@@ -12,6 +12,7 @@
 #include "IWMathTypes.h"
 #include "IWMathUtils.h"
 
+#include "IWVector2.h"
 #include "IWVector3.h"
 
 #endif

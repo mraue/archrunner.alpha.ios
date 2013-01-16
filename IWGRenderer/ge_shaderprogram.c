@@ -41,7 +41,7 @@ GLuint ge_build_program(const char* vertexShaderSource,
             glDeleteProgram(prog);
             prog = 0;
         }
-        exit(1);
+        return 0;
     }
 
     return prog;
@@ -60,7 +60,7 @@ GLuint ge_build_shader(const char* source, GLenum shaderType)
         glGetShaderInfoLog(shader, sizeof(messages), NULL, &messages[0]);
         printf("Shader compile log:\n%s\n", messages);
         glDeleteShader(shader);
-        exit(1);
+        return 0;
     }
 
     return shader;

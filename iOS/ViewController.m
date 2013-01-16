@@ -10,6 +10,8 @@
 #import "IWController.h"
 #import "IWPlayer.h"
 #import "IWGLighting.h"
+#import "IWGHeadUpDisplay.h"
+#import "IWGRectangleButton.h"
 
 #import "ge_shaderprogram.h"
 #import "ge_cubes.h"
@@ -124,6 +126,7 @@ GLuint N_VERT2 = 0;
     switchColor = NO;
     
     [aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
+    switch1.on = NO;
     
     self.context = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
 
@@ -201,27 +204,27 @@ GLuint N_VERT2 = 0;
     _lightSource = IWGLightingMakeBasicLight();
     _materialSource = IWGLightingMakeBasicMaterial();
     
-    IWGLightSource lightSource = {
-        {3.0, 2.5, 2.0},//Position
-        {0.5, 0.1, 2.0},//Attenuation
-        {1.0, 1.0, 1.0},//Direction
-        {1.0, 1.0, 1.0},//Colour
-        1.5, 1.0, 7.0//OuterCutoff, InnerCutoff, Exponent
-        //1.05, 1.0, 8.//OuterCutoff, InnerCutoff, Exponent
-         //0.01, 0.06, 20.0
-         //.1, 1., 20.0
-    };
-    _lightSource = lightSource;
-    IWGMaterialSource materialSource = {
-        {0.0, 0.0, 0.0},// Ambient
-        {0.4, 0.4, 1.0, 1.0},// Diffuse
-        {0.0, 0.0, 0.0},// Specular
-        60.,// Shininess
-        {0.0, 0.0},
-        {0.0, 0.0}
-    };
-    _materialSource = materialSource;
-    
+//    IWGLightSource lightSource = {
+//        {3.0, 2.5, 2.0},//Position
+//        {0.5, 0.1, 2.0},//Attenuation
+//        {1.0, 1.0, 1.0},//Direction
+//        {1.0, 1.0, 1.0},//Colour
+//        1.5, 1.0, 7.0//OuterCutoff, InnerCutoff, Exponent
+//        //1.05, 1.0, 8.//OuterCutoff, InnerCutoff, Exponent
+//         //0.01, 0.06, 20.0
+//         //.1, 1., 20.0
+//    };
+//    _lightSource = lightSource;
+//    IWGMaterialSource materialSource = {
+//        {0.0, 0.0, 0.0},// Ambient
+//        {0.4, 0.4, 1.0, 1.0},// Diffuse
+//        {0.0, 0.0, 0.0},// Specular
+//        60.,// Shininess
+//        {0.0, 0.0},
+//        {0.0, 0.0}
+//    };
+//    _materialSource = materialSource;
+//    
     [self setupGL];
 }
 
@@ -296,12 +299,17 @@ GLuint N_VERT2 = 0;
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(gCubeVertexData), gCubeVertexData, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_STATIC_DRAW);
+
+    //glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_STATIC_DRAW);
+    // DEBUG
+    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
+    // DEBUG END
     
 //    GLuint positionSlot = glGetAttribLocation(_program, "position");
 //    GLuint normalSlot = glGetAttribLocation(_program, "normal");
     GLuint positionSlot = glGetAttribLocation(_programBasicLight, "Vertex");
     GLuint normalSlot = glGetAttribLocation(_programBasicLight, "Normal");
+    GLuint colourSlot = glGetAttribLocation(_programBasicLight, "Colour");
     
 //    glEnableVertexAttribArray(positionSlot);
 //    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(0));
@@ -314,6 +322,46 @@ GLuint N_VERT2 = 0;
 
     glBindVertexArrayOES(0);
     
+    //
+    // Head up display data
+    //
+    glGenVertexArraysOES(1, &_vertexArray2);
+    glBindVertexArrayOES(_vertexArray2);
+    
+    IWGButton resetPositionButton = {
+        {0.0, -1.0},
+        {1.0, -0.2},
+        {1.0, 1.0, 1.0, 0.4}
+    };
+
+    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    printf("aspect = %f\n", aspect);
+    IWVector4 squareButtonColour = {1.0, 1.0, 1.0, 0.3};
+    IWGRectangleButton squareButton = IWGRectangleButtonMake(0.4, 0.0,
+                                                       IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT,
+                                                       0.18, 0.18, squareButtonColour,
+                                                       IWGRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
+                                                       0.05, aspect);
+    
+    size_t mypos_size2 = 4 * 9 * 7 * sizeof(GLfloat);
+    GLfloat *mypos2 = malloc(mypos_size2);
+    GLfloat *mypos2start = mypos2;
+
+    int nVerticesButton = 0;
+    //IWGHeadUpDisplayButtonToTriangles(resetPositionButton, mypos2, &nVerticesButton);
+    IWGRectangleButtonToTriangelBuffer(&squareButton, mypos2);
+    
+    glGenBuffers(1, &_vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
+
+
+    glEnableVertexAttribArray(positionSlot);
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(colourSlot);
+    glVertexAttribPointer(colourSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+    
+    glBindVertexArrayOES(0);
     
 //    nx = ny = nz = 4;
 //    d = .1;
@@ -411,9 +459,11 @@ GLuint N_VERT2 = 0;
     //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
 
     // Update player position
+    //float speed = 110.0;
+    float speed = 0.0;
     playerData.position = IWVector3Add(playerData.position,
                                        IWVector3MultiplyScalar(playerData.direction,
-                                                               self.timeSinceLastUpdate / 1000.0 * 110.));
+                                                               self.timeSinceLastUpdate / 1000.0 * speed));
     float rotationSpeedMax = 100.0 / 180.0 * M_PI * self.timeSinceLastUpdate;
     
     // Update y rotation
@@ -445,7 +495,7 @@ GLuint N_VERT2 = 0;
         }
     }
     GLKMatrix4 yRotationUpdateMatrix =GLKMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
-                                                            upGLV.x, upGLV.y, upGLV.z);
+                                                             upGLV.x, upGLV.y, upGLV.z);
     GLKVector3 normGLV = GLKVector3CrossProduct(dirGLV, upGLV);
     GLKMatrix4 xRotationUpdateMatrix =GLKMatrix4MakeRotation(rotationSpeedX * rotationSpeedMax,
                                                              normGLV.x, normGLV.y, normGLV.z);
@@ -555,18 +605,30 @@ GLuint N_VERT2 = 0;
 
     glBindVertexArrayOES(0);
     
-//    // Draw array 2
-//    glBindVertexArrayOES(_vertexArray2);
-//    
-//    //glUseProgram(_program);
-//    
-//    //glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
-//    //glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, _normalMatrix.m);
-//    glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 1.0, 0.1, 0.1, 1.0);
-//    
-//    //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
-//    
-//    glBindVertexArrayOES(0);
+    // Draw array 2
+    
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_ONE, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glBindVertexArrayOES(_vertexArray2);
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
+                0);
+    
+    //glUseProgram(_program);
+    
+    //glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
+    //glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, _normalMatrix.m);
+    //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 1.0, 0.1, 0.1, 1.0);
+    
+    //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 1*9 + 3*6);
+    
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
+                1);
+    
+    glBindVertexArrayOES(0);
+    glDisable(GL_BLEND);
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
@@ -590,8 +652,8 @@ GLuint N_VERT2 = 0;
 //    //uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR] = glGetUniformLocation(_program, "lightDiffuseColor");
 
     // Basic lighting program
-    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"BasicLightShader" ofType:@"vsh"];
-    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"BasicLightShader" ofType:@"fsh"];
+    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"vsh"];
+    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"fsh"];
     
     _programBasicLight = ge_build_program([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
                                 [[NSString stringWithContentsOfFile:fragShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String]);

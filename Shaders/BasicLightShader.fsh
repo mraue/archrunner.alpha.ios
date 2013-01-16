@@ -1,6 +1,6 @@
 #ifdef GL_ES
     precision highp float;
-    precision highp int;
+    precision medp int;
 #endif
 
 
@@ -45,7 +45,6 @@ uniform MaterialSource Material;
 /// fragment lighting (Phong Shading) is used.
 /// <summary>
 uniform int ShadingType;
-
 
 /// <summary>
 /// Varying variables.

@@ -25,6 +25,8 @@
 		646F593A16A5573100704F45 /* BasicLightShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F591F16A555B000704F45 /* BasicLightShader.vsh */; };
 		646F593B16A5573400704F45 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F592016A555B000704F45 /* Shader.fsh */; };
 		646F593C16A5573800704F45 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F592116A555B000704F45 /* Shader.vsh */; };
+		646F594316A56BF100704F45 /* MasterShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594216A56BF100704F45 /* MasterShader.vsh */; };
+		646F594616A577DF00704F45 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594416A56C0200704F45 /* MasterShader.fsh */; };
 		64822E611695E9BF003C5415 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E601695E9BF003C5415 /* UIKit.framework */; };
 		64822E631695E9BF003C5415 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E621695E9BF003C5415 /* Foundation.framework */; };
 		64822E651695E9BF003C5415 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E641695E9BF003C5415 /* CoreGraphics.framework */; };
@@ -32,6 +34,9 @@
 		64822E691695E9BF003C5415 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E681695E9BF003C5415 /* OpenGLES.framework */; };
 		64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EA8169DB8A8003C5415 /* CoreLocation.framework */; };
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
+		648E756516A58872004DE1A4 /* IWGHeadUpDisplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 648E756416A58872004DE1A4 /* IWGHeadUpDisplay.c */; };
+		648E756816A6B251004DE1A4 /* IWGRectangleButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 648E756716A6B251004DE1A4 /* IWGRectangleButton.c */; };
+		648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */ = {isa = PBXBuildFile; fileRef = 648E756916A6B7E8004DE1A4 /* IWVector2.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,10 +67,12 @@
 		646F591A16A555B000704F45 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		646F591B16A555B000704F45 /* theBr1dge-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "theBr1dge-Info.plist"; sourceTree = "<group>"; };
 		646F591C16A555B000704F45 /* theBr1dge-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "theBr1dge-Prefix.pch"; sourceTree = "<group>"; };
-		646F591E16A555B000704F45 /* BasicLightShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = BasicLightShader.fsh; sourceTree = "<group>"; };
-		646F591F16A555B000704F45 /* BasicLightShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = BasicLightShader.vsh; sourceTree = "<group>"; };
+		646F591E16A555B000704F45 /* BasicLightShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = BasicLightShader.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		646F591F16A555B000704F45 /* BasicLightShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = BasicLightShader.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		646F592016A555B000704F45 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
 		646F592116A555B000704F45 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
+		646F594216A56BF100704F45 /* MasterShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		646F594416A56C0200704F45 /* MasterShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64822E5C1695E9BF003C5415 /* theBr1dge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = theBr1dge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64822E601695E9BF003C5415 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		64822E621695E9BF003C5415 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -74,6 +81,11 @@
 		64822E681695E9BF003C5415 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		64822EA8169DB8A8003C5415 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		64822EAA169DB901003C5415 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		648E756316A58865004DE1A4 /* IWGHeadUpDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGHeadUpDisplay.h; sourceTree = "<group>"; };
+		648E756416A58872004DE1A4 /* IWGHeadUpDisplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGHeadUpDisplay.c; sourceTree = "<group>"; };
+		648E756616A6B242004DE1A4 /* IWGRectangleButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGRectangleButton.h; sourceTree = "<group>"; };
+		648E756716A6B251004DE1A4 /* IWGRectangleButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGRectangleButton.c; sourceTree = "<group>"; };
+		648E756916A6B7E8004DE1A4 /* IWVector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector2.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +150,10 @@
 				646F590716A555B000704F45 /* ge_shaderprogram.c */,
 				646F590A16A555B000704F45 /* IWGLighting.h */,
 				646F590916A555B000704F45 /* IWGLighting.c */,
+				648E756316A58865004DE1A4 /* IWGHeadUpDisplay.h */,
+				648E756416A58872004DE1A4 /* IWGHeadUpDisplay.c */,
+				648E756616A6B242004DE1A4 /* IWGRectangleButton.h */,
+				648E756716A6B251004DE1A4 /* IWGRectangleButton.c */,
 			);
 			path = IWGRenderer;
 			sourceTree = "<group>";
@@ -148,6 +164,7 @@
 				646F590C16A555B000704F45 /* IWMath.h */,
 				646F590D16A555B000704F45 /* IWMathTypes.h */,
 				646F590E16A555B000704F45 /* IWVector3.h */,
+				648E756916A6B7E8004DE1A4 /* IWVector2.h */,
 				646F590F16A555B000704F45 /* IWMathUtils.h */,
 			);
 			path = IWMath;
@@ -172,8 +189,10 @@
 		646F591D16A555B000704F45 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				646F591E16A555B000704F45 /* BasicLightShader.fsh */,
+				646F594216A56BF100704F45 /* MasterShader.vsh */,
+				646F594416A56C0200704F45 /* MasterShader.fsh */,
 				646F591F16A555B000704F45 /* BasicLightShader.vsh */,
+				646F591E16A555B000704F45 /* BasicLightShader.fsh */,
 				646F592016A555B000704F45 /* Shader.fsh */,
 				646F592116A555B000704F45 /* Shader.vsh */,
 			);
@@ -272,6 +291,9 @@
 				646F593A16A5573100704F45 /* BasicLightShader.vsh in Resources */,
 				646F593B16A5573400704F45 /* Shader.fsh in Resources */,
 				646F593C16A5573800704F45 /* Shader.vsh in Resources */,
+				646F594316A56BF100704F45 /* MasterShader.vsh in Resources */,
+				646F594616A577DF00704F45 /* MasterShader.fsh in Resources */,
+				648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,6 +312,8 @@
 				646F592B16A555B000704F45 /* ge_shaderprogram.c in Sources */,
 				646F592C16A555B000704F45 /* IWGLighting.c in Sources */,
 				646F593316A555B000704F45 /* main.m in Sources */,
+				648E756516A58872004DE1A4 /* IWGHeadUpDisplay.c in Sources */,
+				648E756816A6B251004DE1A4 /* IWGRectangleButton.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
