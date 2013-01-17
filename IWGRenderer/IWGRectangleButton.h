@@ -15,13 +15,6 @@
 #include "IWMath.h"
 #include "IWGeometry.h"
 
-enum IWGRECTANGLEBUTTON_ANCHOR_POSITION {
-    IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT,
-    IWGRECTANGLEBUTTON_ANCHOR_POSITION_UPPER_LEFT,
-    IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_RIGHT,
-    IWGRECTANGLEBUTTON_ANCHOR_POSITION_UPPER_RIGHT
-};
-
 enum IWGRECTANGLEBUTTON_CORNER_CUT {
     IWGRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT  = 1 <<  0,
     IWGRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT  = 1 <<  1,
@@ -31,16 +24,14 @@ enum IWGRECTANGLEBUTTON_CORNER_CUT {
 };
 
 struct _IWGRectangleButton {
-    IWVector2 anchorPoint;// [0.0, 1.0] coordinates
-    enum IWGRECTANGLEBUTTON_ANCHOR_POSITION anchorPosition;
+    IWPoint anchorPoint;// [0.0, 1.0] coordinates
+    enum IWRECTANGLE_ANCHOR_POSITION anchorPosition;
     IWVector2 size;// [0.0, 1.0] coordinates
     IWVector4 colour;
     enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut;
     float cornerOffset;
     float aspectRatio;
-    IWRectangle rectangle;
-    //IWVector2 lowerLeft;// GL [-1.0, 1.0] coordinates
-    //IWVector2 upperRight;// GL [-1.0, 1.0] coordinates
+    IWRectangle rectangle;// [0.0 - 1.0]
     unsigned int nVertices;
     GLfloat *memStartPtr;
     unsigned short memSize;
@@ -49,7 +40,7 @@ struct _IWGRectangleButton {
 typedef struct _IWGRectangleButton IWGRectangleButton;
 
 IWGRectangleButton IWGRectangleButtonMake(float anchorPointX, float anchorPointY,
-                                          enum IWGRECTANGLEBUTTON_ANCHOR_POSITION anchorPosition,
+                                          enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
                                           float sizeX, float sizeY,
                                           IWVector4 colour,
                                           enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut,

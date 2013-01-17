@@ -24,14 +24,24 @@ struct _IWRectangle {
 
 typedef struct _IWRectangle IWRectangle;
 
+enum IWRECTANGLE_ANCHOR_POSITION {
+    IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+    IWRECTANGLE_ANCHOR_POSITION_UPPER_LEFT,
+    IWRECTANGLE_ANCHOR_POSITION_LOWER_RIGHT,
+    IWRECTANGLE_ANCHOR_POSITION_UPPER_RIGHT
+};
+
 #
 # pragma mark - Function prototypes
 #
 
+IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,
+                                                   enum IWRECTANGLE_ANCHOR_POSITION anchorPosition);
+
 static __inline__ short IWPointInRectangle(IWPoint point, IWRectangle rectangle);
 
 #
-# pragma mark - Implementation
+# pragma mark - Inline implementation
 #
 
 static __inline__ short IWPointInRectangle(IWPoint point, IWRectangle rectangle)

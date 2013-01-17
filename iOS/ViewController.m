@@ -12,6 +12,7 @@
 #import "IWGLighting.h"
 #import "IWGHeadUpDisplay.h"
 #import "IWGRectangleButton.h"
+#import "IWGeometry.h"
 
 #import "ge_shaderprogram.h"
 #import "ge_cubes.h"
@@ -344,7 +345,7 @@ GLuint N_VERT2 = 0;
     // Light gray
     IWVector4 squareButtonColour = {0.6, 0.6, 0.6, 0.4};
     IWGRectangleButton squareButton = IWGRectangleButtonMake(0.4, 0.0,
-                                                       IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT,
+                                                       IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                        0.18, 0.18, squareButtonColour,
                                                        IWGRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
                                                        0.035, aspect);

@@ -10,14 +10,12 @@
 
 #include "IWGRectangleButton.h"
 
-void IWGRectangleButtonInitCorners(IWGRectangleButton *button);
-
 IWGRectangleButton IWGRectangleButtonMake(float anchorPointX, float anchorPointY,
-                                    enum IWGRECTANGLEBUTTON_ANCHOR_POSITION anchorPosition,
-                                    float sizeX, float sizeY,
-                                    IWVector4 colour,
-                                    enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut,
-                                    float cornerOffset, float aspectRatio)
+                                          enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
+                                          float sizeX, float sizeY,
+                                          IWVector4 colour,
+                                          enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut,
+                                          float cornerOffset, float aspectRatio)
 {
     IWGRectangleButton button = {
         {anchorPointX, anchorPointY},
@@ -30,46 +28,10 @@ IWGRectangleButton IWGRectangleButtonMake(float anchorPointX, float anchorPointY
         {{0.0, 0.0}, {0.0, 0.0}},
         0, 0, 0
     };
-    IWGRectangleButtonInitCorners(&button);
+    button.rectangle = IWRectangleMakeFromAnchorAndDimensions(button.anchorPoint,
+                                                              IWVector2Make(sizeX, sizeY),
+                                                              button.anchorPosition);
     return button;
-}
-
-void IWGRectangleButtonInitCorners(IWGRectangleButton *button)
-{
-    IWVector2 anchor = IWVector2AddScalar(IWVector2MultiplyScalar(button->anchorPoint, 2.0), -1.0);
-    IWVector2 dimension = IWVector2MultiplyScalar(button->size, 2.0);
-
-    switch (button->anchorPosition) {
-
-        case IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT:
-            button->rectangle.lowerLeft.x = anchor.x;
-            button->rectangle.lowerLeft.y = anchor.y;
-            button->rectangle.upperRight.x = anchor.x + dimension.x;
-            button->rectangle.upperRight.y = anchor.y + dimension.y;
-            break;
-
-        case IWGRECTANGLEBUTTON_ANCHOR_POSITION_UPPER_LEFT:
-            button->rectangle.lowerLeft.x = anchor.x;
-            button->rectangle.lowerLeft.y = anchor.y - dimension.y;
-            button->rectangle.upperRight.x = anchor.x + dimension.x;
-            button->rectangle.upperRight.y = anchor.y;
-            break;
-
-        case IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_RIGHT:
-            button->rectangle.lowerLeft.x = anchor.x - dimension.x;
-            button->rectangle.lowerLeft.y = anchor.y;
-            button->rectangle.upperRight.x = anchor.x;
-            button->rectangle.upperRight.y = anchor.y + dimension.y;
-            break;
-
-        case IWGRECTANGLEBUTTON_ANCHOR_POSITION_UPPER_RIGHT:
-            button->rectangle.lowerLeft.x = anchor.x - dimension.x;
-            button->rectangle.lowerLeft.y = anchor.y - dimension.y;
-            button->rectangle.upperRight.x = anchor.x;
-            button->rectangle.upperRight.y = anchor.y;
-            break;
-    }
-    return;
 }
 
 short IWGRectangleButtonPointInRectangle(IWGRectangleButton *button, IWVector2 point)
@@ -122,9 +84,15 @@ int IWGRectangleButtonToTriangleBuffer(IWGRectangleButton * button, GLfloat* p)
     IWVector2 cornerOffset = IWVector2MultiplyScalar(IWVector2Make(1., button->aspectRatio), button->cornerOffset * 2.);
     IWVector2 center = IWVector2MultiplyScalar(IWVector2Add(button->rectangle.upperRight, button->rectangle.lowerLeft), 0.5);
 
-    float xc = center.x, yc = center.y;
-    float xmin = button->rectangle.lowerLeft.x, xmax = button->rectangle.upperRight.x;
-    float ymin = button->rectangle.lowerLeft.y, ymax = button->rectangle.upperRight.y;
+    // Convert to GL coordinates
+    // REFACTOR: this shall be improved in the future
+    float xc, yc, xmin, xmax, ymin, ymax;
+    xc = center.x * 2.0 - 1.0;
+    yc = center.y * 2.0 - 1.0;
+    xmin = button->rectangle.lowerLeft.x * 2.0 - 1.0;
+    xmax = button->rectangle.upperRight.x * 2.0 - 1.0;
+    ymin = button->rectangle.lowerLeft.y * 2.0 - 1.0;
+    ymax = button->rectangle.upperRight.y * 2.0 - 1.0;
 
     // Calculate base vertices
     IWVector2 baseVertices[] = {
