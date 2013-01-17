@@ -253,8 +253,8 @@ GLuint N_VERT2 = 0;
     //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
 
     // Update player position
-    //float speed = 110.0;
-    float speed = 0.0;
+    float speed = 110.0;
+    //float speed = 0.0;
     gdPlayerData.position = IWVector3Add(gdPlayerData.position,
                                          IWVector3MultiplyScalar(gdPlayerData.direction,
                                                                  self.timeSinceLastUpdate / 1000.0 * speed));

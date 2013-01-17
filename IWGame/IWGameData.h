@@ -20,10 +20,10 @@ IWPlayerData gdPlayerData;
 
 static GLuint gdN_VERT = 0;
 
-GLuint gdVertexArray;
-GLuint gdVertexArray2;
-GLuint gdVertexBuffer;
-GLuint gdVertexBuffer2;
+static GLuint gdVertexArray;
+static GLuint gdVertexArray2;
+static GLuint gdVertexBuffer;
+static GLuint gdVertexBuffer2;
 
 GLKMatrix4 gdModelMatrix;
 GLKMatrix4 gdViewMatrix;

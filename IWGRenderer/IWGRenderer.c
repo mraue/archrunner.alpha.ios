@@ -150,11 +150,11 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     glBindVertexArrayOES(0);
     
-    // Slowed it down :(
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
-    //glFrontFace(GL_CW);
-    
+//    // Slowed it down :(
+//    glEnable(GL_CULL_FACE);
+//    glCullFace(GL_BACK);
+//    glFrontFace(GL_CW);
+//    
     return;
 }
 
