@@ -13,6 +13,7 @@
 #include <OpenGLES/ES2/glext.h>
 
 #include "IWMath.h"
+#include "IWGeometry.h"
 
 enum IWGRECTANGLEBUTTON_ANCHOR_POSITION {
     IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT,
@@ -37,8 +38,9 @@ struct _IWGRectangleButton {
     enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut;
     float cornerOffset;
     float aspectRatio;
-    IWVector2 lowerLeft;// GL [-1.0, 1.0] coordinates
-    IWVector2 upperRight;// GL [-1.0, 1.0] coordinates
+    IWRectangle rectangle;
+    //IWVector2 lowerLeft;// GL [-1.0, 1.0] coordinates
+    //IWVector2 upperRight;// GL [-1.0, 1.0] coordinates
     unsigned int nVertices;
     GLfloat *memStartPtr;
     unsigned short memSize;
@@ -53,6 +55,6 @@ IWGRectangleButton IWGRectangleButtonMake(float anchorPointX, float anchorPointY
                                           enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                           float cornerOffset, float aspectRatio);
 
-int IWGRectangleButtonToTriangleBuffer(IWGRectangleButton * button, GLfloat* p);
+int IWGRectangleButtonToTriangleBuffer(IWGRectangleButton *button, GLfloat* p);
 
 #endif

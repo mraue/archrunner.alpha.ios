@@ -27,12 +27,10 @@ IWGRectangleButton IWGRectangleButtonMake(float anchorPointX, float anchorPointY
         cornerCut,
         cornerOffset,
         aspectRatio,
-        {0.0, 0.0},
-        {0.0, 0.0},
+        {{0.0, 0.0}, {0.0, 0.0}},
         0, 0, 0
     };
     IWGRectangleButtonInitCorners(&button);
-    printf("DEBUG (%f, %f) (%f, %f)\n", button.lowerLeft.x, button.lowerLeft.y, button.upperRight.x, button.upperRight.y);
     return button;
 }
 
@@ -44,34 +42,40 @@ void IWGRectangleButtonInitCorners(IWGRectangleButton *button)
     switch (button->anchorPosition) {
 
         case IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT:
-            button->lowerLeft.x = anchor.x;
-            button->lowerLeft.y = anchor.y;
-            button->upperRight.x = anchor.x + dimension.x;
-            button->upperRight.y = anchor.y + dimension.y;
+            button->rectangle.lowerLeft.x = anchor.x;
+            button->rectangle.lowerLeft.y = anchor.y;
+            button->rectangle.upperRight.x = anchor.x + dimension.x;
+            button->rectangle.upperRight.y = anchor.y + dimension.y;
             break;
 
         case IWGRECTANGLEBUTTON_ANCHOR_POSITION_UPPER_LEFT:
-            button->lowerLeft.x = anchor.x;
-            button->lowerLeft.y = anchor.y - dimension.y;
-            button->upperRight.x = anchor.x + dimension.x;
-            button->upperRight.y = anchor.y;
+            button->rectangle.lowerLeft.x = anchor.x;
+            button->rectangle.lowerLeft.y = anchor.y - dimension.y;
+            button->rectangle.upperRight.x = anchor.x + dimension.x;
+            button->rectangle.upperRight.y = anchor.y;
             break;
 
         case IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_RIGHT:
-            button->lowerLeft.x = anchor.x - dimension.x;
-            button->lowerLeft.y = anchor.y;
-            button->upperRight.x = anchor.x;
-            button->upperRight.y = anchor.y + dimension.y;
+            button->rectangle.lowerLeft.x = anchor.x - dimension.x;
+            button->rectangle.lowerLeft.y = anchor.y;
+            button->rectangle.upperRight.x = anchor.x;
+            button->rectangle.upperRight.y = anchor.y + dimension.y;
             break;
 
         case IWGRECTANGLEBUTTON_ANCHOR_POSITION_UPPER_RIGHT:
-            button->lowerLeft.x = anchor.x - dimension.x;
-            button->lowerLeft.y = anchor.y - dimension.y;
-            button->upperRight.x = anchor.x;
-            button->upperRight.y = anchor.y;
+            button->rectangle.lowerLeft.x = anchor.x - dimension.x;
+            button->rectangle.lowerLeft.y = anchor.y - dimension.y;
+            button->rectangle.upperRight.x = anchor.x;
+            button->rectangle.upperRight.y = anchor.y;
             break;
     }
     return;
+}
+
+short IWGRectangleButtonPointInRectangle(IWGRectangleButton *button, IWVector2 point)
+{
+    return ((point.x >= button->rectangle.lowerLeft.x) && (point.x < button->rectangle.upperRight.x)
+            && (point.y >= button->rectangle.lowerLeft.y) && (point.y < button->rectangle.upperRight.y));
 }
 
 static __inline__ size_t IWGRectangleButtonBufferAppendVertex(GLfloat *p, IWVector2 xyvec, float z, IWVector4 color)
@@ -82,6 +86,8 @@ static __inline__ size_t IWGRectangleButtonBufferAppendVertex(GLfloat *p, IWVect
     return p - pstart;
 }
 
+// Duplicated here to have full controll over the order,
+// since it must match the index array
 const static short _IWGRECTANGLEBUTTONTOTRIANGLEBUFFER_CORNER_CUT[] = {
     IWGRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT,
     IWGRECTANGLEBUTTON_CORNER_CUT_LOWER_RIGHT,
@@ -89,11 +95,14 @@ const static short _IWGRECTANGLEBUTTONTOTRIANGLEBUFFER_CORNER_CUT[] = {
     IWGRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT
 };
 
+// Helper structure
 struct _IWGRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES_STRUCT {
     unsigned short cornerCut[9];
     unsigned short noCornerCut[6];
 };
 
+// Indices for the different quadrants of the button, with
+// and without the corner cut
 static struct _IWGRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES_STRUCT _IWGRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES[] = {
     {{2, 3, 0, 2, 0, 16, 16, 0, 15}, {1, 3, 0, 1, 0, 15}},
     {{3, 4, 0, 4, 6, 0, 6, 7, 0}, {3, 5, 0, 5, 7, 0}},
@@ -107,16 +116,17 @@ int IWGRectangleButtonToTriangleBuffer(IWGRectangleButton * button, GLfloat* p)
     GLfloat *pstart = p;
     
     IWVector4 colour = button->colour;
-    //float cornerOffset = (button->upperRight.x - button->lowerLeft.x) * button->cornerCutXFraction;
+    //float cornerOffset = (button->rectangle.upperRight.x - button->rectangle.lowerLeft.x) * button->cornerCutXFraction;
 
     // REFACTOR: Aspect ratio needs to be checked, and implementation needs to be improved
     IWVector2 cornerOffset = IWVector2MultiplyScalar(IWVector2Make(1., button->aspectRatio), button->cornerOffset * 2.);
-    IWVector2 center = IWVector2MultiplyScalar(IWVector2Add(button->upperRight, button->lowerLeft), 0.5);
+    IWVector2 center = IWVector2MultiplyScalar(IWVector2Add(button->rectangle.upperRight, button->rectangle.lowerLeft), 0.5);
 
     float xc = center.x, yc = center.y;
-    float xmin = button->lowerLeft.x, xmax = button->upperRight.x;
-    float ymin = button->lowerLeft.y, ymax = button->upperRight.y;
+    float xmin = button->rectangle.lowerLeft.x, xmax = button->rectangle.upperRight.x;
+    float ymin = button->rectangle.lowerLeft.y, ymax = button->rectangle.upperRight.y;
 
+    // Calculate base vertices
     IWVector2 baseVertices[] = {
         {xc, yc},
         {xmin, ymin}, {xmin + cornerOffset.x, ymin}, {xc, ymin}, {xmax - cornerOffset.x, ymin}, {xmax, ymin},

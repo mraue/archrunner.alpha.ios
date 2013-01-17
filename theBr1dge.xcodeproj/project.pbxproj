@@ -86,6 +86,7 @@
 		648E756616A6B242004DE1A4 /* IWGRectangleButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGRectangleButton.h; sourceTree = "<group>"; };
 		648E756716A6B251004DE1A4 /* IWGRectangleButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGRectangleButton.c; sourceTree = "<group>"; };
 		648E756916A6B7E8004DE1A4 /* IWVector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector2.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		648E756B16A7F5B1004DE1A4 /* IWGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGeometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +162,7 @@
 		646F590B16A555B000704F45 /* IWMath */ = {
 			isa = PBXGroup;
 			children = (
+				648E756B16A7F5B1004DE1A4 /* IWGeometry.h */,
 				646F590C16A555B000704F45 /* IWMath.h */,
 				646F590D16A555B000704F45 /* IWMathTypes.h */,
 				646F590E16A555B000704F45 /* IWVector3.h */,
