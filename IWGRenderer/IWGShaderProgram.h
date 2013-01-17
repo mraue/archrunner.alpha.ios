@@ -12,8 +12,20 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
+struct _IWGShaderProgramData {
+    const char* vertexShaderDataString;
+    const char* fragmentShaderDataString;
+    GLuint vertexShaderID;
+    GLuint fragmentShaderID;
+    GLuint programID;
+};
+typedef struct _IWGShaderProgramData IWGShaderProgramData;
+
+IWGShaderProgramData IWGShaderProgramMake(const char* vertexShaderDataString,
+                                          const char* fragmentShaderDataString);
+
 GLuint IWGShaderProgramBuildShader(const char* source, GLenum shaderType);
 GLuint IWGShaderProgramBuildProgram(const char* vertexShaderSource,
-                        const char* fragmentShaderSource);
+                                    const char* fragmentShaderSource);
 
 #endif

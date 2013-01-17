@@ -9,6 +9,8 @@
 #ifndef theBr1dge_IWGeometry_h
 #define theBr1dge_IWGeometry_h
 
+#include <stdbool.h>
+
 #include "IWMath.h"
 
 # pragma mark - Data Types
@@ -34,11 +36,11 @@ enum IWRECTANGLE_ANCHOR_POSITION {
 IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,
                                                    enum IWRECTANGLE_ANCHOR_POSITION anchorPosition);
 
-static __inline__ short IWPointInRectangle(IWPoint point, IWRectangle rectangle);
+static __inline__ bool IWPointInRectangle(IWPoint point, IWRectangle rectangle);
 
 # pragma mark - Inline implementation
 
-static __inline__ short IWPointInRectangle(IWPoint point, IWRectangle rectangle)
+static __inline__ bool IWPointInRectangle(IWPoint point, IWRectangle rectangle)
 {
     return ((point.x >= rectangle.lowerLeft.x) && (point.x < rectangle.upperRight.x)
             && (point.y >= rectangle.lowerLeft.y) && (point.y < rectangle.upperRight.y));

@@ -34,7 +34,7 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
     return button;
 }
 
-short IWUIRectangleButtonPointInRectangle(IWUIRectangleButton *button, IWVector2 point)
+bool IWUIRectangleButtonPointInRectangle(IWUIRectangleButton *button, IWVector2 point)
 {
     return ((point.x >= button->rectangle.lowerLeft.x) && (point.x < button->rectangle.upperRight.x)
             && (point.y >= button->rectangle.lowerLeft.y) && (point.y < button->rectangle.upperRight.y));
@@ -72,7 +72,7 @@ static struct _IWUIRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES_STRUCT _IWUIRECTANGLE
     {{0, 11, 12, 0, 12, 14, 0, 14, 15}, {0, 11, 13, 0, 13, 15}}
 };
 
-int IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat* p)
+size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat* p)
 {
     //float* p = &vertices->x;
     GLfloat *pstart = p;

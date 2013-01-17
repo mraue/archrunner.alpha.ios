@@ -11,8 +11,50 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+IWGShaderProgramData IWGShaderProgramMake(const char* vertexShaderDataString,
+                                          const char* fragmentShaderDataString)
+{
+    IWGShaderProgramData programData = {
+        vertexShaderDataString, fragmentShaderDataString, 0, 0, 0
+    };
+    
+    GLuint vertexShader = IWGShaderProgramBuildShader(vertexShaderDataString, GL_VERTEX_SHADER);
+    GLuint fragmentShader = IWGShaderProgramBuildShader(fragmentShaderDataString, GL_FRAGMENT_SHADER);
+    
+    GLuint prog = glCreateProgram();
+    glAttachShader(prog, vertexShader);
+    glAttachShader(prog, fragmentShader);
+    glLinkProgram(prog);
+    
+    GLint linkSuccess;
+    glGetProgramiv(prog, GL_LINK_STATUS, &linkSuccess);
+    if (linkSuccess == GL_FALSE) {
+        GLchar messages[256];
+        glGetProgramInfoLog(prog, sizeof(messages), NULL, &messages[0]);
+        printf("Program link log:\n%s\n", messages);
+        // Cleanup
+        if (vertexShader) {
+            glDeleteShader(vertexShader);
+            vertexShader = 0;
+        }
+        if (fragmentShader) {
+            glDeleteShader(fragmentShader);
+            fragmentShader = 0;
+        }
+        if (prog) {
+            glDeleteProgram(prog);
+            prog = 0;
+        }
+        return programData;
+    }
+    programData.programID = prog;
+    programData.vertexShaderID = vertexShader;
+    programData.fragmentShaderID = fragmentShader;
+    return programData;
+}
+
 GLuint IWGShaderProgramBuildProgram(const char* vertexShaderSource,
-                        const char* fragmentShaderSource)
+                                    const char* fragmentShaderSource)
 {
     GLuint vertexShader = IWGShaderProgramBuildShader(vertexShaderSource, GL_VERTEX_SHADER);
     GLuint fragmentShader = IWGShaderProgramBuildShader(fragmentShaderSource, GL_FRAGMENT_SHADER);

@@ -9,6 +9,49 @@
 #ifndef theBr1dge_IWGRenderer_h
 #define theBr1dge_IWGRenderer_h
 
+#pragma mark - Includes
 
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+
+#include "IWGShaderProgram.h"
+#include "IWGLighting.h"
+
+#import "ge_cubes.h"
+
+#pragma mark - Definitions
+
+enum _IWGRENDERER_BASIC_UNIFORM_ID_INDEX {
+    IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX,
+    IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX,
+    IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX,
+    IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX,
+    IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N
+};
+typedef enum _IWGRENDERER_BASIC_UNIFORM_ID_INDEX IWGRENDERER_BASIC_UNIFORM_ID_INDEX;
+
+enum _IWGRENDERER_ATTRIBUTE_ID_INDEX {
+    IWGRENDERER_ATTRIBUTE_ID_INDEX_VERTEX,
+    IWGRENDERER_ATTRIBUTE_ID_INDEX_NORMAL,
+    IWGRENDERER_ATTRIBUTE_ID_INDEX_COLOUR,
+    IWGRENDERER_ATTRIBUTE_ID_INDEX_N
+};
+typedef enum _IWGRENDERER_ATTRIBUTE_ID_INDEX IWGRENDERER_ATTRIBUTE_ID_INDEX;
+
+#pragma mark - Variables
+
+IWGShaderProgramData programData;
+GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
+GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
+
+static IWGLightSource lightSourceData;
+static IWGMaterialSource materialSourceData;
+
+#pragma mark - Functions
+
+void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentShaderFilename,
+                        float viewWidth, float viewHeight);
+void IWGRendererRender(void);
+void IWGRendererTearDownGL(void);
 
 #endif

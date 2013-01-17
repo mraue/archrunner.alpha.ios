@@ -9,6 +9,8 @@
 #ifndef theBr1dge_IWUIRectangleButton_h
 #define theBr1dge_IWUIRectangleButton_h
 
+#include <stdbool.h>
+
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
@@ -46,6 +48,6 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
                                           enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                           float cornerOffset, float aspectRatio);
 
-int IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton *button, GLfloat* p);
+size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton *button, GLfloat* p);
 
 #endif
