@@ -336,12 +336,18 @@ GLuint N_VERT2 = 0;
 
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     printf("aspect = %f\n", aspect);
-    IWVector4 squareButtonColour = {1.0, 1.0, 1.0, 0.3};
+    //IWVector4 squareButtonColour = {1.0, 1.0, 1.0, 0.3};
+    // Saturated yellow
+    //IWVector4 squareButtonColour = {255.0 / 255.0, 223. / 255., 94. / 255, 0.2};
+    // White-ish yellow
+    //IWVector4 squareButtonColour = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
+    // Light gray
+    IWVector4 squareButtonColour = {0.6, 0.6, 0.6, 0.4};
     IWGRectangleButton squareButton = IWGRectangleButtonMake(0.4, 0.0,
                                                        IWGRECTANGLEBUTTON_ANCHOR_POSITION_LOWER_LEFT,
                                                        0.18, 0.18, squareButtonColour,
                                                        IWGRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
-                                                       0.05, aspect);
+                                                       0.035, aspect);
     
     size_t mypos_size2 = 4 * 9 * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
@@ -349,7 +355,7 @@ GLuint N_VERT2 = 0;
 
     int nVerticesButton = 0;
     //IWGHeadUpDisplayButtonToTriangles(resetPositionButton, mypos2, &nVerticesButton);
-    IWGRectangleButtonToTriangelBuffer(&squareButton, mypos2);
+    IWGRectangleButtonToTriangleBuffer(&squareButton, mypos2);
     
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);

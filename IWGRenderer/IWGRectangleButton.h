@@ -53,6 +53,6 @@ IWGRectangleButton IWGRectangleButtonMake(float anchorPointX, float anchorPointY
                                           enum IWGRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                           float cornerOffset, float aspectRatio);
 
-int IWGRectangleButtonToTriangelBuffer(IWGRectangleButton * button, GLfloat* p);
+int IWGRectangleButtonToTriangleBuffer(IWGRectangleButton * button, GLfloat* p);
 
 #endif
