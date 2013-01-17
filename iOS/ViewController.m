@@ -138,6 +138,7 @@ GLuint N_VERT2 = 0;
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+    
     self.locationManager = [[[CLLocationManager alloc] init] autorelease];
 	
 	// check if the hardware has a compass
@@ -666,9 +667,7 @@ GLuint N_VERT2 = 0;
     return YES;
 }
 
-#
 #pragma mark -  CLLocation Manager delegate methods
-#
 
 // This delegate method is invoked when the location manager has heading data.
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)heading {
@@ -715,9 +714,7 @@ GLuint N_VERT2 = 0;
     //1.05, 1.0, 8.//OuterCutoff, InnerCutoff, Exponent
 }
 
-#
 #pragma mark -  Track touch
-#
 
 - (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch* touch = [touches anyObject];

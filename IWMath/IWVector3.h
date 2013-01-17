@@ -37,16 +37,12 @@ static __inline__ float IWVector3Distance(IWVector3 vStart, IWVector3 vEnd);
 
 static __inline__ IWVector3 IWVector3CrossProduct(IWVector3 vectorLeft, IWVector3 vectorRight);
 
-#
-#pragma mark --- New functionality not in GLKVector3
-#
+#pragma mark - New functionality not in GLKVector3
 
 static __inline__ IWVector3 IWVector3ApplyFunctionF(IWVector3 vector, float (*function)(float));
 static __inline__ IWVector3 IWVector3ApplyFunctionD(IWVector3 vector, double (*function)(double));
 
-#
-#pragma mark --- Implementation ---
-#
+#pragma mark - Implementation
 
 static __inline__ IWVector3 IWVector3Make(float x, float y, float z) {
     IWVector3 v = {x, y, z};

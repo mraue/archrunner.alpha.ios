@@ -11,9 +11,7 @@
 
 #include "IWMath.h"
 
-#
 # pragma mark - Data Types
-#
 
 typedef IWVector2 IWPoint;
 
@@ -31,18 +29,14 @@ enum IWRECTANGLE_ANCHOR_POSITION {
     IWRECTANGLE_ANCHOR_POSITION_UPPER_RIGHT
 };
 
-#
 # pragma mark - Function prototypes
-#
 
 IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,
                                                    enum IWRECTANGLE_ANCHOR_POSITION anchorPosition);
 
 static __inline__ short IWPointInRectangle(IWPoint point, IWRectangle rectangle);
 
-#
 # pragma mark - Inline implementation
-#
 
 static __inline__ short IWPointInRectangle(IWPoint point, IWRectangle rectangle)
 {

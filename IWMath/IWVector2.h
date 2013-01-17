@@ -35,16 +35,12 @@ static __inline__ float IWVector2DotProduct(IWVector2 vectorLeft, IWVector2 vect
 static __inline__ float IWVector2Length(IWVector2 v);
 static __inline__ float IWVector2Distance(IWVector2 vStart, IWVector2 vEnd);
 
-#
-#pragma mark --- New functionality not in GLKVector2
-#
+#pragma mark - New functionality not in GLKVector2
 
 static __inline__ IWVector2 IWVector2ApplyFunctionF(IWVector2 vector, float (*function)(float));
 static __inline__ IWVector2 IWVector2ApplyFunctionD(IWVector2 vector, double (*function)(double));
 
-#
-#pragma mark --- Implementation ---
-#
+#pragma mark - Implementation
 
 static __inline__ IWVector2 IWVector2Make(float x, float y) {
     IWVector2 v = {x, y};
