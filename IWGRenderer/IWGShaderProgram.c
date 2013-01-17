@@ -1,21 +1,21 @@
 //
-//  ge_shaderprogram.c
+//  IWGShaderProgram.c
 //  gameone
 //
 //  Created by Martin Raue on 1/4/13.
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#include "ge_shaderprogram.h"
+#include "IWGShaderProgram.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
-GLuint ge_build_program(const char* vertexShaderSource,
+GLuint IWGShaderProgramBuildProgram(const char* vertexShaderSource,
                         const char* fragmentShaderSource)
 {
-    GLuint vertexShader = ge_build_shader(vertexShaderSource, GL_VERTEX_SHADER);
-    GLuint fragmentShader = ge_build_shader(fragmentShaderSource, GL_FRAGMENT_SHADER);
+    GLuint vertexShader = IWGShaderProgramBuildShader(vertexShaderSource, GL_VERTEX_SHADER);
+    GLuint fragmentShader = IWGShaderProgramBuildShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
     
     GLuint prog = glCreateProgram();
     glAttachShader(prog, vertexShader);
@@ -47,7 +47,7 @@ GLuint ge_build_program(const char* vertexShaderSource,
     return prog;
 }
 
-GLuint ge_build_shader(const char* source, GLenum shaderType)
+GLuint IWGShaderProgramBuildShader(const char* source, GLenum shaderType)
 {
     GLuint shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &source, NULL);

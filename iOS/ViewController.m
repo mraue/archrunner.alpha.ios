@@ -10,11 +10,11 @@
 #import "IWController.h"
 #import "IWPlayer.h"
 #import "IWGLighting.h"
-#import "IWGHeadUpDisplay.h"
-#import "IWGRectangleButton.h"
+#import "IWUIHeadUpDisplay.h"
+#import "IWUIRectangleButton.h"
 #import "IWGeometry.h"
 
-#import "ge_shaderprogram.h"
+#import "IWGShaderProgram.h"
 #import "ge_cubes.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -328,12 +328,6 @@ GLuint N_VERT2 = 0;
     //
     glGenVertexArraysOES(1, &_vertexArray2);
     glBindVertexArrayOES(_vertexArray2);
-    
-    IWGButton resetPositionButton = {
-        {0.0, -1.0},
-        {1.0, -0.2},
-        {1.0, 1.0, 1.0, 0.4}
-    };
 
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     printf("aspect = %f\n", aspect);
@@ -343,20 +337,17 @@ GLuint N_VERT2 = 0;
     // White-ish yellow
     //IWVector4 squareButtonColour = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
     // Light gray
-    IWVector4 squareButtonColour = {0.6, 0.6, 0.6, 0.4};
-    IWGRectangleButton squareButton = IWGRectangleButtonMake(0.4, 0.0,
-                                                       IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                       0.18, 0.18, squareButtonColour,
-                                                       IWGRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
-                                                       0.035, aspect);
+    IWVector4 rectangleButtonColour = {0.6, 0.6, 0.6, 0.4};
+    IWUIRectangleButton rectangleButton = IWUIRectangleButtonMake(0.4, 0.0,
+                                                                IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                                0.18, 0.18, rectangleButtonColour,
+                                                                IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
+                                                                0.035, aspect);
     
     size_t mypos_size2 = 4 * 9 * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
-    GLfloat *mypos2start = mypos2;
 
-    int nVerticesButton = 0;
-    //IWGHeadUpDisplayButtonToTriangles(resetPositionButton, mypos2, &nVerticesButton);
-    IWGRectangleButtonToTriangleBuffer(&squareButton, mypos2);
+    IWUIRectangleButtonToTriangleBuffer(&rectangleButton, mypos2);
     
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
@@ -648,7 +639,7 @@ GLuint N_VERT2 = 0;
 //    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"vsh"];
 //    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"];
 //   
-//    _program = ge_build_program([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
+//    _program = IWGShaderProgramBuildProgram([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
 //                                [[NSString stringWithContentsOfFile:fragShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String]);
 //
 //    // Get uniform locations.
@@ -662,7 +653,7 @@ GLuint N_VERT2 = 0;
     vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"vsh"];
     fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"fsh"];
     
-    _programBasicLight = ge_build_program([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
+    _programBasicLight = IWGShaderProgramBuildProgram([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
                                 [[NSString stringWithContentsOfFile:fragShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String]);
     // Get uniform locations.
     uniforms[UNIFORM_MODEL_MATRIX] = glGetUniformLocation(_programBasicLight, "ModelMatrix");
