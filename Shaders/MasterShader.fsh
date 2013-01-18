@@ -10,7 +10,7 @@ struct LightSource
     vec3 Position;
     vec3 Attenuation;
     vec3 Direction;
-    vec3 Colour;
+    vec3 Color;
     int HasSpotlight;
     float OuterCutoff;
     float InnerCutoff;
@@ -53,14 +53,14 @@ uniform int ShaderType;
 varying vec4 vWorldVertex;
 varying vec3 vWorldNormal;
 varying vec3 vViewVec;
-varying vec4 vColour;
+varying vec4 vColor;
 
 // Fragment shader entry.
 void main ()
 {
     if ( ShaderType == 0)
     {
-            gl_FragColor = vColour;        
+            gl_FragColor = vColor;        
     }
     else if ( ShaderType == 1 )
     {
@@ -70,7 +70,7 @@ void main ()
             // We need to renormalize the vector so that it stays at unit length.
             vec3 normal = normalize(vWorldNormal);
 
-            vec3 colour = Material.Ambient;
+            vec3 color = Material.Ambient;
             for (int i = 0; i < 4; ++i)
             {
                 if ( i >= NumLight )
@@ -102,21 +102,21 @@ void main ()
                     float d = distance(vWorldVertex.xyz, Light[i].Position);
                     float a = 1.0 / (Light[i].Attenuation.x + (Light[i].Attenuation.y * d) + (Light[i].Attenuation.z * d * d));
                     
-                    // Add to colour
-                    colour += Material.Diffuse.xyz * l * Light[i].Colour * a * spotlight;
+                    // Add to color
+                    color += Material.Diffuse.xyz * l * Light[i].Color * a * spotlight;
                 }
             }
             
-            gl_FragColor = clamp(vec4(colour, Material.Diffuse.w), 0.0, 1.0);
+            gl_FragColor = clamp(vec4(color, Material.Diffuse.w), 0.0, 1.0);
         }
         else
         {
-            // Set colour
-            gl_FragColor = vColour;
+            // Set color
+            gl_FragColor = vColor;
         }
     }
     else
     {
-        gl_FragColor = vColour;
+        gl_FragColor = vColor;
     }
 }

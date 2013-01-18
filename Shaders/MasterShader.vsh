@@ -4,7 +4,7 @@ struct LightSource
     vec3 Position;
     vec3 Attenuation;
     vec3 Direction;
-    vec3 Colour;
+    vec3 Color;
     int HasSpotlight;
     float OuterCutoff;
     float InnerCutoff;
@@ -22,7 +22,7 @@ struct MaterialSource
 // Attributes.
 attribute vec3 Vertex;
 attribute vec3 Normal;
-attribute vec4 Colour;
+attribute vec4 Color;
 
 // Uniform variables.
 uniform mat4 ProjectionMatrix;
@@ -52,7 +52,7 @@ uniform int ShaderType;
 varying vec4 vWorldVertex;
 varying vec3 vWorldNormal;
 varying vec3 vViewVec;
-varying vec4 vColour;
+varying vec4 vColor;
 
 // Vertex shader entry.
 void main ()
@@ -60,7 +60,7 @@ void main ()
     if ( ShaderType == 0)
     {
         gl_Position = vec4(Vertex, 1.0);
-        vColour = Colour;
+        vColor = Color;
     }
     else if ( ShaderType == 1)
     {
@@ -79,7 +79,7 @@ void main ()
 
         if ( LightingType == 0 )
         {
-            vColour = vec4(Material.Ambient, 0.0);
+            vColor = vec4(Material.Ambient, 0.0);
             for (int i = 0; i < 4; ++i)
             {
                 if ( i >= NumLight )
@@ -111,12 +111,12 @@ void main ()
                     float d = distance(vWorldVertex.xyz, Light[i].Position);
                     float a = 1.0 / (Light[i].Attenuation.x + (Light[i].Attenuation.y * d) + (Light[i].Attenuation.z * d * d));
                     
-                    // Add to colour
-                    vColour.xyz += Material.Diffuse.xyz * l * Light[i].Colour * a * spotlight;
+                    // Add to color
+                    vColor.xyz += Material.Diffuse.xyz * l * Light[i].Color * a * spotlight;
                 }
             }
             
-            vColour.w = Material.Diffuse.w;
+            vColor.w = Material.Diffuse.w;
         }
     }
 }

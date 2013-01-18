@@ -14,5 +14,6 @@
 
 #include "IWVector2.h"
 #include "IWVector3.h"
+#include "IWVector4.h"
 
 #endif

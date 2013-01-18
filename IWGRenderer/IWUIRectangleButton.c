@@ -11,22 +11,23 @@
 #include "IWUIRectangleButton.h"
 
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
-                                          enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
-                                          float sizeX, float sizeY,
-                                          IWVector4 colour,
-                                          enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
-                                          float cornerOffset, float aspectRatio)
+                                            enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
+                                            float sizeX, float sizeY,
+                                            IWVector4 color,
+                                            enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
+                                            float cornerOffset, float aspectRatio)
 {
     IWUIRectangleButton button = {
         {anchorPointX, anchorPointY},
         anchorPosition,
         {sizeX, sizeY},
-        colour,
+        color,
         cornerCut,
         cornerOffset,
         aspectRatio,
         {{0.0, 0.0}, {0.0, 0.0}},
-        0, 0, 0
+        0, 0, 0,
+        IWColorTransitionMake()
     };
     button.rectangle = IWRectangleMakeFromAnchorAndDimensions(button.anchorPoint,
                                                               IWVector2Make(sizeX, sizeY),
@@ -75,9 +76,9 @@ static struct _IWUIRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES_STRUCT _IWUIRECTANGLE
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat* p)
 {
     //float* p = &vertices->x;
-    GLfloat *pstart = p;
+    button->memStartPtr = p;
     
-    IWVector4 colour = button->colour;
+    IWVector4 color = button->color;
     //float cornerOffset = (button->rectangle.upperRight.x - button->rectangle.lowerLeft.x) * button->cornerCutXFraction;
 
     // REFACTOR: Aspect ratio needs to be checked, and implementation needs to be improved
@@ -113,8 +114,24 @@ size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat
             imax = 6;
         }
         for (int i = 0; i < imax; i++) {
-            p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[indices[i]], -1.0, colour);
+            p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[indices[i]], -1.0, color);
         }
     }
-    return p - pstart;
+    button->memSize = p - button->memStartPtr;
+    button->nVertices = button->memSize / 7;
+    return button->memSize;
+}
+
+void IWUIRectangleButtonUpdateColorInBuffer(IWUIRectangleButton *button)
+{
+    if (button->memStartPtr) {
+        GLfloat *ptr = button->memStartPtr;
+        while (ptr < button->memStartPtr + button->memSize) {
+            ptr += 3;
+            *ptr++ = button->color.x;
+            *ptr++ = button->color.y;
+            *ptr++ = button->color.z;
+            *ptr++ = button->color.w;
+        }
+    }
 }

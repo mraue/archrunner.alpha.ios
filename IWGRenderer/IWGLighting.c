@@ -14,7 +14,7 @@ const char* IWGLIGHTING_UNIFORM_STRINGS[] = {
     "Light[0].Position",
     "Light[0].Attenuation",
     "Light[0].Direction",
-    "Light[0].Colour",
+    "Light[0].Color",
     "Light[0].HasSpotlight",    
     "Light[0].OuterCutoff",
     "Light[0].InnerCutoff",
@@ -57,8 +57,8 @@ void IWGLightingSetUniforms(IWGLightSource lightSource,
                 lightSource.Attenuation.x, lightSource.Attenuation.y, lightSource.Attenuation.z);
     glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
                 lightSource.Direction.x, lightSource.Direction.y, lightSource.Direction.z);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_COLOUR],
-                lightSource.Colour.x, lightSource.Colour.y, lightSource.Colour.z);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_COLOR],
+                lightSource.Color.x, lightSource.Color.y, lightSource.Color.z);
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_HAS_SPOT_LIGHT],
                 lightSource.HasSpotlight);
     glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_OUTER_CUTOFF],
@@ -81,7 +81,7 @@ IWGLightSource IWGLightingMakeBasicLight(void) {
         {3.0, 2.5, 2.0},// Position
         {0.5, 0.1, 1.0},// Attenuation
         {0.0, 0.0, 0.0},// Direction
-        {1.0, 1.0, 1.0},// Colour
+        {1.0, 1.0, 1.0},// Color
         0,// HasSpotlight
         0.0, 0.0, 0.0,// OuterCutoff, InnerCutoff, Exponent
         7.//VignettingExponent

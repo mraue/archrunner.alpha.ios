@@ -14,6 +14,7 @@
 #include <GLKit/GLKMath.h>
 
 #include "IWUIRectangleButton.h"
+#include "IWColorTransition.h"
 #include "IWFileTools.h"
 
 #include "IWGameData.h"
@@ -61,11 +62,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     printf("nVertMax = %d\n", gdN_VERT);
     
     // Basic lighting program
-    programData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
+    shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
                                        IWFileToolsReadFileToString(fragmentShaderFilename));
-//    programData = IWGShaderProgramMake(vertexShaderFilename,
-//                                       fragmentShaderFilename);
-    GLuint programID = programData.programID;
+    GLuint programID = shaderProgramData.programID;
     
     if (programID == 0) {
         printf("ERROR: Could not create GL program");
@@ -85,7 +84,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     IWGLightingInitializeUniformLocations(programID);
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
-    //glUseProgram(_program);
     glUseProgram(programID);
     
     glEnable(GL_DEPTH_TEST);
@@ -105,7 +103,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     GLuint positionSlot = glGetAttribLocation(programID, "Vertex");
     GLuint normalSlot = glGetAttribLocation(programID, "Normal");
-    GLuint colourSlot = glGetAttribLocation(programID, "Colour");
+    GLuint colorSlot = glGetAttribLocation(programID, "Color");
     
     glEnableVertexAttribArray(positionSlot);
     glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(0));
@@ -122,23 +120,33 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     float aspect = fabsf(viewWidth / viewHeight);
     printf("aspect = %f\n", aspect);
-    //IWVector4 squareButtonColour = {1.0, 1.0, 1.0, 0.3};
+    //IWVector4 squareButtonColor = {1.0, 1.0, 1.0, 0.3};
     // Saturated yellow
-    //IWVector4 squareButtonColour = {255.0 / 255.0, 223. / 255., 94. / 255, 0.2};
+    //IWVector4 squareButtonColor = {255.0 / 255.0, 223. / 255., 94. / 255, 0.2};
     // White-ish yellow
-    //IWVector4 squareButtonColour = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
+    //IWVector4 squareButtonColor = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
     // Light gray
-    IWVector4 rectangleButtonColour = {0.6, 0.6, 0.6, 0.4};
-    IWUIRectangleButton rectangleButton = IWUIRectangleButtonMake(0.4, 0.0,
-                                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                                  0.18, 0.18, rectangleButtonColour,
-                                                                  IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
-                                                                  0.035, aspect);
+    IWVector4 rectangleButtonColor = {0.6, 0.6, 0.6, 0.4};
+    gdRectangleButton = IWUIRectangleButtonMake(0.4, 0.0,
+                                                IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                0.18, 0.18, rectangleButtonColor,
+                                                IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
+                                                0.035, aspect);
+    IWColorTransition colorTransition = {
+        {0.6, 0.6, 0.6, 0.4},
+        {255.0 / 255.0, 236. / 255., 147. / 255, 0.3},
+        {0.6, 0.6, 0.6, 0.4},
+        0.5, 0.0, false
+    };
+    gdRectangleButton.colorTransition = colorTransition;
     
     size_t mypos_size2 = 4 * 9 * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
     
-    IWUIRectangleButtonToTriangleBuffer(&rectangleButton, mypos2);
+    IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
+
+    //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
+    //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
     
     glGenBuffers(1, &gdVertexBuffer2);
     glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer2);
@@ -147,8 +155,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     glEnableVertexAttribArray(positionSlot);
     glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(colourSlot);
-    glVertexAttribPointer(colourSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+    glEnableVertexAttribArray(colorSlot);
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
     
     glBindVertexArrayOES(0);
     
@@ -225,8 +233,8 @@ void IWGRendererTearDownGL(void)
     // Delete buffer
     //glDeleteBuffers(GLsizei n, const GLuint *buffers)
     // Delete shader and programs
-    glDeleteShader(programData.vertexShaderID);
-    glDeleteShader(programData.fragmentShaderID);
-    glDeleteProgram(programData.programID);
-    programData.programID = 0;
+    glDeleteShader(shaderProgramData.vertexShaderID);
+    glDeleteShader(shaderProgramData.fragmentShaderID);
+    glDeleteProgram(shaderProgramData.programID);
+    shaderProgramData.programID = 0;
 }

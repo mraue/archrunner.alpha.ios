@@ -16,6 +16,7 @@
 
 #include "IWMath.h"
 #include "IWGeometry.h"
+#include "IWColorTransition.h"
 
 enum IWUIRECTANGLEBUTTON_CORNER_CUT {
     IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT  = 1 <<  0,
@@ -29,7 +30,7 @@ struct _IWUIRectangleButton {
     IWPoint anchorPoint;// [0.0, 1.0] coordinates
     enum IWRECTANGLE_ANCHOR_POSITION anchorPosition;
     IWVector2 size;// [0.0, 1.0] coordinates
-    IWVector4 colour;
+    IWVector4 color;
     enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut;
     float cornerOffset;
     float aspectRatio;
@@ -37,6 +38,7 @@ struct _IWUIRectangleButton {
     unsigned int nVertices;
     GLfloat *memStartPtr;
     unsigned short memSize;
+    IWColorTransition colorTransition;
 };
 
 typedef struct _IWUIRectangleButton IWUIRectangleButton;
@@ -44,10 +46,12 @@ typedef struct _IWUIRectangleButton IWUIRectangleButton;
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
                                           enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
                                           float sizeX, float sizeY,
-                                          IWVector4 colour,
+                                          IWVector4 color,
                                           enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                           float cornerOffset, float aspectRatio);
 
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton *button, GLfloat* p);
+
+void IWUIRectangleButtonUpdateColorInBuffer(IWUIRectangleButton *button);
 
 #endif

@@ -12,6 +12,8 @@
 		641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590716A555B000704F45 /* IWGShaderProgram.c */; };
 		641E0D7616A834FE0077785D /* IWGRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D6F16A809560077785D /* IWGRenderer.c */; };
 		641E0D7A16A844710077785D /* IWGame.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7916A844710077785D /* IWGame.c */; };
+		641E0D7C16A962580077785D /* IWVector4.h in Resources */ = {isa = PBXBuildFile; fileRef = 641E0D7B16A962580077785D /* IWVector4.h */; };
+		641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7F16A9662D0077785D /* IWColorTransition.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
 		646F592716A555B000704F45 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FE16A555B000704F45 /* ViewController.m */; };
 		646F592816A555B000704F45 /* ge_cube.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590016A555B000704F45 /* ge_cube.c */; };
@@ -52,6 +54,9 @@
 		641E0D7716A840DE0077785D /* IWGameData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGameData.h; sourceTree = "<group>"; };
 		641E0D7816A844650077785D /* IWGame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGame.h; sourceTree = "<group>"; };
 		641E0D7916A844710077785D /* IWGame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGame.c; sourceTree = "<group>"; };
+		641E0D7B16A962580077785D /* IWVector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector4.h; sourceTree = "<group>"; };
+		641E0D7D16A965E90077785D /* IWColorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWColorTransition.h; path = IWAnimation/IWColorTransition.h; sourceTree = SOURCE_ROOT; };
+		641E0D7F16A9662D0077785D /* IWColorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWColorTransition.c; path = IWAnimation/IWColorTransition.c; sourceTree = "<group>"; };
 		646F58FB16A555B000704F45 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		646F58FC16A555B000704F45 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		646F58FD16A555B000704F45 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -128,14 +133,24 @@
 			name = IWTools;
 			sourceTree = "<group>";
 		};
+		641E0D7E16A965EF0077785D /* IWAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				641E0D7D16A965E90077785D /* IWColorTransition.h */,
+				641E0D7F16A9662D0077785D /* IWColorTransition.c */,
+			);
+			name = IWAnimation;
+			sourceTree = "<group>";
+		};
 		646F58F816A555B000704F45 /* theBr1dge */ = {
 			isa = PBXGroup;
 			children = (
-				641E0D7116A8310F0077785D /* IWTools */,
+				641E0D7E16A965EF0077785D /* IWAnimation */,
 				646F58FA16A555B000704F45 /* iOS */,
 				646F58FF16A555B000704F45 /* IWGame */,
 				646F590616A555B000704F45 /* IWGRenderer */,
 				646F590B16A555B000704F45 /* IWMath */,
+				641E0D7116A8310F0077785D /* IWTools */,
 				646F591D16A555B000704F45 /* Shaders */,
 				646F591016A555B000704F45 /* Misc */,
 			);
@@ -193,8 +208,9 @@
 				641E0D6A16A7FE0A0077785D /* IWGeometry.c */,
 				646F590C16A555B000704F45 /* IWMath.h */,
 				646F590D16A555B000704F45 /* IWMathTypes.h */,
-				646F590E16A555B000704F45 /* IWVector3.h */,
 				648E756916A6B7E8004DE1A4 /* IWVector2.h */,
+				646F590E16A555B000704F45 /* IWVector3.h */,
+				641E0D7B16A962580077785D /* IWVector4.h */,
 				646F590F16A555B000704F45 /* IWMathUtils.h */,
 			);
 			path = IWMath;
@@ -324,6 +340,7 @@
 				646F594316A56BF100704F45 /* MasterShader.vsh in Resources */,
 				646F594616A577DF00704F45 /* MasterShader.fsh in Resources */,
 				648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */,
+				641E0D7C16A962580077785D /* IWVector4.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,6 +365,7 @@
 				641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */,
 				641E0D7616A834FE0077785D /* IWGRenderer.c in Sources */,
 				641E0D7A16A844710077785D /* IWGame.c in Sources */,
+				641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

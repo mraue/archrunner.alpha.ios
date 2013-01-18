@@ -17,12 +17,9 @@
 #import "IWGShaderProgram.h"
 #import "ge_cubes.h"
 
-
 #import "IWGameData.h"
 #import "IWGame.h"
 #import "IWGRenderer.h"
-
-#import "IWFileTools.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -220,6 +217,8 @@ GLuint N_VERT2 = 0;
 
 - (void)update
 {
+    IWGameUpdate(self.timeSinceLastUpdate);
+
     float alpha = 0.2;
     CMAccelerometerData *newestAccel = motionManager.accelerometerData;
     _filteredAcceleration.x = _filteredAcceleration.x * (1.0-alpha) + newestAccel.acceleration.x * alpha;
@@ -256,7 +255,7 @@ GLuint N_VERT2 = 0;
     float speed = 110.0;
     //float speed = 0.0;
     gdPlayerData.position = IWVector3Add(gdPlayerData.position,
-                                         IWVector3MultiplyScalar(gdPlayerData.direction,
+                                         IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
                                                                  self.timeSinceLastUpdate / 1000.0 * speed));
     float rotationSpeedMax = 100.0 / 180.0 * M_PI * self.timeSinceLastUpdate;
     
@@ -297,9 +296,6 @@ GLuint N_VERT2 = 0;
     gdPlayerData.direction = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV).v);
     gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
     
-    //_rotationX += -1.0 * controllerData.rotationSpeed.x * rotationSpeedMax;
-    //_rotationY += -1.0 * controllerData.rotationSpeed.y * rotationSpeedMax;
-    
     // Display player data
     [xLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.x]];
     [yLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.y]];
@@ -319,24 +315,7 @@ GLuint N_VERT2 = 0;
     
     // Compute the model view matrix for the object rendered with ES2
     GLKMatrix4 modelMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
-    //modelMatrix = GLKMatrix4Rotate(modelMatrix, M_PI / 4., 0.0f, 1.0f, 0.0f);
-    //GLKMatrix4 viewMatrix = GLKMatrix4MakeTranslation(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
-//    GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z,
-//                                                 gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
-//                                                 gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
-//    GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
-//                                                 gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z,
-//                                                 gdPlayerData.up.x, gdPlayerData.up.y, playerData.up.z);
     
-//    // This works!
-//    GLKMatrix4 viewMatrixBase = GLKMatrix4MakeTranslation(playerData.position.x,
-//                                                          playerData.position.y,
-//                                                          playerData.position.z);
-//    GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(0., 0., 0.,
-//                                                 -playerData.direction.x, -playerData.direction.y, -playerData.direction.z,
-//                                                 playerData.up.x, playerData.up.y, playerData.up.z);
-//    viewMatrix = GLKMatrix4Multiply(viewMatrix, viewMatrixBase);
-//    
     // Check this
     GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
                                                  gdPlayerData.position.x + gdPlayerData.direction.x,
@@ -344,31 +323,10 @@ GLuint N_VERT2 = 0;
                                                  gdPlayerData.position.z + gdPlayerData.direction.z,
                                                  gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
-    
-    //GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
-    //modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, M_PI / 4., 1.0f, 1.0f, 0.0f);
-    //modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, _rotation, 0.0f, 1.0f, 0.0f);
-//    float rotationSpeedMax = 40.0 * 180.0 / M_PI * self.timeSinceLastUpdate / 1000.0;
-//    _rotationX += -1.0 * controllerData.rotationSpeed.x * rotationSpeedMax;
-//    _rotationY += -1.0 * controllerData.rotationSpeed.y * rotationSpeedMax;
-    //modelViewMatrix = GLKMatrix4RotateX(modelViewMatrix, _rotationX);
-    //modelViewMatrix = GLKMatrix4RotateY(modelViewMatrix, _rotationY);
-    
-    /*projectionMatrix = GLKMatrix4RotateX(projectionMatrix, _rotationX);
-    projectionMatrix = GLKMatrix4RotateY(projectionMatrix, _rotationY);*/
-    //modelViewMatrix = GLKMatrix4Multiply(baseModelViewMatrix, modelViewMatrix);
-    //GLKMatrix4 modelViewMatrix = GLKMatrix4Multiply(viewMatrix, modelMatrix);
-
-    //[aLabel3 setText:[NSString stringWithFormat:@"%.2f", _rotationX]];
-    
     gdNormalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
-    
-    //_modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
     gdModelMatrix = modelMatrix;
     gdProjectionMatrix = projectionMatrix;
     gdViewMatrix = viewMatrix;
-    
-    //_rotation += self.timeSinceLastUpdate;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -402,25 +360,6 @@ GLuint N_VERT2 = 0;
     orientationNeutralSetAccelerometer = NO;
     orientationNeutralSetCompass = NO;
     gdPlayerData.position = IWVector3Make(0.0, 0.0, 0.0);
-    //NSLog(@"PONG");
-//    if (switchColor) {
-//        _lightSource.OuterCutoff = 1.5;
-//        _lightSource.InnerCutoff = 1.0;
-//        _lightSource.Exponent = 8.0;
-//        switchColor = NO;
-//        _materialSource.Ambient = IWVector3Make(0.0, 0.0, 0.0);
-//        NSLog(@"COLOR1");
-//    } else {
-//        _lightSource.OuterCutoff = 0.8;
-//        _lightSource.InnerCutoff = .98;
-//        _lightSource.Exponent = 0.6;
-//        _materialSource.Ambient = IWVector3Make(0.0, 0.0, 0.1);
-//        switchColor = YES;
-//        NSLog(@"COLOR2");        
-//    }
-
-    //.05, .11, 8.//OuterCutoff, InnerCutoff, Exponent
-    //1.05, 1.0, 8.//OuterCutoff, InnerCutoff, Exponent
 }
 
 #pragma mark -  Track touch

@@ -17,18 +17,21 @@ char* IWFileToolsReadFileToString(const char *filename)
     FILE *fp = fopen(filename, "r");
     char inputStringFull[FILETOSTRING_MAX_CHAR_N];
     int c, i;
-    for (i = 0; i < FILETOSTRING_MAX_CHAR_N && (c = getc(fp)) != EOF; i++) {
+    for (i = 0; i < (FILETOSTRING_MAX_CHAR_N - 1) && (c = getc(fp)) != EOF; i++) {
         inputStringFull[i] = c;
     }
+    fclose(fp);
     if (i == FILETOSTRING_MAX_CHAR_N) {
         printf("ERROR: IWFileToolsReadFileToString maximum string length reached (%d)\n", FILETOSTRING_MAX_CHAR_N);
-        fclose(fp);
         return "";
     } else {
-        inputStringFull[i] = '\0';
         char* returnString = malloc(i * sizeof(int));
+        if (returnString == NULL) {
+            printf("ERROR: IWFileToolsReadFileToString could not allocate memory for return string\n");
+            return "";
+        }
+        inputStringFull[i] = '\0';
         strncpy(returnString, inputStringFull, i + 1);
-        fclose(fp);
         return returnString;
     }
 }
