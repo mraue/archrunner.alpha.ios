@@ -20,6 +20,7 @@ struct _IWColorTransition {
     float transitionTime;
     float currentTransitionTime;
     bool transitionHasFinished;
+    bool quadraticEaseIn;
 };
 typedef struct _IWColorTransition IWColorTransition;
 

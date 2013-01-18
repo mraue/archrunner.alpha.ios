@@ -16,7 +16,7 @@ IWColorTransition IWColorTransitionMake(void)
         {0.0, 0.0, 0.0, 0.0},
         {0.0, 0.0, 0.0, 0.0},
         {0.0, 0.0, 0.0, 0.0},
-        0.0, 0.0, true
+        0.0, 0.0, true, false
     };
     return colorTransition;
 }
@@ -29,7 +29,10 @@ bool IWColorTransitionUpdate(IWColorTransition *colorTransition, float timeSince
         colorTransition->currentColor = colorTransition->endColor;
         colorTransition->transitionHasFinished = true;
     } else {
-        colorTransition->currentColor = IWVector4Lerp(colorTransition->startColor, colorTransition->endColor, colorTransition->currentTransitionTime / colorTransition->transitionTime);
+        float lerp = colorTransition->currentTransitionTime / colorTransition->transitionTime;
+        if (colorTransition->quadraticEaseIn)
+            lerp *= lerp;
+        colorTransition->currentColor = IWVector4Lerp(colorTransition->startColor, colorTransition->endColor, lerp);
         colorTransition->transitionHasFinished = false;
     }
     return colorTransition->transitionHasFinished;

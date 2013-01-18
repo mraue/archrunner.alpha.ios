@@ -37,8 +37,9 @@ struct _IWUIRectangleButton {
     IWRectangle rectangle;// [0.0 - 1.0]
     unsigned int nVertices;
     GLfloat *memStartPtr;
-    unsigned short memSize;
+    size_t memSize;// [CGFloat]
     IWColorTransition colorTransition;
+    bool isTouched;
 };
 
 typedef struct _IWUIRectangleButton IWUIRectangleButton;
@@ -49,6 +50,8 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
                                           IWVector4 color,
                                           enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                           float cornerOffset, float aspectRatio);
+
+size_t IWUIRectangleButtonMemorySize(IWUIRectangleButton *button);//[CGFloat]
 
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton *button, GLfloat* p);
 

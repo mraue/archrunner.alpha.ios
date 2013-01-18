@@ -132,15 +132,15 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
                                                 0.18, 0.18, rectangleButtonColor,
                                                 IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
                                                 0.035, aspect);
-    IWColorTransition colorTransition = {
-        {0.6, 0.6, 0.6, 0.4},
-        {255.0 / 255.0, 236. / 255., 147. / 255, 0.3},
-        {0.6, 0.6, 0.6, 0.4},
-        0.5, 0.0, false
-    };
-    gdRectangleButton.colorTransition = colorTransition;
+//    IWColorTransition colorTransition = {
+//        {0.6, 0.6, 0.6, 0.4},
+//        {0.8, 0.8, 0.8, 0.8},//{255.0 / 255.0, 236. / 255., 147. / 255, 0.5},
+//        {0.6, 0.6, 0.6, 0.4},
+//        0.5, 0.0, false, true
+//    };
+//    gdRectangleButton.colorTransition = colorTransition;
     
-    size_t mypos_size2 = 4 * 9 * 7 * sizeof(GLfloat);
+    size_t mypos_size2 = IWUIRectangleButtonMemorySize(&gdRectangleButton) * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
     
     IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);

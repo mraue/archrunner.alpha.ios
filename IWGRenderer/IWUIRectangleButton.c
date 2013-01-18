@@ -27,12 +27,26 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
         aspectRatio,
         {{0.0, 0.0}, {0.0, 0.0}},
         0, 0, 0,
-        IWColorTransitionMake()
+        IWColorTransitionMake(), false
     };
     button.rectangle = IWRectangleMakeFromAnchorAndDimensions(button.anchorPoint,
                                                               IWVector2Make(sizeX, sizeY),
                                                               button.anchorPosition);
     return button;
+}
+
+size_t IWUIRectangleButtonMemorySize(IWUIRectangleButton *button)
+{
+    size_t memSize = 4 * 6;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT)
+        memSize += 3;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_RIGHT)
+        memSize += 3;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT)
+        memSize += 3;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT)
+        memSize += 3;
+    return memSize * 7;
 }
 
 bool IWUIRectangleButtonPointInRectangle(IWUIRectangleButton *button, IWVector2 point)

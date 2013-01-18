@@ -14,6 +14,7 @@
 
 #include <GLKit/GLKMath.h>
 
+#include "IWGame.h"
 #include "IWGLighting.h"
 #include "IWPlayer.h"
 #include "IWUIRectangleButton.h"
@@ -21,6 +22,9 @@
 IWPlayerData gdPlayerData;
 
 #pragma mark - User Interface
+
+bool gdIsTouched;
+IWPoint gdTouchPoint;
 
 IWUIRectangleButton gdRectangleButton;
 

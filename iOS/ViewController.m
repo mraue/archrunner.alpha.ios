@@ -368,18 +368,30 @@ GLuint N_VERT2 = 0;
     UITouch* touch = [touches anyObject];
     _touchLocation  = [touch locationInView:self.view];
     _isTouched = YES;
+    // Update game data
+    gdIsTouched = true;
+    gdTouchPoint.x = _touchLocation.x / self.view.bounds.size.width;
+    gdTouchPoint.y = 1.0 - _touchLocation.y / self.view.bounds.size.height;
 }
 
 - (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch* touch = [touches anyObject];
     _touchLocation  = [touch locationInView:self.view];
     _isTouched = NO;
+    // Update game data
+    gdIsTouched = false;
+    gdTouchPoint.x = _touchLocation.x / self.view.bounds.size.width;
+    gdTouchPoint.y = 1.0 - _touchLocation.y / self.view.bounds.size.height;
 }
 
 - (void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch* touch = [touches anyObject];
     _touchLocation = [touch locationInView:self.view];
     _isTouched = YES;
+    // Update game data
+    gdIsTouched = true;
+    gdTouchPoint.x = _touchLocation.x / self.view.bounds.size.width;
+    gdTouchPoint.y = 1.0 - _touchLocation.y / self.view.bounds.size.height;
 }
 
 @end
