@@ -44,9 +44,6 @@ IWGShaderProgramData programData;
 GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
 GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
-static IWGLightSource lightSourceData;
-static IWGMaterialSource materialSourceData;
-
 #pragma mark - Functions
 
 void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentShaderFilename,

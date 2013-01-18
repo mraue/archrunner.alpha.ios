@@ -8,28 +8,27 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-# define FILETOSTRING_FILESIZE_MAX 1024 * 1024 // 1 MB me hopes
+# define FILETOSTRING_MAX_CHAR_N 30000
 
-const char* IWFileToolsReadFileToString(const char *filename)
+char* IWFileToolsReadFileToString(const char *filename)
 {
-    long f_size;
-    char* code = "";
-    size_t code_s, result;
-    FILE* fp = fopen(filename, "r");
-    fseek(fp, 0, SEEK_END);
-    f_size = ftell(fp);
-    if (f_size > FILETOSTRING_FILESIZE_MAX) {
-        printf("ERROR IWFileToolsReadFileToString: file size exceeds maximum allowed file size of %d kB\n",
-               FILETOSTRING_FILESIZE_MAX / 1024);
+    FILE *fp = fopen(filename, "r");
+    char inputStringFull[FILETOSTRING_MAX_CHAR_N];
+    int c, i;
+    for (i = 0; i < FILETOSTRING_MAX_CHAR_N && (c = getc(fp)) != EOF; i++) {
+        inputStringFull[i] = c;
+    }
+    if (i == FILETOSTRING_MAX_CHAR_N) {
+        printf("ERROR: IWFileToolsReadFileToString maximum string length reached (%d)\n", FILETOSTRING_MAX_CHAR_N);
         fclose(fp);
-        return code;
+        return "";
     } else {
-        fseek(fp, 0, SEEK_SET);
-        code_s = sizeof(char) * f_size;
-        code = malloc(code_s);
-        result = fread(code, 1, f_size, fp);
+        inputStringFull[i] = '\0';
+        char* returnString = malloc(i * sizeof(int));
+        strncpy(returnString, inputStringFull, i + 1);
         fclose(fp);
-        return code;
+        return returnString;
     }
 }

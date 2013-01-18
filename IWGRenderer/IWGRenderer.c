@@ -23,8 +23,10 @@
 void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentShaderFilename,
                         float viewWidth, float viewHeight)
 {
-    lightSourceData = IWGLightingMakeBasicLight();
-    materialSourceData = IWGLightingMakeBasicMaterial();
+    gdLightSourceData = IWGLightingMakeBasicLight();
+    gdMaterialSourceData = IWGLightingMakeBasicMaterial();
+        
+    gdN_VERT = 0;
     
     //gePos mypos[55296];
     int nx, ny, nz;
@@ -59,10 +61,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     printf("nVertMax = %d\n", gdN_VERT);
     
     // Basic lighting program
-//    programData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
-//                                       IWFileToolsReadFileToString(fragmentShaderFilename));
-    programData = IWGShaderProgramMake(vertexShaderFilename,
-                                       fragmentShaderFilename);
+    programData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
+                                       IWFileToolsReadFileToString(fragmentShaderFilename));
+//    programData = IWGShaderProgramMake(vertexShaderFilename,
+//                                       fragmentShaderFilename);
     GLuint programID = programData.programID;
     
     if (programID == 0) {
@@ -81,7 +83,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         = glGetUniformLocation(programID, "NormalMatrix");
 
     IWGLightingInitializeUniformLocations(programID);
-    IWGLightingSetUniforms(lightSourceData, materialSourceData);
+    IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
     //glUseProgram(_program);
     glUseProgram(programID);
@@ -180,10 +182,10 @@ void IWGRendererRender(void)
                        1, 0, gdNormalMatrix.m);
 
     //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 0.4, 0.4, 1.0, 1.0);
-    lightSourceData.Position = gdPlayerData.position;
+    gdLightSourceData.Position = gdPlayerData.position;
     //_lightSource.Direction = IWVector3MultiplyScalar(playerData.direction, -1.0);
-    lightSourceData.Direction = gdPlayerData.direction;
-    IWGLightingSetUniforms(lightSourceData, materialSourceData);
+    gdLightSourceData.Direction = gdPlayerData.direction;
+    IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT / 2);
     glDrawArrays(GL_TRIANGLES, 0, gdN_VERT / 2);

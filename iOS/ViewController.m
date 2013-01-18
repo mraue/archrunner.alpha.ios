@@ -107,12 +107,12 @@ GLuint N_VERT2 = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.preferredFramesPerSecond = 30;
-
-    switchColor = NO;
     
+    switchColor = NO;
     [aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
     switch1.on = NO;
+    
+    self.preferredFramesPerSecond = 30;
     
     self.context = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
 
@@ -188,14 +188,14 @@ GLuint N_VERT2 = 0;
     vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"vsh"];
     fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"fsh"];
 
-//    IWGRendererSetupGL([vertShaderPathname UTF8String],
-//                       [fragShaderPathname UTF8String],
-//                       self.view.bounds.size.width,
-//                       self.view.bounds.size.height);
-    IWGRendererSetupGL([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
-                       [[NSString stringWithContentsOfFile:fragShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
+    IWGRendererSetupGL([vertShaderPathname UTF8String],
+                       [fragShaderPathname UTF8String],
                        self.view.bounds.size.width,
                        self.view.bounds.size.height);
+//    IWGRendererSetupGL([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
+//                       [[NSString stringWithContentsOfFile:fragShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
+//                       self.view.bounds.size.width,
+//                       self.view.bounds.size.height);
 }
 
 - (void)didReceiveMemoryWarning
@@ -205,7 +205,7 @@ GLuint N_VERT2 = 0;
     if ([self isViewLoaded] && ([[self view] window] == nil)) {
         self.view = nil;
         
-        [self tearDownGL];
+        IWGRendererTearDownGL();
         
         if ([EAGLContext currentContext] == self.context) {
             [EAGLContext setCurrentContext:nil];

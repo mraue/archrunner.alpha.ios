@@ -14,20 +14,24 @@
 
 #include <GLKit/GLKMath.h>
 
+#include "IWGLighting.h"
 #include "IWPlayer.h"
 
 IWPlayerData gdPlayerData;
 
-static GLuint gdN_VERT = 0;
+GLuint gdN_VERT;
 
-static GLuint gdVertexArray;
-static GLuint gdVertexArray2;
-static GLuint gdVertexBuffer;
-static GLuint gdVertexBuffer2;
+GLuint gdVertexArray;
+GLuint gdVertexArray2;
+GLuint gdVertexBuffer;
+GLuint gdVertexBuffer2;
 
 GLKMatrix4 gdModelMatrix;
 GLKMatrix4 gdViewMatrix;
 GLKMatrix4 gdProjectionMatrix;
 GLKMatrix3 gdNormalMatrix;
+
+IWGLightSource gdLightSourceData;
+IWGMaterialSource gdMaterialSourceData;
 
 #endif
