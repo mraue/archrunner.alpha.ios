@@ -14,6 +14,7 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
                                             enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
                                             float sizeX, float sizeY,
                                             IWVector4 touchedColor, IWVector4 untouchedColor,
+                                            IWVector4 lineColor,
                                             enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                             float cornerOffset, float aspectRatio)
 {
@@ -23,12 +24,13 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
         {sizeX, sizeY},
         touchedColor,
         untouchedColor,
+        lineColor,
         untouchedColor,
         cornerCut,
         cornerOffset,
         aspectRatio,
         {{0.0, 0.0}, {0.0, 0.0}},
-        0, 0, 0,
+        0, NULL, 0, 0, NULL, 0,
         IWColorTransitionMake(), false
     };
     button.rectangle = IWRectangleMakeFromAnchorAndDimensions(button.anchorPoint,
@@ -37,7 +39,7 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
     return button;
 }
 
-size_t IWUIRectangleButtonMemorySize(IWUIRectangleButton *button)
+size_t IWUIRectangleButtonTriangleBufferSize(IWUIRectangleButton *button)
 {
     size_t memSize = 4 * 6;
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT)
@@ -48,6 +50,20 @@ size_t IWUIRectangleButtonMemorySize(IWUIRectangleButton *button)
         memSize += 3;
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT)
         memSize += 3;
+    return memSize * 7;
+}
+
+size_t IWUIRectangleButtonLineBufferSize(IWUIRectangleButton *button)//[CGFloat]
+{
+    size_t memSize = 16;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT)
+        memSize += 2;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_RIGHT)
+        memSize += 2;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT)
+        memSize += 2;
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT)
+        memSize += 2;
     return memSize * 7;
 }
 
@@ -63,8 +79,8 @@ bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, 
                 0.1, 0.0, false, true
             };
             button->colorTransition = colorTransition;
+            return true;// only once per touch for now
         }
-        return true;
     } else {
         if (button->isTouched) {
             button->isTouched = false;
@@ -76,8 +92,8 @@ bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, 
             };
             button->colorTransition = colorTransition;
         }
-        return false;
     }
+    return false;
 }
 
 bool IWUIRectangleButtonPointInRectangle(IWUIRectangleButton *button, IWVector2 point)
@@ -121,7 +137,7 @@ static struct _IWUIRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES_STRUCT _IWUIRECTANGLE
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat* p)
 {
     //float* p = &vertices->x;
-    button->memStartPtr = p;
+    button->triangleBufferStart = p;
     
     IWVector4 color = button->color;
     //float cornerOffset = (button->rectangle.upperRight.x - button->rectangle.lowerLeft.x) * button->cornerCutXFraction;
@@ -162,16 +178,100 @@ size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat
             p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[indices[i]], -1.0, color);
         }
     }
-    button->memSize = p - button->memStartPtr;
-    button->nVertices = button->memSize / 7;
-    return button->memSize;
+    button->triangleBufferSize = p - button->triangleBufferStart;
+    button->nTriangleVertices = button->triangleBufferSize / 7;
+    return button->triangleBufferSize;
+}
+
+size_t IWUIRectangleButtonToLineBuffer(IWUIRectangleButton *button, GLfloat* p)
+{
+    button->lineBufferStart = p;
+    
+    IWVector4 color = button->lineColor;
+    
+    // REFACTOR: Aspect ratio needs to be checked, and implementation needs to be improved
+    IWVector2 cornerOffset = IWVector2MultiplyScalar(IWVector2Make(1., button->aspectRatio), button->cornerOffset * 2.);
+    IWVector2 center = IWVector2MultiplyScalar(IWVector2Add(button->rectangle.upperRight, button->rectangle.lowerLeft), 0.5);
+    
+    // Convert to GL coordinates
+    // REFACTOR: this shall be improved in the future
+    float xc, yc, xmin, xmax, ymin, ymax;
+    xc = center.x * 2.0 - 1.0;
+    yc = center.y * 2.0 - 1.0;
+    xmin = button->rectangle.lowerLeft.x * 2.0 - 1.0;
+    xmax = button->rectangle.upperRight.x * 2.0 - 1.0;
+    ymin = button->rectangle.lowerLeft.y * 2.0 - 1.0;
+    ymax = button->rectangle.upperRight.y * 2.0 - 1.0;
+    
+    // Calculate base vertices
+    IWVector2 baseVertices[] = {
+        {xc, yc},
+        {xmin, ymin}, {xmin + cornerOffset.x, ymin}, {xc, ymin}, {xmax - cornerOffset.x, ymin}, {xmax, ymin},
+        {xmax, ymin + cornerOffset.y}, {xmax, yc}, {xmax, ymax - cornerOffset.y}, {xmax, ymax},
+        {xmax - cornerOffset.x, ymax}, {xc, ymax}, {xmin + cornerOffset.x, ymax}, {xmin, ymax},
+        {xmin, ymax - cornerOffset.y}, {xmin, yc}, {xmin, ymin + cornerOffset.y}
+    };
+
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], -1.0, color);
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT) {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[16], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[16], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[2], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[2], -1.0, color);
+    } else {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[1], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[1], -1.0, color);
+    }
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[3], -1.0, color);
+    
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[3], -1.0, color);
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_RIGHT) {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[4], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[4], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[6], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[6], -1.0, color);
+    } else {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[5], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[5], -1.0, color);
+    }
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[7], -1.0, color);
+    
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[7], -1.0, color);
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT) {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[8], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[8], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[10], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[10], -1.0, color);
+        
+    } else {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[9], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[9], -1.0, color);
+    }
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[11], -1.0, color);
+    
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[11], -1.0, color);
+    if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT) {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[12], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[12], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[14], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[14], -1.0, color);
+        
+    } else {
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[13], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[13], -1.0, color);
+    }
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], -1.0, color);
+
+    button->lineBufferSize = p - button->lineBufferStart;
+    button->nLineVertices = button->lineBufferSize / 7;
+    return button->lineBufferSize;
 }
 
 void IWUIRectangleButtonUpdateColorInBuffer(IWUIRectangleButton *button)
 {
-    if (button->memStartPtr) {
-        GLfloat *ptr = button->memStartPtr;
-        while (ptr < button->memStartPtr + button->memSize) {
+    if (button->triangleBufferStart) {
+        GLfloat *ptr = button->triangleBufferStart;
+        while (ptr < button->triangleBufferStart + button->triangleBufferSize) {
             ptr += 3;
             *ptr++ = button->color.x;
             *ptr++ = button->color.y;

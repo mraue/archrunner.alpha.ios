@@ -63,7 +63,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     // Basic lighting program
     shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
-                                       IWFileToolsReadFileToString(fragmentShaderFilename));
+                                             IWFileToolsReadFileToString(fragmentShaderFilename));
     GLuint programID = shaderProgramData.programID;
     
     if (programID == 0) {
@@ -115,8 +115,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //
     // Head up display data
     //
-    glGenVertexArraysOES(1, &gdVertexArray2);
-    glBindVertexArrayOES(gdVertexArray2);
+    glGenVertexArraysOES(1, &gdUITriangleVertexArray);
+    glBindVertexArrayOES(gdUITriangleVertexArray);
     
     float aspect = fabsf(viewWidth / viewHeight);
     printf("aspect = %f\n", aspect);
@@ -128,17 +128,20 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     // Light gray
     IWVector4 rectangleButtonColorTouched = {255.0 / 255.0, 236. / 255., 147. / 255, 0.6};
     IWVector4 rectangleButtonColorTouched2 = {0.8, 0.8, 0.8, 0.6};
-    IWVector4 rectangleButtonColorUntouched = {0.6, 0.6, 0.6, 0.4};
+    IWVector4 rectangleButtonColorUntouched = {0.6, 0.6, 0.6, 0.25};
+    IWVector4 rectangleButtonLineColor = {0.8, 0.8, 0.8, 0.5};
     gdRectangleButton = IWUIRectangleButtonMake(0.58, 0.0,
                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                 0.2, 0.2,
                                                 rectangleButtonColorTouched, rectangleButtonColorUntouched,
+                                                rectangleButtonLineColor,
                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                 0.035, aspect);
     gdRectangleButton2 = IWUIRectangleButtonMake(0.8, 0.0,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.2, 0.2,
                                                  rectangleButtonColorTouched2, rectangleButtonColorUntouched,
+                                                 rectangleButtonLineColor,
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
 
@@ -149,11 +152,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 //        0.5, 0.0, false, true
 //    };
 //    gdRectangleButton.colorTransition = colorTransition;
-    gdUIVertices = (IWUIRectangleButtonMemorySize(&gdRectangleButton)
-                    + IWUIRectangleButtonMemorySize(&gdRectangleButton2)) / 7;
+    gdUINTriangleVertices = (IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
+                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)) / 7;
     
-    size_t mypos_size2 = (IWUIRectangleButtonMemorySize(&gdRectangleButton)
-                          + IWUIRectangleButtonMemorySize(&gdRectangleButton2))* sizeof(GLfloat);
+    size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
     
     size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
@@ -162,16 +164,38 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
     
-    glGenBuffers(1, &gdVertexBuffer2);
-    glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer2);
-    glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
-    
+    glGenBuffers(1, &gdUITriangleVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, gdUITriangleVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);    
     
     glEnableVertexAttribArray(positionSlot);
     glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
     glEnableVertexAttribArray(colorSlot);
     glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
     
+    glBindVertexArrayOES(0);
+    
+    glGenVertexArraysOES(1, &gdUILineVertexArray);
+    glBindVertexArrayOES(gdUILineVertexArray);
+    
+    gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
+                         + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)) / 7;
+    
+    mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);
+    mypos2 = malloc(mypos_size2);
+    
+    offset = IWUIRectangleButtonToLineBuffer(&gdRectangleButton, mypos2);
+    IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, mypos2 + offset);
+    
+    glGenBuffers(1, &gdUILineVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, gdUILineVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
+    
+    glEnableVertexAttribArray(positionSlot);
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(colorSlot);
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+
     glBindVertexArrayOES(0);
     
 //    // Slowed it down :(
@@ -221,7 +245,7 @@ void IWGRendererRender(void)
     //glBlendFunc(GL_ONE, GL_ONE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glBindVertexArrayOES(gdVertexArray2);
+    glBindVertexArrayOES(gdUITriangleVertexArray);
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
                 0);
     
@@ -232,7 +256,12 @@ void IWGRendererRender(void)
     //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 1.0, 0.1, 0.1, 1.0);
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
-    glDrawArrays(GL_TRIANGLES, 0, gdUIVertices);
+    glDrawArrays(GL_TRIANGLES, 0, gdUINTriangleVertices);
+
+    glBindVertexArrayOES(gdUILineVertexArray);
+
+    glLineWidth(2.);
+    glDrawArrays(GL_LINES, 0, gdUINLineVertices);
     
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
                 1);

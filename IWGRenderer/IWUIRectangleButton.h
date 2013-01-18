@@ -32,14 +32,18 @@ struct _IWUIRectangleButton {
     IWVector2 size;// [0.0, 1.0] coordinates
     IWVector4 touchedColor;
     IWVector4 untouchedColor;
+    IWVector4 lineColor;
     IWVector4 color;
     enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut;
     float cornerOffset;
     float aspectRatio;
     IWRectangle rectangle;// [0.0 - 1.0]
-    unsigned int nVertices;
-    GLfloat *memStartPtr;
-    size_t memSize;// [CGFloat]
+    size_t nTriangleVertices;
+    GLfloat *triangleBufferStart;
+    size_t triangleBufferSize;// [CGFloat]
+    size_t nLineVertices;
+    GLfloat *lineBufferStart;
+    size_t lineBufferSize;// [CGFloat]
     IWColorTransition colorTransition;
     bool isTouched;
 };
@@ -47,17 +51,20 @@ struct _IWUIRectangleButton {
 typedef struct _IWUIRectangleButton IWUIRectangleButton;
 
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
-                                          enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
-                                          float sizeX, float sizeY,
-                                          IWVector4 touchedColor, IWVector4 untouchedColor,
-                                          enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
-                                          float cornerOffset, float aspectRatio);
+                                            enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
+                                            float sizeX, float sizeY,
+                                            IWVector4 touchedColor, IWVector4 untouchedColor,
+                                            IWVector4 lineColor,
+                                            enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
+                                            float cornerOffset, float aspectRatio);
 
-size_t IWUIRectangleButtonMemorySize(IWUIRectangleButton *button);//[CGFloat]
+size_t IWUIRectangleButtonTriangleBufferSize(IWUIRectangleButton *button);//[CGFloat]
+size_t IWUIRectangleButtonLineBufferSize(IWUIRectangleButton *button);//[CGFloat]
 
 bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton * button, bool isTouched, IWPoint touchPoint);
 
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton *button, GLfloat* p);
+size_t IWUIRectangleButtonToLineBuffer(IWUIRectangleButton *button, GLfloat* p);
 
 void IWUIRectangleButtonUpdateColorInBuffer(IWUIRectangleButton *button);
 

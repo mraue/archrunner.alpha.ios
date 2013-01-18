@@ -29,16 +29,21 @@ IWPoint gdTouchPoint;
 IWUIRectangleButton gdRectangleButton;
 IWUIRectangleButton gdRectangleButton2;
 
-unsigned int gdUIVertices;
+unsigned int gdUINTriangleVertices;
+unsigned int gdUINLineVertices;
+
+bool gdResetControllerPosition;
 
 #pragma mark - Open GL Buffer
 
 GLuint gdN_VERT;
 
 GLuint gdVertexArray;
-GLuint gdVertexArray2;
 GLuint gdVertexBuffer;
-GLuint gdVertexBuffer2;
+GLuint gdUITriangleVertexArray;
+GLuint gdUITriangleVertexBuffer;
+GLuint gdUILineVertexArray;
+GLuint gdUILineVertexBuffer;
 
 #pragma mark - Open GL Vertex Transformation Matrices
 

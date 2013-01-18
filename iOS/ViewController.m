@@ -108,6 +108,7 @@ GLuint N_VERT2 = 0;
     switchColor = NO;
     //[aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
     switch1.on = NO;
+    switch1.hidden = YES;
     
     self.preferredFramesPerSecond = 30;
     
@@ -225,9 +226,10 @@ GLuint N_VERT2 = 0;
     _filteredAcceleration.y = _filteredAcceleration.y * (1.0-alpha) + newestAccel.acceleration.y * alpha;
     _filteredAcceleration.z = _filteredAcceleration.z * (1.0-alpha) + newestAccel.acceleration.z * alpha;
     
-    if (!orientationNeutralSetAccelerometer) {
+    if (!orientationNeutralSetAccelerometer || gdResetControllerPosition) {
         controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
         orientationNeutralSetAccelerometer = YES;
+        gdResetControllerPosition = false;
     }
     controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
     

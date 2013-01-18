@@ -21,16 +21,22 @@
 
 void IWGameSetup(void)
 {
-    gdPlayerData = IWPlayerDataMake(IWVector3Make(0.0, 0.0, 0.0),
-                                    IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
+    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.6, 1.6, 1.6),
+                                    IWVector3Normalize(IWVector3Make(-1.0, -1.0, -1.0)),
                                     IWVector3Make(0.0, 1.0, 0.0));
     return;
 }
 
 void IWGameUpdate(float timeSinceLastUpdate)
 {
-    IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint);
-    IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint);
+    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
+        gdResetControllerPosition = true;
+    }
+    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
+        gdPlayerData.position = IWVector3Make(1.6, 1.6, 1.6);
+        gdPlayerData.direction = IWVector3Normalize(IWVector3Make(-1., -1., -1.));
+        gdPlayerData.up = IWVector3Make(0, 1., 0);
+    }
     
     if (!gdRectangleButton.colorTransition.transitionHasFinished) {
         IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
@@ -38,8 +44,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
 
         //glBindVertexArrayOES(gdVertexArray2);
-        glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer2);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, gdRectangleButton.memSize * sizeof(GLfloat), gdRectangleButton.memStartPtr);
+        glBindBuffer(GL_ARRAY_BUFFER, gdUITriangleVertexBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, gdRectangleButton.triangleBufferSize * sizeof(GLfloat), gdRectangleButton.triangleBufferStart);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArrayOES(0);
     }
@@ -49,20 +55,10 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
         
         //glBindVertexArrayOES(gdVertexArray2);
-        glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer2);
-        glBufferSubData(GL_ARRAY_BUFFER, gdRectangleButton.memSize * sizeof(GLfloat), gdRectangleButton2.memSize * sizeof(GLfloat), gdRectangleButton2.memStartPtr);
+        glBindBuffer(GL_ARRAY_BUFFER, gdUITriangleVertexBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, gdRectangleButton.triangleBufferSize * sizeof(GLfloat), gdRectangleButton2.triangleBufferSize * sizeof(GLfloat), gdRectangleButton2.triangleBufferStart);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArrayOES(0);
     }
-//    } else {
-//        IWColorTransition colorTransition = {
-//            gdRectangleButton.colorTransition.endColor,
-//            gdRectangleButton.colorTransition.startColor,
-//            gdRectangleButton.colorTransition.endColor,
-//            gdRectangleButton.colorTransition.transitionTime,
-//            0.0, false, gdRectangleButton.colorTransition.quadraticEaseIn
-//        };
-//        gdRectangleButton.colorTransition = colorTransition;
-//    }
     return;
 }
