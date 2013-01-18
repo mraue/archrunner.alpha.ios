@@ -106,7 +106,7 @@ GLuint N_VERT2 = 0;
     [super viewDidLoad];
     
     switchColor = NO;
-    [aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
+    //[aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
     switch1.on = NO;
     
     self.preferredFramesPerSecond = 30;
@@ -252,7 +252,7 @@ GLuint N_VERT2 = 0;
     //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
 
     // Update player position
-    float speed = 110.0;
+    float speed = 120.0;
     //float speed = 0.0;
     gdPlayerData.position = IWVector3Add(gdPlayerData.position,
                                          IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
@@ -264,7 +264,7 @@ GLuint N_VERT2 = 0;
     GLKVector3 upGLV = GLKVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
     float rotationSpeedX = 0.0, rotationSpeedY = 0.0;
-    if (_isTouched) {
+    if (_isTouched && 0) {
         float touchActiveArea = 0.25;
         float touchFracX = _touchLocation.x / self.view.bounds.size.width;
         float touchFracY = 1. - _touchLocation.y / self.view.bounds.size.height;

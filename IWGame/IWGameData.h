@@ -27,6 +27,9 @@ bool gdIsTouched;
 IWPoint gdTouchPoint;
 
 IWUIRectangleButton gdRectangleButton;
+IWUIRectangleButton gdRectangleButton2;
+
+unsigned int gdUIVertices;
 
 #pragma mark - Open GL Buffer
 

@@ -13,7 +13,7 @@
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
                                             enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
                                             float sizeX, float sizeY,
-                                            IWVector4 color,
+                                            IWVector4 touchedColor, IWVector4 untouchedColor,
                                             enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                             float cornerOffset, float aspectRatio)
 {
@@ -21,7 +21,9 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
         {anchorPointX, anchorPointY},
         anchorPosition,
         {sizeX, sizeY},
-        color,
+        touchedColor,
+        untouchedColor,
+        untouchedColor,
         cornerCut,
         cornerOffset,
         aspectRatio,
@@ -47,6 +49,35 @@ size_t IWUIRectangleButtonMemorySize(IWUIRectangleButton *button)
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT)
         memSize += 3;
     return memSize * 7;
+}
+
+bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, IWPoint touchPoint)
+{
+    if (isTouched && IWPointInRectangle(touchPoint, button->rectangle)) {
+        if (!button->isTouched) {
+            button->isTouched = true;
+            IWColorTransition colorTransition = {
+                button->color,
+                button->touchedColor,
+                button->color,
+                0.1, 0.0, false, true
+            };
+            button->colorTransition = colorTransition;
+        }
+        return true;
+    } else {
+        if (button->isTouched) {
+            button->isTouched = false;
+            IWColorTransition colorTransition = {
+                button->color,
+                button->untouchedColor,
+                button->color,
+                0.2, 0.0, false, false
+            };
+            button->colorTransition = colorTransition;
+        }
+        return false;
+    }
 }
 
 bool IWUIRectangleButtonPointInRectangle(IWUIRectangleButton *button, IWVector2 point)

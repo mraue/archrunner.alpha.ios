@@ -126,12 +126,22 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     // White-ish yellow
     //IWVector4 squareButtonColor = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
     // Light gray
-    IWVector4 rectangleButtonColor = {0.6, 0.6, 0.6, 0.4};
-    gdRectangleButton = IWUIRectangleButtonMake(0.4, 0.0,
+    IWVector4 rectangleButtonColorTouched = {255.0 / 255.0, 236. / 255., 147. / 255, 0.6};
+    IWVector4 rectangleButtonColorTouched2 = {0.8, 0.8, 0.8, 0.6};
+    IWVector4 rectangleButtonColorUntouched = {0.6, 0.6, 0.6, 0.4};
+    gdRectangleButton = IWUIRectangleButtonMake(0.58, 0.0,
                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                0.18, 0.18, rectangleButtonColor,
-                                                IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT,
+                                                0.2, 0.2,
+                                                rectangleButtonColorTouched, rectangleButtonColorUntouched,
+                                                (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                 0.035, aspect);
+    gdRectangleButton2 = IWUIRectangleButtonMake(0.8, 0.0,
+                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                 0.2, 0.2,
+                                                 rectangleButtonColorTouched2, rectangleButtonColorUntouched,
+                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
+                                                 0.035, aspect);
+
 //    IWColorTransition colorTransition = {
 //        {0.6, 0.6, 0.6, 0.4},
 //        {0.8, 0.8, 0.8, 0.8},//{255.0 / 255.0, 236. / 255., 147. / 255, 0.5},
@@ -139,11 +149,15 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 //        0.5, 0.0, false, true
 //    };
 //    gdRectangleButton.colorTransition = colorTransition;
+    gdUIVertices = (IWUIRectangleButtonMemorySize(&gdRectangleButton)
+                    + IWUIRectangleButtonMemorySize(&gdRectangleButton2)) / 7;
     
-    size_t mypos_size2 = IWUIRectangleButtonMemorySize(&gdRectangleButton) * sizeof(GLfloat);
+    size_t mypos_size2 = (IWUIRectangleButtonMemorySize(&gdRectangleButton)
+                          + IWUIRectangleButtonMemorySize(&gdRectangleButton2))* sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
     
-    IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
+    size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
+    IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
 
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
@@ -218,7 +232,7 @@ void IWGRendererRender(void)
     //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 1.0, 0.1, 0.1, 1.0);
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
-    glDrawArrays(GL_TRIANGLES, 0, 1*9 + 3*6);
+    glDrawArrays(GL_TRIANGLES, 0, gdUIVertices);
     
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
                 1);

@@ -29,29 +29,8 @@ void IWGameSetup(void)
 
 void IWGameUpdate(float timeSinceLastUpdate)
 {
-    if (gdIsTouched && IWPointInRectangle(gdTouchPoint, gdRectangleButton.rectangle)) {
-        if (!gdRectangleButton.isTouched) {
-            gdRectangleButton.isTouched = true;
-            IWColorTransition colorTransition = {
-                gdRectangleButton.color,
-                {0.8, 0.8, 0.8, 0.8},//{255.0 / 255.0, 236. / 255., 147. / 255, 0.5},
-                gdRectangleButton.color,
-                0.1, 0.0, false, true
-            };
-            gdRectangleButton.colorTransition = colorTransition;
-        }
-    } else {
-        if (gdRectangleButton.isTouched) {
-            gdRectangleButton.isTouched = false;
-            IWColorTransition colorTransition = {
-                gdRectangleButton.color,
-                {0.8, 0.8, 0.8, 0.2},//{255.0 / 255.0, 236. / 255., 147. / 255, 0.5},
-                gdRectangleButton.color,
-                0.1, 0.0, false, false
-            };
-            gdRectangleButton.colorTransition = colorTransition;
-        }
-    }
+    IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint);
+    IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint);
     
     if (!gdRectangleButton.colorTransition.transitionHasFinished) {
         IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
@@ -61,6 +40,17 @@ void IWGameUpdate(float timeSinceLastUpdate)
         //glBindVertexArrayOES(gdVertexArray2);
         glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer2);
         glBufferSubData(GL_ARRAY_BUFFER, 0, gdRectangleButton.memSize * sizeof(GLfloat), gdRectangleButton.memStartPtr);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArrayOES(0);
+    }
+    if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
+        IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
+        gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
+        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
+        
+        //glBindVertexArrayOES(gdVertexArray2);
+        glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer2);
+        glBufferSubData(GL_ARRAY_BUFFER, gdRectangleButton.memSize * sizeof(GLfloat), gdRectangleButton2.memSize * sizeof(GLfloat), gdRectangleButton2.memStartPtr);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArrayOES(0);
     }
