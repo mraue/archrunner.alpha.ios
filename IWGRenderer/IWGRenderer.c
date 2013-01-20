@@ -16,6 +16,7 @@
 #include "IWUIRectangleButton.h"
 #include "IWColorTransition.h"
 #include "IWFileTools.h"
+#include "IWUIElement.h"
 
 #include "IWGameData.h"
 
@@ -126,8 +127,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     // White-ish yellow
     //IWVector4 squareButtonColor = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
     // Light gray
-    IWVector4 rectangleButtonColorTouched = {255.0 / 255.0, 236. / 255., 147. / 255, 0.6};
+    IWVector4 rectangleButtonColorTouched = {255.0 / 255.0, 236.0 / 255.0, 147.0 / 255.0, 0.6};
     IWVector4 rectangleButtonColorTouched2 = {0.8, 0.8, 0.8, 0.6};
+    IWVector4 rectangleButtonColorTouched3 = {218.0 / 255.0, 255.0 / 255.0, 233.0 / 255.0, 0.6};
     IWVector4 rectangleButtonColorUntouched = {0.6, 0.6, 0.6, 0.25};
     IWVector4 rectangleButtonLineColor = {0.8, 0.8, 0.8, 0.5};
     gdRectangleButton = IWUIRectangleButtonMake(0.58, 0.0,
@@ -144,6 +146,13 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
                                                  rectangleButtonLineColor,
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
+    gdRectangleButton3 = IWUIRectangleButtonMake(0.36, 0.0,
+                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                 0.2, 0.2,
+                                                 rectangleButtonColorTouched3, rectangleButtonColorUntouched,
+                                                 rectangleButtonLineColor,
+                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
+                                                 0.035, aspect);
 
 //    IWColorTransition colorTransition = {
 //        {0.6, 0.6, 0.6, 0.4},
@@ -153,13 +162,15 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 //    };
 //    gdRectangleButton.colorTransition = colorTransition;
     gdUINTriangleVertices = (IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
-                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)) / 7;
+                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)
+                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton3)) / 7;
     
     size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
     
     size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
-    IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
+    offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
+    offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton3, mypos2 + offset);
 
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
@@ -179,13 +190,24 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glBindVertexArrayOES(gdUILineVertexArray);
     
     gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
-                         + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)) / 7;
+                         + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)
+                         + IWUIRectangleButtonLineBufferSize(&gdRectangleButton3)
+                         + 2 * 52 * 7) / 7;
     
     mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);
     mypos2 = malloc(mypos_size2);
     
     offset = IWUIRectangleButtonToLineBuffer(&gdRectangleButton, mypos2);
-    IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, mypos2 + offset);
+    offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, mypos2 + offset);
+    offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton3, mypos2 + offset);
+    
+    IWUIElement uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.05,//0.3,//0.03,
+                                                        IWVector4Make(1.0, 1.0, 1.0, 0.2), aspect, 31, mypos2 + offset);
+    offset += uiCentralCircle.lineBufferSize;
+    
+    IWUIElement uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.01,//0.1,//0.005,
+                                                        IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 21, mypos2 + offset);
+    offset += uiCentralCircle2.lineBufferSize;
     
     glGenBuffers(1, &gdUILineVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, gdUILineVertexBuffer);
@@ -260,7 +282,7 @@ void IWGRendererRender(void)
 
     glBindVertexArrayOES(gdUILineVertexArray);
 
-    glLineWidth(2.);
+    glLineWidth(1.5);
     glDrawArrays(GL_LINES, 0, gdUINLineVertices);
     
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],

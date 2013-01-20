@@ -20,6 +20,7 @@
 #include "IWUIRectangleButton.h"
 
 IWPlayerData gdPlayerData;
+IWPlayerData gdPlayerDataSave;
 
 #pragma mark - User Interface
 
@@ -28,11 +29,14 @@ IWPoint gdTouchPoint;
 
 IWUIRectangleButton gdRectangleButton;
 IWUIRectangleButton gdRectangleButton2;
+IWUIRectangleButton gdRectangleButton3;
 
 unsigned int gdUINTriangleVertices;
 unsigned int gdUINLineVertices;
 
 bool gdResetControllerPosition;
+
+bool gdDropCamera;
 
 #pragma mark - Open GL Buffer
 

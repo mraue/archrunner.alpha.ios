@@ -319,11 +319,23 @@ GLuint N_VERT2 = 0;
     GLKMatrix4 modelMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
     
     // Check this
-    GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
-                                                 gdPlayerData.position.x + gdPlayerData.direction.x,
-                                                 gdPlayerData.position.y + gdPlayerData.direction.y,
-                                                 gdPlayerData.position.z + gdPlayerData.direction.z,
-                                                 gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    GLKMatrix4 viewMatrix;
+    if (!gdDropCamera) {
+        viewMatrix = GLKMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
+                                          gdPlayerData.position.x + gdPlayerData.direction.x,
+                                          gdPlayerData.position.y + gdPlayerData.direction.y,
+                                          gdPlayerData.position.z + gdPlayerData.direction.z,
+                                          gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    } else {
+        viewMatrix = GLKMatrix4MakeLookAt(gdPlayerDataSave.position.x,
+                                          gdPlayerDataSave.position.y,
+                                          gdPlayerDataSave.position.z,
+                                          gdPlayerData.position.x,
+                                          gdPlayerData.position.y,
+                                          gdPlayerData.position.z,
+                                          gdPlayerDataSave.up.x, gdPlayerDataSave.up.y, gdPlayerDataSave.up.z);
+    }
+
     
     gdNormalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
     gdModelMatrix = modelMatrix;

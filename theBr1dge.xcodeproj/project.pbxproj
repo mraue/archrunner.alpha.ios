@@ -14,6 +14,7 @@
 		641E0D7A16A844710077785D /* IWGame.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7916A844710077785D /* IWGame.c */; };
 		641E0D7C16A962580077785D /* IWVector4.h in Resources */ = {isa = PBXBuildFile; fileRef = 641E0D7B16A962580077785D /* IWVector4.h */; };
 		641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7F16A9662D0077785D /* IWColorTransition.c */; };
+		641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8116AAF8D80077785D /* IWUIElement.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
 		646F592716A555B000704F45 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FE16A555B000704F45 /* ViewController.m */; };
 		646F592816A555B000704F45 /* ge_cube.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590016A555B000704F45 /* ge_cube.c */; };
@@ -57,6 +58,8 @@
 		641E0D7B16A962580077785D /* IWVector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector4.h; sourceTree = "<group>"; };
 		641E0D7D16A965E90077785D /* IWColorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWColorTransition.h; path = IWAnimation/IWColorTransition.h; sourceTree = SOURCE_ROOT; };
 		641E0D7F16A9662D0077785D /* IWColorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWColorTransition.c; path = IWAnimation/IWColorTransition.c; sourceTree = "<group>"; };
+		641E0D8116AAF8D80077785D /* IWUIElement.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIElement.c; path = IWUserInterface/IWUIElement.c; sourceTree = "<group>"; };
+		641E0D8416AAF9170077785D /* IWUIElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIElement.h; path = IWUserInterface/IWUIElement.h; sourceTree = "<group>"; };
 		646F58FB16A555B000704F45 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		646F58FC16A555B000704F45 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		646F58FD16A555B000704F45 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -142,9 +145,19 @@
 			name = IWAnimation;
 			sourceTree = "<group>";
 		};
+		641E0D8316AAF8E00077785D /* IWUserInterface */ = {
+			isa = PBXGroup;
+			children = (
+				641E0D8416AAF9170077785D /* IWUIElement.h */,
+				641E0D8116AAF8D80077785D /* IWUIElement.c */,
+			);
+			name = IWUserInterface;
+			sourceTree = "<group>";
+		};
 		646F58F816A555B000704F45 /* theBr1dge */ = {
 			isa = PBXGroup;
 			children = (
+				641E0D8316AAF8E00077785D /* IWUserInterface */,
 				641E0D7E16A965EF0077785D /* IWAnimation */,
 				646F58FA16A555B000704F45 /* iOS */,
 				646F58FF16A555B000704F45 /* IWGame */,
@@ -366,6 +379,7 @@
 				641E0D7616A834FE0077785D /* IWGRenderer.c in Sources */,
 				641E0D7A16A844710077785D /* IWGame.c in Sources */,
 				641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */,
+				641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
