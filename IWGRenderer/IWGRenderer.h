@@ -17,8 +17,6 @@
 #include "IWGShaderProgram.h"
 #include "IWGLighting.h"
 
-#import "ge_cubes.h"
-
 #pragma mark - Definitions
 
 enum _IWGRENDERER_BASIC_UNIFORM_ID_INDEX {

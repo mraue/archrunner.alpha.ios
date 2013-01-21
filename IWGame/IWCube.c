@@ -53,14 +53,13 @@ IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d)
     return cubeOfCubeDataStart;
 }
 
-size_t IWCubeToTriangles(IWCubeData* cube, GLfloat* pos)
+size_t IWCubeToTriangles(IWCubeData* cube)
 {
     float lh = cube->halfLengthX;
     GLfloat x = cube->centerPosition.x;
     GLfloat y = cube->centerPosition.y;
     GLfloat z = cube->centerPosition.z;
-    GLfloat *p = pos;
-    GLfloat *pstart = pos;
+    GLfloat *p = cube->triangleBufferData.start;
     // back 1
     *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
     *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
@@ -146,5 +145,5 @@ size_t IWCubeToTriangles(IWCubeData* cube, GLfloat* pos)
     *p++ = x - lh; *p++ = y + lh; *p++ = z - lh;
     *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
     //
-    return (p - pstart);
+    return cube->triangleBufferData.size = (p - cube->triangleBufferData.start);
 }

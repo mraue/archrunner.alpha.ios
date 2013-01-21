@@ -20,18 +20,19 @@
 #include "IWUIRectangleButton.h"
 #include "IWCube.h"
 
-#include "ge_cubes.h"
+#pragma mark - Game Logic Data
 
 IWPlayerData gdPlayerData;
 IWPlayerData gdPlayerDataSave;
 
+IWCubeData* gdCubeData;
+unsigned int gdNCubes;
+
 #pragma mark - Debug / Testing
 
-IWCubeData* gdCubeDataNew;
-unsigned int gdNCubesNew;
-
-geCube *gdCubeData;
-unsigned int gdNCubes;
+unsigned int *gdCubeToBufferMap;
+unsigned int *gdBufferToCubeMap;
+unsigned int gdBufferToCubeMapNEntries;
 
 #pragma mark - User Interface
 

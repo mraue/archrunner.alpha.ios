@@ -28,7 +28,7 @@ IWCubeData IWCubeMake(IWVector3 centerPosition, float halfLengthX,
 
 IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d);
 
-size_t IWCubeToTriangles(IWCubeData* cube, GLfloat* pos);
+size_t IWCubeToTriangles(IWCubeData* cube);
 
 
 #endif

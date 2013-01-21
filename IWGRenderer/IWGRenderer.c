@@ -44,8 +44,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     nx = ny = nz = 10;
     d = .05;
     
-    //nx = ny = nz = 2;
-    //d = .1;
+    //nx = ny = nz = 4;
+    //d = .2;
     
     //nx = ny = nz = 1;
     //d = 1.5;
@@ -55,13 +55,27 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     printf("Allocating %d position with total size %d\n", n * 72, (int)mypos_size);
     GLfloat *mypos = malloc(mypos_size);
     
-    gdCubeDataNew = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1);
-    gdNCubesNew = nx * ny * nz;
+    gdCubeToBufferMap = malloc(n * sizeof(unsigned int));
+    gdBufferToCubeMap = malloc(n * sizeof(unsigned int));
+    gdBufferToCubeMapNEntries = n;
+    
+    gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1);
+    gdNCubes = nx * ny * nz;
     
     GLfloat *memPtr = mypos;
     for (int nc=0; nc < n; nc++) {
-        gdCubeDataNew[nc].halfLengthX = d / 2.;
-        memPtr += IWCubeToTriangles(&gdCubeDataNew[nc], memPtr);
+        gdCubeData[nc].triangleBufferData.bufferStart = mypos;
+        gdCubeData[nc].triangleBufferData.start = memPtr;
+        gdCubeData[nc].halfLengthX = d / 2.;
+        gdCubeData[nc].collisionRadius = d * 1.1;
+        memPtr += IWCubeToTriangles(&gdCubeData[nc]);
+        // Setup primitive data buffer chain
+        if (nc > 1) {
+            gdCubeData[nc].triangleBufferData.previous = &gdCubeData[nc - 1].triangleBufferData;
+            gdCubeData[nc - 1].triangleBufferData.next = &gdCubeData[nc].triangleBufferData;
+        }
+        gdCubeToBufferMap[nc] = nc;
+        gdBufferToCubeMap[nc] = nc;
     }
     gdN_VERT = (memPtr - mypos) / 6;
     printf("nVertMax = %d\n", gdN_VERT);
