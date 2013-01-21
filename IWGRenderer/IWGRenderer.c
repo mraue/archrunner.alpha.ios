@@ -17,6 +17,7 @@
 #include "IWColorTransition.h"
 #include "IWFileTools.h"
 #include "IWUIElement.h"
+#include "IWCube.h"
 
 #include "IWGameData.h"
 
@@ -43,23 +44,26 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     nx = ny = nz = 10;
     d = .05;
     
-    //nx = ny = nz = 4;
+    //nx = ny = nz = 2;
     //d = .1;
     
     //nx = ny = nz = 1;
     //d = 1.5;
     
     int n = nx * ny * nz;
-    size_t mypos_size = n * 72 * sizeof(gePos);
+    size_t mypos_size = n * 6 * 6 * 6 * sizeof(GLfloat);
     printf("Allocating %d position with total size %d\n", n * 72, (int)mypos_size);
-    gePos *mypos = malloc(mypos_size);
+    GLfloat *mypos = malloc(mypos_size);
     
-    geCube* mycubes = ge_create_uniform_cubes(nx, ny, nz, 1., .1);
+    gdCubeDataNew = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1);
+    gdNCubesNew = nx * ny * nz;
     
+    GLfloat *memPtr = mypos;
     for (int nc=0; nc < n; nc++) {
-        //ge_cube_to_trianglestrip(&mycubes[nc + 1], &mypos[N_VERT], d, 1, 1, &N_VERT);
-        ge_cube_to_triangles(&mycubes[nc], &mypos[gdN_VERT], d, &gdN_VERT);
+        gdCubeDataNew[nc].halfLengthX = d / 2.;
+        memPtr += IWCubeToTriangles(&gdCubeDataNew[nc], memPtr);
     }
+    gdN_VERT = (memPtr - mypos) / 6;
     printf("nVertMax = %d\n", gdN_VERT);
     
     // Basic lighting program
@@ -132,23 +136,23 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     IWVector4 rectangleButtonColorTouched3 = {218.0 / 255.0, 255.0 / 255.0, 233.0 / 255.0, 0.6};
     IWVector4 rectangleButtonColorUntouched = {0.6, 0.6, 0.6, 0.25};
     IWVector4 rectangleButtonLineColor = {0.8, 0.8, 0.8, 0.5};
-    gdRectangleButton = IWUIRectangleButtonMake(0.58, 0.0,
+    gdRectangleButton = IWUIRectangleButtonMake(0.63, -0.001,
                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                0.2, 0.2,
+                                                0.18, 0.18,
                                                 rectangleButtonColorTouched, rectangleButtonColorUntouched,
                                                 rectangleButtonLineColor,
                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                 0.035, aspect);
-    gdRectangleButton2 = IWUIRectangleButtonMake(0.8, 0.0,
+    gdRectangleButton2 = IWUIRectangleButtonMake(0.82, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                 0.2, 0.2,
+                                                 0.18, 0.18,
                                                  rectangleButtonColorTouched2, rectangleButtonColorUntouched,
                                                  rectangleButtonLineColor,
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
-    gdRectangleButton3 = IWUIRectangleButtonMake(0.36, 0.0,
+    gdRectangleButton3 = IWUIRectangleButtonMake(0.44, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                 0.2, 0.2,
+                                                 0.18, 0.18,
                                                  rectangleButtonColorTouched3, rectangleButtonColorUntouched,
                                                  rectangleButtonLineColor,
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
@@ -192,7 +196,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
                          + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)
                          + IWUIRectangleButtonLineBufferSize(&gdRectangleButton3)
-                         + 2 * 52 * 7) / 7;
+                         + 2 * 42 * 7) / 7;
     
     mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);
     mypos2 = malloc(mypos_size2);
@@ -201,12 +205,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, mypos2 + offset);
     offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton3, mypos2 + offset);
     
-    IWUIElement uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.05,//0.3,//0.03,
-                                                        IWVector4Make(1.0, 1.0, 1.0, 0.2), aspect, 31, mypos2 + offset);
+    IWUIElement uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.03,//0.05,//0.3,//0.03,
+                                                        IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 31, mypos2 + offset);
     offset += uiCentralCircle.lineBufferSize;
     
-    IWUIElement uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.01,//0.1,//0.005,
-                                                        IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 21, mypos2 + offset);
+    IWUIElement uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
+                                                        IWVector4Make(1.0, 1.0, 1.0, 0.4), aspect, 11, mypos2 + offset);
     offset += uiCentralCircle2.lineBufferSize;
     
     glGenBuffers(1, &gdUILineVertexBuffer);
@@ -256,7 +260,7 @@ void IWGRendererRender(void)
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT / 2);
-    glDrawArrays(GL_TRIANGLES, 0, gdN_VERT / 2);
+    glDrawArrays(GL_TRIANGLES, 0, gdN_VERT);
     //glDrawArrays(GL_LINE_STRIP, 0, N_VERT / 2);
     
     glBindVertexArrayOES(0);
@@ -282,7 +286,7 @@ void IWGRendererRender(void)
 
     glBindVertexArrayOES(gdUILineVertexArray);
 
-    glLineWidth(1.5);
+    glLineWidth(0.5);
     glDrawArrays(GL_LINES, 0, gdUINLineVertices);
     
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],

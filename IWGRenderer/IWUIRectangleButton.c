@@ -10,6 +10,9 @@
 
 #include "IWUIRectangleButton.h"
 
+#define IWUIRECTANGLEBUTTON_TRIANGLE_Z -.999
+#define IWUIRECTANGLEBUTTON_LINE_Z -.9999
+
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
                                             enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
                                             float sizeX, float sizeY,
@@ -175,7 +178,8 @@ size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat
             imax = 6;
         }
         for (int i = 0; i < imax; i++) {
-            p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[indices[i]], -1.0, color);
+            p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[indices[i]],
+                                                       IWUIRECTANGLEBUTTON_TRIANGLE_Z, color);
         }
     }
     button->triangleBufferSize = p - button->triangleBufferStart;
@@ -212,55 +216,55 @@ size_t IWUIRectangleButtonToLineBuffer(IWUIRectangleButton *button, GLfloat* p)
         {xmin, ymax - cornerOffset.y}, {xmin, yc}, {xmin, ymin + cornerOffset.y}
     };
 
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], IWUIRECTANGLEBUTTON_LINE_Z, color);
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT) {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[16], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[16], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[2], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[2], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[16], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[16], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[2], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[2], IWUIRECTANGLEBUTTON_LINE_Z, color);
     } else {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[1], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[1], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[1], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[1], IWUIRECTANGLEBUTTON_LINE_Z, color);
     }
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[3], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[3], IWUIRECTANGLEBUTTON_LINE_Z, color);
     
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[3], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[3], IWUIRECTANGLEBUTTON_LINE_Z, color);
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_RIGHT) {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[4], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[4], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[6], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[6], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[4], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[4], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[6], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[6], IWUIRECTANGLEBUTTON_LINE_Z, color);
     } else {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[5], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[5], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[5], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[5], IWUIRECTANGLEBUTTON_LINE_Z, color);
     }
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[7], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[7], IWUIRECTANGLEBUTTON_LINE_Z, color);
     
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[7], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[7], IWUIRECTANGLEBUTTON_LINE_Z, color);
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT) {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[8], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[8], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[10], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[10], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[8], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[8], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[10], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[10], IWUIRECTANGLEBUTTON_LINE_Z, color);
         
     } else {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[9], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[9], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[9], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[9], IWUIRECTANGLEBUTTON_LINE_Z, color);
     }
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[11], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[11], IWUIRECTANGLEBUTTON_LINE_Z, color);
     
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[11], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[11], IWUIRECTANGLEBUTTON_LINE_Z, color);
     if (button->cornerCut & IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT) {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[12], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[12], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[14], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[14], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[12], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[12], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[14], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[14], IWUIRECTANGLEBUTTON_LINE_Z, color);
         
     } else {
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[13], -1.0, color);
-        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[13], -1.0, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[13], IWUIRECTANGLEBUTTON_LINE_Z, color);
+        p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[13], IWUIRECTANGLEBUTTON_LINE_Z, color);
     }
-    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], -1.0, color);
+    p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], IWUIRECTANGLEBUTTON_LINE_Z, color);
 
     button->lineBufferSize = p - button->lineBufferStart;
     button->nLineVertices = button->lineBufferSize / 7;

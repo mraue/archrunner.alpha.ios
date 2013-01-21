@@ -18,9 +18,20 @@
 #include "IWGLighting.h"
 #include "IWPlayer.h"
 #include "IWUIRectangleButton.h"
+#include "IWCube.h"
+
+#include "ge_cubes.h"
 
 IWPlayerData gdPlayerData;
 IWPlayerData gdPlayerDataSave;
+
+#pragma mark - Debug / Testing
+
+IWCubeData* gdCubeDataNew;
+unsigned int gdNCubesNew;
+
+geCube *gdCubeData;
+unsigned int gdNCubes;
 
 #pragma mark - User Interface
 

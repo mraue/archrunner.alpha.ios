@@ -41,6 +41,7 @@ static __inline__ IWVector3 IWVector3CrossProduct(IWVector3 vectorLeft, IWVector
 
 static __inline__ IWVector3 IWVector3ApplyFunctionF(IWVector3 vector, float (*function)(float));
 static __inline__ IWVector3 IWVector3ApplyFunctionD(IWVector3 vector, double (*function)(double));
+static __inline__ float IWVector3DistanceSquared(IWVector3 vStart, IWVector3 vEnd);
 
 #pragma mark - Implementation
 
@@ -165,6 +166,11 @@ static __inline__ IWVector3 IWVector3ApplyFunctionD(IWVector3 vector, double (*f
         (*function)(vector.z)
     };
     return newVector;
+}
+
+static __inline__ float IWVector3DistanceSquared(IWVector3 vStart, IWVector3 vEnd) {
+    IWVector3 v = {vEnd.x - vStart.x, vEnd.y - vStart.y, vEnd.z - vStart.z};
+    return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
 //

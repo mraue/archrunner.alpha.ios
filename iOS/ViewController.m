@@ -266,7 +266,7 @@ GLuint N_VERT2 = 0;
     GLKVector3 upGLV = GLKVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
     float rotationSpeedX = 0.0, rotationSpeedY = 0.0;
-    if (_isTouched && 0) {
+    if (_isTouched) {
         float touchActiveArea = 0.25;
         float touchFracX = _touchLocation.x / self.view.bounds.size.width;
         float touchFracY = 1. - _touchLocation.y / self.view.bounds.size.height;

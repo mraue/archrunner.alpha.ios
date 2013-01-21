@@ -29,8 +29,27 @@ void IWGameSetup(void)
 
 void IWGameUpdate(float timeSinceLastUpdate)
 {
+    // BEGIN TESTING
+    for (int i = 0; i < gdNCubes; i++) {
+        float x = gdCubeData[i].p.x;
+        float y = gdCubeData[i].p.y;
+        float z = gdCubeData[i].p.z;
+        IWVector3 cubePosition = IWVector3Make(x, y, z);
+        double minDist = 0.01;
+        minDist *= minDist;
+        if (IWVector3DistanceSquared(gdPlayerData.position, cubePosition) < minDist) {
+            printf("%f %f %f BOING!\n", x, y, x);
+        }
+    }
+    // END TESTING
+    
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
-        gdResetControllerPosition = true;
+        if (gdDropCamera) {
+            gdDropCamera = false;
+        } else {
+            gdDropCamera = true;
+            gdPlayerDataSave = gdPlayerData;
+        }
     }
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
         gdPlayerData.position = IWVector3Make(1.6, 1.0, 1.6);
@@ -38,12 +57,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
         gdPlayerData.up = IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0));
     }
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton3, gdIsTouched, gdTouchPoint)) {
-        if (gdDropCamera) {
-            gdDropCamera = false;
-        } else {
-            gdDropCamera = true;
-            gdPlayerDataSave = gdPlayerData;
-        }
+        gdResetControllerPosition = true;
     }
     
     if (!gdRectangleButton.colorTransition.transitionHasFinished) {

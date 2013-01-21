@@ -15,6 +15,8 @@
 		641E0D7C16A962580077785D /* IWVector4.h in Resources */ = {isa = PBXBuildFile; fileRef = 641E0D7B16A962580077785D /* IWVector4.h */; };
 		641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7F16A9662D0077785D /* IWColorTransition.c */; };
 		641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8116AAF8D80077785D /* IWUIElement.c */; };
+		641E0D8916AD69720077785D /* IWCube.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8816AD69720077785D /* IWCube.c */; };
+		641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
 		646F592716A555B000704F45 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FE16A555B000704F45 /* ViewController.m */; };
 		646F592816A555B000704F45 /* ge_cube.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590016A555B000704F45 /* ge_cube.c */; };
@@ -60,6 +62,10 @@
 		641E0D7F16A9662D0077785D /* IWColorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWColorTransition.c; path = IWAnimation/IWColorTransition.c; sourceTree = "<group>"; };
 		641E0D8116AAF8D80077785D /* IWUIElement.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIElement.c; path = IWUserInterface/IWUIElement.c; sourceTree = "<group>"; };
 		641E0D8416AAF9170077785D /* IWUIElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIElement.h; path = IWUserInterface/IWUIElement.h; sourceTree = "<group>"; };
+		641E0D8716AD69680077785D /* IWCube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCube.h; sourceTree = "<group>"; };
+		641E0D8816AD69720077785D /* IWCube.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWCube.c; sourceTree = "<group>"; };
+		641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGPrimitiveBuffer.h; sourceTree = "<group>"; };
+		641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGPrimitiveBuffer.c; sourceTree = "<group>"; };
 		646F58FB16A555B000704F45 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		646F58FC16A555B000704F45 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		646F58FD16A555B000704F45 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -189,6 +195,8 @@
 				641E0D7916A844710077785D /* IWGame.c */,
 				646F590116A555B000704F45 /* ge_cubes.h */,
 				646F590016A555B000704F45 /* ge_cube.c */,
+				641E0D8716AD69680077785D /* IWCube.h */,
+				641E0D8816AD69720077785D /* IWCube.c */,
 				646F590316A555B000704F45 /* IWController.h */,
 				646F590216A555B000704F45 /* IWController.c */,
 				646F590516A555B000704F45 /* IWPlayer.h */,
@@ -210,6 +218,8 @@
 				648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */,
 				648E756616A6B242004DE1A4 /* IWUIRectangleButton.h */,
 				648E756716A6B251004DE1A4 /* IWUIRectangleButton.c */,
+				641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */,
+				641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */,
 			);
 			path = IWGRenderer;
 			sourceTree = "<group>";
@@ -380,6 +390,8 @@
 				641E0D7A16A844710077785D /* IWGame.c in Sources */,
 				641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */,
 				641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */,
+				641E0D8916AD69720077785D /* IWCube.c in Sources */,
+				641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
