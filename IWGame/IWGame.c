@@ -98,11 +98,17 @@ void IWGameUpdate(float timeSinceLastUpdate)
                 }
                 //glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data)
                 gdN_VERT -= gdCubeData[i].triangleBufferData.size / 6;
+                gdClearColorTransition.currentTransitionTime = 0.0;
+                gdClearColorTransition.transitionHasFinished = false;
             }
         }
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     // END TESTING
+    
+    if (!gdClearColorTransition.transitionHasFinished) {
+        IWColorTransitionUpdate(&gdClearColorTransition, timeSinceLastUpdate);
+    }
     
     
     glBindVertexArrayOES(gdUITriangleVertexArray);

@@ -16,6 +16,7 @@
 
 struct _IWCubeData {
     IWVector3 centerPosition;
+    IWVector4 color;
     float halfLengthX;
     float collisionRadius;// if == 0.0 no collision possible
     bool isVisible;
@@ -23,10 +24,11 @@ struct _IWCubeData {
 };
 typedef struct _IWCubeData IWCubeData;
 
-IWCubeData IWCubeMake(IWVector3 centerPosition, float halfLengthX,
-                      float collisionRadius, bool isVisible);
+IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
+                      float halfLengthX, float collisionRadius,
+                      bool isVisible);
 
-IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d);
+IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d, IWVector4 color);
 
 size_t IWCubeToTriangles(IWCubeData* cube);
 

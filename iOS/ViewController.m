@@ -249,6 +249,8 @@ GLuint N_VERT2 = 0;
     //[aLabel setText:[NSString stringWithFormat:@"%.1f", controllerData.orientation.x]];
     
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    
+    // REFACTOR: does not change, could only be created and intialized to uniform once
     GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.01f, 100.0f);
     
     //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
@@ -316,6 +318,7 @@ GLuint N_VERT2 = 0;
 //    // END DEBUG
     
     // Compute the model view matrix for the object rendered with ES2
+    // REFACTOR: does not change, could only be calculated and intialized to uniforms once
     GLKMatrix4 modelMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
     
     // Check this

@@ -19,6 +19,8 @@
 #include "IWUIElement.h"
 #include "IWCube.h"
 
+#include "IWGLighting.h"
+
 #include "IWGameData.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -28,7 +30,15 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 {
     gdLightSourceData = IWGLightingMakeBasicLight();
     gdMaterialSourceData = IWGLightingMakeBasicMaterial();
-        
+    
+    IWColorTransition clearColorTransition = {
+        {0.1, 0.1, 0.4, 1.0},
+        {0.0, 0.0, 0.0, 1.0},
+        {1.0, 1.0, 1.0, 1.0},
+        1.0, 0.0, true, false
+    };
+    gdClearColorTransition = clearColorTransition;
+    
     gdN_VERT = 0;
     
     //gePos mypos[55296];
@@ -51,7 +61,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //d = 1.5;
     
     int n = nx * ny * nz;
-    size_t mypos_size = n * 6 * 6 * 6 * sizeof(GLfloat);
+    size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
     printf("Allocating %d position with total size %d\n", n * 72, (int)mypos_size);
     GLfloat *mypos = malloc(mypos_size);
     
@@ -59,7 +69,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdBufferToCubeMap = malloc(n * sizeof(unsigned int));
     gdBufferToCubeMapNEntries = n;
     
-    gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1);
+    IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
+    
+    gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1, cubeBaseColor);
     gdNCubes = nx * ny * nz;
     
     GLfloat *memPtr = mypos;
@@ -77,7 +89,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         gdCubeToBufferMap[nc] = nc;
         gdBufferToCubeMap[nc] = nc;
     }
-    gdN_VERT = (memPtr - mypos) / 6;
+    gdN_VERT = (memPtr - mypos) / 10;
     printf("nVertMax = %d\n", gdN_VERT);
     
     // Basic lighting program
@@ -89,6 +101,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         printf("ERROR: Could not create GL program");
         return;
     }
+    
+    glUseProgram(programID);
+    
+    glEnable(GL_DEPTH_TEST);
     
     // Get uniform locations.
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
@@ -102,10 +118,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 
     IWGLightingInitializeUniformLocations(programID);
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
-    
-    glUseProgram(programID);
-    
-    glEnable(GL_DEPTH_TEST);
     
     // First cube
     glGenVertexArraysOES(1, &gdVertexArray);
@@ -125,10 +137,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     GLuint colorSlot = glGetAttribLocation(programID, "Color");
     
     glEnableVertexAttribArray(positionSlot);
-    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(0));
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(colorSlot);
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(normalSlot);
-    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(12));
-    
+    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+    //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
     glBindVertexArrayOES(0);
     
     //
@@ -249,7 +263,15 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 void IWGRendererRender(void)
 {
     //glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gdClearColorTransition.transitionHasFinished) {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    } else {
+        glClearColor(gdClearColorTransition.currentColor.x,
+                     gdClearColorTransition.currentColor.y,
+                     gdClearColorTransition.currentColor.z,
+                     gdClearColorTransition.currentColor.w);
+    }
+    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // Draw array 1
@@ -271,7 +293,13 @@ void IWGRendererRender(void)
     gdLightSourceData.Position = gdPlayerData.position;
     //_lightSource.Direction = IWVector3MultiplyScalar(playerData.direction, -1.0);
     gdLightSourceData.Direction = gdPlayerData.direction;
-    IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
+    
+    // 
+    //IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_POSITION],
+                gdLightSourceData.Position.x, gdLightSourceData.Position.y, gdLightSourceData.Position.z);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
+                gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT / 2);
     glDrawArrays(GL_TRIANGLES, 0, gdN_VERT);

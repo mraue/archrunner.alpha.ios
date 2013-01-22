@@ -89,6 +89,7 @@ void main ()
                 vec3 lightVec = normalize(Light[i].Position - vWorldVertex.xyz);
                 float l = max(0.0, dot(vWorldNormal, lightVec));
 
+                // REFACTOR: dynamic branching is bad ??? not sure ;)
                 if ( l > 0.0 )
                 {
                     // Calculate spotlight effect
@@ -112,11 +113,17 @@ void main ()
                     float a = 1.0 / (Light[i].Attenuation.x + (Light[i].Attenuation.y * d) + (Light[i].Attenuation.z * d * d));
                     
                     // Add to color
-                    vColor.xyz += Material.Diffuse.xyz * l * Light[i].Color * a * spotlight;
+                    //vColor.xyz += Material.Diffuse.xyz * l * Light[i].Color * a * spotlight;
+                    vColor.xyz += Color.xyz * l * Light[i].Color * a * spotlight;
+                    vColor.w = Color.w;
                 }
             }
-            
-            vColor.w = Material.Diffuse.w;
+            //vColor.w = Material.Diffuse.w;
         }
+        else
+        {
+            vColor = Color;
+        }
+        
     }
 }

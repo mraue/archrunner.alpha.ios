@@ -19,6 +19,8 @@
 #include "IWPlayer.h"
 #include "IWUIRectangleButton.h"
 #include "IWCube.h"
+#include "IWColorTransition.h"
+#include "IWGVBManager.h"
 
 #pragma mark - Game Logic Data
 
@@ -33,6 +35,8 @@ unsigned int gdNCubes;
 unsigned int *gdCubeToBufferMap;
 unsigned int *gdBufferToCubeMap;
 unsigned int gdBufferToCubeMapNEntries;
+
+IWColorTransition gdClearColorTransition;
 
 #pragma mark - User Interface
 
@@ -52,10 +56,12 @@ bool gdDropCamera;
 
 #pragma mark - Open GL Buffer
 
-GLuint gdN_VERT;
+IWGVBManagerData gdBridgeCubesVBManager;
 
+GLuint gdN_VERT;
 GLuint gdVertexArray;
 GLuint gdVertexBuffer;
+
 GLuint gdUITriangleVertexArray;
 GLuint gdUITriangleVertexBuffer;
 GLuint gdUILineVertexArray;

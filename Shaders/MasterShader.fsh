@@ -103,7 +103,8 @@ void main ()
                     float a = 1.0 / (Light[i].Attenuation.x + (Light[i].Attenuation.y * d) + (Light[i].Attenuation.z * d * d));
                     
                     // Add to color
-                    color += Material.Diffuse.xyz * l * Light[i].Color * a * spotlight;
+                    //color += Material.Diffuse.xyz * l * Light[i].Color * a * spotlight;
+                    color += vColor.xyz * l * Light[i].Color * a * spotlight;
                 }
             }
             
