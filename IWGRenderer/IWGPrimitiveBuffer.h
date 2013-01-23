@@ -9,6 +9,7 @@
 #ifndef theBr1dge_IWGPrimitiveBuffer_h
 #define theBr1dge_IWGPrimitiveBuffer_h
 
+#include <stdlib.h>
 #include <stdbool.h>
 
 #include <OpenGLES/ES2/gl.h>
@@ -25,24 +26,21 @@ enum {
 struct _IWGPrimitiveBufferData {
     size_t size;// [ GLfloat ]
     short stride;// [ GLfloat ]
-    GLfloat *start;
-    GLfloat *bufferStart;
-    short positionOffset;
-    short normalOffset;
-    short colorOffset;
-    short textureposOffset;
+    GLfloat *startCPU;
+    GLfloat *bufferStartCPU;
+    unsigned int bufferIDGPU;
+    short positionOffset;// [ GLfloat ]
+    short normalOffset;// [ GLfloat ]
+    short colorOffset;// [ GLfloat ]
+    short textureposOffset;// [ GLfloat ]
     int needsUpdate;
-    struct _IWGPrimitiveBufferData *previous;
-    struct _IWGPrimitiveBufferData *next;
 };
 typedef struct _IWGPrimitiveBufferData IWGPrimitiveBufferData;
 
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMake(size_t size, short stride,
-                                                  GLfloat *start, GLfloat *bufferStart,
+                                                  GLfloat *startCPU, GLfloat *bufferStartCPU, unsigned int bufferIDGPU,
                                                   short positionOffset, short normalOffset, short colorOffset,
-                                                  short textureposOffset, int needsUpdate,
-                                                  IWGPrimitiveBufferData* previous,
-                                                  IWGPrimitiveBufferData* next);
+                                                  short textureposOffset, int needsUpdate);
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMakeEmpty();
 
 #endif

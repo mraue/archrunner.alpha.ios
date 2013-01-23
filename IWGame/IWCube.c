@@ -6,10 +6,13 @@
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
+#include "IWCube.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "IWCube.h"
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 
 IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
                       float halfLengthX, float collisionRadius,
@@ -66,7 +69,7 @@ size_t IWCubeToTriangles(IWCubeData* cube)
     GLfloat cg = cube->color.y;
     GLfloat cb = cube->color.z;
     GLfloat ca = cube->color.w;
-    GLfloat *p = cube->triangleBufferData.start;
+    GLfloat *p = cube->triangleBufferData.startCPU;
     // back 1
     *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
     *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
@@ -188,5 +191,5 @@ size_t IWCubeToTriangles(IWCubeData* cube)
     *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
     *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
     //
-    return cube->triangleBufferData.size = (p - cube->triangleBufferData.start);
+    return cube->triangleBufferData.size = (p - cube->triangleBufferData.startCPU);
 }

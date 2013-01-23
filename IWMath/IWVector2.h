@@ -35,6 +35,8 @@ static __inline__ float IWVector2DotProduct(IWVector2 vectorLeft, IWVector2 vect
 static __inline__ float IWVector2Length(IWVector2 v);
 static __inline__ float IWVector2Distance(IWVector2 vStart, IWVector2 vEnd);
 
+static __inline__ IWVector2 IWVector2Lerp(IWVector2 vectorStart, IWVector2 vectorEnd, float t);
+
 #pragma mark - New functionality not in GLKVector2
 
 static __inline__ IWVector2 IWVector2ApplyFunctionF(IWVector2 vector, float (*function)(float));
@@ -137,6 +139,16 @@ static __inline__ float IWVector2Length(IWVector2 v) {
 static __inline__ float IWVector2Distance(IWVector2 vStart, IWVector2 vEnd) {
     IWVector2 v = {vEnd.x - vStart.x, vEnd.y - vStart.y};
     return sqrt(v.x * v.x + v.y * v.y);
+}
+
+
+static __inline__ IWVector2 IWVector2Lerp(IWVector2 vectorStart, IWVector2 vectorEnd, float t)
+{
+    IWVector2 v = {
+        vectorStart.x + ((vectorEnd.x - vectorStart.x) * t),
+        vectorStart.y + ((vectorEnd.y - vectorStart.y) * t)
+    };
+    return v;
 }
 
 

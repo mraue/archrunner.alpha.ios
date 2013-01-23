@@ -21,18 +21,20 @@
 #include "IWCube.h"
 #include "IWColorTransition.h"
 #include "IWGVBManager.h"
+#include "IWFuel.h"
 
 #pragma mark - Game Logic Data
 
 IWPlayerData gdPlayerData;
 IWPlayerData gdPlayerDataSave;
 
+IWFuel gdFuel;
+
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
 
 #pragma mark - Debug / Testing
 
-unsigned int *gdCubeToBufferMap;
 unsigned int *gdBufferToCubeMap;
 unsigned int gdBufferToCubeMapNEntries;
 

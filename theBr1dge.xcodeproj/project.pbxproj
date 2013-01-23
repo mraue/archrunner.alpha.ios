@@ -37,6 +37,9 @@
 		646F594316A56BF100704F45 /* MasterShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594216A56BF100704F45 /* MasterShader.vsh */; };
 		646F594616A577DF00704F45 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594416A56C0200704F45 /* MasterShader.fsh */; };
 		64765C1716AE8873007E5C7A /* IWGVBManager.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C1616AE8873007E5C7A /* IWGVBManager.c */; };
+		64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C1916AEC758007E5C7A /* IWFuel.c */; };
+		64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */; };
+		64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */; };
 		64822E611695E9BF003C5415 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E601695E9BF003C5415 /* UIKit.framework */; };
 		64822E631695E9BF003C5415 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E621695E9BF003C5415 /* Foundation.framework */; };
 		64822E651695E9BF003C5415 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E641695E9BF003C5415 /* CoreGraphics.framework */; };
@@ -45,7 +48,6 @@
 		64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EA8169DB8A8003C5415 /* CoreLocation.framework */; };
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
 		648E756516A58872004DE1A4 /* IWUIHeadUpDisplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */; };
-		648E756816A6B251004DE1A4 /* IWUIRectangleButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 648E756716A6B251004DE1A4 /* IWUIRectangleButton.c */; };
 		648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */ = {isa = PBXBuildFile; fileRef = 648E756916A6B7E8004DE1A4 /* IWVector2.h */; };
 /* End PBXBuildFile section */
 
@@ -102,6 +104,13 @@
 		646F594416A56C0200704F45 /* MasterShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64765C1416AE8868007E5C7A /* IWGVBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGVBManager.h; sourceTree = "<group>"; };
 		64765C1616AE8873007E5C7A /* IWGVBManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGVBManager.c; sourceTree = "<group>"; };
+		64765C1816AEC74B007E5C7A /* IWFuel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWFuel.h; sourceTree = "<group>"; };
+		64765C1916AEC758007E5C7A /* IWFuel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWFuel.c; sourceTree = "<group>"; };
+		64765C1E16AFD7E7007E5C7A /* IWUserInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUserInterface.h; path = IWUserInterface/IWUserInterface.h; sourceTree = "<group>"; };
+		64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIRectangleButton.c; path = IWUserInterface/IWUIRectangleButton.c; sourceTree = "<group>"; };
+		64765C2516AFD8E9007E5C7A /* IWUIRectangleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIRectangleButton.h; path = IWUserInterface/IWUIRectangleButton.h; sourceTree = "<group>"; };
+		64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIStateBar.c; path = IWUserInterface/IWUIStateBar.c; sourceTree = "<group>"; };
+		64765C2716AFD8E9007E5C7A /* IWUIStateBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIStateBar.h; path = IWUserInterface/IWUIStateBar.h; sourceTree = "<group>"; };
 		64822E5C1695E9BF003C5415 /* theBr1dge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = theBr1dge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64822E601695E9BF003C5415 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		64822E621695E9BF003C5415 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -112,8 +121,6 @@
 		64822EAA169DB901003C5415 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		648E756316A58865004DE1A4 /* IWUIHeadUpDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWUIHeadUpDisplay.h; sourceTree = "<group>"; };
 		648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWUIHeadUpDisplay.c; sourceTree = "<group>"; };
-		648E756616A6B242004DE1A4 /* IWUIRectangleButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWUIRectangleButton.h; sourceTree = "<group>"; };
-		648E756716A6B251004DE1A4 /* IWUIRectangleButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWUIRectangleButton.c; sourceTree = "<group>"; };
 		648E756916A6B7E8004DE1A4 /* IWVector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector2.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		648E756B16A7F5B1004DE1A4 /* IWGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGeometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -157,8 +164,13 @@
 		641E0D8316AAF8E00077785D /* IWUserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				64765C1E16AFD7E7007E5C7A /* IWUserInterface.h */,
 				641E0D8416AAF9170077785D /* IWUIElement.h */,
 				641E0D8116AAF8D80077785D /* IWUIElement.c */,
+				64765C2516AFD8E9007E5C7A /* IWUIRectangleButton.h */,
+				64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */,
+				64765C2716AFD8E9007E5C7A /* IWUIStateBar.h */,
+				64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */,
 			);
 			name = IWUserInterface;
 			sourceTree = "<group>";
@@ -204,6 +216,8 @@
 				646F590416A555B000704F45 /* IWPlayer.c */,
 				646F590116A555B000704F45 /* ge_cubes.h */,
 				646F590016A555B000704F45 /* ge_cube.c */,
+				64765C1816AEC74B007E5C7A /* IWFuel.h */,
+				64765C1916AEC758007E5C7A /* IWFuel.c */,
 			);
 			path = IWGame;
 			sourceTree = "<group>";
@@ -219,8 +233,6 @@
 				646F590916A555B000704F45 /* IWGLighting.c */,
 				648E756316A58865004DE1A4 /* IWUIHeadUpDisplay.h */,
 				648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */,
-				648E756616A6B242004DE1A4 /* IWUIRectangleButton.h */,
-				648E756716A6B251004DE1A4 /* IWUIRectangleButton.c */,
 				641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */,
 				641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */,
 				64765C1416AE8868007E5C7A /* IWGVBManager.h */,
@@ -387,7 +399,6 @@
 				646F592C16A555B000704F45 /* IWGLighting.c in Sources */,
 				646F593316A555B000704F45 /* main.m in Sources */,
 				648E756516A58872004DE1A4 /* IWUIHeadUpDisplay.c in Sources */,
-				648E756816A6B251004DE1A4 /* IWUIRectangleButton.c in Sources */,
 				641E0D6B16A7FE0A0077785D /* IWGeometry.c in Sources */,
 				641E0D7416A8313F0077785D /* IWFileTools.c in Sources */,
 				641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */,
@@ -398,6 +409,9 @@
 				641E0D8916AD69720077785D /* IWCube.c in Sources */,
 				641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */,
 				64765C1716AE8873007E5C7A /* IWGVBManager.c in Sources */,
+				64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */,
+				64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */,
+				64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

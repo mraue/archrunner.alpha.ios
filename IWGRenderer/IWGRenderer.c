@@ -18,6 +18,8 @@
 #include "IWFileTools.h"
 #include "IWUIElement.h"
 #include "IWCube.h"
+#include "IWFuel.h"
+#include "IWUIStateBar.h"
 
 #include "IWGLighting.h"
 
@@ -65,7 +67,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     printf("Allocating %d position with total size %d\n", n * 72, (int)mypos_size);
     GLfloat *mypos = malloc(mypos_size);
     
-    gdCubeToBufferMap = malloc(n * sizeof(unsigned int));
     gdBufferToCubeMap = malloc(n * sizeof(unsigned int));
     gdBufferToCubeMapNEntries = n;
     
@@ -76,20 +77,20 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     GLfloat *memPtr = mypos;
     for (int nc=0; nc < n; nc++) {
-        gdCubeData[nc].triangleBufferData.bufferStart = mypos;
-        gdCubeData[nc].triangleBufferData.start = memPtr;
+        gdCubeData[nc].triangleBufferData.bufferStartCPU = mypos;
+        gdCubeData[nc].triangleBufferData.startCPU = memPtr;
+        gdCubeData[nc].triangleBufferData.bufferIDGPU = nc;
+        gdCubeData[nc].triangleBufferData.positionOffset = 0;
+        gdCubeData[nc].triangleBufferData.colorOffset = 3;
+        gdCubeData[nc].triangleBufferData.normalOffset = 7;
+        gdCubeData[nc].triangleBufferData.stride = 10;
         gdCubeData[nc].halfLengthX = d / 2.;
         gdCubeData[nc].collisionRadius = d * 1.1;
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
-        if (nc > 1) {
-            gdCubeData[nc].triangleBufferData.previous = &gdCubeData[nc - 1].triangleBufferData;
-            gdCubeData[nc - 1].triangleBufferData.next = &gdCubeData[nc].triangleBufferData;
-        }
-        gdCubeToBufferMap[nc] = nc;
         gdBufferToCubeMap[nc] = nc;
     }
-    gdN_VERT = (memPtr - mypos) / 10;
+    gdN_VERT = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
     printf("nVertMax = %d\n", gdN_VERT);
     
     // Basic lighting program
@@ -186,6 +187,18 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
 
+    gdFuel = IWFuelMakeDefaultStart();
+    
+    float _states[] = {0.25, 0.5, 1.0};
+    IWVector4 _colors[] = {
+        {1.0, 1.0, 1.0, 1.0},
+        {1.0, 1.0, 1.0, 0.8},
+        {1.0, 1.0, 1.0, 0.6}
+    };
+    //IWRectangle stateBarRectangle = {{0.2, 0.95}, {0.8, 0.98}};
+    IWRectangle stateBarRectangle = {{0.01, 0.2}, {0.04, 0.8}};
+    IWUIStateBar stateBar = IWUIStateBarMake(3, _states, _colors, stateBarRectangle,
+                                             IWUI_ORIENTATION_VERTICAL, IWUI_DIRECTION_TO_RIGHT);
 //    IWColorTransition colorTransition = {
 //        {0.6, 0.6, 0.6, 0.4},
 //        {0.8, 0.8, 0.8, 0.8},//{255.0 / 255.0, 236. / 255., 147. / 255, 0.5},
@@ -193,9 +206,13 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
 //        0.5, 0.0, false, true
 //    };
 //    gdRectangleButton.colorTransition = colorTransition;
-    gdUINTriangleVertices = (IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
+    
+    
+    
+    gdUINTriangleVertices = ((IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)
-                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton3)) / 7;
+                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton3)) / 7
+                             + 18 + 3*6);
     
     size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
@@ -203,6 +220,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
     offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
     offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton3, mypos2 + offset);
+    gdFuel.uiElementData.triangleBufferStart = mypos2 + offset;
+    gdFuel.uiElementData.triangleBufferSize = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
+    offset += gdFuel.uiElementData.triangleBufferSize;
+    stateBar.uiElementData.triangleBufferStart = mypos2 + offset;
+    stateBar.uiElementData.triangleBufferSize = IWUIStateBarToTriangles(&stateBar);
+    offset += stateBar.uiElementData.triangleBufferSize;
 
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
@@ -309,6 +332,7 @@ void IWGRendererRender(void)
     
     // Draw array 2
     
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ONE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -336,6 +360,8 @@ void IWGRendererRender(void)
     
     glBindVertexArrayOES(0);
     glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    
     return;
 }
 

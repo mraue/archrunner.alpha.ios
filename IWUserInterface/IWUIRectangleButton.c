@@ -10,8 +10,8 @@
 
 #include "IWUIRectangleButton.h"
 
-#define IWUIRECTANGLEBUTTON_TRIANGLE_Z -.999
-#define IWUIRECTANGLEBUTTON_LINE_Z -.9999
+#define IWUIRECTANGLEBUTTON_TRIANGLE_Z -0.999
+#define IWUIRECTANGLEBUTTON_LINE_Z -0.9999
 
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
                                             enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,

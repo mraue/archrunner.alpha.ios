@@ -17,16 +17,32 @@
 #include "IWMath.h"
 #include "IWGeometry.h"
 
+enum _IWUI_ORIENTATION {
+    IWUI_ORIENTATION_HORIZONTAL,
+    IWUI_ORIENTATION_VERTICAL
+};
+typedef enum _IWUI_ORIENTATION IWUI_ORIENTATION;
+
+enum _IWUI_DIRECTION {
+    IWUI_DIRECTION_TO_LEFT,
+    IWUI_DIRECTION_TO_RIGHT,
+    IWUI_DIRECTION_TO_UP,
+    IWUI_DIRECTION_TO_DOWN
+};
+typedef enum _IWUI_ORIENTATION IWUI_DIRECTION;
+
 struct _IWUIElement {
     IWRectangle rectangle;// [0.0 - 1.0]
     size_t nTriangleVertices;
     GLfloat *triangleBufferStart;
-    size_t triangleBufferSize;// [CGFloat]
+    size_t triangleBufferSize;// [GLFloat]
     size_t nLineVertices;
     GLfloat *lineBufferStart;
-    size_t lineBufferSize;// [CGFloat]
+    size_t lineBufferSize;// [GLFloat]
 };
 typedef struct _IWUIElement IWUIElement;
+
+IWUIElement IWUIElementMakeEmpty();
 
 IWUIElement IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
                                   float aspectRatio, unsigned int nDivisions, GLfloat* bufferPointer);

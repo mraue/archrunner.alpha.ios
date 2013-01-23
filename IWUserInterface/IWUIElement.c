@@ -10,6 +10,15 @@
 
 #include <math.h>
 
+IWUIElement IWUIElementMakeEmpty()
+{
+    IWUIElement uiElement = {
+        {{0.0, 0.0}, {1.0, 1.0}},
+        0, NULL, 0, 0, NULL, 0
+    };
+    return uiElement;
+}
+
 IWUIElement IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
                                   float aspectRatio, unsigned int nDivisions, GLfloat *bufferPointer)
 {
