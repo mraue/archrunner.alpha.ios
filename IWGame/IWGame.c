@@ -84,12 +84,12 @@ void IWGameUpdate(float timeSinceLastUpdate)
     glBindVertexArrayOES(gdUITriangleVertexArray);
     
     // Fuel vertex update
-    IWFuelToTriangleBuffer(&gdFuel, gdFuel.uiElementData.triangleBufferStart);
+    IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.uiElementData.triangleBufferStart);
 
     glBindBuffer(GL_ARRAY_BUFFER, gdUITriangleVertexBuffer);
     glBufferSubData(GL_ARRAY_BUFFER,
-                    (gdFuel.uiElementData.triangleBufferStart - gdRectangleButton.triangleBufferStart)  * sizeof(GLfloat),
-                    gdFuel.uiElementData.triangleBufferSize * sizeof(GLfloat), gdFuel.uiElementData.triangleBufferStart);
+                    (gdFuel.stateBar.uiElementData.triangleBufferStart - gdRectangleButton.triangleBufferStart)  * sizeof(GLfloat),
+                    gdFuel.stateBar.uiElementData.triangleBufferSize * sizeof(GLfloat), gdFuel.stateBar.uiElementData.triangleBufferStart);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {

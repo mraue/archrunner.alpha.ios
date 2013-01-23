@@ -13,13 +13,12 @@
 
 #include <GLKit/GLKMath.h>
 
-#include "IWUIRectangleButton.h"
+#include "IWUserInterface.h"
+
 #include "IWColorTransition.h"
 #include "IWFileTools.h"
-#include "IWUIElement.h"
 #include "IWCube.h"
 #include "IWFuel.h"
-#include "IWUIStateBar.h"
 
 #include "IWGLighting.h"
 
@@ -191,9 +190,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     float _states[] = {0.25, 0.5, 1.0};
     IWVector4 _colors[] = {
-        {1.0, 1.0, 1.0, 1.0},
-        {1.0, 1.0, 1.0, 0.8},
-        {1.0, 1.0, 1.0, 0.6}
+        IWUI_COLOR_LIGHT_BLUE(0.6),
+        IWUI_COLOR_DARK_BLUE(0.6),
+        IWUI_COLOR_DARK_BLUE(0.4)
     };
     //IWRectangle stateBarRectangle = {{0.2, 0.95}, {0.8, 0.98}};
     IWRectangle stateBarRectangle = {{0.01, 0.2}, {0.04, 0.8}};
@@ -220,9 +219,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
     offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
     offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton3, mypos2 + offset);
-    gdFuel.uiElementData.triangleBufferStart = mypos2 + offset;
-    gdFuel.uiElementData.triangleBufferSize = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
-    offset += gdFuel.uiElementData.triangleBufferSize;
+    gdFuel.stateBar.uiElementData.triangleBufferStart = mypos2 + offset;
+    gdFuel.stateBar.uiElementData.triangleBufferSize = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
+    offset += gdFuel.stateBar.uiElementData.triangleBufferSize;
     stateBar.uiElementData.triangleBufferStart = mypos2 + offset;
     stateBar.uiElementData.triangleBufferSize = IWUIStateBarToTriangles(&stateBar);
     offset += stateBar.uiElementData.triangleBufferSize;
@@ -256,11 +255,11 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, mypos2 + offset);
     offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton3, mypos2 + offset);
     
-    IWUIElement uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.03,//0.05,//0.3,//0.03,
+    IWUIElementData uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.03,//0.05,//0.3,//0.03,
                                                         IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 31, mypos2 + offset);
     offset += uiCentralCircle.lineBufferSize;
     
-    IWUIElement uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
+    IWUIElementData uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
                                                         IWVector4Make(1.0, 1.0, 1.0, 0.4), aspect, 11, mypos2 + offset);
     offset += uiCentralCircle2.lineBufferSize;
     

@@ -10,19 +10,19 @@
 
 #include <math.h>
 
-IWUIElement IWUIElementMakeEmpty()
+IWUIElementData IWUIElementMakeEmpty()
 {
-    IWUIElement uiElement = {
+    IWUIElementData uiElement = {
         {{0.0, 0.0}, {1.0, 1.0}},
         0, NULL, 0, 0, NULL, 0
     };
     return uiElement;
 }
 
-IWUIElement IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
-                                  float aspectRatio, unsigned int nDivisions, GLfloat *bufferPointer)
+IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
+                                      float aspectRatio, unsigned int nDivisions, GLfloat *bufferPointer)
 {
-    IWUIElement circle = {
+    IWUIElementData circle = {
         {{centerPoint.x - radiusX, centerPoint.y - radiusX * aspectRatio},
         {centerPoint.x + radiusX, centerPoint.y + radiusX * aspectRatio}},
         0, NULL, 0, 0, bufferPointer, 0

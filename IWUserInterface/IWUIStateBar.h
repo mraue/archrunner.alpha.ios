@@ -21,7 +21,7 @@ struct _IWUIStateBar {
     IWRectangle rectangle;
     IWUI_ORIENTATION orientation;
     IWUI_DIRECTION direction;
-    IWUIElement uiElementData;
+    IWUIElementData uiElementData;
 };
 typedef struct _IWUIStateBar IWUIStateBar;
 

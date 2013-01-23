@@ -16,17 +16,21 @@
 
 #include "IWMath.h"
 #include "IWGeometry.h"
-#include "IWUIElement.h"
+
+#include "IWUserInterface.h"
+
+enum _IWFUEL_COLOR {
+    IWFUEL_COLOR_CURRENT,
+    IWFUEL_COLOR_CURRENTMAX,
+    IWFUEL_COLOR_MAX
+};
+typedef enum _IWFUEL_COLOR IWFUEL_COLOR;
 
 struct _IWFuel {
     float currentLevel;
     float currentMaxLevel;
     float maxLevel;
-    IWVector4 currentColor;
-    IWVector4 currentMaxColor;
-    IWVector4 maxColor;
-    IWRectangle rectangle;
-    IWUIElement uiElementData;
+    IWUIStateBar stateBar;
 };
 
 typedef struct _IWFuel IWFuel;
@@ -38,12 +42,14 @@ IWFuel IWFuelMake(float currentLevel,
                   IWVector4 currentMaxColor,
                   IWVector4 maxColor,
                   IWRectangle rectangle,
-                  IWUIElement uiElement);
+                  IWUIElementData uiElement);
 IWFuel IWFuelMakeDefaultStart();
 
 bool IWFuelAddFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelRemoveFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelExtendMaxLevel(IWFuel *fuel, float extraMaxLevel);
+
+bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor,bool updateBuffer);
 
 size_t IWFuelToTriangleBuffer(IWFuel *fuel, GLfloat* p);
 size_t IWFuelToLineBuffer(IWFuel *fuel, GLfloat* p);

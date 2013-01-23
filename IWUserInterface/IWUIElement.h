@@ -31,7 +31,7 @@ enum _IWUI_DIRECTION {
 };
 typedef enum _IWUI_ORIENTATION IWUI_DIRECTION;
 
-struct _IWUIElement {
+struct _IWUIElementData {
     IWRectangle rectangle;// [0.0 - 1.0]
     size_t nTriangleVertices;
     GLfloat *triangleBufferStart;
@@ -40,12 +40,12 @@ struct _IWUIElement {
     GLfloat *lineBufferStart;
     size_t lineBufferSize;// [GLFloat]
 };
-typedef struct _IWUIElement IWUIElement;
+typedef struct _IWUIElementData IWUIElementData;
 
-IWUIElement IWUIElementMakeEmpty();
+IWUIElementData IWUIElementMakeEmpty();
 
-IWUIElement IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
-                                  float aspectRatio, unsigned int nDivisions, GLfloat* bufferPointer);
+IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
+                                      float aspectRatio, unsigned int nDivisions, GLfloat* bufferPointer);
 
 
 #endif
