@@ -40,6 +40,8 @@
 		64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C1916AEC758007E5C7A /* IWFuel.c */; };
 		64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */; };
 		64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */; };
+		64765C2D16B28491007E5C7A /* IWGBufferSubData.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2C16B28491007E5C7A /* IWGBufferSubData.c */; };
+		64765C3016B29D9D007E5C7A /* IWGDoubleBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2F16B29D9C007E5C7A /* IWGDoubleBuffer.c */; };
 		64822E611695E9BF003C5415 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E601695E9BF003C5415 /* UIKit.framework */; };
 		64822E631695E9BF003C5415 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E621695E9BF003C5415 /* Foundation.framework */; };
 		64822E651695E9BF003C5415 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E641695E9BF003C5415 /* CoreGraphics.framework */; };
@@ -47,7 +49,6 @@
 		64822E691695E9BF003C5415 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E681695E9BF003C5415 /* OpenGLES.framework */; };
 		64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EA8169DB8A8003C5415 /* CoreLocation.framework */; };
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
-		648E756516A58872004DE1A4 /* IWUIHeadUpDisplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */; };
 		648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */ = {isa = PBXBuildFile; fileRef = 648E756916A6B7E8004DE1A4 /* IWVector2.h */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +112,10 @@
 		64765C2516AFD8E9007E5C7A /* IWUIRectangleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIRectangleButton.h; path = IWUserInterface/IWUIRectangleButton.h; sourceTree = "<group>"; };
 		64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIStateBar.c; path = IWUserInterface/IWUIStateBar.c; sourceTree = "<group>"; };
 		64765C2716AFD8E9007E5C7A /* IWUIStateBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIStateBar.h; path = IWUserInterface/IWUIStateBar.h; sourceTree = "<group>"; };
+		64765C2B16B28488007E5C7A /* IWGBufferSubData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGBufferSubData.h; sourceTree = "<group>"; };
+		64765C2C16B28491007E5C7A /* IWGBufferSubData.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGBufferSubData.c; sourceTree = "<group>"; };
+		64765C2E16B29D91007E5C7A /* IWGDoubleBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGDoubleBuffer.h; sourceTree = "<group>"; };
+		64765C2F16B29D9C007E5C7A /* IWGDoubleBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGDoubleBuffer.c; sourceTree = "<group>"; };
 		64822E5C1695E9BF003C5415 /* theBr1dge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = theBr1dge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64822E601695E9BF003C5415 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		64822E621695E9BF003C5415 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -119,8 +124,6 @@
 		64822E681695E9BF003C5415 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		64822EA8169DB8A8003C5415 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		64822EAA169DB901003C5415 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
-		648E756316A58865004DE1A4 /* IWUIHeadUpDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWUIHeadUpDisplay.h; sourceTree = "<group>"; };
-		648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWUIHeadUpDisplay.c; sourceTree = "<group>"; };
 		648E756916A6B7E8004DE1A4 /* IWVector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector2.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		648E756B16A7F5B1004DE1A4 /* IWGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGeometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -231,8 +234,10 @@
 				646F590716A555B000704F45 /* IWGShaderProgram.c */,
 				646F590A16A555B000704F45 /* IWGLighting.h */,
 				646F590916A555B000704F45 /* IWGLighting.c */,
-				648E756316A58865004DE1A4 /* IWUIHeadUpDisplay.h */,
-				648E756416A58872004DE1A4 /* IWUIHeadUpDisplay.c */,
+				64765C2E16B29D91007E5C7A /* IWGDoubleBuffer.h */,
+				64765C2F16B29D9C007E5C7A /* IWGDoubleBuffer.c */,
+				64765C2B16B28488007E5C7A /* IWGBufferSubData.h */,
+				64765C2C16B28491007E5C7A /* IWGBufferSubData.c */,
 				641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */,
 				641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */,
 				64765C1416AE8868007E5C7A /* IWGVBManager.h */,
@@ -398,7 +403,6 @@
 				646F592A16A555B000704F45 /* IWPlayer.c in Sources */,
 				646F592C16A555B000704F45 /* IWGLighting.c in Sources */,
 				646F593316A555B000704F45 /* main.m in Sources */,
-				648E756516A58872004DE1A4 /* IWUIHeadUpDisplay.c in Sources */,
 				641E0D6B16A7FE0A0077785D /* IWGeometry.c in Sources */,
 				641E0D7416A8313F0077785D /* IWFileTools.c in Sources */,
 				641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */,
@@ -412,6 +416,8 @@
 				64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */,
 				64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */,
 				64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */,
+				64765C2D16B28491007E5C7A /* IWGBufferSubData.c in Sources */,
+				64765C3016B29D9D007E5C7A /* IWGDoubleBuffer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

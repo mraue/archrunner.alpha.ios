@@ -22,6 +22,9 @@
 
 #include "IWGLighting.h"
 
+#include "IWGBufferSubData.h"
+//#include "IWGDoubleBuffer.h"
+
 #include "IWGameData.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -40,7 +43,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     };
     gdClearColorTransition = clearColorTransition;
     
-    gdN_VERT = 0;
+    gdB1TriangleNVertices = 0;
     
     //gePos mypos[55296];
     int nx, ny, nz;
@@ -89,8 +92,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         // Setup primitive data buffer chain
         gdBufferToCubeMap[nc] = nc;
     }
-    gdN_VERT = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
-    printf("nVertMax = %d\n", gdN_VERT);
+    gdB1TriangleNVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
+    gdB2TriangleNVertices = gdB1TriangleNVertices;
+    printf("nVertMax = %d\n", gdB1TriangleNVertices);
     
     // Basic lighting program
     shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
@@ -106,6 +110,11 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     glEnable(GL_DEPTH_TEST);
     
+    // Get attribute locations
+    GLuint positionSlot = glGetAttribLocation(programID, "Vertex");
+    GLuint normalSlot = glGetAttribLocation(programID, "Normal");
+    GLuint colorSlot = glGetAttribLocation(programID, "Color");
+    
     // Get uniform locations.
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
         = glGetUniformLocation(programID, "ModelMatrix");
@@ -119,22 +128,19 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     IWGLightingInitializeUniformLocations(programID);
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
-    // First cube
-    glGenVertexArraysOES(1, &gdVertexArray);
-    glBindVertexArrayOES(gdVertexArray);
+    gdTriangleDoubleBuffer = IWGDoubleBufferGen();
     
-    glGenBuffers(1, &gdVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, gdVertexBuffer);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(gCubeVertexData), gCubeVertexData, GL_STATIC_DRAW);
+    gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
     
-    //glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_STATIC_DRAW);
-    // DEBUG
-    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
-    // DEBUG END
-    
-    GLuint positionSlot = glGetAttribLocation(programID, "Vertex");
-    GLuint normalSlot = glGetAttribLocation(programID, "Normal");
-    GLuint colorSlot = glGetAttribLocation(programID, "Color");
+    // Setup and fill first buffer
+//    glGenVertexArraysOES(1, &gdB1TriangleVertexArray);
+//    glBindVertexArrayOES(gdB1TriangleVertexArray);
+//    
+//    glGenBuffers(1, &gdB1TriangleVertexBuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, gdB1TriangleVertexBuffer);
+    IWGDoubleBufferBind(&gdTriangleDoubleBuffer, 0);
+
+    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);    
     
     glEnableVertexAttribArray(positionSlot);
     glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
@@ -143,7 +149,33 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glEnableVertexAttribArray(normalSlot);
     glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
+
+//    glBindVertexArrayOES(0);
+//    
+//    // Setup and fill second buffer
+//    glGenVertexArraysOES(1, &gdB2TriangleVertexArray);
+//    glBindVertexArrayOES(gdB2TriangleVertexArray);
+//    
+//    glGenBuffers(1, &gdB2TriangleVertexBuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, gdB2TriangleVertexBuffer);
+    
+    IWGDoubleBufferBind(&gdTriangleDoubleBuffer, 1);
+    
+    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
+    
+    glEnableVertexAttribArray(positionSlot);
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(colorSlot);
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(normalSlot);
+    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+    //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
+    
     glBindVertexArrayOES(0);
+    
+    // Set first draw buffer
+    gdCurrentDrawBuffer = IWG_CURRENT_DRAW_BUFFER_1;
+    gdB2TriangleBufferSubData = gdB1TriangleBufferSubData = NULL;
     
     //
     // Head up display data
@@ -271,11 +303,13 @@ void IWGRendererRender(void)
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    // Draw array 1
-    glBindVertexArrayOES(gdVertexArray);
-    
-    //glUseProgram(_program);
-    //glUseProgram(_program);
+    // Draw cubes
+//    if (gdCurrentDrawBuffer == IWG_CURRENT_DRAW_BUFFER_1) {
+//        glBindVertexArrayOES(gdB1TriangleVertexArray);
+//    } else {
+//        glBindVertexArrayOES(gdB2TriangleVertexArray);
+//    }
+    IWGDoubleBufferBindCurrentBuffer(&gdTriangleDoubleBuffer);
     
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
                        1, 0, gdModelMatrix.m);
@@ -298,10 +332,13 @@ void IWGRendererRender(void)
     glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
                 gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
     
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT / 2);
-    glDrawArrays(GL_TRIANGLES, 0, gdN_VERT);
-    //glDrawArrays(GL_LINE_STRIP, 0, N_VERT / 2);
-    
+//    if (gdCurrentDrawBuffer == IWG_CURRENT_DRAW_BUFFER_1) {
+//        glDrawArrays(GL_TRIANGLES, 0, gdB1TriangleNVertices);
+//    } else {
+//        glDrawArrays(GL_TRIANGLES, 0, gdB2TriangleNVertices);
+//    }
+    glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer]);
+                 
     glBindVertexArrayOES(0);
     
     // Draw array 2

@@ -9,6 +9,8 @@
 #ifndef theBr1dge_IWGameData_h
 #define theBr1dge_IWGameData_h
 
+#include <stdbool.h>
+
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
@@ -22,6 +24,9 @@
 #include "IWColorTransition.h"
 #include "IWGVBManager.h"
 #include "IWFuel.h"
+#include "IWGDoubleBuffer.h"
+#include "IWGBufferSubData.h"
+
 
 #pragma mark - Game Logic Data
 
@@ -60,9 +65,26 @@ bool gdDropCamera;
 
 IWGVBManagerData gdBridgeCubesVBManager;
 
-GLuint gdN_VERT;
-GLuint gdVertexArray;
-GLuint gdVertexBuffer;
+enum _IWG_CURRENT_DRAW_BUFFER {
+    IWG_CURRENT_DRAW_BUFFER_1,
+    IWG_CURRENT_DRAW_BUFFER_2
+};
+typedef enum _IWG_CURRENT_DRAW_BUFFER IWG_CURRENT_DRAW_BUFFER;
+
+IWG_CURRENT_DRAW_BUFFER gdCurrentDrawBuffer;
+
+IWGBufferSubData* gdB1TriangleBufferSubData;
+IWGBufferSubData* gdB2TriangleBufferSubData;
+
+IWGDoubleBufferData gdTriangleDoubleBuffer;
+
+GLuint gdB1TriangleNVertices;
+GLuint gdB1TriangleVertexArray;
+GLuint gdB1TriangleVertexBuffer;
+
+GLuint gdB2TriangleNVertices;
+GLuint gdB2TriangleVertexArray;
+GLuint gdB2TriangleVertexBuffer;
 
 GLuint gdUITriangleVertexArray;
 GLuint gdUITriangleVertexBuffer;

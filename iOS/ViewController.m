@@ -10,7 +10,6 @@
 #import "IWController.h"
 #import "IWPlayer.h"
 #import "IWGLighting.h"
-#import "IWUIHeadUpDisplay.h"
 #import "IWUIRectangleButton.h"
 #import "IWGeometry.h"
 
