@@ -13,9 +13,11 @@
 IWFuel IWFuelMake(float currentLevel,
                   float currentMaxLevel,
                   float maxLevel,
+                  float warningLevel,
                   IWVector4 currentColor,
                   IWVector4 currentMaxColor,
                   IWVector4 maxColor,
+                  IWVector4 warningColor,
                   IWRectangle rectangle,
                   IWUIElementData uiElement)
 {
@@ -23,21 +25,21 @@ IWFuel IWFuelMake(float currentLevel,
     IWVector4 colors[] = { currentColor, currentMaxColor, maxColor};
     
     IWFuel fuel = {
-        currentLevel, currentMaxLevel, maxLevel,
+        currentLevel, currentMaxLevel, maxLevel, warningLevel, false,
+        currentColor, currentMaxColor, maxColor, warningColor,
         IWUIStateBarMake(3, states, colors, rectangle,
-                         IWUI_ORIENTATION_VERTICAL, IWUI_DIRECTION_TO_UP)
+                         IWUI_ORIENTATION_HORIZONTAL, IWUI_DIRECTION_TO_UP)
     };
     
     return fuel;
 }
 IWFuel IWFuelMakeDefaultStart()
 {
-    IWVector4 currentColor = IWUI_COLOR_LIGHT_BLUE(0.6);
-    IWVector4 currentMaxColor = IWUI_COLOR_BLUE(0.4);
-    IWVector4 maxColor = IWUI_COLOR_DARK_BLUE(0.4);
-    IWRectangle rectangle = {{0.97, 0.25}, {0.99, 0.75}};
-    IWFuel fuel = IWFuelMake(0.6, 0.6, 1.0,
-                             currentColor, currentMaxColor, maxColor,
+    //IWRectangle rectangle = {{0.97, 0.25}, {0.99, 0.75}};
+    IWRectangle rectangle = {{0.01, 0.96}, {0.5, 0.99}};
+    IWFuel fuel = IWFuelMake(0.6, 0.6, 1.0, 0.33,
+                             IWUI_COLOR_LIGHT_BLUE(0.6), IWUI_COLOR_BLUE(0.4), IWUI_COLOR_DARK_BLUE(0.4),
+                             IWVector4Make(255.0 / 255.0, 139.0 / 255.0, 139.0 / 255.0, 0.6),
                              rectangle,
                              IWUIElementMakeEmpty());
     return fuel;
@@ -94,7 +96,25 @@ bool IWFuelExtendMaxLevel(IWFuel *fuel, float extraMaxLevel)
     }
 }
 
-bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor,bool updateBuffer);
+bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor, bool updateTriangle)
+{
+    switch (fuelColor) {
+        case IWFUEL_COLOR_CURRENT:
+            fuel->stateBar.colors[0] = newColor;
+            break;
+        case IWFUEL_COLOR_CURRENTMAX:
+            fuel->stateBar.colors[1] = newColor;
+            break;
+        case IWFUEL_COLOR_MAX:
+            fuel->stateBar.colors[2] = newColor;
+            break;
+    }
+
+    if (updateTriangle)
+        IWUIStateBarToTriangles(&fuel->stateBar);
+
+    return true;
+}
 
 size_t IWFuelToTriangleBuffer(IWFuel *fuel, GLfloat *p)
 {

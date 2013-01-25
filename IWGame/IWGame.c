@@ -21,7 +21,7 @@
 
 void IWGameSetup(void)
 {
-    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.6, 1.0, 1.6),
+    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
                                     IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0)),
                                     IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
     return;
@@ -75,10 +75,18 @@ void IWGameUpdate(float timeSinceLastUpdate)
     }
     
     if (gdFuel.currentLevel == 0.0) {
-        gdPlayerData.position = IWVector3Make(1.6, 1.0, 1.6);
+        gdPlayerData.position = IWVector3Make(1.4, 0.8, 1.4);
         gdPlayerData.direction = IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0));
         gdPlayerData.up = IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0));
         gdFuel.currentLevel = gdFuel.currentMaxLevel;
+    } else if (gdFuel.currentLevel / gdFuel.currentMaxLevel < 0.333) {
+        if (!gdFuel.isWarning) {
+            IWFuelUpdateColor(&gdFuel, gdFuel.warningColor, IWFUEL_COLOR_CURRENT, false);
+            gdFuel.isWarning = true;
+        }
+    } else {
+        IWFuelUpdateColor(&gdFuel, gdFuel.currentColor, IWFUEL_COLOR_CURRENT, false);
+        gdFuel.isWarning = false;
     }
     
     glBindVertexArrayOES(gdUITriangleVertexArray);

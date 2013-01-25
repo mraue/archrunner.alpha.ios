@@ -162,56 +162,34 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     IWVector4 rectangleButtonColorTouched = {255.0 / 255.0, 236.0 / 255.0, 147.0 / 255.0, 0.6};
     IWVector4 rectangleButtonColorTouched2 = {0.8, 0.8, 0.8, 0.6};
     IWVector4 rectangleButtonColorTouched3 = {218.0 / 255.0, 255.0 / 255.0, 233.0 / 255.0, 0.6};
-    IWVector4 rectangleButtonColorUntouched = {0.6, 0.6, 0.6, 0.25};
-    IWVector4 rectangleButtonLineColor = {0.8, 0.8, 0.8, 0.5};
     gdRectangleButton = IWUIRectangleButtonMake(0.63, -0.001,
                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                0.18, 0.18,
-                                                rectangleButtonColorTouched, rectangleButtonColorUntouched,
-                                                rectangleButtonLineColor,
+                                                0.18, 0.19,
+                                                rectangleButtonColorTouched, IWUI_COLOR_LIGHT_BLUE(0.25),
+                                                IWUI_COLOR_LIGHT_BLUE(0.5),
                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                 0.035, aspect);
     gdRectangleButton2 = IWUIRectangleButtonMake(0.82, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                 0.18, 0.18,
-                                                 rectangleButtonColorTouched2, rectangleButtonColorUntouched,
-                                                 rectangleButtonLineColor,
+                                                 0.18, 0.19,
+                                                 rectangleButtonColorTouched2, IWUI_COLOR_LIGHT_BLUE(0.25),
+                                                 IWUI_COLOR_LIGHT_BLUE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
     gdRectangleButton3 = IWUIRectangleButtonMake(0.44, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-                                                 0.18, 0.18,
-                                                 rectangleButtonColorTouched3, rectangleButtonColorUntouched,
-                                                 rectangleButtonLineColor,
+                                                 0.18, 0.19,
+                                                 rectangleButtonColorTouched3, IWUI_COLOR_LIGHT_BLUE(0.2),
+                                                 IWUI_COLOR_LIGHT_BLUE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
 
     gdFuel = IWFuelMakeDefaultStart();
     
-    float _states[] = {0.25, 0.5, 1.0};
-    IWVector4 _colors[] = {
-        IWUI_COLOR_LIGHT_BLUE(0.6),
-        IWUI_COLOR_DARK_BLUE(0.6),
-        IWUI_COLOR_DARK_BLUE(0.4)
-    };
-    //IWRectangle stateBarRectangle = {{0.2, 0.95}, {0.8, 0.98}};
-    IWRectangle stateBarRectangle = {{0.01, 0.2}, {0.04, 0.8}};
-    IWUIStateBar stateBar = IWUIStateBarMake(3, _states, _colors, stateBarRectangle,
-                                             IWUI_ORIENTATION_VERTICAL, IWUI_DIRECTION_TO_RIGHT);
-//    IWColorTransition colorTransition = {
-//        {0.6, 0.6, 0.6, 0.4},
-//        {0.8, 0.8, 0.8, 0.8},//{255.0 / 255.0, 236. / 255., 147. / 255, 0.5},
-//        {0.6, 0.6, 0.6, 0.4},
-//        0.5, 0.0, false, true
-//    };
-//    gdRectangleButton.colorTransition = colorTransition;
-    
-    
-    
     gdUINTriangleVertices = ((IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)
                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton3)) / 7
-                             + 18 + 3*6);
+                             + 18);
     
     size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
     GLfloat *mypos2 = malloc(mypos_size2);
@@ -222,9 +200,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdFuel.stateBar.uiElementData.triangleBufferStart = mypos2 + offset;
     gdFuel.stateBar.uiElementData.triangleBufferSize = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
     offset += gdFuel.stateBar.uiElementData.triangleBufferSize;
-    stateBar.uiElementData.triangleBufferStart = mypos2 + offset;
-    stateBar.uiElementData.triangleBufferSize = IWUIStateBarToTriangles(&stateBar);
-    offset += stateBar.uiElementData.triangleBufferSize;
 
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);

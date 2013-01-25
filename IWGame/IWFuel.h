@@ -30,6 +30,12 @@ struct _IWFuel {
     float currentLevel;
     float currentMaxLevel;
     float maxLevel;
+    float warningLevel;
+    bool isWarning;
+    IWVector4 currentColor;
+    IWVector4 currentMaxColor;
+    IWVector4 maxColor;
+    IWVector4 warningColor;
     IWUIStateBar stateBar;
 };
 
@@ -38,9 +44,11 @@ typedef struct _IWFuel IWFuel;
 IWFuel IWFuelMake(float currentLevel,
                   float currentMaxLevel,
                   float maxLevel,
+                  float warningLevel,
                   IWVector4 currentColor,
                   IWVector4 currentMaxColor,
                   IWVector4 maxColor,
+                  IWVector4 warningColor,
                   IWRectangle rectangle,
                   IWUIElementData uiElement);
 IWFuel IWFuelMakeDefaultStart();
@@ -49,7 +57,7 @@ bool IWFuelAddFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelRemoveFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelExtendMaxLevel(IWFuel *fuel, float extraMaxLevel);
 
-bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor,bool updateBuffer);
+bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor,bool updateTriangles);
 
 size_t IWFuelToTriangleBuffer(IWFuel *fuel, GLfloat* p);
 size_t IWFuelToLineBuffer(IWFuel *fuel, GLfloat* p);
