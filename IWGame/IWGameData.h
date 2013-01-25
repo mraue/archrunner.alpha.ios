@@ -22,7 +22,6 @@
 #include "IWUIRectangleButton.h"
 #include "IWCube.h"
 #include "IWColorTransition.h"
-#include "IWGVBManager.h"
 #include "IWFuel.h"
 #include "IWGDoubleBuffer.h"
 #include "IWGBufferSubData.h"
@@ -63,28 +62,10 @@ bool gdDropCamera;
 
 #pragma mark - Open GL Buffer
 
-IWGVBManagerData gdBridgeCubesVBManager;
-
-//enum _IWG_CURRENT_DRAW_BUFFER {
-//    IWG_CURRENT_DRAW_BUFFER_1,
-//    IWG_CURRENT_DRAW_BUFFER_2
-//};
-//typedef enum _IWG_CURRENT_DRAW_BUFFER IWG_CURRENT_DRAW_BUFFER;
-//
-//IWG_CURRENT_DRAW_BUFFER gdCurrentDrawBuffer;
-//
-//IWGBufferSubData* gdB1TriangleBufferSubData;
-//IWGBufferSubData* gdB2TriangleBufferSubData;
-
 IWGDoubleBufferData gdTriangleDoubleBuffer;
 
 GLuint gdB1TriangleNVertices;
-//GLuint gdB1TriangleVertexArray;
-//GLuint gdB1TriangleVertexBuffer;
-
 GLuint gdB2TriangleNVertices;
-//GLuint gdB2TriangleVertexArray;
-//GLuint gdB2TriangleVertexBuffer;
 
 IWGDoubleBufferData gdUITriangleDoubleBuffer;
 

@@ -36,7 +36,6 @@
 		646F593C16A5573800704F45 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F592116A555B000704F45 /* Shader.vsh */; };
 		646F594316A56BF100704F45 /* MasterShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594216A56BF100704F45 /* MasterShader.vsh */; };
 		646F594616A577DF00704F45 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594416A56C0200704F45 /* MasterShader.fsh */; };
-		64765C1716AE8873007E5C7A /* IWGVBManager.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C1616AE8873007E5C7A /* IWGVBManager.c */; };
 		64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C1916AEC758007E5C7A /* IWFuel.c */; };
 		64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */; };
 		64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */; };
@@ -103,8 +102,6 @@
 		646F592116A555B000704F45 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
 		646F594216A56BF100704F45 /* MasterShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		646F594416A56C0200704F45 /* MasterShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
-		64765C1416AE8868007E5C7A /* IWGVBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGVBManager.h; sourceTree = "<group>"; };
-		64765C1616AE8873007E5C7A /* IWGVBManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGVBManager.c; sourceTree = "<group>"; };
 		64765C1816AEC74B007E5C7A /* IWFuel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWFuel.h; sourceTree = "<group>"; };
 		64765C1916AEC758007E5C7A /* IWFuel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWFuel.c; sourceTree = "<group>"; };
 		64765C1E16AFD7E7007E5C7A /* IWUserInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUserInterface.h; path = IWUserInterface/IWUserInterface.h; sourceTree = "<group>"; };
@@ -240,8 +237,6 @@
 				64765C2C16B28491007E5C7A /* IWGBufferSubData.c */,
 				641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */,
 				641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */,
-				64765C1416AE8868007E5C7A /* IWGVBManager.h */,
-				64765C1616AE8873007E5C7A /* IWGVBManager.c */,
 			);
 			path = IWGRenderer;
 			sourceTree = "<group>";
@@ -412,7 +407,6 @@
 				641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */,
 				641E0D8916AD69720077785D /* IWCube.c in Sources */,
 				641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */,
-				64765C1716AE8873007E5C7A /* IWGVBManager.c in Sources */,
 				64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */,
 				64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */,
 				64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */,
