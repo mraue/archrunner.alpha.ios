@@ -132,56 +132,28 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
     
-    // Setup and fill first buffer
-//    glGenVertexArraysOES(1, &gdB1TriangleVertexArray);
-//    glBindVertexArrayOES(gdB1TriangleVertexArray);
-//    
-//    glGenBuffers(1, &gdB1TriangleVertexBuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, gdB1TriangleVertexBuffer);
-    IWGDoubleBufferBind(&gdTriangleDoubleBuffer, 0);
+    // Fill buffers
+    for (unsigned int i = 0; i < IWGDOUBLEBUFFER_MAX; i++) {
+        IWGDoubleBufferBind(&gdTriangleDoubleBuffer, i);
 
-    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);    
-    
-    glEnableVertexAttribArray(positionSlot);
-    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(colorSlot);
-    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(normalSlot);
-    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
-    //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
+        glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
 
-//    glBindVertexArrayOES(0);
-//    
-//    // Setup and fill second buffer
-//    glGenVertexArraysOES(1, &gdB2TriangleVertexArray);
-//    glBindVertexArrayOES(gdB2TriangleVertexArray);
-//    
-//    glGenBuffers(1, &gdB2TriangleVertexBuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, gdB2TriangleVertexBuffer);
-    
-    IWGDoubleBufferBind(&gdTriangleDoubleBuffer, 1);
-    
-    glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
-    
-    glEnableVertexAttribArray(positionSlot);
-    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(colorSlot);
-    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(normalSlot);
-    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
-    //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
+        glEnableVertexAttribArray(positionSlot);
+        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(colorSlot);
+        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(normalSlot);
+        glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+        //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
+    }
     
     glBindVertexArrayOES(0);
-    
-    // Set first draw buffer
-    gdCurrentDrawBuffer = IWG_CURRENT_DRAW_BUFFER_1;
-    gdB2TriangleBufferSubData = gdB1TriangleBufferSubData = NULL;
     
     //
     // Head up display data
     //
-    glGenVertexArraysOES(1, &gdUITriangleVertexArray);
-    glBindVertexArrayOES(gdUITriangleVertexArray);
+    //glGenVertexArraysOES(1, &gdUITriangleVertexArray);
+    //glBindVertexArrayOES(gdUITriangleVertexArray);
     
     float aspect = fabsf(viewWidth / viewHeight);
     printf("aspect = %f\n", aspect);
@@ -236,14 +208,17 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
     
-    glGenBuffers(1, &gdUITriangleVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, gdUITriangleVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);    
-    
-    glEnableVertexAttribArray(positionSlot);
-    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(colorSlot);
-    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+    gdUITriangleDoubleBuffer = IWGDoubleBufferGen();
+
+    for (unsigned int i = 0; i < IWGDOUBLEBUFFER_MAX; i++) {
+        IWGDoubleBufferBind(&gdUITriangleDoubleBuffer, i);
+        glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
+        
+        glEnableVertexAttribArray(positionSlot);
+        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(colorSlot);
+        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+    }
     
     glBindVertexArrayOES(0);
     
@@ -304,11 +279,7 @@ void IWGRendererRender(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // Draw cubes
-//    if (gdCurrentDrawBuffer == IWG_CURRENT_DRAW_BUFFER_1) {
-//        glBindVertexArrayOES(gdB1TriangleVertexArray);
-//    } else {
-//        glBindVertexArrayOES(gdB2TriangleVertexArray);
-//    }
+
     IWGDoubleBufferBindCurrentBuffer(&gdTriangleDoubleBuffer);
     
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
@@ -332,11 +303,6 @@ void IWGRendererRender(void)
     glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
                 gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
     
-//    if (gdCurrentDrawBuffer == IWG_CURRENT_DRAW_BUFFER_1) {
-//        glDrawArrays(GL_TRIANGLES, 0, gdB1TriangleNVertices);
-//    } else {
-//        glDrawArrays(GL_TRIANGLES, 0, gdB2TriangleNVertices);
-//    }
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer]);
                  
     glBindVertexArrayOES(0);
@@ -348,7 +314,9 @@ void IWGRendererRender(void)
     //glBlendFunc(GL_ONE, GL_ONE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glBindVertexArrayOES(gdUITriangleVertexArray);
+    //glBindVertexArrayOES(gdUITriangleVertexArray);
+    IWGDoubleBufferBindCurrentBuffer(&gdUITriangleDoubleBuffer);
+    
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
                 0);
     

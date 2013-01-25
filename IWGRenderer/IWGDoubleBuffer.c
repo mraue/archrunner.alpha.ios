@@ -40,7 +40,7 @@ void IWGDoubleBufferBindCurrentBuffer(IWGDoubleBufferData *doubleBufferData)
 void IWGDoubleBufferSwitchBuffer(IWGDoubleBufferData *doubleBufferData)
 {
     unsigned int previousBuffer = doubleBufferData->currentBuffer;
-    unsigned int currentBuffer = doubleBufferData->currentBuffer += previousBuffer % IWGDOUBLEBUFFER_MAX;
+    unsigned int currentBuffer = doubleBufferData->currentBuffer = (previousBuffer + 1) % IWGDOUBLEBUFFER_MAX;
     IWGDoubleBufferBindCurrentBuffer(doubleBufferData);
     IWGBufferSubData *subData = NULL;
     while ((subData = doubleBufferData->bufferSubData[currentBuffer])) {

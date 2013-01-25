@@ -65,26 +65,28 @@ bool gdDropCamera;
 
 IWGVBManagerData gdBridgeCubesVBManager;
 
-enum _IWG_CURRENT_DRAW_BUFFER {
-    IWG_CURRENT_DRAW_BUFFER_1,
-    IWG_CURRENT_DRAW_BUFFER_2
-};
-typedef enum _IWG_CURRENT_DRAW_BUFFER IWG_CURRENT_DRAW_BUFFER;
-
-IWG_CURRENT_DRAW_BUFFER gdCurrentDrawBuffer;
-
-IWGBufferSubData* gdB1TriangleBufferSubData;
-IWGBufferSubData* gdB2TriangleBufferSubData;
+//enum _IWG_CURRENT_DRAW_BUFFER {
+//    IWG_CURRENT_DRAW_BUFFER_1,
+//    IWG_CURRENT_DRAW_BUFFER_2
+//};
+//typedef enum _IWG_CURRENT_DRAW_BUFFER IWG_CURRENT_DRAW_BUFFER;
+//
+//IWG_CURRENT_DRAW_BUFFER gdCurrentDrawBuffer;
+//
+//IWGBufferSubData* gdB1TriangleBufferSubData;
+//IWGBufferSubData* gdB2TriangleBufferSubData;
 
 IWGDoubleBufferData gdTriangleDoubleBuffer;
 
 GLuint gdB1TriangleNVertices;
-GLuint gdB1TriangleVertexArray;
-GLuint gdB1TriangleVertexBuffer;
+//GLuint gdB1TriangleVertexArray;
+//GLuint gdB1TriangleVertexBuffer;
 
 GLuint gdB2TriangleNVertices;
-GLuint gdB2TriangleVertexArray;
-GLuint gdB2TriangleVertexBuffer;
+//GLuint gdB2TriangleVertexArray;
+//GLuint gdB2TriangleVertexBuffer;
+
+IWGDoubleBufferData gdUITriangleDoubleBuffer;
 
 GLuint gdUITriangleVertexArray;
 GLuint gdUITriangleVertexBuffer;
