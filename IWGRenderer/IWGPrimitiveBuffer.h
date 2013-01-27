@@ -15,6 +15,8 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
+#include "IWMath.h"
+
 enum {
     IWGPRIMITIVEBUFFERDATA_NEEDS_UPDATE_POSITION  = 1 <<  0,
     IWGPRIMITIVEBUFFERDATA_NEEDS_UPDATE_NORMAL  = 1 <<  1,
@@ -42,5 +44,7 @@ IWGPrimitiveBufferData IWGPrimitiveBufferDataMake(size_t size, short stride,
                                                   short positionOffset, short normalOffset, short colorOffset,
                                                   short textureposOffset, int needsUpdate);
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMakeEmpty();
+
+bool IWGPrimitiveBufferDataUpdateColor(IWGPrimitiveBufferData *primitiveBufferData, IWVector4 newColor);
 
 #endif

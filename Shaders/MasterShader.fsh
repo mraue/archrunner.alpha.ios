@@ -60,7 +60,7 @@ void main ()
 {
     if ( ShaderType == 0)
     {
-            gl_FragColor = vColor;        
+        gl_FragColor = vColor;        
     }
     else if ( ShaderType == 1 )
     {

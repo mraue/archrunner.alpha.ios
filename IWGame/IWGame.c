@@ -28,11 +28,14 @@ void IWGameSetup(void)
     gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
                                     IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0)),
                                     IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
+    gdTotalRunTime = 0.0;
     return;
 }
 
 void IWGameUpdate(float timeSinceLastUpdate)
 {
+    gdTotalRunTime += timeSinceLastUpdate;
+    
     // Switch draw buffer
     IWGDoubleBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     
@@ -44,31 +47,47 @@ void IWGameUpdate(float timeSinceLastUpdate)
             if (IWVector3DistanceSquared(gdPlayerData.position, gdCubeData[i].centerPosition)
                 < gdCubeData[i].collisionRadius * gdCubeData[i].collisionRadius) {
                 // Collision detected
+                //
+                //IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_DARK_BLUE(1.0));
+                gdCubeData[i].centerPosition = IWVector3Add(gdCubeData[i].centerPosition,
+                                                            IWVector3Make(0.0, 0.2, 0.0));
+                IWCubeToTriangles(&gdCubeData[i]);
+                
+                IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
+                                       gdCubeData[i].triangleBufferData.size * i * sizeof(GLfloat),
+                                       gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
+                                       gdCubeData[i].triangleBufferData.startCPU,
+                                       false);
+                gdFuel.currentLevel = gdFuel.currentMaxLevel;
                 // Hide cube
                 gdCubeData[i].isVisible = false;
-                if (gdBufferToCubeMapNEntries > 0) {
-                    gdBufferToCubeMapNEntries -= 1;
-                    unsigned currentBufferID, newCubeID;
-                    //currentBufferID = gdCubeToBufferMap[i];
-                    currentBufferID = gdCubeData[i].triangleBufferData.bufferIDGPU;
-                    newCubeID = gdBufferToCubeMap[gdBufferToCubeMapNEntries];
-                    if (newCubeID != i) {
-                        gdBufferToCubeMap[currentBufferID] = newCubeID;
-                        //gdCubeToBufferMap[newCubeID] = currentBufferID;
-                        gdCubeData[newCubeID].triangleBufferData.bufferIDGPU = currentBufferID;
-
-                        IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
-                                               gdCubeData[i].triangleBufferData.size * currentBufferID * sizeof(GLfloat),
-                                               gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
-                                               gdCubeData[newCubeID].triangleBufferData.startCPU,
-                                               false);
-                    }
-                    printf("BOING %u %u %u\n", i, currentBufferID, newCubeID);
-                    gdFuel.currentLevel = gdFuel.currentMaxLevel;
-                }
-                //glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data)
-                gdB2TriangleNVertices = gdB1TriangleNVertices -= gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
-                gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer] = gdB1TriangleNVertices;
+//                if (gdBufferToCubeMapNEntries > 0) {
+//                    
+//                    gdBufferToCubeMapNEntries -= 1;
+//                    unsigned currentBufferID, newCubeID;
+//                    //currentBufferID = gdCubeToBufferMap[i];
+//                    currentBufferID = gdCubeData[i].triangleBufferData.bufferIDGPU;
+//                    newCubeID = gdBufferToCubeMap[gdBufferToCubeMapNEntries];
+//                    
+//                    if (newCubeID != i) {
+//                        gdBufferToCubeMap[currentBufferID] = newCubeID;
+//                        //gdCubeToBufferMap[newCubeID] = currentBufferID;
+//                        gdCubeData[newCubeID].triangleBufferData.bufferIDGPU = currentBufferID;
+//
+//                        IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
+//                                               gdCubeData[i].triangleBufferData.size * currentBufferID * sizeof(GLfloat),
+//                                               gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
+//                                               gdCubeData[newCubeID].triangleBufferData.startCPU,
+//                                               false);
+//                    }
+//                    
+//                    printf("BOING %u %u %u\n", i, currentBufferID, newCubeID);
+//                    gdFuel.currentLevel = gdFuel.currentMaxLevel;
+//                }
+//                //glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data)
+//                gdB2TriangleNVertices = gdB1TriangleNVertices -= gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
+//                gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer] = gdB1TriangleNVertices;
+                
                 gdClearColorTransition.currentTransitionTime = 0.0;
                 gdClearColorTransition.transitionHasFinished = false;
             }

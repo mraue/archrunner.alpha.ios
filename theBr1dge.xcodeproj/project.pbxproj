@@ -19,7 +19,6 @@
 		641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
 		646F592716A555B000704F45 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FE16A555B000704F45 /* ViewController.m */; };
-		646F592816A555B000704F45 /* ge_cube.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590016A555B000704F45 /* ge_cube.c */; };
 		646F592916A555B000704F45 /* IWController.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590216A555B000704F45 /* IWController.c */; };
 		646F592A16A555B000704F45 /* IWPlayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590416A555B000704F45 /* IWPlayer.c */; };
 		646F592C16A555B000704F45 /* IWGLighting.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590916A555B000704F45 /* IWGLighting.c */; };
@@ -73,8 +72,6 @@
 		646F58FC16A555B000704F45 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		646F58FD16A555B000704F45 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		646F58FE16A555B000704F45 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		646F590016A555B000704F45 /* ge_cube.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ge_cube.c; sourceTree = "<group>"; };
-		646F590116A555B000704F45 /* ge_cubes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ge_cubes.h; sourceTree = "<group>"; };
 		646F590216A555B000704F45 /* IWController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWController.c; sourceTree = "<group>"; };
 		646F590316A555B000704F45 /* IWController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWController.h; sourceTree = "<group>"; };
 		646F590416A555B000704F45 /* IWPlayer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWPlayer.c; sourceTree = "<group>"; };
@@ -214,8 +211,6 @@
 				646F590216A555B000704F45 /* IWController.c */,
 				646F590516A555B000704F45 /* IWPlayer.h */,
 				646F590416A555B000704F45 /* IWPlayer.c */,
-				646F590116A555B000704F45 /* ge_cubes.h */,
-				646F590016A555B000704F45 /* ge_cube.c */,
 				64765C1816AEC74B007E5C7A /* IWFuel.h */,
 				64765C1916AEC758007E5C7A /* IWFuel.c */,
 			);
@@ -393,7 +388,6 @@
 			files = (
 				646F592616A555B000704F45 /* AppDelegate.m in Sources */,
 				646F592716A555B000704F45 /* ViewController.m in Sources */,
-				646F592816A555B000704F45 /* ge_cube.c in Sources */,
 				646F592916A555B000704F45 /* IWController.c in Sources */,
 				646F592A16A555B000704F45 /* IWPlayer.c in Sources */,
 				646F592C16A555B000704F45 /* IWGLighting.c in Sources */,
@@ -481,6 +475,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -489,6 +484,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -501,6 +497,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Misc/theBr1dge-Prefix.pch";
 				INFOPLIST_FILE = "Misc/theBr1dge-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = theBr1dge;
 				WRAPPER_EXTENSION = app;
 			};
@@ -512,6 +509,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Misc/theBr1dge-Prefix.pch";
 				INFOPLIST_FILE = "Misc/theBr1dge-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = theBr1dge;
 				WRAPPER_EXTENSION = app;
 			};

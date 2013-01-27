@@ -29,6 +29,7 @@ IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
     cubeData.triangleBufferData.size = 6 * 6 * 10;// 6 sides * 6 vertices * 6 GLfloats (pos + norm)
     cubeData.triangleBufferData.stride = 10;
     cubeData.triangleBufferData.positionOffset = 0;
+    cubeData.triangleBufferData.colorOffset = 3;
     cubeData.triangleBufferData.normalOffset = 7;
     return cubeData;
 }

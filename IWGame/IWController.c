@@ -11,6 +11,34 @@
 
 #include "IWController.h"
 
+IWControllerData IWControllerDataMakeDefault()
+{
+    IWControllerData controllerData = {
+        {0.0, 0.0, 0.0},// referenceDirection
+        {0.0, 0.0, 0.0},// direction
+        {1.8, 1.4, 1.8},// pitchAngleMin
+        {4.4, 4.2, 4.2},// pitchAngleMax
+        {0.0, 0.0, 0.0},// rotationSpeed
+        GLKMatrix4MakeTranslation(0.0, 0.0, 0.0)
+    };
+    return controllerData;
+}
+
+void IWControllerDataUpdateReferenceDirection(IWControllerData *controllerData,
+                                              IWVector3 newReferenceDirection,
+                                              IWVector3 referenceFrame)
+{
+    controllerData->referenceDirection = IWVector3Normalize(newReferenceDirection);
+    IWVector3 normal = IWVector3CrossProduct(controllerData->referenceDirection,
+                                             referenceFrame);
+    float angle = acosf(IWVector3DotProduct(controllerData->referenceDirection,
+                                            referenceFrame));
+    
+    controllerData->referenceRotationMatrix = GLKMatrix4MakeRotation(angle,
+                                                                     normal.x, normal.y, normal.z);
+    return;
+}
+
 //IWVector3 orientationNeutral;
 //IWVector3 orientation;
 //IWVector3 pitchAngleMin;
@@ -43,8 +71,8 @@ IWVector3 toEuler(double x,double y,double z,double angle) {
 		return vec;
 	}
 	vec.x = atan2(y * s- x * z * t , 1 - (y*y+ z*z ) * t);
-	vec.y = asin(x * y * t + z * s) ;
-	vec.z = atan2(x * s - y * z * t , 1 - (x*x + z*z) * t);
+	vec.z = asin(x * y * t + z * s) ;
+	vec.y = -atan2(x * s - y * z * t , 1 - (x*x + z*z) * t);
     return vec;
 }
 
@@ -63,54 +91,57 @@ void IWControllerUpdateRotationSpeed(IWControllerData* cd, float deltaT) {
 ////                                    0.0);
 //    diffV = IWVector3MultiplyScalar(diffV, IW_RAD_TO_DEG);
 
-    IWVector3 diffV = {0.0, 0.0, 0.0};
-    diffV.x = (atan2(cd->direction.z, cd->direction.x) - atan2(cd->referenceDirection.z, cd->referenceDirection.x)) * IW_RAD_TO_DEG;
-    diffV.y = (atan2(cd->direction.z, cd->direction.y) - atan2(cd->referenceDirection.z, cd->referenceDirection.y)) * IW_RAD_TO_DEG;
+    IWVector3 attitude = {0.0, 0.0, 0.0};
     
-//    // DEBUG
-//    cd->rotationSpeedDeltaMax = IWVector3Divide(diffV, angles);
-//    // END DEBUG
-//    IWVector3 diffSigns = IWVector3Make(diffV.x / fabs(diffV.x),
-//                                        diffV.y / fabs(diffV.y),
-//                                        0.0);
-    IWVector3 diffSigns = IWVector3Divide(diffV, IWVector3ApplyFunctionD(diffV, (double (*)(double))(fabs)));
+    // Ok, this kinda works, but always rotates around fixed coordinate systems
+    // Much better would be: rotate vector to reference vector, then calculate angles!
+//    diffV.x = (atan2(cd->direction.z, cd->direction.x) - atan2(cd->referenceDirection.z, cd->referenceDirection.x)) * IW_RAD_TO_DEG;
+//    diffV.y = (atan2(cd->direction.z, cd->direction.y) - atan2(cd->referenceDirection.z, cd->referenceDirection.y)) * IW_RAD_TO_DEG;
+    // OK, let's try this:
+//    IWVector3 normal = IWVector3CrossProduct(IWVector3Normalize(cd->referenceDirection),
+//                                             IWVector3Make(0.0, 0.0, -1.0));
+//    float angle = acosf(IWVector3DotProduct(IWVector3Normalize(cd->referenceDirection),
+//                                            IWVector3Make(0.0, 0.0, -1.0)));
+//      
+//    GLKMatrix4 yRotationUpdateMatrix = GLKMatrix4MakeRotation(angle,
+//                                                              normal.x, normal.y, normal.z);
     
-    diffV = IWVector3Multiply(diffV, diffSigns);
-    diffV = IWVector3Maximum(IWVector3Substract(diffV, cd->pitchAngleMin),
-                             IWVector3Make(0.0, 0.0, 0.0));
-    //IWVector3 angleMaxDeg = IWVector3Make(8.0, 4.2, 0.);
-    diffV = IWVector3Divide(IWVector3Minimum(diffV, cd->pitchAngleMax), cd->pitchAngleMax);
-    diffV = IWVector3Multiply(diffV, diffV);
-    diffV = IWVector3Multiply(diffV, diffSigns);
-    if (isnan(diffV.x))
-        diffV.x = 0.0;
-    if (isnan(diffV.y))
-        diffV.y = 0.0;
-    if (isnan(diffV.z))
-        diffV.z = 0.0;
-    cd->rotationSpeed = diffV;
+    // This also works !!!
+    GLKVector3 normGLV = GLKVector3Make(cd->direction.x, cd->direction.y, cd->direction.z);
+    GLKVector3 newVec = GLKMatrix4MultiplyVector3(cd->referenceRotationMatrix, normGLV);
+    //cd->debug = IWVector3Make(newVec.x, newVec.y, newVec.z);
+    
+    //diffV.x = atan2(newVec.z, newVec.x) * IW_RAD_TO_DEG + 90.0;
+    //diffV.y = atan2(newVec.z, newVec.y) * IW_RAD_TO_DEG + 90.0;
+    
+    // lets try something new
+    GLKVector3 newNormal = GLKVector3CrossProduct(newVec, GLKVector3Make(0.0, 0.0, -1.0));
+    float angle = GLKVector3DotProduct(newVec, GLKVector3Make(0.0, 0.0, -1.0));
+    attitude = toEuler(newNormal.x, newNormal.y, newNormal.z, angle);
+    attitude = IWVector3MultiplyScalar(attitude, 180. / M_PI);
+    cd->debug = attitude;
 
-    //IWVector3 diffV = IWVector3Substract(cd->orientation, cd->orientationNeutral);
-    //cd->rotationSpeed.x = angles.x * 180. / M_PI;
-//    cd->rotationSpeed.x = (atan2(cd->orientation.y, cd->orientation.x) - atan2(cd->orientationNeutral.y, cd->orientationNeutral.x))* 180. / M_PI;
-//    cd->rotationSpeed.y = (atan2(cd->orientation.z, cd->orientation.y) - atan2(cd->orientationNeutral.z, cd->orientationNeutral.y))* 180. / M_PI;
-//    cd->rotationSpeed.x = atan2(cd->orientation.y, cd->orientation.x) * 180. / M_PI;
-//    cd->rotationSpeed.y = atan2(cd->orientation.z, cd->orientation.y) * 180. / M_PI;
+    IWControllerAttitudeToRotationSpeed(cd, attitude);
+    return;
+}
+
+void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVector3 attitude)
+{
+    IWVector3 diffSigns = IWVector3Divide(attitude, IWVector3ApplyFunctionD(attitude, (double (*)(double))(fabs)));
     
-    //cd->rotationSpeed.y = angles.y * 180. / M_PI;
-//    cd->rotationSpeed.x = (acos(cd->orientationNeutral.x) - acos(cd->orientation.x))* 180. / M_PI;
-//    cd->rotationSpeed.y = (acos(cd->orientationNeutral.y) - acos(cd->orientation.y))* 180. / M_PI;
-//    cd->rotationSpeed.z = angles.z * 180. / M_PI;
-    //float angDegX = asin(diffV.x) * 180. / 3.142;
-    //cd->rotationSpeed.x = angDegX;
-    //cd->rotationSpeed.x = diffV.x;
-//    float sign = angDegX > 0 ? 1. : -1.;
-//    angDegX = fabsf(angDegX);
-//    if (angDegX > cd->pitchAngleMin.x) {
-//        angDegX = angDegX > cd->pitchAngleMax.x ? cd->pitchAngleMax.x : angDegX;
-//        cd->rotationSpeed.x = (angDegX - cd->pitchAngleMin.x) / cd->pitchAngleMax.x * cd->rotationSpeedMax.x;
-//    } else {
-//        cd->rotationSpeed.x = 0.;
-//    }
-//    return;
+    IWVector3 rotationSpeed = IWVector3Multiply(attitude, diffSigns);
+    rotationSpeed = IWVector3Maximum(IWVector3Substract(rotationSpeed, controllerData->pitchAngleMin),
+                                     IWVector3Make(0.0, 0.0, 0.0));
+    //IWVector3 angleMaxDeg = IWVector3Make(8.0, 4.2, 0.);
+    rotationSpeed = IWVector3Divide(IWVector3Minimum(rotationSpeed,
+                                                     controllerData->pitchAngleMax), controllerData->pitchAngleMax);
+    rotationSpeed = IWVector3Multiply(rotationSpeed, rotationSpeed);
+    rotationSpeed = IWVector3Multiply(rotationSpeed, diffSigns);
+    if (isnan(rotationSpeed.x))
+        rotationSpeed.x = 0.0;
+    if (isnan(rotationSpeed.y))
+        rotationSpeed.y = 0.0;
+    if (isnan(rotationSpeed.z))
+        rotationSpeed.z = 0.0;
+    controllerData->rotationSpeed = rotationSpeed;
 }

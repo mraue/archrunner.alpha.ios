@@ -14,7 +14,6 @@
 #import "IWGeometry.h"
 
 #import "IWGShaderProgram.h"
-#import "ge_cubes.h"
 
 #import "IWGameData.h"
 #import "IWGame.h"
@@ -51,6 +50,7 @@ GLuint N_VERT2 = 0;
     CGPoint _touchLocation;
     
     IWVector3 _filteredAcceleration;
+    IWVector3 _filteredAttitude;
     
     IWControllerData controllerDataAccelerometer;
     IWControllerData controllerDataCompass;
@@ -61,6 +61,7 @@ GLuint N_VERT2 = 0;
 
     CLLocationManager *locationManager;
     CMMotionManager *motionManager;
+    CMAttitude *savedAttitude;
     
     UILabel *xLabel, *yLabel, *zLabel, *rxLabel, *ryLabel, *rzLabel;
     UIButton *aButton;
@@ -97,6 +98,8 @@ GLuint N_VERT2 = 0;
     // Stop the compass
 	[locationManager stopUpdatingHeading];
     [locationManager release];
+    if (motionManager.isDeviceMotionActive)
+        [motionManager stopDeviceMotionUpdates];
     [super dealloc];
 }
 
@@ -145,27 +148,42 @@ GLuint N_VERT2 = 0;
     motionManager = [[CMMotionManager alloc] init]; // motionManager is an instance variable
     motionManager.accelerometerUpdateInterval = 0.01; // 100Hz
     [motionManager startAccelerometerUpdates];
-    CMAccelerometerData *newestAccel = motionManager.accelerometerData;
-    _filteredAcceleration.x = newestAccel.acceleration.x;
-    _filteredAcceleration.y = newestAccel.acceleration.y;
-    _filteredAcceleration.z = newestAccel.acceleration.z;
+
+    if (motionManager.isDeviceMotionAvailable) {
+        motionManager.deviceMotionUpdateInterval = 0.015;
+        [motionManager startDeviceMotionUpdates];
+        _filteredAcceleration.x = motionManager.deviceMotion.gravity.x;
+        _filteredAcceleration.y = motionManager.deviceMotion.gravity.y;
+        _filteredAcceleration.z = motionManager.deviceMotion.gravity.z;
+        //NSLog(@"%f %f %f",motionManager.deviceMotion.gravity.x, motionManager.deviceMotion.gravity.y, motionManager.deviceMotion.gravity.z);
+        savedAttitude = [motionManager.deviceMotion.attitude retain];
+        _filteredAttitude = IWVector3Make(savedAttitude.roll * IW_RAD_TO_DEG,
+                                          -1.0 * savedAttitude.pitch * IW_RAD_TO_DEG,
+                                          -1.0 * savedAttitude.yaw * IW_RAD_TO_DEG);
+    } else {
+        CMAccelerometerData *newestAccel = motionManager.accelerometerData;
+        _filteredAcceleration.x = newestAccel.acceleration.x;
+        _filteredAcceleration.y = newestAccel.acceleration.y;
+        _filteredAcceleration.z = newestAccel.acceleration.z;
+    }
+
     
-    IWControllerData controllerDataTmp = {
-        {0.0, 0.0, 0.0},// referenceDirection
-        {0.0, 0.0, 0.0},// direction
-        {2.5, 1.0, 0.0},// pitchAngleMin
-        {8.0, 4.2, 1.0},// pitchAngleMax
-        {0.0, 0.0, 0.0}// rotationSpeed
-    };
-    controllerDataAccelerometer = controllerDataTmp;
-    IWControllerData controllerDataTmp2 = {
-        {0.0, 0.0, 0.0},// referenceDirection
-        {0.0, 0.0, 0.0},// direction
-        {2.0, 0.8, 0.0},// pitchAngleMin
-        {6.0, 4.0, 1.0},// pitchAngleMax
-        {0.0, 0.0, 0.0}// rotationSpeed
-    };
-    controllerDataCompass = controllerDataTmp;
+//    IWControllerData controllerDataTmp = {
+//        {0.0, 0.0, 0.0},// referenceDirection
+//        {0.0, 0.0, 0.0},// direction
+//        {1.8, 1.4, 0.0},// pitchAngleMin
+//        {4.4, 4.2, 1.0},// pitchAngleMax
+//        {0.0, 0.0, 0.0}// rotationSpeed
+//    };
+    controllerDataAccelerometer = IWControllerDataMakeDefault();
+//    IWControllerData controllerDataTmp2 = {
+//        {0.0, 0.0, 0.0},// referenceDirection
+//        {0.0, 0.0, 0.0},// direction
+//        {2.0, 0.8, 0.0},// pitchAngleMin
+//        {6.0, 4.0, 1.0},// pitchAngleMax
+//        {0.0, 0.0, 0.0}// rotationSpeed
+//    };
+    controllerDataCompass = IWControllerDataMakeDefault();
 //    playerData = IWPlayerDataMake(IWVector3Make(0.0, 0.0, 0.0),
 //                                  IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
 //                                  IWVector3Make(0.0, 1.0, 0.0));
@@ -220,19 +238,48 @@ GLuint N_VERT2 = 0;
     IWGameUpdate(self.timeSinceLastUpdate);
 
     float alpha = 0.2;
-    CMAccelerometerData *newestAccel = motionManager.accelerometerData;
-    _filteredAcceleration.x = _filteredAcceleration.x * (1.0-alpha) + newestAccel.acceleration.x * alpha;
-    _filteredAcceleration.y = _filteredAcceleration.y * (1.0-alpha) + newestAccel.acceleration.y * alpha;
-    _filteredAcceleration.z = _filteredAcceleration.z * (1.0-alpha) + newestAccel.acceleration.z * alpha;
+    if (motionManager.isDeviceMotionAvailable) {
+        IWVector3 gravity = IWVector3Make(motionManager.deviceMotion.gravity.x, motionManager.deviceMotion.gravity.y, motionManager.deviceMotion.gravity.z);
+        if (gdTotalRunTime < 1.0) {
+            _filteredAcceleration.x = gravity.x;
+            _filteredAcceleration.y = gravity.y;
+            _filteredAcceleration.z = gravity.z;
+            gdResetControllerPosition = true;
+        } else {
+            _filteredAcceleration.x = _filteredAcceleration.x * (1.0-alpha) + gravity.x * alpha;
+            _filteredAcceleration.y = _filteredAcceleration.y * (1.0-alpha) + gravity.y * alpha;
+            _filteredAcceleration.z = _filteredAcceleration.z * (1.0-alpha) + gravity.z * alpha;
+        }
+    } else {
+        alpha = 0.4;
+        CMAccelerometerData *newestAccel = motionManager.accelerometerData;
+        _filteredAcceleration.x = _filteredAcceleration.x * (1.0-alpha) + newestAccel.acceleration.x * alpha;
+        _filteredAcceleration.y = _filteredAcceleration.y * (1.0-alpha) + newestAccel.acceleration.y * alpha;
+        _filteredAcceleration.z = newestAccel.acceleration.z;
+    }
     
     if (!orientationNeutralSetAccelerometer || gdResetControllerPosition) {
-        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
+        IWControllerDataUpdateReferenceDirection(&controllerDataAccelerometer, IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z)), IWVector3Make(0.0, 0.0, -1.0));
+//        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
         orientationNeutralSetAccelerometer = YES;
         gdResetControllerPosition = false;
+        savedAttitude = [motionManager.deviceMotion.attitude retain];
     }
     controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
     
-    IWControllerUpdateRotationSpeed(&controllerDataAccelerometer, self.timeSinceLastUpdate);
+    if (motionManager.isDeviceMotionAvailable) {
+        CMAttitude *currentAttitude = [motionManager.deviceMotion.attitude retain];
+        [currentAttitude multiplyByInverseOfAttitude: savedAttitude];
+        _filteredAttitude = IWVector3Add(IWVector3MultiplyScalar(_filteredAttitude, (1.0-alpha)),
+                                         IWVector3MultiplyScalar(IWVector3Make(currentAttitude.roll * IW_RAD_TO_DEG,
+                                                                               -1.0 * currentAttitude.pitch * IW_RAD_TO_DEG,
+                                                                               -1.0 * currentAttitude.yaw * IW_RAD_TO_DEG),
+                                                                 alpha));
+        IWControllerAttitudeToRotationSpeed(&controllerDataAccelerometer,
+                                            _filteredAttitude);
+    } else {
+        IWControllerUpdateRotationSpeed(&controllerDataAccelerometer, self.timeSinceLastUpdate);
+    }
 
     IWControllerUpdateRotationSpeed(&controllerDataCompass, self.timeSinceLastUpdate);
     
@@ -266,8 +313,8 @@ GLuint N_VERT2 = 0;
     GLKVector3 dirGLV = GLKVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
     GLKVector3 upGLV = GLKVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
-    float rotationSpeedX = 0.0, rotationSpeedY = 0.0;
-    if (_isTouched) {
+    float rotationSpeedX = 0.0, rotationSpeedY = 0.0, rotationSpeedZ = 0.0;
+    if (_isTouched && 0) {
         float touchActiveArea = 0.25;
         float touchFracX = _touchLocation.x / self.view.bounds.size.width;
         float touchFracY = 1. - _touchLocation.y / self.view.bounds.size.height;
@@ -288,6 +335,7 @@ GLuint N_VERT2 = 0;
         } else {
             rotationSpeedX = controllerDataAccelerometer.rotationSpeed.x;
             rotationSpeedY = controllerDataAccelerometer.rotationSpeed.y;
+            rotationSpeedZ = controllerDataAccelerometer.rotationSpeed.z;
         }
     }
     GLKMatrix4 yRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
@@ -296,6 +344,13 @@ GLuint N_VERT2 = 0;
     GLKMatrix4 xRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedX * rotationSpeedMax,
                                                               normGLV.x, normGLV.y, normGLV.z);
     GLKMatrix4 rotationUpdateMatrix = GLKMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
+
+    if (motionManager.isDeviceMotionAvailable) {
+        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
+                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
+        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+    }
+
     gdPlayerData.direction = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV).v);
     gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
     
@@ -303,17 +358,28 @@ GLuint N_VERT2 = 0;
     [xLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.x]];
     [yLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.y]];
     [zLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.z]];
-    [rxLabel setText:[NSString stringWithFormat:@"%.3f", controllerDataAccelerometer.rotationSpeed.x]];
-    [ryLabel setText:[NSString stringWithFormat:@"%.3f", controllerDataAccelerometer.rotationSpeed.y]];
-    [rzLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.rotationSpeed.y]];
+//    [rxLabel setText:[NSString stringWithFormat:@"%.3f", controllerDataAccelerometer.rotationSpeed.x]];
+//    [ryLabel setText:[NSString stringWithFormat:@"%.3f", controllerDataAccelerometer.rotationSpeed.y]];
+//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.rotationSpeed.y]];
     
+    // this is how to do this correctly
+    CMAttitude *currentAttitude = motionManager.deviceMotion.attitude;
+    [currentAttitude multiplyByInverseOfAttitude: savedAttitude];
 //    // DEBUG
 //    [xLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataCompass.rotationSpeed.x]];
 //    [yLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataCompass.rotationSpeed.y]];
 //    [zLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataCompass.rotationSpeed.z]];
-//    [rxLabel setText:[NSString stringWithFormat:@"%.2f", controllerData.rotationSpeedMax.x]];
-//    [ryLabel setText:[NSString stringWithFormat:@"%.2f", controllerData.rotationSpeedMax.y]];
-//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", controllerData.rotationSpeedMax.z]];
+//    [rxLabel setText:[NSString stringWithFormat:@"%.2f", motionManager.deviceMotion.gravity.x]];
+//    [ryLabel setText:[NSString stringWithFormat:@"%.2f", motionManager.deviceMotion.gravity.y]];
+//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", motionManager.deviceMotion.gravity.z]];
+    
+    [rxLabel setText:[NSString stringWithFormat:@"%.2f", currentAttitude.roll * IW_RAD_TO_DEG]];
+    [ryLabel setText:[NSString stringWithFormat:@"%.2f", currentAttitude.pitch * IW_RAD_TO_DEG]];
+    [rzLabel setText:[NSString stringWithFormat:@"%.2f", currentAttitude.yaw * IW_RAD_TO_DEG]];
+//    [rxLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.debug.x]];
+//    [ryLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.debug.y]];
+//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.debug.z]];
+
 //    // END DEBUG
     
     // Compute the model view matrix for the object rendered with ES2
@@ -338,7 +404,6 @@ GLuint N_VERT2 = 0;
                                           gdPlayerDataSave.up.x, gdPlayerDataSave.up.y, gdPlayerDataSave.up.z);
     }
 
-    
     gdNormalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
     gdModelMatrix = modelMatrix;
     gdProjectionMatrix = projectionMatrix;

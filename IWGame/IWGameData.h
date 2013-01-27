@@ -37,6 +37,13 @@ IWFuel gdFuel;
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
 
+float gdTotalRunTime;
+
+#pragma mark - Second VBO array scaffolding
+
+IWGDoubleBufferData gdTriangleDoubleBuffer2;
+GLuint gdTriangleNVertices2;
+
 #pragma mark - Debug / Testing
 
 unsigned int *gdBufferToCubeMap;

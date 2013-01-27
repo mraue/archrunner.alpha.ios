@@ -9,16 +9,27 @@
 #ifndef gameoneB_IWController_h
 #define gameoneB_IWController_h
 
+#include "GLKit/GLKMath.h"
+
 #include "IWMath.h"
 
-typedef struct _IWControllerData {
+typedef struct {
     IWVector3 referenceDirection;
     IWVector3 direction;
     IWVector3 pitchAngleMin;
     IWVector3 pitchAngleMax;
     IWVector3 rotationSpeed;
+    GLKMatrix4 referenceRotationMatrix;
+    IWVector3 debug;
 } IWControllerData;
 
+IWControllerData IWControllerDataMakeDefault();
+
+void IWControllerDataUpdateReferenceDirection(IWControllerData *controllerData,
+                                              IWVector3 newReferenceDirection,
+                                              IWVector3 referenceFrame);
+
 void IWControllerUpdateRotationSpeed(IWControllerData* cd, float deltaT);
+void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVector3 attitude);
 
 #endif

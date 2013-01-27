@@ -28,3 +28,19 @@ IWGPrimitiveBufferData IWGPrimitiveBufferDataMakeEmpty()
 {
     return IWGPrimitiveBufferDataMake(0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0);
 }
+
+bool IWGPrimitiveBufferDataUpdateColor(IWGPrimitiveBufferData *primitiveBufferData, IWVector4 newColor)
+{
+    if (primitiveBufferData->startCPU) {
+        GLfloat *ptr = primitiveBufferData->startCPU;
+        ptr += primitiveBufferData->colorOffset;
+        while (ptr < primitiveBufferData->startCPU + primitiveBufferData->size) {
+            *ptr++ = newColor.x;
+            *ptr++ = newColor.y;
+            *ptr++ = newColor.z;
+            *ptr++ = newColor.z;
+            ptr += primitiveBufferData->stride - 4;
+        }
+    }
+    return true;
+}
