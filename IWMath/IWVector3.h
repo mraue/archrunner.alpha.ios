@@ -35,6 +35,8 @@ static __inline__ float IWVector3DotProduct(IWVector3 vectorLeft, IWVector3 vect
 static __inline__ float IWVector3Length(IWVector3 v);
 static __inline__ float IWVector3Distance(IWVector3 vStart, IWVector3 vEnd);
 
+static __inline__ IWVector3 IWVector3Lerp(IWVector3 vectorStart, IWVector3 vectorEnd, float t);
+
 static __inline__ IWVector3 IWVector3CrossProduct(IWVector3 vectorLeft, IWVector3 vectorRight);
 
 #pragma mark - New functionality not in GLKVector3
@@ -139,6 +141,18 @@ static __inline__ float IWVector3Distance(IWVector3 vStart, IWVector3 vEnd) {
     IWVector3 v = {vEnd.x - vStart.x, vEnd.y - vStart.y, vEnd.z - vStart.z};
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
+
+
+static __inline__ IWVector3 IWVector3Lerp(IWVector3 vectorStart, IWVector3 vectorEnd, float t)
+{
+    IWVector3 v = {
+        vectorStart.x + ((vectorEnd.x - vectorStart.x) * t),
+        vectorStart.y + ((vectorEnd.y - vectorStart.y) * t),
+        vectorStart.z + ((vectorEnd.z - vectorStart.z) * t)
+    };
+    return v;
+}
+
 
 static __inline__ IWVector3 IWVector3CrossProduct(IWVector3 vectorLeft, IWVector3 vectorRight) {
     IWVector3 v = {

@@ -46,5 +46,6 @@ IWGPrimitiveBufferData IWGPrimitiveBufferDataMake(size_t size, short stride,
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMakeEmpty();
 
 bool IWGPrimitiveBufferDataUpdateColor(IWGPrimitiveBufferData *primitiveBufferData, IWVector4 newColor);
+bool IWGPrimitiveBufferDataUpdatePosition(IWGPrimitiveBufferData *primitiveBufferData, IWVector3 displacement);
 
 #endif

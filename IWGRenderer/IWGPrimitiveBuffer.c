@@ -38,8 +38,23 @@ bool IWGPrimitiveBufferDataUpdateColor(IWGPrimitiveBufferData *primitiveBufferDa
             *ptr++ = newColor.x;
             *ptr++ = newColor.y;
             *ptr++ = newColor.z;
-            *ptr++ = newColor.z;
+            *ptr++ = newColor.w;
             ptr += primitiveBufferData->stride - 4;
+        }
+    }
+    return true;
+}
+
+bool IWGPrimitiveBufferDataUpdatePosition(IWGPrimitiveBufferData *primitiveBufferData, IWVector3 displacement)
+{
+    if (primitiveBufferData->startCPU) {
+        GLfloat *ptr = primitiveBufferData->startCPU;
+        ptr += primitiveBufferData->positionOffset;
+        while (ptr < primitiveBufferData->startCPU + primitiveBufferData->size) {
+            *ptr++ += displacement.x;
+            *ptr++ += displacement.y;
+            *ptr++ += displacement.z;
+            ptr += primitiveBufferData->stride - 3;
         }
     }
     return true;

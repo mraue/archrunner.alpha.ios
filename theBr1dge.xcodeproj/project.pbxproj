@@ -48,6 +48,7 @@
 		64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EA8169DB8A8003C5415 /* CoreLocation.framework */; };
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
 		648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */ = {isa = PBXBuildFile; fileRef = 648E756916A6B7E8004DE1A4 /* IWVector2.h */; };
+		64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A2F02716B67CCC00655F68 /* IWVectorTransition.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +121,8 @@
 		64822EAA169DB901003C5415 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		648E756916A6B7E8004DE1A4 /* IWVector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector2.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		648E756B16A7F5B1004DE1A4 /* IWGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGeometry.h; sourceTree = "<group>"; };
+		64A2F02716B67CCC00655F68 /* IWVectorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWVectorTransition.c; sourceTree = "<group>"; };
+		64A2F02916B67CD800655F68 /* IWVectorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWVectorTransition.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +242,8 @@
 		646F590B16A555B000704F45 /* IWMath */ = {
 			isa = PBXGroup;
 			children = (
+				64A2F02916B67CD800655F68 /* IWVectorTransition.h */,
+				64A2F02716B67CCC00655F68 /* IWVectorTransition.c */,
 				648E756B16A7F5B1004DE1A4 /* IWGeometry.h */,
 				641E0D6A16A7FE0A0077785D /* IWGeometry.c */,
 				646F590C16A555B000704F45 /* IWMath.h */,
@@ -406,6 +411,7 @@
 				64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */,
 				64765C2D16B28491007E5C7A /* IWGBufferSubData.c in Sources */,
 				64765C3016B29D9D007E5C7A /* IWGDoubleBuffer.c in Sources */,
+				64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

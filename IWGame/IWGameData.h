@@ -29,6 +29,7 @@
 
 #pragma mark - Game Logic Data
 
+IWPlayerData gdPlayerDataStart;
 IWPlayerData gdPlayerData;
 IWPlayerData gdPlayerDataSave;
 

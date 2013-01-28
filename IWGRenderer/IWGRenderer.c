@@ -55,7 +55,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //nx = ny = nz = 27;
     //d = 0.05;
     
-    nx = ny = nz = 10;
+    //nx = ny = nz = 10;
+    nx = ny = 5;
+    nz = 10;
     d = .05;
     
     //nx = ny = nz = 4;
@@ -74,7 +76,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
     
-    gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1, cubeBaseColor);
+    gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1, cubeBaseColor, 1, 0.1);
     gdNCubes = nx * ny * nz;
     
     GLfloat *memPtr = mypos;
@@ -87,7 +89,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         gdCubeData[nc].triangleBufferData.normalOffset = 7;
         gdCubeData[nc].triangleBufferData.stride = 10;
         gdCubeData[nc].halfLengthX = d / 2.;
-        gdCubeData[nc].collisionRadius = d * 1.1;
+        gdCubeData[nc].collisionRadius = d * 2.0;// 1.1
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
         gdBufferToCubeMap[nc] = nc;

@@ -16,14 +16,16 @@
 
 IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
                       float halfLengthX, float collisionRadius,
-                      bool isVisible)
+                      bool isVisible, bool isInteractive,
+                      IWVector3Transition positionTransition)
 {
     IWCubeData cubeData = {
         centerPosition,
         color,
         halfLengthX,
         collisionRadius,
-        isVisible,
+        isVisible, isInteractive,
+        positionTransition,
         IWGPrimitiveBufferDataMakeEmpty()
     };
     cubeData.triangleBufferData.size = 6 * 6 * 10;// 6 sides * 6 vertices * 6 GLfloats (pos + norm)
@@ -34,7 +36,9 @@ IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
     return cubeData;
 }
 
-IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d, IWVector4 color)
+IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d,
+                                 IWVector4 color,
+                                 unsigned int nRandomizePositions, float randomDistance)
 {
     unsigned int n = nx * ny * nz;
     IWCubeData* cubeOfCubeDataStart = malloc(n * sizeof(IWCubeData));
@@ -48,10 +52,18 @@ IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d, IWVec
                 cubePtr->centerPosition.x = x * p0  - 1. + p0 - l / 2. * sc;
                 cubePtr->centerPosition.y = y * p0  - 1. + p0 - l / 2. * sc;
                 cubePtr->centerPosition.z = z * p0  - 1. + p0 - l / 2. * sc;
+                for (unsigned int i = 0; i < nRandomizePositions; i++) {
+                    cubePtr->centerPosition = IWVector3Add(cubePtr->centerPosition,
+                                                           IWVector3Make((IW_FRAND - 0.5) * 2.0 * randomDistance,
+                                                                         (IW_FRAND - 0.5) * 2.0 * randomDistance,
+                                                                         (IW_FRAND - 0.5) * 2.0 * randomDistance));
+                }
                 cubePtr->color = color;
                 cubePtr->halfLengthX = l;
                 cubePtr->collisionRadius = l * 1.4142;
                 cubePtr->isVisible = true;
+                cubePtr->isInteractive = true;
+                cubePtr->positionTransition = IWVector3TransitionMakeEmpty();
                 cubePtr->triangleBufferData = IWGPrimitiveBufferDataMakeEmpty();
                 cubePtr++;
             }

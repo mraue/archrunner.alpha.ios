@@ -39,14 +39,6 @@ void IWControllerDataUpdateReferenceDirection(IWControllerData *controllerData,
     return;
 }
 
-//IWVector3 orientationNeutral;
-//IWVector3 orientation;
-//IWVector3 pitchAngleMin;
-//IWVector3 pitchAngleMax;
-//IWVector3 rotationSpeedDeltaMax;
-//IWVector3 rotationSpeed;
-//IWVector3 rotationSpeedMax;
-
 IWVector3 toEuler(double x,double y,double z,double angle) {
     IWVector3 vec;
 	float s=sin(angle);
@@ -127,7 +119,7 @@ void IWControllerUpdateRotationSpeed(IWControllerData* cd, float deltaT) {
 
 void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVector3 attitude)
 {
-    IWVector3 diffSigns = IWVector3Divide(attitude, IWVector3ApplyFunctionD(attitude, (double (*)(double))(fabs)));
+    IWVector3 diffSigns = IWVector3Divide(attitude, IWVector3ApplyFunctionF(attitude, (float (*)(float))(fabsf)));
     
     IWVector3 rotationSpeed = IWVector3Multiply(attitude, diffSigns);
     rotationSpeed = IWVector3Maximum(IWVector3Substract(rotationSpeed, controllerData->pitchAngleMin),
@@ -144,4 +136,5 @@ void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVec
     if (isnan(rotationSpeed.z))
         rotationSpeed.z = 0.0;
     controllerData->rotationSpeed = rotationSpeed;
+    return;
 }
