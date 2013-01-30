@@ -12,10 +12,19 @@
 #include <stdbool.h>
 
 #include "IWMath.h"
+#include "IWGeometry.h"
 #include "IWVectorTransition.h"
 #include "IWGPrimitiveBuffer.h"
 
+typedef enum {
+    IWCUBE_TYPE_STANDARD,
+    IWCUBE_TYPE_OVERDRIVE,
+    IWCUBE_TYPE_TRANSITION,
+    IWCUBE_TYPE_N
+} IWCUBE_TYPE;
+
 struct _IWCubeData {
+    IWCUBE_TYPE type;    
     IWVector3 centerPosition;
     IWVector4 color;
     float halfLengthX;
@@ -27,7 +36,8 @@ struct _IWCubeData {
 };
 typedef struct _IWCubeData IWCubeData;
 
-IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
+IWCubeData IWCubeMake(IWCUBE_TYPE type,
+                      IWVector3 centerPosition, IWVector4 color,
                       float halfLengthX, float collisionRadius,
                       bool isVisible, bool isInteractive,
                       IWVector3Transition positionTransition);
@@ -35,6 +45,12 @@ IWCubeData IWCubeMake(IWVector3 centerPosition, IWVector4 color,
 IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d,
                                  IWVector4 color,
                                  unsigned int nRandomizePositions, float randomDistance);
+
+IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
+                            IWVector3 center, IWVector4 color,
+                            unsigned int nRandomizePositions, float randomDistance);
+
+IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPosition, IWGEOMETRY_AXIS axis);
 
 size_t IWCubeToTriangles(IWCubeData* cube);
 

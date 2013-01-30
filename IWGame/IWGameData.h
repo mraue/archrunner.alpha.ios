@@ -25,7 +25,8 @@
 #include "IWFuel.h"
 #include "IWGDoubleBuffer.h"
 #include "IWGBufferSubData.h"
-
+#include "IWTimer.h"
+#include "IWIndexList.h"
 
 #pragma mark - Game Logic Data
 
@@ -40,6 +41,13 @@ unsigned int gdNCubes;
 
 float gdTotalRunTime;
 
+IWTimerData gdRandomRemoveCubeTimer;
+
+IWIndexListData gdStandardCubeIndexList;
+
+unsigned int gdNormalCubesN;
+unsigned int *gdNormalCubesMaps;
+
 #pragma mark - Second VBO array scaffolding
 
 IWGDoubleBufferData gdTriangleDoubleBuffer2;
@@ -49,6 +57,9 @@ GLuint gdTriangleNVertices2;
 
 unsigned int *gdBufferToCubeMap;
 unsigned int gdBufferToCubeMapNEntries;
+
+unsigned int gdSecondaryPositionCounter;
+IWVector3 *gdSecondaryPosition;
 
 IWColorTransition gdClearColorTransition;
 

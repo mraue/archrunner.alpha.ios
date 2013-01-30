@@ -17,6 +17,8 @@
 		641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8116AAF8D80077785D /* IWUIElement.c */; };
 		641E0D8916AD69720077785D /* IWCube.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8816AD69720077785D /* IWCube.c */; };
 		641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */; };
+		6437583016B97CAD00FD222E /* IWTimer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6437582F16B97CAD00FD222E /* IWTimer.c */; };
+		6437583416B97FA600FD222E /* IWIndexList.c in Sources */ = {isa = PBXBuildFile; fileRef = 6437583316B97FA600FD222E /* IWIndexList.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
 		646F592716A555B000704F45 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FE16A555B000704F45 /* ViewController.m */; };
 		646F592916A555B000704F45 /* IWController.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590216A555B000704F45 /* IWController.c */; };
@@ -69,6 +71,10 @@
 		641E0D8816AD69720077785D /* IWCube.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWCube.c; sourceTree = "<group>"; };
 		641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGPrimitiveBuffer.h; sourceTree = "<group>"; };
 		641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGPrimitiveBuffer.c; sourceTree = "<group>"; };
+		6437582F16B97CAD00FD222E /* IWTimer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWTimer.c; sourceTree = "<group>"; };
+		6437583216B97CB400FD222E /* IWTimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWTimer.h; sourceTree = "<group>"; };
+		6437583316B97FA600FD222E /* IWIndexList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWIndexList.c; sourceTree = "<group>"; };
+		6437583516B97FAE00FD222E /* IWIndexList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWIndexList.h; sourceTree = "<group>"; };
 		646F58FB16A555B000704F45 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		646F58FC16A555B000704F45 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		646F58FD16A555B000704F45 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -216,6 +222,10 @@
 				646F590416A555B000704F45 /* IWPlayer.c */,
 				64765C1816AEC74B007E5C7A /* IWFuel.h */,
 				64765C1916AEC758007E5C7A /* IWFuel.c */,
+				6437583216B97CB400FD222E /* IWTimer.h */,
+				6437582F16B97CAD00FD222E /* IWTimer.c */,
+				6437583516B97FAE00FD222E /* IWIndexList.h */,
+				6437583316B97FA600FD222E /* IWIndexList.c */,
 			);
 			path = IWGame;
 			sourceTree = "<group>";
@@ -412,6 +422,8 @@
 				64765C2D16B28491007E5C7A /* IWGBufferSubData.c in Sources */,
 				64765C3016B29D9D007E5C7A /* IWGDoubleBuffer.c in Sources */,
 				64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */,
+				6437583016B97CAD00FD222E /* IWTimer.c in Sources */,
+				6437583416B97FA600FD222E /* IWIndexList.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -31,6 +31,12 @@ enum IWRECTANGLE_ANCHOR_POSITION {
     IWRECTANGLE_ANCHOR_POSITION_UPPER_RIGHT
 };
 
+typedef enum {
+    IWGEOMETRY_AXIS_X,
+    IWGEOMETRY_AXIS_Y,
+    IWGEOMETRY_AXIS_Z
+} IWGEOMETRY_AXIS;
+
 # pragma mark - Function prototypes
 
 IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,

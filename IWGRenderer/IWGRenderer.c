@@ -55,10 +55,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //nx = ny = nz = 27;
     //d = 0.05;
     
-    //nx = ny = nz = 10;
-    nx = ny = 5;
-    nz = 10;
-    d = .05;
+    nx = ny = nz = 5;
+    //nx = ny = 7;
+    //nz = 25;
+    //d = .05;
     
     //nx = ny = nz = 4;
     //d = .2;
@@ -68,19 +68,33 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
-    printf("Allocating %d position with total size %d\n", n * 72, (int)mypos_size);
+    printf("Allocating %d position with total size %d\n", n * 6 * 6 * 10, (int)mypos_size);
     GLfloat *mypos = malloc(mypos_size);
     
     gdBufferToCubeMap = malloc(n * sizeof(unsigned int));
     gdBufferToCubeMapNEntries = n;
     
+    gdNormalCubesMaps = malloc(n * sizeof(unsigned int));
+    gdNormalCubesN = n;
+    gdStandardCubeIndexList = IWIndexListMake(n);
+    
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
     
-    gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1, cubeBaseColor, 1, 0.1);
+    //gdCubeData = IWCubeMakeCubeOfCube(nx, ny, nz, 1., .1, cubeBaseColor, 1, 0.1);
+    gdCubeData = IWCubeMakeCubes(nx, ny, nz, .05, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdNCubes = nx * ny * nz;
+    
+    IWVector3 *points = IWCubeMakeCubeCurve(gdNCubes, IWVector3Make(0.0, 0.0, 0.0), IWGEOMETRY_AXIS_Z);
+    gdSecondaryPosition = points;
+    gdSecondaryPositionCounter = 0;
     
     GLfloat *memPtr = mypos;
     for (int nc=0; nc < n; nc++) {
+        // DBUG
+        //gdCubeData[nc].secondaryPosition = points[nc];
+        //gdCubeData[nc].type = IWCUBE_TYPE_OVERDRIVE;
+        //gdCubeData[nc].color = IWUI_COLOR_GOLD(1.0);
+        // DBUG
         gdCubeData[nc].triangleBufferData.bufferStartCPU = mypos;
         gdCubeData[nc].triangleBufferData.startCPU = memPtr;
         gdCubeData[nc].triangleBufferData.bufferIDGPU = nc;
@@ -88,11 +102,14 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         gdCubeData[nc].triangleBufferData.colorOffset = 3;
         gdCubeData[nc].triangleBufferData.normalOffset = 7;
         gdCubeData[nc].triangleBufferData.stride = 10;
-        gdCubeData[nc].halfLengthX = d / 2.;
-        gdCubeData[nc].collisionRadius = d * 2.0;// 1.1
+        //gdCubeData[nc].halfLengthX = d / 2.;
+        //gdCubeData[nc].collisionRadius = gdCubeData[nc].halfLengthX;// 1.1
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
         gdBufferToCubeMap[nc] = nc;
+        gdNormalCubesMaps[nc] = nc;
+        gdStandardCubeIndexList.map[nc] = nc;
+        gdStandardCubeIndexList.reverseMap[nc] = nc;
     }
     gdB1TriangleNVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
     gdB2TriangleNVertices = gdB1TriangleNVertices;
@@ -259,9 +276,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glBindVertexArrayOES(0);
     
 //    // Slowed it down :(
-//    glEnable(GL_CULL_FACE);
-//    glCullFace(GL_BACK);
-//    glFrontFace(GL_CW);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
 //    
     return;
 }
@@ -279,6 +296,8 @@ void IWGRendererRender(void)
     }
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glEnable(GL_CULL_FACE);
     
     // Draw cubes
 
@@ -310,7 +329,7 @@ void IWGRendererRender(void)
     glBindVertexArrayOES(0);
     
     // Draw array 2
-    
+    glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ONE);

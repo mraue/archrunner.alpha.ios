@@ -79,7 +79,7 @@ void IWGLightingSetUniforms(IWGLightSource lightSource,
 IWGLightSource IWGLightingMakeBasicLight(void) {
     IWGLightSource lightSource = {
         {3.0, 2.5, 2.0},// Position
-        {0.5, 0.1, 1.0},// Attenuation
+        {0.5, 0.1, 0.4},// Attenuation
         {0.0, 0.0, 0.0},// Direction
         {1.0, 1.0, 1.0},// Color
         0,// HasSpotlight
