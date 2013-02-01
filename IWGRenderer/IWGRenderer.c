@@ -77,7 +77,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdStandardCubeIndexList = IWIndexListMake(n);
     
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
-    
+
     gdCubeData = IWCubeMakeCubes(nx, ny, nz, .05, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdNCubes = nx * ny * nz;
     
