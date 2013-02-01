@@ -39,12 +39,16 @@ void IWGameSetup(void)
     gdPlayerData = gdPlayerDataStart;
     gdTotalRunTime = 0.0;
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
+    gdNOverdriveCubes = 0;
+    gdZMax = 0.0;
     return;
 }
 
 void IWGameUpdate(float timeSinceLastUpdate)
 {
     gdTotalRunTime += timeSinceLastUpdate;
+    
+    gdZMax = MAX(gdZMax, gdPlayerData.position.z);
     
     // Switch draw buffer
     IWGDoubleBufferSwitchBuffer(&gdTriangleDoubleBuffer);
@@ -57,7 +61,10 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWFuelRemoveFuel(&gdFuel, 0.05 * timeSinceLastUpdate);
     }
 
-    if (gdStandardCubeIndexList.nEntries > 0 && IWTimerUpdate(&gdRandomRemoveCubeTimer, timeSinceLastUpdate)) {
+    // Auto remove standard cubes
+    if (!gdPlayerData.overdrive
+        && gdStandardCubeIndexList.nEntries > 0
+        && IWTimerUpdate(&gdRandomRemoveCubeTimer, timeSinceLastUpdate)) {
 
         IWTimerResetAndStart(&gdRandomRemoveCubeTimer);
         
@@ -84,36 +91,21 @@ void IWGameUpdate(float timeSinceLastUpdate)
                                    false);
         }
         gdB2TriangleNVertices = gdB1TriangleNVertices -= gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
-        gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer] = gdB1TriangleNVertices;
+        gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
     }
     
+    // Collision detection
     for (int i = 0; i < gdNCubes; i++) {
-        if (gdCubeData[i].isVisible && gdCubeData[i].isInteractive && (gdCubeData[i].collisionRadius > 0.0)) {
+        if (gdCubeData[i].isVisible
+            && gdCubeData[i].isInteractive
+            && gdCubeData[i].positionTransition.transitionHasFinished
+            && gdCubeData[i].collisionRadius > 0.0) {
             if (IWVector3DistanceSquared(gdPlayerData.position, gdCubeData[i].centerPosition)
                 < gdCubeData[i].collisionRadius * gdCubeData[i].collisionRadius) {
                 // Collision detected
-                //
-                //IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_DARK_BLUE(1.0));
-//                gdCubeData[i].centerPosition = IWVector3Add(gdCubeData[i].centerPosition,
-//                                                            IWVector3Make(0.0, 0.2, 0.0));
-//                IWCubeToTriangles(&gdCubeData[i]);
-//                
-//                IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
-//                                       gdCubeData[i].triangleBufferData.size * i * sizeof(GLfloat),
-//                                       gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
-//                                       gdCubeData[i].triangleBufferData.startCPU,
-//                                       false);
-
-                //gdFuel.currentLevel = gdFuel.currentMaxLevel;
                 IWFuelAddFuel(&gdFuel, gdFuel.currentMaxLevel);
 
                 gdCubeData[i].isInteractive = false;
-
-//                gdNormalCubesN -= 1;
-//                if (gdNormalCubesMaps > 0) {
-//                    gdNormalCubesMaps[i] = gdNormalCubesMaps[gdNormalCubesN];
-//                }
-                
                 
                 if (gdCubeData[i].type == IWCUBE_TYPE_STANDARD) {
 
@@ -131,6 +123,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
                                                                                10.0, 0.0, false, false);
                     IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_DARK_GOLD(1.0));
                     gdClearColorTransition.startColor = IWUI_COLOR_DARK_BLUE(1.0);
+                    gdNOverdriveCubes++;
+                    //printf("Moving cube %u to %f %f %f\n", i, newPosition.x, newPosition.y, newPosition.z);
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
                     //gdFuel.currentLevel = gdFuel.currentMaxLevel;
                     // Remove cube
@@ -156,11 +150,13 @@ void IWGameUpdate(float timeSinceLastUpdate)
                         }
                         IWPlayerActivatOverdrive(&gdPlayerData);
                         IWPlayerUpdateOverdrive(&gdPlayerData, 0.0);
+                        gdNOverdriveCubes--;
+                        IWFuelUpdateColor(&gdFuel, IWUI_COLOR_GOLD(0.6), IWFUEL_COLOR_CURRENT, false);
                         printf("BOING %u %u %u\n", i, currentBufferID, newCubeID);
+                        gdB2TriangleNVertices = gdB1TriangleNVertices -= gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
+                        gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
+                        gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
                     }
-                    gdB2TriangleNVertices = gdB1TriangleNVertices -= gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
-                    gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer] = gdB1TriangleNVertices;
-                    gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
                 }
                 gdClearColorTransition.currentTransitionTime = 0.0;
                 gdClearColorTransition.transitionHasFinished = false;
@@ -173,12 +169,17 @@ void IWGameUpdate(float timeSinceLastUpdate)
                 IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_GOLD(1.0));
                 gdCubeData[i].isInteractive = true;
                 gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
+                //printf("Cube %u has arrived at %f %f %f\n", i, gdCubeData[i].centerPosition.x,
+                //       gdCubeData[i].centerPosition.y, gdCubeData[i].centerPosition.z);
             } else {
                 gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.currentVector;
+                IWCubeToTriangles(&gdCubeData[i]);
+                //IWVector3 offset = IWVector3Substract(gdCubeData[i].positionTransition.currentVector,
+                //                                      previousPosition);
+                //offset = IWVector3Maximum(IWVector3Make(0.0, 0.0, 0.0), offset);
+                //IWGPrimitiveBufferDataUpdatePosition(&gdCubeData[i].triangleBufferData,
+                //                                     offset);
             }
-            IWGPrimitiveBufferDataUpdatePosition(&gdCubeData[i].triangleBufferData,
-                                                 IWVector3Substract(gdCubeData[i].positionTransition.currentVector,
-                                                                    previousPosition));
             IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
                                    gdCubeData[i].triangleBufferData.size * i * sizeof(GLfloat),
                                    gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
@@ -188,16 +189,16 @@ void IWGameUpdate(float timeSinceLastUpdate)
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    // Switch UI VBO object
     IWGDoubleBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
     
+    // Update background color transition
     if (!gdClearColorTransition.transitionHasFinished) {
         IWColorTransitionUpdate(&gdClearColorTransition, timeSinceLastUpdate);
     }
     
+    // Update fuel status bar
     if (gdFuel.currentLevel == 0.0) {
-//        gdPlayerData.position = IWVector3Make(1.4, 0.8, 1.4);
-//        gdPlayerData.direction = IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0));
-//        gdPlayerData.up = IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0));
         gdPlayerData = gdPlayerDataStart;
         gdFuel.currentLevel = gdFuel.currentMaxLevel;
     } else if (gdFuel.currentLevel / gdFuel.currentMaxLevel < 0.333) {
@@ -205,7 +206,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
             IWFuelUpdateColor(&gdFuel, gdFuel.warningColor, IWFUEL_COLOR_CURRENT, false);
             gdFuel.isWarning = true;
         }
-    } else {
+    } else if (!gdPlayerData.overdrive) {
         IWFuelUpdateColor(&gdFuel, gdFuel.currentColor, IWFUEL_COLOR_CURRENT, false);
         gdFuel.isWarning = false;
     }
@@ -221,6 +222,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
                            gdFuel.stateBar.uiElementData.triangleBufferStart,
                            false);
     
+    // Check button interaction
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdDropCamera) {
             gdDropCamera = false;

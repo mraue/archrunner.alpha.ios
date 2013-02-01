@@ -19,6 +19,12 @@
 		641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */; };
 		6437583016B97CAD00FD222E /* IWTimer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6437582F16B97CAD00FD222E /* IWTimer.c */; };
 		6437583416B97FA600FD222E /* IWIndexList.c in Sources */ = {isa = PBXBuildFile; fileRef = 6437583316B97FA600FD222E /* IWIndexList.c */; };
+		6437583D16BBF2D600FD222E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6437583C16BBF2D600FD222E /* SenTestingKit.framework */; };
+		6437583E16BBF2D600FD222E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E601695E9BF003C5415 /* UIKit.framework */; };
+		6437583F16BBF2D600FD222E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E621695E9BF003C5415 /* Foundation.framework */; };
+		6437584516BBF2D700FD222E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6437584316BBF2D700FD222E /* InfoPlist.strings */; };
+		6437584816BBF2D700FD222E /* theBr1dgeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6437584716BBF2D700FD222E /* theBr1dgeTest.m */; };
+		6437584D16BBF76E00FD222E /* IWIndexList.c in Sources */ = {isa = PBXBuildFile; fileRef = 6437583316B97FA600FD222E /* IWIndexList.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
 		646F592716A555B000704F45 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FE16A555B000704F45 /* ViewController.m */; };
 		646F592916A555B000704F45 /* IWController.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590216A555B000704F45 /* IWController.c */; };
@@ -75,6 +81,13 @@
 		6437583216B97CB400FD222E /* IWTimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWTimer.h; sourceTree = "<group>"; };
 		6437583316B97FA600FD222E /* IWIndexList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWIndexList.c; sourceTree = "<group>"; };
 		6437583516B97FAE00FD222E /* IWIndexList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWIndexList.h; sourceTree = "<group>"; };
+		6437583B16BBF2D600FD222E /* theBr1dgeTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = theBr1dgeTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6437583C16BBF2D600FD222E /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		6437584216BBF2D700FD222E /* theBr1dgeTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "theBr1dgeTest-Info.plist"; sourceTree = "<group>"; };
+		6437584416BBF2D700FD222E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6437584616BBF2D700FD222E /* theBr1dgeTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = theBr1dgeTest.h; sourceTree = "<group>"; };
+		6437584716BBF2D700FD222E /* theBr1dgeTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = theBr1dgeTest.m; sourceTree = "<group>"; };
+		6437584916BBF2D700FD222E /* theBr1dgeTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "theBr1dgeTest-Prefix.pch"; sourceTree = "<group>"; };
 		646F58FB16A555B000704F45 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		646F58FC16A555B000704F45 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		646F58FD16A555B000704F45 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -132,6 +145,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6437583716BBF2D600FD222E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6437583D16BBF2D600FD222E /* SenTestingKit.framework in Frameworks */,
+				6437583E16BBF2D600FD222E /* UIKit.framework in Frameworks */,
+				6437583F16BBF2D600FD222E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64822E591695E9BF003C5415 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -179,6 +202,26 @@
 				64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */,
 			);
 			name = IWUserInterface;
+			sourceTree = "<group>";
+		};
+		6437584016BBF2D700FD222E /* theBr1dgeTest */ = {
+			isa = PBXGroup;
+			children = (
+				6437584616BBF2D700FD222E /* theBr1dgeTest.h */,
+				6437584716BBF2D700FD222E /* theBr1dgeTest.m */,
+				6437584116BBF2D700FD222E /* Supporting Files */,
+			);
+			path = theBr1dgeTest;
+			sourceTree = "<group>";
+		};
+		6437584116BBF2D700FD222E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6437584216BBF2D700FD222E /* theBr1dgeTest-Info.plist */,
+				6437584316BBF2D700FD222E /* InfoPlist.strings */,
+				6437584916BBF2D700FD222E /* theBr1dgeTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		646F58F816A555B000704F45 /* theBr1dge */ = {
@@ -299,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				646F58F816A555B000704F45 /* theBr1dge */,
+				6437584016BBF2D700FD222E /* theBr1dgeTest */,
 				64822E5F1695E9BF003C5415 /* Frameworks */,
 				64822E5D1695E9BF003C5415 /* Products */,
 			);
@@ -308,6 +352,7 @@
 			isa = PBXGroup;
 			children = (
 				64822E5C1695E9BF003C5415 /* theBr1dge.app */,
+				6437583B16BBF2D600FD222E /* theBr1dgeTest.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -322,6 +367,7 @@
 				64822E641695E9BF003C5415 /* CoreGraphics.framework */,
 				64822E661695E9BF003C5415 /* GLKit.framework */,
 				64822E681695E9BF003C5415 /* OpenGLES.framework */,
+				6437583C16BBF2D600FD222E /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -329,6 +375,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6437583A16BBF2D600FD222E /* theBr1dgeTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6437584A16BBF2D700FD222E /* Build configuration list for PBXNativeTarget "theBr1dgeTest" */;
+			buildPhases = (
+				6437583616BBF2D600FD222E /* Sources */,
+				6437583716BBF2D600FD222E /* Frameworks */,
+				6437583816BBF2D600FD222E /* Resources */,
+				6437583916BBF2D600FD222E /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = theBr1dgeTest;
+			productName = theBr1dgeTest;
+			productReference = 6437583B16BBF2D600FD222E /* theBr1dgeTest.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		64822E5B1695E9BF003C5415 /* theBr1dge */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 64822E8B1695E9BF003C5415 /* Build configuration list for PBXNativeTarget "theBr1dge" */;
@@ -368,11 +432,20 @@
 			projectRoot = "";
 			targets = (
 				64822E5B1695E9BF003C5415 /* theBr1dge */,
+				6437583A16BBF2D600FD222E /* theBr1dgeTest */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6437583816BBF2D600FD222E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6437584516BBF2D700FD222E /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64822E5A1695E9BF003C5415 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -396,7 +469,32 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		6437583916BBF2D600FD222E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		6437583616BBF2D600FD222E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6437584816BBF2D700FD222E /* theBr1dgeTest.m in Sources */,
+				6437584D16BBF76E00FD222E /* IWIndexList.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64822E581695E9BF003C5415 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -430,6 +528,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		6437584316BBF2D700FD222E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6437584416BBF2D700FD222E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		646F591416A555B000704F45 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -457,6 +563,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		6437584B16BBF2D700FD222E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "theBr1dgeTest/theBr1dgeTest-Prefix.pch";
+				INFOPLIST_FILE = "theBr1dgeTest/theBr1dgeTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		6437584C16BBF2D700FD222E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "theBr1dgeTest/theBr1dgeTest-Prefix.pch";
+				INFOPLIST_FILE = "theBr1dgeTest/theBr1dgeTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 		64822E891695E9BF003C5415 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -536,6 +672,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6437584A16BBF2D700FD222E /* Build configuration list for PBXNativeTarget "theBr1dgeTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6437584B16BBF2D700FD222E /* Debug */,
+				6437584C16BBF2D700FD222E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		64822E561695E9BF003C5415 /* Build configuration list for PBXProject "theBr1dge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

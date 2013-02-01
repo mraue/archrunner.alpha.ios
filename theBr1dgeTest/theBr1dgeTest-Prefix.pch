@@ -1,0 +1,8 @@
+//
+// Prefix header for all source files of the 'theBr1dgeTest' target in the 'theBr1dgeTest' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif

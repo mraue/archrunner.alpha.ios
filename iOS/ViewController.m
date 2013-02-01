@@ -112,7 +112,7 @@ GLuint N_VERT2 = 0;
     switch1.on = NO;
     switch1.hidden = YES;
     
-    self.preferredFramesPerSecond = 60;
+    self.preferredFramesPerSecond = 30;
     
     self.context = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
 
@@ -369,9 +369,9 @@ GLuint N_VERT2 = 0;
     [xLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.x]];
     [yLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.y]];
     [zLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.z]];
-//    [rxLabel setText:[NSString stringWithFormat:@"%.3f", controllerDataAccelerometer.rotationSpeed.x]];
-//    [ryLabel setText:[NSString stringWithFormat:@"%.3f", controllerDataAccelerometer.rotationSpeed.y]];
-//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.rotationSpeed.y]];
+    [rxLabel setText:[NSString stringWithFormat:@"%u", gdStandardCubeIndexList.nEntries]];
+    [ryLabel setText:[NSString stringWithFormat:@"%u", gdNOverdriveCubes]];
+    [rzLabel setText:[NSString stringWithFormat:@"%.2f", gdZMax]];
     
     // this is how to do this correctly
     //CMAttitude *currentAttitude = motionManager.deviceMotion.attitude;

@@ -74,8 +74,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdBufferToCubeMap = malloc(n * sizeof(unsigned int));
     gdBufferToCubeMapNEntries = n;
     
-    gdNormalCubesMaps = malloc(n * sizeof(unsigned int));
-    gdNormalCubesN = n;
+    //gdNormalCubesMaps = malloc(n * sizeof(unsigned int));
+    //gdNormalCubesN = n;
     gdStandardCubeIndexList = IWIndexListMake(n);
     
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
@@ -107,7 +107,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
         gdBufferToCubeMap[nc] = nc;
-        gdNormalCubesMaps[nc] = nc;
+        //gdNormalCubesMaps[nc] = nc;
         gdStandardCubeIndexList.map[nc] = nc;
         gdStandardCubeIndexList.reverseMap[nc] = nc;
     }

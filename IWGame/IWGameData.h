@@ -45,8 +45,8 @@ IWTimerData gdRandomRemoveCubeTimer;
 
 IWIndexListData gdStandardCubeIndexList;
 
-unsigned int gdNormalCubesN;
-unsigned int *gdNormalCubesMaps;
+unsigned int gdNOverdriveCubes;
+float gdZMax;
 
 #pragma mark - Second VBO array scaffolding
 
