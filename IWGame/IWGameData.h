@@ -23,7 +23,7 @@
 #include "IWCube.h"
 #include "IWColorTransition.h"
 #include "IWFuel.h"
-#include "IWGDoubleBuffer.h"
+#include "IWGMultiBuffer.h"
 #include "IWGBufferSubData.h"
 #include "IWTimer.h"
 #include "IWIndexList.h"
@@ -50,7 +50,7 @@ float gdZMax;
 
 #pragma mark - Second VBO array scaffolding
 
-IWGDoubleBufferData gdTriangleDoubleBuffer2;
+IWGMultiBufferData gdTriangleDoubleBuffer2;
 GLuint gdTriangleNVertices2;
 
 #pragma mark - Debug / Testing
@@ -81,9 +81,9 @@ bool gdDropCamera;
 
 #pragma mark - Open GL Buffer
 
-IWGDoubleBufferData gdTriangleDoubleBuffer;
+IWGMultiBufferData gdTriangleDoubleBuffer;
 
-IWGDoubleBufferData gdUITriangleDoubleBuffer;
+IWGMultiBufferData gdUITriangleDoubleBuffer;
 
 GLuint gdUITriangleVertexArray;
 GLuint gdUITriangleVertexBuffer;

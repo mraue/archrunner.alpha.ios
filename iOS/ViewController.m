@@ -107,11 +107,15 @@ GLuint N_VERT2 = 0;
 {
     [super viewDidLoad];
     
+    // Prevent screen diming and autolock
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+    
     switchColor = NO;
     //[aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
     switch1.on = NO;
     switch1.hidden = YES;
     
+    // Default setting for 3GS
     self.preferredFramesPerSecond = 30;
     
     self.context = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
@@ -124,16 +128,13 @@ GLuint N_VERT2 = 0;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
+    // This can be removed, since I guess we won't be using the
+    // the compass after all (too slow/buggy)
     self.locationManager = [[[CLLocationManager alloc] init] autorelease];
 	
 	// check if the hardware has a compass
 	if ([CLLocationManager headingAvailable] == NO) {
-		// No compass is available. This application cannot function without a compass,
-        // so a dialog will be displayed and no magnetic data will be measured.
         self.locationManager = nil;
-//        UIAlertView *noCompassAlert = [[UIAlertView alloc] initWithTitle:@"No Compass!" message:@"This device does not have the ability to measure magnetic fields." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-//        [noCompassAlert show];
-//        [noCompassAlert release];
 	} else {
         // heading service configuration
         locationManager.headingFilter = kCLHeadingFilterNone;
@@ -150,47 +151,32 @@ GLuint N_VERT2 = 0;
     [motionManager startAccelerometerUpdates];
 
     if (motionManager.isDeviceMotionAvailable) {
+        // IPhone 4++
+        self.preferredFramesPerSecond = 60;
+        
         motionManager.deviceMotionUpdateInterval = 0.01;
+        
         [motionManager startDeviceMotionUpdates];
+
         _filteredAcceleration.x = motionManager.deviceMotion.gravity.x;
         _filteredAcceleration.y = motionManager.deviceMotion.gravity.y;
         _filteredAcceleration.z = motionManager.deviceMotion.gravity.z;
-        //NSLog(@"%f %f %f",motionManager.deviceMotion.gravity.x, motionManager.deviceMotion.gravity.y, motionManager.deviceMotion.gravity.z);
+
         savedAttitude = [motionManager.deviceMotion.attitude retain];
         _filteredAttitude = IWVector3Make(savedAttitude.roll * IW_RAD_TO_DEG,
                                           -1.0 * savedAttitude.pitch * IW_RAD_TO_DEG,
                                           -1.0 * savedAttitude.yaw * IW_RAD_TO_DEG);
     } else {
         CMAccelerometerData *newestAccel = motionManager.accelerometerData;
+        
         _filteredAcceleration.x = newestAccel.acceleration.x;
         _filteredAcceleration.y = newestAccel.acceleration.y;
         _filteredAcceleration.z = newestAccel.acceleration.z;
     }
 
-    
-//    IWControllerData controllerDataTmp = {
-//        {0.0, 0.0, 0.0},// referenceDirection
-//        {0.0, 0.0, 0.0},// direction
-//        {1.8, 1.4, 0.0},// pitchAngleMin
-//        {4.4, 4.2, 1.0},// pitchAngleMax
-//        {0.0, 0.0, 0.0}// rotationSpeed
-//    };
     controllerDataAccelerometer = IWControllerDataMakeDefault();
-//    IWControllerData controllerDataTmp2 = {
-//        {0.0, 0.0, 0.0},// referenceDirection
-//        {0.0, 0.0, 0.0},// direction
-//        {2.0, 0.8, 0.0},// pitchAngleMin
-//        {6.0, 4.0, 1.0},// pitchAngleMax
-//        {0.0, 0.0, 0.0}// rotationSpeed
-//    };
-    controllerDataCompass = IWControllerDataMakeDefault();
-//    playerData = IWPlayerDataMake(IWVector3Make(0.0, 0.0, 0.0),
-//                                  IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
-//                                  IWVector3Make(0.0, 1.0, 0.0));
 
-//    playerData = IWPlayerDataMake(IWVector3Make(2.0, 2.0, 0.0),
-//                                  IWVector3Normalize(IWVector3Make(-1.0, -1.0, 0.0)),
-//                                  IWVector3Make(0.0, 1.0, 0.0));
+    controllerDataCompass = IWControllerDataMakeDefault();
     
     orientationNeutralSetAccelerometer = NO;
     orientationNeutralSetCompass = NO;
@@ -207,10 +193,6 @@ GLuint N_VERT2 = 0;
                        [fragShaderPathname UTF8String],
                        self.view.bounds.size.width,
                        self.view.bounds.size.height);
-//    IWGRendererSetupGL([[NSString stringWithContentsOfFile:vertShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
-//                       [[NSString stringWithContentsOfFile:fragShaderPathname encoding:NSUTF8StringEncoding error:nil] UTF8String],
-//                       self.view.bounds.size.width,
-//                       self.view.bounds.size.height);
 }
 
 - (void)didReceiveMemoryWarning
@@ -240,6 +222,8 @@ GLuint N_VERT2 = 0;
     float alpha = 0.2;
     if (motionManager.isDeviceMotionAvailable) {
         IWVector3 gravity = IWVector3Make(motionManager.deviceMotion.gravity.x, motionManager.deviceMotion.gravity.y, motionManager.deviceMotion.gravity.z);
+        // This is somehwat of a hack to filter out the first few data sets
+        // which seem to be corrupt/wrong
         if (gdTotalRunTime < 0.5) {
             _filteredAcceleration.x = gravity.x;
             _filteredAcceleration.y = gravity.y;
@@ -274,7 +258,8 @@ GLuint N_VERT2 = 0;
     controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
     
     if (motionManager.isDeviceMotionAvailable) {
-        alpha = 0.85;
+        // Needs to be better determined under the assumption of 60 FPS
+        alpha = 0.5;
         if (savedAttitude) {
             CMAttitude *currentAttitude = [motionManager.deviceMotion.attitude retain];
             [currentAttitude multiplyByInverseOfAttitude: savedAttitude];
@@ -294,17 +279,6 @@ GLuint N_VERT2 = 0;
 
     IWControllerUpdateRotationSpeed(&controllerDataCompass, self.timeSinceLastUpdate);
     
-//    [aLabel1 setText:[NSString stringWithFormat:@"%.2f", controllerData.rotationSpeed.x]];
-//    [aLabel2 setText:[NSString stringWithFormat:@"%.2f", controllerData.rotationSpeed.y]];
-//    [aLabel3 setText:[NSString stringWithFormat:@"%.1f", controllerData.rotationSpeed.z]];
-    
-//    [aLabel1 setText:[NSString stringWithFormat:@"%.2f", _filteredAcceleration.x]];
-//    [aLabel2 setText:[NSString stringWithFormat:@"%.2f", _filteredAcceleration.y]];
-//    [aLabel3 setText:[NSString stringWithFormat:@"%.2f", _filteredAcceleration.z]];
-    
-    //[aLabel setText:[NSString stringWithFormat:@"%.1f", controllerData.orientationNeutral.x]];
-    //[aLabel setText:[NSString stringWithFormat:@"%.1f", controllerData.orientation.x]];
-    
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     
     // REFACTOR: does not change, could only be created and intialized to uniform once
@@ -314,7 +288,6 @@ GLuint N_VERT2 = 0;
 
     // Update player position
     float speed = gdPlayerData.speed;
-    //float speed = 0.0;
     gdPlayerData.position = IWVector3Add(gdPlayerData.position,
                                          IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
                                                                  self.timeSinceLastUpdate * speed));
@@ -372,26 +345,6 @@ GLuint N_VERT2 = 0;
     [rxLabel setText:[NSString stringWithFormat:@"%u", gdStandardCubeIndexList.nEntries]];
     [ryLabel setText:[NSString stringWithFormat:@"%u", gdNOverdriveCubes]];
     [rzLabel setText:[NSString stringWithFormat:@"%.2f", gdZMax]];
-    
-    // this is how to do this correctly
-    //CMAttitude *currentAttitude = motionManager.deviceMotion.attitude;
-    //[currentAttitude multiplyByInverseOfAttitude: savedAttitude];
-//    // DEBUG
-//    [xLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataCompass.rotationSpeed.x]];
-//    [yLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataCompass.rotationSpeed.y]];
-//    [zLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataCompass.rotationSpeed.z]];
-//    [rxLabel setText:[NSString stringWithFormat:@"%.2f", motionManager.deviceMotion.gravity.x]];
-//    [ryLabel setText:[NSString stringWithFormat:@"%.2f", motionManager.deviceMotion.gravity.y]];
-//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", motionManager.deviceMotion.gravity.z]];
-    
-//    [rxLabel setText:[NSString stringWithFormat:@"%.2f", currentAttitude.roll * IW_RAD_TO_DEG]];
-//    [ryLabel setText:[NSString stringWithFormat:@"%.2f", currentAttitude.pitch * IW_RAD_TO_DEG]];
-//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", currentAttitude.yaw * IW_RAD_TO_DEG]];
-//    [rxLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.debug.x]];
-//    [ryLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.debug.y]];
-//    [rzLabel setText:[NSString stringWithFormat:@"%.2f", controllerDataAccelerometer.debug.z]];
-
-//    // END DEBUG
     
     // Compute the model view matrix for the object rendered with ES2
     // REFACTOR: does not change, could only be calculated and intialized to uniforms once

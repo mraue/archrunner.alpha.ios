@@ -23,7 +23,7 @@
 #include "IWGLighting.h"
 
 #include "IWGBufferSubData.h"
-//#include "IWGDoubleBuffer.h"
+//#include "IWGMultiBuffer.h"
 
 #include "IWGameData.h"
 
@@ -43,28 +43,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     };
     gdClearColorTransition = clearColorTransition;
     
-    //gdB1TriangleNVertices = 0;
-    
-    //gePos mypos[55296];
     int nx, ny, nz;
-    float d;
     
-    //nx = ny = nz = 20;
-    //d = 0.05;
-    
-    //nx = ny = nz = 27;
-    //d = 0.05;
-    
-    nx = ny = nz = 5;
-    //nx = ny = 7;
-    //nz = 25;
-    //d = .05;
-    
-    //nx = ny = nz = 4;
-    //d = .2;
-    
-    //nx = ny = nz = 1;
-    //d = 1.5;
+    nx = ny = nz = 10;
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
@@ -105,10 +86,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         gdStandardCubeIndexList.map[nc] = nc;
         gdStandardCubeIndexList.reverseMap[nc] = nc;
     }
-    unsigned int nVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
     
-    //gdB1TriangleNVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
-    //gdB2TriangleNVertices = gdB1TriangleNVertices;
+    unsigned int nVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
     printf("nVertices = %u\n", nVertices);
     
     // Basic lighting program
@@ -143,15 +122,14 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     IWGLightingInitializeUniformLocations(programID);
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
-    gdTriangleDoubleBuffer = IWGDoubleBufferGen();
-    for (unsigned int  k =0; k < IWGDOUBLEBUFFER_MAX; k++) {
+    gdTriangleDoubleBuffer = IWGMultiBufferGen();
+    for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTriangleDoubleBuffer.nVertices[k] = nVertices;
     }
-    //gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
     
     // Fill buffers
-    for (unsigned int i = 0; i < IWGDOUBLEBUFFER_MAX; i++) {
-        IWGDoubleBufferBind(&gdTriangleDoubleBuffer, i);
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        IWGMultiBufferBind(&gdTriangleDoubleBuffer, i);
 
         glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
 
@@ -225,10 +203,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
     
-    gdUITriangleDoubleBuffer = IWGDoubleBufferGen();
+    gdUITriangleDoubleBuffer = IWGMultiBufferGen();
 
-    for (unsigned int i = 0; i < IWGDOUBLEBUFFER_MAX; i++) {
-        IWGDoubleBufferBind(&gdUITriangleDoubleBuffer, i);
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        IWGMultiBufferBind(&gdUITriangleDoubleBuffer, i);
         glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
         
         glEnableVertexAttribArray(positionSlot);
@@ -299,7 +277,7 @@ void IWGRendererRender(void)
     
     // Draw cubes
 
-    IWGDoubleBufferBindCurrentBuffer(&gdTriangleDoubleBuffer);
+    IWGMultiBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
     
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
                        1, 0, gdModelMatrix.m);
@@ -322,11 +300,11 @@ void IWGRendererRender(void)
     glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
                 gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
     
-    glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentBuffer]);
+    glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
                  
     glBindVertexArrayOES(0);
     
-    // Draw array 2
+    // Draw user interface
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -334,10 +312,10 @@ void IWGRendererRender(void)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     //glBindVertexArrayOES(gdUITriangleVertexArray);
-    IWGDoubleBufferBindCurrentBuffer(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferBindCurrentDrawBuffer(&gdUITriangleDoubleBuffer);
     
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
-                0);
+    // Set master shader switch
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 0);
     
     //glUseProgram(_program);
     
@@ -352,9 +330,9 @@ void IWGRendererRender(void)
 
     glLineWidth(0.5);
     glDrawArrays(GL_LINES, 0, gdUINLineVertices);
-    
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
-                1);
+
+    // Set master shader switch
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 1);
     
     glBindVertexArrayOES(0);
     glDisable(GL_BLEND);

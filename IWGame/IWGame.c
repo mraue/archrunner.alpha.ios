@@ -20,7 +20,7 @@
 #include "IWController.h"
 
 #include "IWGBufferSubData.h"
-#include "IWGDoubleBuffer.h"
+#include "IWGMultiBuffer.h"
 
 #include "IWTimer.h"
 
@@ -50,7 +50,7 @@ void IWGameSetup(void)
     return;
 }
 
-void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGDoubleBufferData *buffer)
+void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
 {
     gdBufferToCubeMapNEntries -= 1;
     cube->isInteractive = false;
@@ -65,15 +65,16 @@ void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGDoubleBufferData *buffer)
         gdBufferToCubeMap[currentBufferID] = newCubeID;
         gdCubeData[newCubeID].triangleBufferData.bufferIDGPU = currentBufferID;
         
-        IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
+        IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
                                cube->triangleBufferData.size * currentBufferID * sizeof(GLfloat),
                                cube->triangleBufferData.size * sizeof(GLfloat),
                                gdCubeData[newCubeID].triangleBufferData.startCPU,
                                false);
     }
-    for (unsigned int k=0; k < IWGDOUBLEBUFFER_MAX; k++) {
-        gdTriangleDoubleBuffer.nVertices[k] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
-    }
+    gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDataUpdateBuffer] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
+//    for (unsigned int k=0; k < IWGMULTIBUFFER_MAX; k++) {
+//        gdTriangleDoubleBuffer.nVertices[k] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
+//    }
     return;
 }
 
@@ -84,7 +85,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
     gdZMax = MAX(gdZMax, gdPlayerData.position.z);
     
     // Switch draw buffer
-    IWGDoubleBufferSwitchBuffer(&gdTriangleDoubleBuffer);
+    IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
 
     // Update overdrive
     IWPlayerUpdateOverdrive(&gdPlayerData, timeSinceLastUpdate);
@@ -103,7 +104,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
 
         // Remove cube
         unsigned int i = IWIndexListRemoveRandom(&gdStandardCubeIndexList);
-
         IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
 
     }
@@ -173,7 +173,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
                 gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.currentVector;
                 IWCubeToTriangles(&gdCubeData[i]);
             }
-            IWGDoubleBufferSubData(&gdTriangleDoubleBuffer,
+            IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
                                    gdCubeData[i].triangleBufferData.size * gdCubeData[i].triangleBufferData.bufferIDGPU * sizeof(GLfloat),
                                    gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
                                    gdCubeData[i].triangleBufferData.startCPU,
@@ -183,7 +183,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // Switch UI VBO object
-    IWGDoubleBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);    
     
     // Update background color transition
     if (!gdClearColorTransition.transitionHasFinished) {
@@ -210,7 +210,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
     // Fuel vertex update
     IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.uiElementData.triangleBufferStart);
     
-    IWGDoubleBufferSubData(&gdUITriangleDoubleBuffer,
+    IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
                            (gdFuel.stateBar.uiElementData.triangleBufferStart - gdRectangleButton.triangleBufferStart)  * sizeof(GLfloat),
                            gdFuel.stateBar.uiElementData.triangleBufferSize * sizeof(GLfloat),
                            gdFuel.stateBar.uiElementData.triangleBufferStart,
@@ -237,7 +237,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
         gdRectangleButton.color = gdRectangleButton.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
-        IWGDoubleBufferSubData(&gdUITriangleDoubleBuffer,
+        IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
                                0,
                                gdRectangleButton.triangleBufferSize * sizeof(GLfloat),
                                gdRectangleButton.triangleBufferStart,
@@ -247,7 +247,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
         gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
-        IWGDoubleBufferSubData(&gdUITriangleDoubleBuffer,
+        IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
                                (gdRectangleButton2.triangleBufferStart - gdRectangleButton.triangleBufferStart) * sizeof(GLfloat),
                                gdRectangleButton2.triangleBufferSize * sizeof(GLfloat),
                                gdRectangleButton2.triangleBufferStart,
@@ -257,7 +257,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWColorTransitionUpdate(&gdRectangleButton3.colorTransition, timeSinceLastUpdate);
         gdRectangleButton3.color = gdRectangleButton3.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton3);
-        IWGDoubleBufferSubData(&gdUITriangleDoubleBuffer,
+        IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
                                (gdRectangleButton3.triangleBufferStart - gdRectangleButton.triangleBufferStart)  * sizeof(GLfloat),
                                gdRectangleButton3.triangleBufferSize * sizeof(GLfloat),
                                gdRectangleButton3.triangleBufferStart,
