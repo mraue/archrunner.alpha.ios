@@ -83,9 +83,6 @@ bool gdDropCamera;
 
 IWGDoubleBufferData gdTriangleDoubleBuffer;
 
-GLuint gdB1TriangleNVertices;
-GLuint gdB2TriangleNVertices;
-
 IWGDoubleBufferData gdUITriangleDoubleBuffer;
 
 GLuint gdUITriangleVertexArray;

@@ -43,7 +43,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     };
     gdClearColorTransition = clearColorTransition;
     
-    gdB1TriangleNVertices = 0;
+    //gdB1TriangleNVertices = 0;
     
     //gePos mypos[55296];
     int nx, ny, nz;
@@ -105,9 +105,11 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         gdStandardCubeIndexList.map[nc] = nc;
         gdStandardCubeIndexList.reverseMap[nc] = nc;
     }
-    gdB1TriangleNVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
-    gdB2TriangleNVertices = gdB1TriangleNVertices;
-    printf("nVertMax = %d\n", gdB1TriangleNVertices);
+    unsigned int nVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
+    
+    //gdB1TriangleNVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
+    //gdB2TriangleNVertices = gdB1TriangleNVertices;
+    printf("nVertices = %u\n", nVertices);
     
     // Basic lighting program
     shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
@@ -142,8 +144,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
     gdTriangleDoubleBuffer = IWGDoubleBufferGen();
-    
-    gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
+    for (unsigned int  k =0; k < IWGDOUBLEBUFFER_MAX; k++) {
+        gdTriangleDoubleBuffer.nVertices[k] = nVertices;
+    }
+    //gdTriangleDoubleBuffer.nVertices[0] = gdTriangleDoubleBuffer.nVertices[1] = gdB1TriangleNVertices;
     
     // Fill buffers
     for (unsigned int i = 0; i < IWGDOUBLEBUFFER_MAX; i++) {
