@@ -32,13 +32,14 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
         cornerCut,
         cornerOffset,
         aspectRatio,
-        {{0.0, 0.0}, {0.0, 0.0}},
-        0, NULL, 0, 0, NULL, 0,
-        IWColorTransitionMake(), false
+        IWRectangleMakeFromAnchorAndDimensions(IWVector2Make(anchorPointX, anchorPointY),
+                                               IWVector2Make(sizeX, sizeY),
+                                               anchorPosition),
+        IWGPrimitiveBufferDataMake(0, 7, 0, 0, 0, 0, 0, 0, 3, 0, 0),
+        IWGPrimitiveBufferDataMake(0, 7, 0, 0, 0, 0, 0, 0, 3, 0, 0),
+        IWColorTransitionMake(),
+        false
     };
-    button.rectangle = IWRectangleMakeFromAnchorAndDimensions(button.anchorPoint,
-                                                              IWVector2Make(sizeX, sizeY),
-                                                              button.anchorPosition);
     return button;
 }
 
@@ -140,7 +141,7 @@ static struct _IWUIRECTANGLEBUTTONTOTRIANGLEBUFFER_INDICES_STRUCT _IWUIRECTANGLE
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat* p)
 {
     //float* p = &vertices->x;
-    button->triangleBufferStart = p;
+    button->triangleBuffer.bufferStartCPU = p;
     
     IWVector4 color = button->color;
     //float cornerOffset = (button->rectangle.upperRight.x - button->rectangle.lowerLeft.x) * button->cornerCutXFraction;
@@ -182,14 +183,14 @@ size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton * button, GLfloat
                                                        IWUIRECTANGLEBUTTON_TRIANGLE_Z, color);
         }
     }
-    button->triangleBufferSize = p - button->triangleBufferStart;
-    button->nTriangleVertices = button->triangleBufferSize / 7;
-    return button->triangleBufferSize;
+    button->triangleBuffer.size = p - button->triangleBuffer.bufferStartCPU;
+    //button->nTriangleVertices = button->triangleBufferSize / 7;
+    return button->triangleBuffer.size;
 }
 
 size_t IWUIRectangleButtonToLineBuffer(IWUIRectangleButton *button, GLfloat* p)
 {
-    button->lineBufferStart = p;
+    button->lineBuffer.startCPU = p;
     
     IWVector4 color = button->lineColor;
     
@@ -266,16 +267,16 @@ size_t IWUIRectangleButtonToLineBuffer(IWUIRectangleButton *button, GLfloat* p)
     }
     p += IWUIRectangleButtonBufferAppendVertex(p, baseVertices[15], IWUIRECTANGLEBUTTON_LINE_Z, color);
 
-    button->lineBufferSize = p - button->lineBufferStart;
-    button->nLineVertices = button->lineBufferSize / 7;
-    return button->lineBufferSize;
+    button->lineBuffer.size = p - button->lineBuffer.startCPU;
+    //button->nLineVertices = button->lineBufferSize / 7;
+    return button->lineBuffer.size;
 }
 
 void IWUIRectangleButtonUpdateColorInBuffer(IWUIRectangleButton *button)
 {
-    if (button->triangleBufferStart) {
-        GLfloat *ptr = button->triangleBufferStart;
-        while (ptr < button->triangleBufferStart + button->triangleBufferSize) {
+    if (button->triangleBuffer.bufferStartCPU) {
+        GLfloat *ptr = button->triangleBuffer.bufferStartCPU;
+        while (ptr < button->triangleBuffer.bufferStartCPU + button->triangleBuffer.size) {
             ptr += 3;
             *ptr++ = button->color.x;
             *ptr++ = button->color.y;

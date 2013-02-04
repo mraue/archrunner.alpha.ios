@@ -11,13 +11,14 @@
 #include "IWGPrimitiveBuffer.h"
 
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMake(size_t size, short stride,
-                                                  GLfloat *startCPU, GLfloat *bufferStartCPU, unsigned int bufferIDGPU,
+                                                  GLfloat *startCPU, GLfloat *bufferStartCPU,
+                                                  unsigned int bufferIDGPU, unsigned int bufferOffsetGPU,
                                                   short positionOffset, short normalOffset, short colorOffset,
                                                   short textureposOffset, int needsUpdate)
 {
     IWGPrimitiveBufferData primitiveBufferData = {
         size, stride,
-        startCPU, bufferStartCPU, bufferIDGPU,
+        startCPU, bufferStartCPU, bufferIDGPU, bufferOffsetGPU,
         positionOffset, normalOffset, colorOffset, textureposOffset,
         needsUpdate
     };
@@ -26,7 +27,7 @@ IWGPrimitiveBufferData IWGPrimitiveBufferDataMake(size_t size, short stride,
 
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMakeEmpty()
 {
-    return IWGPrimitiveBufferDataMake(0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0);
+    return IWGPrimitiveBufferDataMake(0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0);
 }
 
 bool IWGPrimitiveBufferDataUpdateColor(IWGPrimitiveBufferData *primitiveBufferData, IWVector4 newColor)

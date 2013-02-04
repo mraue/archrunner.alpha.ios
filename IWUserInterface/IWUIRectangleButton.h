@@ -18,6 +18,8 @@
 #include "IWGeometry.h"
 #include "IWColorTransition.h"
 
+#include "IWGPrimitiveBuffer.h"
+
 enum IWUIRECTANGLEBUTTON_CORNER_CUT {
     IWUIRECTANGLEBUTTON_CORNER_CUT_LOWER_LEFT  = 1 <<  0,
     IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT  = 1 <<  1,
@@ -38,12 +40,14 @@ struct _IWUIRectangleButton {
     float cornerOffset;
     float aspectRatio;
     IWRectangle rectangle;// [0.0 - 1.0]
-    size_t nTriangleVertices;
-    GLfloat *triangleBufferStart;
-    size_t triangleBufferSize;// [CGFloat]
-    size_t nLineVertices;
-    GLfloat *lineBufferStart;
-    size_t lineBufferSize;// [CGFloat]
+    IWGPrimitiveBufferData triangleBuffer;
+    IWGPrimitiveBufferData lineBuffer;
+//    size_t nTriangleVertices;
+//    GLfloat *triangleBufferStart;
+//    size_t triangleBufferSize;// [CGFloat]
+//    size_t nLineVertices;
+//    GLfloat *lineBufferStart;
+//    size_t lineBufferSize;// [CGFloat]
     IWColorTransition colorTransition;
     bool isTouched;
 };

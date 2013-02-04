@@ -57,6 +57,7 @@
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
 		648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */ = {isa = PBXBuildFile; fileRef = 648E756916A6B7E8004DE1A4 /* IWVector2.h */; };
 		64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A2F02716B67CCC00655F68 /* IWVectorTransition.c */; };
+		64F133B616BE706B00E0AC68 /* IWCubeCounter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F133B516BE706B00E0AC68 /* IWCubeCounter.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,6 +143,9 @@
 		648E756B16A7F5B1004DE1A4 /* IWGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGeometry.h; sourceTree = "<group>"; };
 		64A2F02716B67CCC00655F68 /* IWVectorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWVectorTransition.c; sourceTree = "<group>"; };
 		64A2F02916B67CD800655F68 /* IWVectorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWVectorTransition.h; sourceTree = "<group>"; };
+		64F133B416BE6E4900E0AC68 /* IWUIDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWUIDefinitions.h; sourceTree = "<group>"; };
+		64F133B516BE706B00E0AC68 /* IWCubeCounter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWCubeCounter.c; sourceTree = "<group>"; };
+		64F133B716BE707800E0AC68 /* IWCubeCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCubeCounter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				64765C1E16AFD7E7007E5C7A /* IWUserInterface.h */,
+				64F133B416BE6E4900E0AC68 /* IWUIDefinitions.h */,
 				641E0D8416AAF9170077785D /* IWUIElement.h */,
 				641E0D8116AAF8D80077785D /* IWUIElement.c */,
 				64765C2516AFD8E9007E5C7A /* IWUIRectangleButton.h */,
@@ -265,6 +270,8 @@
 				646F590416A555B000704F45 /* IWPlayer.c */,
 				64765C1816AEC74B007E5C7A /* IWFuel.h */,
 				64765C1916AEC758007E5C7A /* IWFuel.c */,
+				64F133B716BE707800E0AC68 /* IWCubeCounter.h */,
+				64F133B516BE706B00E0AC68 /* IWCubeCounter.c */,
 				6437583216B97CB400FD222E /* IWTimer.h */,
 				6437582F16B97CAD00FD222E /* IWTimer.c */,
 				6437583516B97FAE00FD222E /* IWIndexList.h */,
@@ -522,6 +529,7 @@
 				64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */,
 				6437583016B97CAD00FD222E /* IWTimer.c in Sources */,
 				6437583416B97FA600FD222E /* IWIndexList.c in Sources */,
+				64F133B616BE706B00E0AC68 /* IWCubeCounter.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

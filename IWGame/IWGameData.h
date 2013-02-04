@@ -27,6 +27,7 @@
 #include "IWGBufferSubData.h"
 #include "IWTimer.h"
 #include "IWIndexList.h"
+#include "IWCubeCounter.h"
 
 #pragma mark - Game Logic Data
 
@@ -35,6 +36,8 @@ IWPlayerData gdPlayerData;
 IWPlayerData gdPlayerDataSave;
 
 IWFuel gdFuel;
+
+IWCubeCounterData gdCubeCounter;
 
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
@@ -45,7 +48,7 @@ IWTimerData gdRandomRemoveCubeTimer;
 
 IWIndexListData gdStandardCubeIndexList;
 
-unsigned int gdNOverdriveCubes;
+//unsigned int gdNOverdriveCubes;
 float gdZMax;
 
 #pragma mark - Second VBO array scaffolding
@@ -62,6 +65,7 @@ unsigned int gdSecondaryPositionCounter;
 IWVector3 *gdSecondaryPosition;
 
 IWColorTransition gdClearColorTransition;
+IWColorTransition gdOverdriveColorTransition;
 
 #pragma mark - User Interface
 

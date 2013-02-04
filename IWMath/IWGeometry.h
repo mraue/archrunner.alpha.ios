@@ -39,6 +39,12 @@ typedef enum {
 
 # pragma mark - Function prototypes
 
+static __inline__ IWRectangle IWRectangleMake(float x1, float y1, float x2, float y2)
+{
+    IWRectangle rectangle = {{x1, y1}, {x2, y2}};
+    return rectangle;
+}
+
 IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,
                                                    enum IWRECTANGLE_ANCHOR_POSITION anchorPosition);
 

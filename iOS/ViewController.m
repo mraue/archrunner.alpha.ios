@@ -329,11 +329,11 @@ GLuint N_VERT2 = 0;
                                                               normGLV.x, normGLV.y, normGLV.z);
     GLKMatrix4 rotationUpdateMatrix = GLKMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
 
-    if (motionManager.isDeviceMotionAvailable) {
-        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
-                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
-        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
-    }
+//    if (motionManager.isDeviceMotionAvailable) {
+//        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
+//                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
+//        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+//    }
 
     gdPlayerData.direction = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV).v);
     gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
@@ -343,7 +343,7 @@ GLuint N_VERT2 = 0;
     [yLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.y]];
     [zLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.z]];
     [rxLabel setText:[NSString stringWithFormat:@"%u", gdStandardCubeIndexList.nEntries]];
-    [ryLabel setText:[NSString stringWithFormat:@"%u", gdNOverdriveCubes]];
+    [ryLabel setText:[NSString stringWithFormat:@"%u", gdCubeCounter.bridge]];
     [rzLabel setText:[NSString stringWithFormat:@"%.2f", gdZMax]];
     
     // Compute the model view matrix for the object rendered with ES2

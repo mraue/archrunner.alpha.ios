@@ -49,8 +49,7 @@ IWFuel IWFuelMake(float currentLevel,
                   IWVector4 currentMaxColor,
                   IWVector4 maxColor,
                   IWVector4 warningColor,
-                  IWRectangle rectangle,
-                  IWUIElementData uiElement);
+                  IWRectangle rectangle);
 IWFuel IWFuelMakeDefaultStart();
 
 bool IWFuelAddFuel(IWFuel *fuel, float extraFuel);

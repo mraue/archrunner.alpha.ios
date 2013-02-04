@@ -31,6 +31,7 @@ struct _IWGPrimitiveBufferData {
     GLfloat *startCPU;
     GLfloat *bufferStartCPU;
     unsigned int bufferIDGPU;
+    unsigned int bufferOffsetGPU;// [ GLfloat ]
     short positionOffset;// [ GLfloat ]
     short normalOffset;// [ GLfloat ]
     short colorOffset;// [ GLfloat ]
@@ -40,7 +41,8 @@ struct _IWGPrimitiveBufferData {
 typedef struct _IWGPrimitiveBufferData IWGPrimitiveBufferData;
 
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMake(size_t size, short stride,
-                                                  GLfloat *startCPU, GLfloat *bufferStartCPU, unsigned int bufferIDGPU,
+                                                  GLfloat *startCPU, GLfloat *bufferStartCPU,
+                                                  unsigned int bufferIDGPU, unsigned int bufferOffsetGPU,
                                                   short positionOffset, short normalOffset, short colorOffset,
                                                   short textureposOffset, int needsUpdate);
 IWGPrimitiveBufferData IWGPrimitiveBufferDataMakeEmpty();

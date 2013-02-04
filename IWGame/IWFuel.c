@@ -18,8 +18,7 @@ IWFuel IWFuelMake(float currentLevel,
                   IWVector4 currentMaxColor,
                   IWVector4 maxColor,
                   IWVector4 warningColor,
-                  IWRectangle rectangle,
-                  IWUIElementData uiElement)
+                  IWRectangle rectangle)
 {
     float states[] = {currentLevel / maxLevel, currentMaxLevel / maxLevel, 1.0};
     IWVector4 colors[] = { currentColor, currentMaxColor, maxColor};
@@ -28,7 +27,7 @@ IWFuel IWFuelMake(float currentLevel,
         currentLevel, currentMaxLevel, maxLevel, warningLevel, false,
         currentColor, currentMaxColor, maxColor, warningColor,
         IWUIStateBarMake(3, states, colors, rectangle,
-                         IWUI_ORIENTATION_HORIZONTAL, IWUI_DIRECTION_TO_UP)
+                         IWUI_ORIENTATION_HORIZONTAL, IWUI_DIRECTION_NORMAL)
     };
     
     return fuel;
@@ -40,8 +39,7 @@ IWFuel IWFuelMakeDefaultStart()
     IWFuel fuel = IWFuelMake(0.6, 0.6, 1.0, 0.33,
                              IWUI_COLOR_LIGHT_BLUE(0.6), IWUI_COLOR_BLUE(0.4), IWUI_COLOR_DARK_BLUE(0.4),
                              IWVector4Make(255.0 / 255.0, 139.0 / 255.0, 139.0 / 255.0, 0.6),
-                             rectangle,
-                             IWUIElementMakeEmpty());
+                             rectangle);
     return fuel;
 }
 
@@ -118,7 +116,7 @@ bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor,
 
 size_t IWFuelToTriangleBuffer(IWFuel *fuel, GLfloat *p)
 {
-    fuel->stateBar.uiElementData.lineBufferStart = p;
+    fuel->stateBar.triangleBufferData.bufferStartCPU = p;
     return IWUIStateBarToTriangles(&fuel->stateBar);
 }
 

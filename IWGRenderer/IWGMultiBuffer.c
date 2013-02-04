@@ -67,8 +67,8 @@ void IWGMultiBufferSwitchBuffer(IWGMultiBufferData *multiBufferData)
 }
 
 void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,
-                            GLintptr offset, GLsizeiptr size, const GLvoid *data,
-                            bool bindBuffer)
+                           GLintptr offset, GLsizeiptr size, const GLvoid *data,
+                           bool bindBuffer)
 {
     if (bindBuffer)
         IWGMultiBufferBindCurrentDataUpdateBuffer(multiBufferData);
@@ -85,4 +85,16 @@ void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,
             }
         }
     }
+}
+
+void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
+                                          IWGPrimitiveBufferData *primitiveBuffer,
+                                          bool bindBuffer)
+{
+    IWGMultiBufferSubData(multiBuffer,
+                          primitiveBuffer->bufferOffsetGPU  * sizeof(GLfloat),
+                          primitiveBuffer->size * sizeof(GLfloat),
+                          primitiveBuffer->bufferStartCPU,
+                          bindBuffer);
+    return;
 }

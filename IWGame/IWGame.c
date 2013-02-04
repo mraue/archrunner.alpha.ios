@@ -28,6 +28,9 @@
 
 #include "IWUserInterface.h"
 
+#include "IWCubeCounter.h"
+#include "IWFuel.h"
+
 void IWGameSetup(void)
 {
 //    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
@@ -45,7 +48,6 @@ void IWGameSetup(void)
     // DEBUG
     //gdRandomRemoveCubeTimer.duration = 0.5 ;
     // END DEBUG
-    gdNOverdriveCubes = 0;
     gdZMax = 0.0;
     return;
 }
@@ -105,7 +107,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
         // Remove cube
         unsigned int i = IWIndexListRemoveRandom(&gdStandardCubeIndexList);
         IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
-
+        
+        gdCubeCounter.spawned--;
     }
     
     // Collision detection
@@ -138,8 +141,11 @@ void IWGameUpdate(float timeSinceLastUpdate)
                                                                                transitionTime, 0.0, false, false);
                     IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_DARK_GOLD(1.0));
                     gdCubeData[i].color = IWUI_COLOR_DARK_GOLD(1.0);
+                    //gdCubeData[i].color = IWUI_COLOR_DARK_PURPLE(1.0);
                     gdClearColorTransition.startColor = IWUI_COLOR_DARK_BLUE(1.0);
-                    gdNOverdriveCubes++;
+
+                    gdCubeCounter.bridge++;
+                    gdCubeCounter.spawned--;
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
 
@@ -149,11 +155,16 @@ void IWGameUpdate(float timeSinceLastUpdate)
                     // Activate overdrive
                     IWPlayerActivatOverdrive(&gdPlayerData);
                     IWPlayerUpdateOverdrive(&gdPlayerData, 0.0);
-                    gdNOverdriveCubes--;
                     
-                    IWFuelUpdateColor(&gdFuel, IWUI_COLOR_GOLD(0.6), IWFUEL_COLOR_CURRENT, false);
+                    IWFuelUpdateColor(&gdFuel, IWUI_COLOR_GOLD(0.4), IWFUEL_COLOR_CURRENT, false);
+                    gdOverdriveColorTransition.currentColor = IWUI_COLOR_GOLD(0.4);
+                    gdOverdriveColorTransition.currentTransitionTime = 0.0;
+                    gdOverdriveColorTransition.transitionHasFinished = false;
                     
                     gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
+                    
+                    gdCubeCounter.bridge--;
+                    gdCubeCounter.pool++;
                 }
                 gdClearColorTransition.currentTransitionTime = 0.0;
                 gdClearColorTransition.transitionHasFinished = false;
@@ -195,6 +206,14 @@ void IWGameUpdate(float timeSinceLastUpdate)
         // DEBUG
         //gdPlayerData = gdPlayerDataStart;
         //gdFuel.currentLevel = gdFuel.currentMaxLevel;
+    } else if (gdPlayerData.overdrive) {
+        if (IWColorTransitionUpdate(&gdOverdriveColorTransition, timeSinceLastUpdate)) {
+            gdOverdriveColorTransition.endColor = gdOverdriveColorTransition.startColor;
+            gdOverdriveColorTransition.startColor = gdOverdriveColorTransition.currentColor;
+            gdOverdriveColorTransition.currentTransitionTime = 0.0;
+            gdOverdriveColorTransition.transitionHasFinished = false;
+        }
+        IWFuelUpdateColor(&gdFuel, gdOverdriveColorTransition.currentColor, IWFUEL_COLOR_CURRENT, false);
     } else if (gdFuel.currentLevel / gdFuel.currentMaxLevel < 0.333) {
         if (!gdFuel.isWarning) {
             IWFuelUpdateColor(&gdFuel, gdFuel.warningColor, IWFUEL_COLOR_CURRENT, false);
@@ -208,13 +227,18 @@ void IWGameUpdate(float timeSinceLastUpdate)
     glBindVertexArrayOES(gdUITriangleVertexArray);
     
     // Fuel vertex update
-    IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.uiElementData.triangleBufferStart);
+    IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.triangleBufferData.bufferStartCPU);
     
     IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
-                           (gdFuel.stateBar.uiElementData.triangleBufferStart - gdRectangleButton.triangleBufferStart)  * sizeof(GLfloat),
-                           gdFuel.stateBar.uiElementData.triangleBufferSize * sizeof(GLfloat),
-                           gdFuel.stateBar.uiElementData.triangleBufferStart,
+                           (gdFuel.stateBar.triangleBufferData.bufferStartCPU - gdRectangleButton.triangleBuffer.bufferStartCPU)  * sizeof(GLfloat),
+                           gdFuel.stateBar.triangleBufferData.size * sizeof(GLfloat),
+                           gdFuel.stateBar.triangleBufferData.bufferStartCPU,
                            false);
+    
+    // Update cube counter bar
+    IWCubeCounterUpdateStateBar(&gdCubeCounter);
+    IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
+    IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdCubeCounter.stateBar.triangleBufferData, false);
     
     // Check button interaction
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
@@ -237,31 +261,19 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
         gdRectangleButton.color = gdRectangleButton.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
-        IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
-                               0,
-                               gdRectangleButton.triangleBufferSize * sizeof(GLfloat),
-                               gdRectangleButton.triangleBufferStart,
-                               false);
+        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton.triangleBuffer, false);
     }
     if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
         IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
         gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
-        IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
-                               (gdRectangleButton2.triangleBufferStart - gdRectangleButton.triangleBufferStart) * sizeof(GLfloat),
-                               gdRectangleButton2.triangleBufferSize * sizeof(GLfloat),
-                               gdRectangleButton2.triangleBufferStart,
-                               false);
+        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton2.triangleBuffer, false);
     }
     if (!gdRectangleButton3.colorTransition.transitionHasFinished) {
         IWColorTransitionUpdate(&gdRectangleButton3.colorTransition, timeSinceLastUpdate);
         gdRectangleButton3.color = gdRectangleButton3.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton3);
-        IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
-                               (gdRectangleButton3.triangleBufferStart - gdRectangleButton.triangleBufferStart)  * sizeof(GLfloat),
-                               gdRectangleButton3.triangleBufferSize * sizeof(GLfloat),
-                               gdRectangleButton3.triangleBufferStart,
-                               false);
+        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton3.triangleBuffer, false);
     }
     glBindVertexArrayOES(0);
 

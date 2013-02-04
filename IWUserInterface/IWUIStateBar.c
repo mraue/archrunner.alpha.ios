@@ -26,7 +26,7 @@ IWUIStateBar IWUIStateBarMake(unsigned int nStates, float *states,
     IWUIStateBar stateBar = {
         nStates, _states, _colors,
         rectangle, orientation, direction,
-        IWUIElementMakeEmpty()
+        IWGPrimitiveBufferDataMakeEmpty()
         
     };
     return stateBar;
@@ -34,8 +34,25 @@ IWUIStateBar IWUIStateBarMake(unsigned int nStates, float *states,
 
 size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar)
 {
+    float *statesSaved;
+    IWVector4 *colorsSaved;
+    if (stateBar->direction == IWUI_DIRECTION_REVERSE) {
+        statesSaved = stateBar->states;
+        colorsSaved = stateBar->colors;
+        stateBar->states = malloc((stateBar->nStates + 1) * sizeof(float));
+        stateBar->colors = malloc((stateBar->nStates + 1) * sizeof(IWVector4));
+        stateBar->states[0] = 1.0 - statesSaved[stateBar->nStates - 1];
+        stateBar->colors[0] = IWVector4Make(0.0, 0.0, 0.0, 0.0);
+        for (unsigned int i = 1; i < stateBar->nStates; i++) {
+            stateBar->states[i] = 1.0 - statesSaved[stateBar->nStates - i - 1];
+            stateBar->colors[i] = colorsSaved[stateBar->nStates - i];
+        }
+        stateBar->states[stateBar->nStates] = 1.0;
+        stateBar->colors[stateBar->nStates] = colorsSaved[0];
+        stateBar->nStates += 1;
+    }
     unsigned int indices[] = {0, 1, 2, 0, 2, 3};
-    GLfloat *p = stateBar->uiElementData.triangleBufferStart;
+    GLfloat *p = stateBar->triangleBufferData.bufferStartCPU;
     GLfloat *pstart = p;
     IWVector2 llV = IWVector2AddScalar(IWVector2MultiplyScalar(stateBar->rectangle.lowerLeft, 2.0), -1.0);
     IWVector2 urV = IWVector2AddScalar(IWVector2MultiplyScalar(stateBar->rectangle.upperRight, 2.0), -1.0);
@@ -71,6 +88,13 @@ size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar)
             points[0] = points[3];
             points[1] = points[2];
         }
+    }
+    if (stateBar->direction == IWUI_DIRECTION_REVERSE) {
+        free(stateBar->states);
+        free(stateBar->colors);
+        stateBar->states = statesSaved;
+        stateBar->colors = colorsSaved;
+        stateBar->nStates -= 1;
     }
     return (p - pstart);
 }

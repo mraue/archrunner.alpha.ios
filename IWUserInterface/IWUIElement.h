@@ -17,20 +17,6 @@
 #include "IWMath.h"
 #include "IWGeometry.h"
 
-enum _IWUI_ORIENTATION {
-    IWUI_ORIENTATION_HORIZONTAL,
-    IWUI_ORIENTATION_VERTICAL
-};
-typedef enum _IWUI_ORIENTATION IWUI_ORIENTATION;
-
-enum _IWUI_DIRECTION {
-    IWUI_DIRECTION_TO_LEFT,
-    IWUI_DIRECTION_TO_RIGHT,
-    IWUI_DIRECTION_TO_UP,
-    IWUI_DIRECTION_TO_DOWN
-};
-typedef enum _IWUI_ORIENTATION IWUI_DIRECTION;
-
 struct _IWUIElementData {
     IWRectangle rectangle;// [0.0 - 1.0]
     size_t nTriangleVertices;

@@ -12,7 +12,8 @@
 #include <stdlib.h>
 
 #include "IWGeometry.h"
-#include "IWUIElement.h"
+#include "IWUIDefinitions.h"
+#include "IWGPrimitiveBuffer.h"
 
 struct _IWUIStateBar {
     unsigned int nStates;
@@ -21,7 +22,7 @@ struct _IWUIStateBar {
     IWRectangle rectangle;
     IWUI_ORIENTATION orientation;
     IWUI_DIRECTION direction;
-    IWUIElementData uiElementData;
+    IWGPrimitiveBufferData triangleBufferData;
 };
 typedef struct _IWUIStateBar IWUIStateBar;
 

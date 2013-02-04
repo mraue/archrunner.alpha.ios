@@ -16,7 +16,9 @@
 
 #include "IWGBufferSubData.h"
 
-#define IWGMULTIBUFFER_MAX 3
+#include "IWGPrimitiveBuffer.h"
+
+#define IWGMULTIBUFFER_MAX 2
 
 typedef struct {
     unsigned int currentDrawBuffer;
@@ -34,10 +36,15 @@ void IWGMultiBufferBind(IWGMultiBufferData *multiBufferData, unsigned int buffer
 void IWGMultiBufferBindCurrentDrawBuffer(IWGMultiBufferData *multiBufferData);
 void IWGMultiBufferBindCurrentDataUpdateBuffer(IWGMultiBufferData *multiBufferData);
 
+// Also bind new data update buffer
 void IWGMultiBufferSwitchBuffer(IWGMultiBufferData *multiBufferData);
 void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,
-                            GLintptr offset, GLsizeiptr size, const GLvoid *data,
-                            bool bindBuffer);
+                           GLintptr offset, GLsizeiptr size, const GLvoid *data,
+                           bool bindBuffer);
+
+void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
+                                          IWGPrimitiveBufferData *primitiveBuffer,
+                                          bool bindBuffer);
 
 
 #endif
