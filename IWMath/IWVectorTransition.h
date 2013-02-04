@@ -32,6 +32,7 @@ IWVector4Transition IWVector4TransitionMake(IWVector4 startVector,
                                             bool transitionHasFinished,
                                             bool quadraticEaseIn);
 bool IWVector4TransitionUpdate(IWVector4Transition *vector4Transition, float timeSinceLastUpdate);
+void IWVector4TransitionResetAndStart(IWVector4Transition *vector4Transition);
 
 typedef struct {
     IWVector3 startVector;
@@ -52,6 +53,7 @@ IWVector3Transition IWVector3TransitionMake(IWVector3 startVector,
                                             bool transitionHasFinished,
                                             bool quadraticEaseIn);
 bool IWVector3TransitionUpdate(IWVector3Transition *vector3Transition, float timeSinceLastUpdate);
+void IWVector3TransitionResetAndStart(IWVector3Transition *vector3Transition);
 
 
 #endif

@@ -54,6 +54,13 @@ bool IWVector4TransitionUpdate(IWVector4Transition *vector4Transition, float tim
     return vector4Transition->transitionHasFinished;
 }
 
+void IWVector4TransitionResetAndStart(IWVector4Transition *vector4Transition)
+{
+    vector4Transition->transitionHasFinished = false;
+    vector4Transition->currentVector = vector4Transition->startVector;
+    vector4Transition->currentTransitionTime = 0.0;
+    return;
+}
 
 IWVector3Transition IWVector3TransitionMakeEmpty(void)
 {
@@ -96,4 +103,12 @@ bool IWVector3TransitionUpdate(IWVector3Transition *vector3Transition, float tim
         vector3Transition->transitionHasFinished = false;
     }
     return vector3Transition->transitionHasFinished;
+}
+
+void IWVector3TransitionResetAndStart(IWVector3Transition *vector3Transition)
+{
+    vector3Transition->transitionHasFinished = false;
+    vector3Transition->currentVector = vector3Transition->startVector;
+    vector3Transition->currentTransitionTime = 0.0;
+    return;
 }
