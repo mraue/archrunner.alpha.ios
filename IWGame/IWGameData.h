@@ -28,6 +28,7 @@
 #include "IWTimer.h"
 #include "IWIndexList.h"
 #include "IWCubeCounter.h"
+#include "IWGCircle.h"
 
 #pragma mark - Game Logic Data
 
@@ -55,6 +56,7 @@ IWIndexListData gdStandardCubeIndexList;
 float gdZMax;
 
 IWCubeData gdSkyCube;
+IWGCircleData gdSun;
 
 #pragma mark - Second VBO array scaffolding
 

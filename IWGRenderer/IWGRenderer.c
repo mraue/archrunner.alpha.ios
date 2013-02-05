@@ -20,6 +20,7 @@
 #include "IWCube.h"
 #include "IWFuel.h"
 #include "IWCubeCounter.h"
+#include "IWGCircle.h"
 
 #include "IWGLighting.h"
 
@@ -59,7 +60,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     int nx, ny, nz;
     
-    nx = ny = nz = 5;
+    nx = ny = nz = 8;
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
@@ -177,23 +178,27 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glBindVertexArrayOES(0);
     
     //
-    // Sky
+    // Sky box
     //
     
     gdSkyCube= IWCubeMake(IWCUBE_TYPE_STANDARD,
                           IWVector3Make(0.0, -10.0, 0.0),
                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
-                          IWVector3Make(20.0, 20.0, 20.0),
+                          IWVector3Make(60.0, 20.0, 60.0),
                           IWCUBE_FACES_BOWL,
                           IWCUBE_NORMALS_INWARD,
                           0.0, true, false, IWVector3TransitionMakeEmpty());
     
-    size_t skySize = 1 * 5 * 6 * 10 * sizeof(GLfloat);
+    gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
+    
+    size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
     gdSkyCube.triangleBufferData.startCPU = malloc(skySize);
     
     gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
-    
-    
+
+    gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
+    gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
+
     glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
     glBindVertexArrayOES(gdSkyTriangleVertexArray);
     
@@ -332,8 +337,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
 //    // Slowed it down :(
 //    glEnable(GL_CULL_FACE);
-//    glCullFace(GL_BACK);
-//    glFrontFace(GL_CW);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
 //
     return;
 }
@@ -353,7 +358,7 @@ void IWGRendererRender(void)
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     
     // Draw cubes
 
@@ -390,18 +395,32 @@ void IWGRendererRender(void)
     
     // Draw sky
     //glDisable(GL_DITHER);
+    glDisable(GL_CULL_FACE);
     glBindVertexArrayOES(gdSkyTriangleVertexArray);
+
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
                 gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 4);
-    glDrawArrays(GL_TRIANGLES, 0, gdSkyCube.triangleBufferData.size / gdSkyCube.triangleBufferData.stride);
+    
+    gdSkyCube.centerPosition.x = gdPlayerData.position.x;
+    gdSkyCube.centerPosition.z = gdPlayerData.position.z;
+    IWCubeToTriangles(&gdSkyCube);
+    glBufferSubData(gdSkyTriangleVertexBuffer, 0,
+                    gdSkyCube.triangleBufferData.size * sizeof(GLfloat), gdSkyCube.triangleBufferData.startCPU);
+    gdSun.centerLocation.x = gdPlayerData.position.x;
+    gdSun.centerLocation.y = gdPlayerData.position.y;
+    IWGCircleToTriangles(&gdSun);
+    glBufferSubData(gdSkyTriangleVertexBuffer, gdSkyCube.triangleBufferData.size * sizeof(GLfloat),
+                    gdSun.triangleBufferData.size * sizeof(GLfloat), gdSun.triangleBufferData.startCPU);
+    
+    glDrawArrays(GL_TRIANGLES, 0,
+                 (gdSkyCube.triangleBufferData.size + gdSun.triangleBufferData.size) / gdSkyCube.triangleBufferData.stride);
     //glEnable(GL_DITHER);
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
                 gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z, gdMaterialSourceData.Diffuse.w);
     glBindVertexArrayOES(0);
     
     // Draw user interface
-    //glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ONE);

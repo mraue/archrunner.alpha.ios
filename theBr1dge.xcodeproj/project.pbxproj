@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		641AC1C016C11F8200DDD2EB /* IWGCircle.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1BF16C11F8200DDD2EB /* IWGCircle.c */; };
 		641E0D6B16A7FE0A0077785D /* IWGeometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D6A16A7FE0A0077785D /* IWGeometry.c */; };
 		641E0D7416A8313F0077785D /* IWFileTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7316A8313F0077785D /* IWFileTools.c */; };
 		641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590716A555B000704F45 /* IWGShaderProgram.c */; };
@@ -61,6 +62,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		641AC1BE16C11F7500DDD2EB /* IWGCircle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGCircle.h; sourceTree = "<group>"; };
+		641AC1BF16C11F8200DDD2EB /* IWGCircle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGCircle.c; sourceTree = "<group>"; };
 		641E0D6A16A7FE0A0077785D /* IWGeometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGeometry.c; sourceTree = "<group>"; };
 		641E0D6E16A8094C0077785D /* IWGRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGRenderer.h; sourceTree = "<group>"; };
 		641E0D6F16A809560077785D /* IWGRenderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGRenderer.c; sourceTree = "<group>"; };
@@ -295,6 +298,8 @@
 				64765C2C16B28491007E5C7A /* IWGBufferSubData.c */,
 				641E0D8A16AD6D680077785D /* IWGPrimitiveBuffer.h */,
 				641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */,
+				641AC1BE16C11F7500DDD2EB /* IWGCircle.h */,
+				641AC1BF16C11F8200DDD2EB /* IWGCircle.c */,
 			);
 			path = IWGRenderer;
 			sourceTree = "<group>";
@@ -530,6 +535,7 @@
 				6437583016B97CAD00FD222E /* IWTimer.c in Sources */,
 				6437583416B97FA600FD222E /* IWIndexList.c in Sources */,
 				64F133B616BE706B00E0AC68 /* IWCubeCounter.c in Sources */,
+				641AC1C016C11F8200DDD2EB /* IWGCircle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
