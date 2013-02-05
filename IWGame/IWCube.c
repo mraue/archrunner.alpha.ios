@@ -25,7 +25,8 @@ unsigned int IWCubeFacesToNumber(IWCUBE_FACES cubeFaces)
     return nFaces;
 }
 
-IWCubeData IWCubeMake(IWCUBE_TYPE type,
+IWCubeData IWCubeMake(unsigned int id,
+                      IWCUBE_TYPE type,
                       IWVector3 centerPosition,
                       IWVector4 color,
                       IWVector3 dimensions,
@@ -37,6 +38,7 @@ IWCubeData IWCubeMake(IWCUBE_TYPE type,
                       IWVector3Transition positionTransition)
 {
     IWCubeData cubeData = {
+        id,
         type,
         centerPosition,
         color,
@@ -65,13 +67,14 @@ IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
     float x0 = center.x - dx / 2.;
     float y0 = center.y - dy / 2.;
     float z0 = center.z - dz / 2.;
+    unsigned int id = 0;
     for (float x = x0; x <= x0 + dx; x += d + l) {
         for (float y = y0; y < y0 + dy; y += d + l) {
             for (float z = z0; z < z0 + dz; z += d + l) {
                 IWVector3 centerPosition = IWVector3Make(x, y, z);
                 IWVector3 dimensions =  IWVector3Make(l, l, l);
-                *cubePtr = IWCubeMake(IWCUBE_TYPE_STANDARD, centerPosition, color, dimensions,
-                                      IWCUBE_FACES_ALL, IWCUBE_NORMALS_OUTWARDS, l * 1.4142, true, true,
+                *cubePtr = IWCubeMake(id, IWCUBE_TYPE_STANDARD, centerPosition, color, dimensions,
+                                      IWCUBE_FACES_ALL, IWCUBE_NORMALS_OUTWARDS, l * 2.5, true, true,
                                       IWVector3TransitionMakeEmpty());
                 for (unsigned int i = 0; i < nRandomizePositions; i++) {
                     cubePtr->centerPosition = IWVector3Add(cubePtr->centerPosition,
@@ -79,7 +82,7 @@ IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
                                                                          (IW_FRAND - 0.5) * 2.0 * randomDistance,
                                                                          (IW_FRAND - 0.5) * 2.0 * randomDistance));
                 }
-                cubePtr++;
+                cubePtr++; id++;
             }
         }
     }

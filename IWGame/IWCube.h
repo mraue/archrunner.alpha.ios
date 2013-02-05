@@ -23,6 +23,7 @@ typedef enum {
     IWCUBE_TYPE_OVERDRIVE,
     IWCUBE_TYPE_TRANSITION,
     IWCUBE_TYPE_SPAWNING,
+    IWCUBE_TYPE_POOL,
     IWCUBE_TYPE_N
 } IWCUBE_TYPE;
 
@@ -45,6 +46,7 @@ typedef enum {
 } IWCUBE_NORMALS;
 
 struct _IWCubeData {
+    unsigned int id;
     IWCUBE_TYPE type;    
     IWVector3 centerPosition;
     IWVector4 color;
@@ -59,7 +61,8 @@ struct _IWCubeData {
 };
 typedef struct _IWCubeData IWCubeData;
 
-IWCubeData IWCubeMake(IWCUBE_TYPE type,
+IWCubeData IWCubeMake(unsigned int id,
+                      IWCUBE_TYPE type,
                       IWVector3 centerPosition,
                       IWVector4 color,
                       IWVector3 dimensions,

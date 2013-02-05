@@ -51,6 +51,8 @@ float gdTotalRunTime;
 IWTimerData gdRandomRemoveCubeTimer;
 
 IWIndexListData gdStandardCubeIndexList;
+IWIndexListData gdPoolCubeIndexList;
+IWIndexListData gdGPUBufferPositionIndexList;
 
 //unsigned int gdNOverdriveCubes;
 float gdZMax;
@@ -65,14 +67,13 @@ GLuint gdTriangleNVertices2;
 
 #pragma mark - Debug / Testing
 
-unsigned int *gdBufferToCubeMap;
-unsigned int gdBufferToCubeMapNEntries;
-
 unsigned int gdSecondaryPositionCounter;
 IWVector3 *gdSecondaryPosition;
 
 IWColorTransition gdClearColorTransition;
 IWColorTransition gdOverdriveColorTransition;
+
+bool gdSpawnCubes;
 
 #pragma mark - User Interface
 

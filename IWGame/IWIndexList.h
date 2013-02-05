@@ -13,13 +13,19 @@
 
 typedef struct {
     unsigned int nEntries;
-    unsigned int *map;
-    unsigned int *reverseMap;
+    unsigned int nEntriesMax;
+    unsigned int *map;// index -> object id
+    unsigned int *reverseMap;// object id -> index
 } IWIndexListData;
 
-IWIndexListData IWIndexListMake(unsigned int nEntries);
+IWIndexListData IWIndexListMake(unsigned int nEntriesMax);
 
-bool IWIndexListReplaceWithLast(IWIndexListData *indexList, unsigned int entry);
+int IWIndexListGetObjectIdForIndex(IWIndexListData *indexList, unsigned int index);
+int IWIndexListGetIndexForObjectId(IWIndexListData *indexList, unsigned int objectId);
+
+int IWIndexListAppendObjectId(IWIndexListData *indexList, unsigned int objectId);
+
+int IWIndexListReplaceWithLast(IWIndexListData *indexList, unsigned int entry);
 unsigned int IWIndexListRemoveRandom(IWIndexListData *indexList);
 
 #endif

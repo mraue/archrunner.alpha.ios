@@ -60,17 +60,17 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     int nx, ny, nz;
     
-    nx = ny = nz = 8;
+    nx = ny = nz = 5;// 8
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
     printf("Allocating %d position with total size %d\n", n * 6 * 6 * 10, (int)mypos_size);
     GLfloat *mypos = malloc(mypos_size);
-    
-    gdBufferToCubeMap = malloc(n * sizeof(unsigned int));
-    gdBufferToCubeMapNEntries = n;
 
     gdStandardCubeIndexList = IWIndexListMake(n);
+    gdPoolCubeIndexList = IWIndexListMake(n);
+    gdPoolCubeIndexList.nEntries = 0;
+    gdGPUBufferPositionIndexList = IWIndexListMake(n);
     
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
 
@@ -78,8 +78,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdCubeData = IWCubeMakeCubes(nx, ny, nz, .04, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdNCubes = nx * ny * nz;
     
-    IWVector3 *points = IWCubeMakeCubeCurve(gdNCubes, IWVector3Make(0.0, 0.0, 0.0), IWGEOMETRY_AXIS_Z);
-    gdSecondaryPosition = points;
+    gdSecondaryPosition = IWCubeMakeCubeCurve(gdNCubes, IWVector3Make(0.0, 0.0, 0.0), IWGEOMETRY_AXIS_Z);
     gdSecondaryPositionCounter = 0;
     
     GLfloat *memPtr = mypos;
@@ -115,9 +114,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         //
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
-        gdBufferToCubeMap[nc] = nc;
-        gdStandardCubeIndexList.map[nc] = nc;
-        gdStandardCubeIndexList.reverseMap[nc] = nc;
+        //gdStandardCubeIndexList.map[nc] = nc;
+        //gdStandardCubeIndexList.reverseMap[nc] = nc;
+        IWIndexListAppendObjectId(&gdStandardCubeIndexList, nc);
+        IWIndexListAppendObjectId(&gdGPUBufferPositionIndexList, nc);
     }
     
     unsigned int nVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
@@ -181,16 +181,16 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     // Sky box
     //
     
-    gdSkyCube= IWCubeMake(IWCUBE_TYPE_STANDARD,
-                          IWVector3Make(0.0, -10.0, 0.0),
+    gdSkyCube= IWCubeMake(n, IWCUBE_TYPE_STANDARD,
+                          IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
                           IWVector3Make(60.0, 20.0, 60.0),
                           IWCUBE_FACES_BOWL,
                           IWCUBE_NORMALS_INWARD,
                           0.0, true, false, IWVector3TransitionMakeEmpty());
-    
+
     gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
-    
+
     size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
     gdSkyCube.triangleBufferData.startCPU = malloc(skySize);
     
@@ -396,7 +396,9 @@ void IWGRendererRender(void)
     // Draw sky
     //glDisable(GL_DITHER);
     glDisable(GL_CULL_FACE);
+    
     glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
 
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
                 gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
@@ -405,19 +407,22 @@ void IWGRendererRender(void)
     gdSkyCube.centerPosition.x = gdPlayerData.position.x;
     gdSkyCube.centerPosition.z = gdPlayerData.position.z;
     IWCubeToTriangles(&gdSkyCube);
-    glBufferSubData(gdSkyTriangleVertexBuffer, 0,
+    glBufferSubData(GL_ARRAY_BUFFER, 0,
                     gdSkyCube.triangleBufferData.size * sizeof(GLfloat), gdSkyCube.triangleBufferData.startCPU);
+    
     gdSun.centerLocation.x = gdPlayerData.position.x;
-    gdSun.centerLocation.y = gdPlayerData.position.y;
+    gdSun.centerLocation.z = gdPlayerData.position.z + 30.5;
     IWGCircleToTriangles(&gdSun);
-    glBufferSubData(gdSkyTriangleVertexBuffer, gdSkyCube.triangleBufferData.size * sizeof(GLfloat),
+    glBufferSubData(GL_ARRAY_BUFFER, gdSkyCube.triangleBufferData.size * sizeof(GLfloat),
                     gdSun.triangleBufferData.size * sizeof(GLfloat), gdSun.triangleBufferData.startCPU);
     
     glDrawArrays(GL_TRIANGLES, 0,
                  (gdSkyCube.triangleBufferData.size + gdSun.triangleBufferData.size) / gdSkyCube.triangleBufferData.stride);
+    
     //glEnable(GL_DITHER);
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-                gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z, gdMaterialSourceData.Diffuse.w);
+                gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z,
+                gdMaterialSourceData.Diffuse.w);
     glBindVertexArrayOES(0);
     
     // Draw user interface

@@ -50,31 +50,45 @@ void IWGameSetup(void)
     // END DEBUG
     gdZMax = 0.0;
     gdGameIsPaused = false;
+    // DEBUG
+    gdSpawnCubes = true;
+    //
     return;
 }
 
 void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
 {
-    gdBufferToCubeMapNEntries -= 1;
-    cube->isInteractive = false;
-    
-    unsigned int i, currentBufferID, newCubeID;
+    int bufferId = IWIndexListGetIndexForObjectId(&gdGPUBufferPositionIndexList, cube->id);
+    if (bufferId < 0) {
+        printf("ERROR: Could not find cube with id %u in GPU buffer list\n", cube->id);
+        return;
+    }
 
-    currentBufferID = cube->triangleBufferData.bufferIDGPU;
-    i = gdBufferToCubeMap[currentBufferID];
-    newCubeID = gdBufferToCubeMap[gdBufferToCubeMapNEntries];
-    
-    if (newCubeID != i) {
-        gdBufferToCubeMap[currentBufferID] = newCubeID;
-        gdCubeData[newCubeID].triangleBufferData.bufferIDGPU = currentBufferID;
+    int newBufferId = IWIndexListReplaceWithLast(&gdGPUBufferPositionIndexList, bufferId);
+
+    cube->isInteractive = false;
+    cube->type = IWCUBE_TYPE_POOL;
+
+    //currentBufferID = cube->triangleBufferData.bufferIDGPU;
+    if (bufferId != gdGPUBufferPositionIndexList.nEntries) {
+        int newCubeID = IWIndexListGetObjectIdForIndex(&gdGPUBufferPositionIndexList, bufferId);
+        if (newCubeID < 0) {
+            printf("ERROR could not get object id from gdGPUBufferPositionIndexList for buffer %i", bufferId);
+            return;
+        }
         
-        IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
-                               cube->triangleBufferData.size * currentBufferID * sizeof(GLfloat),
-                               cube->triangleBufferData.size * sizeof(GLfloat),
-                               gdCubeData[newCubeID].triangleBufferData.startCPU,
-                               false);
+        if (newBufferId != bufferId) {
+            gdCubeData[newCubeID].triangleBufferData.bufferIDGPU = bufferId;
+            
+            IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
+                                   cube->triangleBufferData.size * bufferId * sizeof(GLfloat),
+                                   cube->triangleBufferData.size * sizeof(GLfloat),
+                                   gdCubeData[newCubeID].triangleBufferData.startCPU,
+                                   false);
+        }
     }
     gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDataUpdateBuffer] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
+    
 //    for (unsigned int k=0; k < IWGMULTIBUFFER_MAX; k++) {
 //        gdTriangleDoubleBuffer.nVertices[k] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
 //    }
@@ -122,6 +136,49 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWFuelRemoveFuel(&gdFuel, 0.05 * timeSinceLastUpdate);
     }
 
+    // Spawn pooled cubes
+    if (gdPoolCubeIndexList.nEntries > 10
+        && gdPlayerData.position.z + 0.5 >= gdSecondaryPosition[gdSecondaryPositionCounter - 1].z
+        && gdSpawnCubes) {
+
+        int i;
+
+        IWVector3 newCenter = gdSecondaryPosition[gdSecondaryPositionCounter];
+        newCenter.z += 0.7;
+        
+        free(gdSecondaryPosition);
+        gdSecondaryPosition = IWCubeMakeCubeCurve(gdNCubes, newCenter, IWGEOMETRY_AXIS_Z);
+        gdSecondaryPositionCounter = 0;
+        
+        for (int j = 0; j < gdPoolCubeIndexList.nEntries; j++) {
+            i = gdPoolCubeIndexList.map[j];
+            // Move cube
+            gdCubeData[i].type = IWCUBE_TYPE_SPAWNING;
+            gdCubeData[i].color = IWVector4Make(0.5, 0.5, 0.5, 1.0);
+            gdCubeData[i].isInteractive = false;
+            
+            IWVector3 randomOffset = IWVector3Make(IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0),
+                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0),
+                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0));
+            IWVector3 spawnPosition = IWVector3Add(newCenter, randomOffset);
+            IWVector3 randomOffset2 = IWVector3Make(IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
+                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
+                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3));
+            float transitionTime = 2.0;
+            
+            gdCubeData[i].positionTransition = IWVector3TransitionMake(spawnPosition,
+                                                                       IWVector3Add(newCenter, randomOffset2),
+                                                                       spawnPosition,
+                                                                       transitionTime, 0.0, false, false);
+            gdCubeData[i].centerPosition = spawnPosition;
+            IWIndexListAppendObjectId(&gdStandardCubeIndexList, i);
+            gdCubeData[i].triangleBufferData.bufferIDGPU = IWIndexListAppendObjectId(&gdGPUBufferPositionIndexList, i);
+            gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDataUpdateBuffer] += gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
+        }
+        gdPoolCubeIndexList.nEntries = 0;
+        //gdSpawnCubes = false;
+    }
+    
     // Auto remove standard cubes
     if (!gdPlayerData.overdrive
         && gdStandardCubeIndexList.nEntries > 0
@@ -131,6 +188,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
 
         // Remove cube
         unsigned int i = IWIndexListRemoveRandom(&gdStandardCubeIndexList);
+        //printf("DEBUG: Removing cube %u\n", i);
         IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
         
         gdCubeCounter.spawned--;
@@ -152,7 +210,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
                 if (gdCubeData[i].type == IWCUBE_TYPE_STANDARD) {
 
                     // Remove from standard cube list
-                    IWIndexListReplaceWithLast(&gdStandardCubeIndexList, gdStandardCubeIndexList.reverseMap[i]);
+                    IWIndexListReplaceWithLast(&gdStandardCubeIndexList,
+                                               IWIndexListGetIndexForObjectId(&gdStandardCubeIndexList, i));
 
                     // Move cube
                     gdCubeData[i].type = IWCUBE_TYPE_TRANSITION;
@@ -195,6 +254,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
                     
                     gdClearColorTransition.currentTransitionTime = 0.0;
                     gdClearColorTransition.transitionHasFinished = false;
+                    IWIndexListAppendObjectId(&gdPoolCubeIndexList, i);
                 }
             }
         } else if (!gdCubeData[i].positionTransition.transitionHasFinished) {
