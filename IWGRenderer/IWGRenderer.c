@@ -33,24 +33,30 @@
 void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentShaderFilename,
                         float viewWidth, float viewHeight)
 {
+    gdMasterShaderID = 2;
+    
+    gdClearColor = IWVector4Make(0.55, 0.55, 0.55, 1.0);
+    //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
+    
     gdLightSourceData = IWGLightingMakeBasicLight();
     gdMaterialSourceData = IWGLightingMakeBasicMaterial();
     
     IWColorTransition clearColorTransition = {
-        {0.1, 0.1, 0.4, 1.0},
-        {0.0, 0.0, 0.0, 1.0},
-        {1.0, 1.0, 1.0, 1.0},
-        1.0, 0.0, true, false
+        {0.8, 0.8, 0.8, 1.0},
+        gdClearColor,
+        {0.8, 0.8, 0.8, 1.0},
+        0.8, 0.0, true, false
     };
     gdClearColorTransition = clearColorTransition;
     
     IWColorTransition overdriveColorTransition = {
-        IWUI_COLOR_GOLD(0.4),
-        IWUI_COLOR_GOLD(1.0),
-        IWUI_COLOR_GOLD(0.4),
+        IWUI_COLOR_WHITE(0.4),
+        IWUI_COLOR_WHITE(1.0),
+        IWUI_COLOR_WHITE(0.4),
         0.4, 0.0, true, true
     };
     gdOverdriveColorTransition = overdriveColorTransition;
+    
     int nx, ny, nz;
     
     nx = ny = nz = 5;
@@ -67,7 +73,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
 
-    gdCubeData = IWCubeMakeCubes(nx, ny, nz, .05, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
+    //gdCubeData = IWCubeMakeCubes(nx, ny, nz, .05, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
+    gdCubeData = IWCubeMakeCubes(nx, ny, nz, .04, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdNCubes = nx * ny * nz;
     
     IWVector3 *points = IWCubeMakeCubeCurve(gdNCubes, IWVector3Make(0.0, 0.0, 0.0), IWGEOMETRY_AXIS_Z);
@@ -81,14 +88,30 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
         //gdCubeData[nc].type = IWCUBE_TYPE_OVERDRIVE;
         //gdCubeData[nc].color = IWUI_COLOR_GOLD(1.0);
         // DBUG
+        // Spawn cube
+        gdCubeData[nc].type = IWCUBE_TYPE_SPAWNING;
+        gdCubeData[nc].isInteractive = false;
+        
+        IWVector3 spawnPosition = IWVector3MultiplyScalar(IWVector3Normalize(gdCubeData[nc].centerPosition),
+                                                          IW_RAND_UNIFORM(2.0, 4.0));
+        float transitionTime = 2.5;
+        
+        gdCubeData[nc].positionTransition = IWVector3TransitionMake(spawnPosition,
+                                                                    gdCubeData[nc].centerPosition,
+                                                                    spawnPosition,
+                                                                    transitionTime, 0.0, false, false);
+        gdCubeData[nc].centerPosition = spawnPosition;
+        //gdCubeData[nc].color = IWUI_COLOR_DARK_BLUE(1.0);
+        gdCubeData[nc].color = IWVector4Make(0.5, 0.5, 0.5, 1.0);
+        //
         gdCubeData[nc].triangleBufferData.bufferStartCPU = mypos;
         gdCubeData[nc].triangleBufferData.startCPU = memPtr;
         gdCubeData[nc].triangleBufferData.bufferIDGPU = nc;
-        gdCubeData[nc].triangleBufferData.positionOffset = 0;
-        gdCubeData[nc].triangleBufferData.colorOffset = 3;
-        gdCubeData[nc].triangleBufferData.normalOffset = 7;
-        gdCubeData[nc].triangleBufferData.stride = 10;
+        //
+        //gdCubeData[nc].faces = IWCUBE_FACES_BOWL;
+        //
         gdCubeData[nc].triangleBufferData.bufferOffsetGPU = memPtr - mypos;
+        //
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
         gdBufferToCubeMap[nc] = nc;
@@ -154,41 +177,68 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glBindVertexArrayOES(0);
     
     //
+    // Sky
+    //
+    
+    gdSkyCube= IWCubeMake(IWCUBE_TYPE_STANDARD,
+                          IWVector3Make(0.0, -10.0, 0.0),
+                          IWVector4Make(0.5, 0.5, 0.5, 1.0),
+                          IWVector3Make(20.0, 20.0, 20.0),
+                          IWCUBE_FACES_BOWL,
+                          IWCUBE_NORMALS_INWARD,
+                          0.0, true, false, IWVector3TransitionMakeEmpty());
+    
+    size_t skySize = 1 * 5 * 6 * 10 * sizeof(GLfloat);
+    gdSkyCube.triangleBufferData.startCPU = malloc(skySize);
+    
+    gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
+    
+    
+    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    
+    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
+    
+    glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
+    
+    glEnableVertexAttribArray(positionSlot);
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(colorSlot);
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(normalSlot);
+    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+    
+    glBindVertexArrayOES(0);
+    
+    //
     // Head up display data
     //
-    //glGenVertexArraysOES(1, &gdUITriangleVertexArray);
-    //glBindVertexArrayOES(gdUITriangleVertexArray);
     
     float aspect = fabsf(viewWidth / viewHeight);
     printf("aspect = %f\n", aspect);
-    //IWVector4 squareButtonColor = {1.0, 1.0, 1.0, 0.3};
-    // Saturated yellow
-    //IWVector4 squareButtonColor = {255.0 / 255.0, 223. / 255., 94. / 255, 0.2};
-    // White-ish yellow
-    //IWVector4 squareButtonColor = {255.0 / 255.0, 236. / 255., 147. / 255, 0.3};
-    // Light gray
-    IWVector4 rectangleButtonColorTouched = {255.0 / 255.0, 236.0 / 255.0, 147.0 / 255.0, 0.6};
-    IWVector4 rectangleButtonColorTouched2 = {0.8, 0.8, 0.8, 0.6};
-    IWVector4 rectangleButtonColorTouched3 = {218.0 / 255.0, 255.0 / 255.0, 233.0 / 255.0, 0.6};
-    gdRectangleButton = IWUIRectangleButtonMake(0.63, -0.001,
+    
+    // Some buttons
+    gdRectangleButton = IWUIRectangleButtonMake(0.0, -0.001,
                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                 0.18, 0.19,
-                                                rectangleButtonColorTouched, IWUI_COLOR_LIGHT_BLUE(0.25),
-                                                IWUI_COLOR_LIGHT_BLUE(0.5),
-                                                (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
+                                                IWUI_COLOR_WHITE(0.5),
+                                                IWUI_COLOR_WHITE(0.25),
+                                                IWUI_COLOR_WHITE(0.5),
+                                                (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT),
                                                 0.035, aspect);
     gdRectangleButton2 = IWUIRectangleButtonMake(0.82, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.18, 0.19,
-                                                 rectangleButtonColorTouched2, IWUI_COLOR_LIGHT_BLUE(0.25),
-                                                 IWUI_COLOR_LIGHT_BLUE(0.5),
+                                                 IWUI_COLOR_PURPLE(0.3), IWUI_COLOR_WHITE(0.25),
+                                                 IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
-    gdRectangleButton3 = IWUIRectangleButtonMake(0.44, -0.001,
+    gdRectangleButton3 = IWUIRectangleButtonMake(0.63, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.18, 0.19,
-                                                 rectangleButtonColorTouched3, IWUI_COLOR_LIGHT_BLUE(0.2),
-                                                 IWUI_COLOR_LIGHT_BLUE(0.5),
+                                                 IWUI_COLOR_GOLD(0.3), IWUI_COLOR_WHITE(0.25),
+                                                 IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, aspect);
 
@@ -203,7 +253,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)
                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton3)) / 7
                              + 6 * 3// 4 for reverse, 3 for normal
-                             + 6 * 4// cube counter
+                             //+ 6 * 4// cube counter
                              );
     
     size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
@@ -221,10 +271,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdFuel.stateBar.triangleBufferData.size = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
     offset += gdFuel.stateBar.triangleBufferData.size;
     
-    gdCubeCounter.stateBar.triangleBufferData.bufferStartCPU = mypos2 + offset;
-    gdCubeCounter.stateBar.triangleBufferData.bufferOffsetGPU = offset;
-    gdCubeCounter.stateBar.triangleBufferData.size = IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
-    offset += gdCubeCounter.stateBar.triangleBufferData.size;
+//    gdCubeCounter.stateBar.triangleBufferData.bufferStartCPU = mypos2 + offset;
+//    gdCubeCounter.stateBar.triangleBufferData.bufferOffsetGPU = offset;
+//    gdCubeCounter.stateBar.triangleBufferData.size = IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
+//    offset += gdCubeCounter.stateBar.triangleBufferData.size;
     
     //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
     //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
@@ -249,7 +299,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
                          + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)
                          + IWUIRectangleButtonLineBufferSize(&gdRectangleButton3)
-                         + 2 * 42 * 7) / 7;
+                         + 2 * 52 * 7) / 7;
     
     mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);
     mypos2 = malloc(mypos_size2);
@@ -261,8 +311,8 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     gdRectangleButton3.lineBuffer.bufferOffsetGPU = offset;
     offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton3, mypos2 + offset);
     
-    IWUIElementData uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.03,//0.05,//0.3,//0.03,
-                                                        IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 31, mypos2 + offset);
+    IWUIElementData uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.06,//0.05,//0.3,//0.03,
+                                                        IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 41, mypos2 + offset);
     offset += uiCentralCircle.lineBufferSize;
     
     IWUIElementData uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
@@ -281,10 +331,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glBindVertexArrayOES(0);
     
 //    // Slowed it down :(
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CW);
-//    
+//    glEnable(GL_CULL_FACE);
+//    glCullFace(GL_BACK);
+//    glFrontFace(GL_CW);
+//
     return;
 }
 
@@ -292,7 +342,8 @@ void IWGRendererRender(void)
 {
     //glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
     if (gdClearColorTransition.transitionHasFinished) {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
     } else {
         glClearColor(gdClearColorTransition.currentColor.x,
                      gdClearColorTransition.currentColor.y,
@@ -302,7 +353,7 @@ void IWGRendererRender(void)
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     
     // Draw cubes
 
@@ -317,30 +368,45 @@ void IWGRendererRender(void)
     glUniformMatrix3fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX],
                        1, 0, gdNormalMatrix.m);
 
-    //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 0.4, 0.4, 1.0, 1.0);
-    gdLightSourceData.Position = gdPlayerData.position;
-    //_lightSource.Direction = IWVector3MultiplyScalar(playerData.direction, -1.0);
-    gdLightSourceData.Direction = gdPlayerData.direction;
-    
-    // 
+//    //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 0.4, 0.4, 1.0, 1.0);
+//    gdLightSourceData.Position = gdPlayerData.position;
+//    //_lightSource.Direction = IWVector3MultiplyScalar(playerData.direction, -1.0);
+//    gdLightSourceData.Direction = gdPlayerData.direction;
+//    
+    //
     //IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_POSITION],
-                gdLightSourceData.Position.x, gdLightSourceData.Position.y, gdLightSourceData.Position.z);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
-                gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
+//    
+//    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_POSITION],
+//                gdLightSourceData.Position.x, gdLightSourceData.Position.y, gdLightSourceData.Position.z);
+//    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
+//                gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
     
+    // Set master shader switch
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdMasterShaderID);
+
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
-                 
+
+    glBindVertexArrayOES(0);
+    
+    // Draw sky
+    //glDisable(GL_DITHER);
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
+                gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 4);
+    glDrawArrays(GL_TRIANGLES, 0, gdSkyCube.triangleBufferData.size / gdSkyCube.triangleBufferData.stride);
+    //glEnable(GL_DITHER);
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
+                gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z, gdMaterialSourceData.Diffuse.w);
     glBindVertexArrayOES(0);
     
     // Draw user interface
-    glDisable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ONE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    //glBindVertexArrayOES(gdUITriangleVertexArray);
     IWGMultiBufferBindCurrentDrawBuffer(&gdUITriangleDoubleBuffer);
     
     // Set master shader switch
@@ -361,7 +427,7 @@ void IWGRendererRender(void)
     glDrawArrays(GL_LINES, 0, gdUINLineVertices);
 
     // Set master shader switch
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 1);
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 2);
     
     glBindVertexArrayOES(0);
     glDisable(GL_BLEND);

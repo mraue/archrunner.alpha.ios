@@ -36,7 +36,7 @@ void IWGameSetup(void)
 //    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
 //                                    IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0)),
 //                                    IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
-    gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
+    gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.5),
                                                IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
                                                IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
     // DEBUG
@@ -49,6 +49,7 @@ void IWGameSetup(void)
     //gdRandomRemoveCubeTimer.duration = 0.5 ;
     // END DEBUG
     gdZMax = 0.0;
+    gdGameIsPaused = false;
     return;
 }
 
@@ -82,6 +83,30 @@ void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
 
 void IWGameUpdate(float timeSinceLastUpdate)
 {
+    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
+        if (gdGameIsPaused) {
+            gdGameIsPaused = false;
+            gdClearColor = IWVector4Make(0.55, 0.55, 0.55, 1.0);
+            gdMasterShaderID = 2;
+        } else {
+            gdGameIsPaused = true;
+            gdPauseTime = 0.0;
+            gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
+            gdMasterShaderID = 3;
+        }
+    }
+    
+    if (!gdRectangleButton.colorTransition.transitionHasFinished) {
+        IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
+        gdRectangleButton.color = gdRectangleButton.colorTransition.currentColor;
+        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
+        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton.triangleBuffer, true);
+    }
+    
+    if (gdGameIsPaused) {
+        return;
+    }
+    
     gdTotalRunTime += timeSinceLastUpdate;
     
     gdZMax = MAX(gdZMax, gdPlayerData.position.z);
@@ -139,10 +164,12 @@ void IWGameUpdate(float timeSinceLastUpdate)
                                                                                newPosition,
                                                                                gdCubeData[i].centerPosition,
                                                                                transitionTime, 0.0, false, false);
-                    IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_DARK_GOLD(1.0));
-                    gdCubeData[i].color = IWUI_COLOR_DARK_GOLD(1.0);
+                    //IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_DARK_GOLD(1.0));
+                    //gdCubeData[i].color = IWUI_COLOR_DARK_GOLD(1.0);
+                    IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_RED(1.0));
+                    gdCubeData[i].color = IWUI_COLOR_DARK_RED(1.0);
                     //gdCubeData[i].color = IWUI_COLOR_DARK_PURPLE(1.0);
-                    gdClearColorTransition.startColor = IWUI_COLOR_DARK_BLUE(1.0);
+                    //gdClearColorTransition.startColor = IWUI_COLOR_DARK_BLUE(1.0);
 
                     gdCubeCounter.bridge++;
                     gdCubeCounter.spawned--;
@@ -161,29 +188,37 @@ void IWGameUpdate(float timeSinceLastUpdate)
                     gdOverdriveColorTransition.currentTransitionTime = 0.0;
                     gdOverdriveColorTransition.transitionHasFinished = false;
                     
-                    gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
+                    //gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
                     
                     gdCubeCounter.bridge--;
                     gdCubeCounter.pool++;
+                    
+                    gdClearColorTransition.currentTransitionTime = 0.0;
+                    gdClearColorTransition.transitionHasFinished = false;
                 }
-                gdClearColorTransition.currentTransitionTime = 0.0;
-                gdClearColorTransition.transitionHasFinished = false;
             }
         } else if (!gdCubeData[i].positionTransition.transitionHasFinished) {
             
             IWVector3TransitionUpdate(&gdCubeData[i].positionTransition, timeSinceLastUpdate);
 
             if (gdCubeData[i].positionTransition.transitionHasFinished) {
-                // Cube has arrived at bridge position
                 gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.endVector;
-                IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_GOLD(1.0));
-                gdCubeData[i].isInteractive = true;
-                gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
+                if (gdCubeData[i].type == IWCUBE_TYPE_TRANSITION) {
+                    // Cube has arrived at bridge position
+                    //IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_GOLD(1.0));
+                    gdCubeData[i].color = IWUI_COLOR_RED(1.0);
+                    gdCubeData[i].isInteractive = true;
+                    gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
+                } else {
+                    //gdCubeData[i].color = IWUI_COLOR_BLUE(1.0);
+                    gdCubeData[i].isInteractive = true;
+                    gdCubeData[i].type = IWCUBE_TYPE_STANDARD;
+                }
             } else {
                 // Continue moving cube
-                gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.currentVector;
-                IWCubeToTriangles(&gdCubeData[i]);
+                gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.currentVector;  
             }
+            IWCubeToTriangles(&gdCubeData[i]);
             IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
                                    gdCubeData[i].triangleBufferData.size * gdCubeData[i].triangleBufferData.bufferIDGPU * sizeof(GLfloat),
                                    gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
@@ -224,8 +259,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
         gdFuel.isWarning = false;
     }
     
-    glBindVertexArrayOES(gdUITriangleVertexArray);
-    
     // Fuel vertex update
     IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.triangleBufferData.bufferStartCPU);
     
@@ -235,20 +268,13 @@ void IWGameUpdate(float timeSinceLastUpdate)
                            gdFuel.stateBar.triangleBufferData.bufferStartCPU,
                            false);
     
-    // Update cube counter bar
-    IWCubeCounterUpdateStateBar(&gdCubeCounter);
-    IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
-    IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdCubeCounter.stateBar.triangleBufferData, false);
+//    // Update cube counter bar
+//    IWCubeCounterUpdateStateBar(&gdCubeCounter);
+//    IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
+//    IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdCubeCounter.stateBar.triangleBufferData, false);
     
     // Check button interaction
-    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
-        if (gdDropCamera) {
-            gdDropCamera = false;
-        } else {
-            gdDropCamera = true;
-            gdPlayerDataSave = gdPlayerData;
-        }
-    }
+
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
         gdPlayerData = gdPlayerDataStart;
         gdFuel.currentLevel = gdFuel.currentMaxLevel;
@@ -257,12 +283,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
         gdResetControllerPosition = true;
     }
     
-    if (!gdRectangleButton.colorTransition.transitionHasFinished) {
-        IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
-        gdRectangleButton.color = gdRectangleButton.colorTransition.currentColor;
-        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
-        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton.triangleBuffer, false);
-    }
     if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
         IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
         gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;

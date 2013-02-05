@@ -78,7 +78,7 @@ void IWGLightingSetUniforms(IWGLightSource lightSource,
 
 IWGLightSource IWGLightingMakeBasicLight(void) {
     IWGLightSource lightSource = {
-        {3.0, 2.5, 2.0},// Position
+        {3.0, 2.5, -2.0},// Position
         {0.5, 0.1, 0.4},// Attenuation
         {0.0, 0.0, 0.0},// Direction
         {1.0, 1.0, 1.0},// Color
@@ -91,7 +91,7 @@ IWGLightSource IWGLightingMakeBasicLight(void) {
 
 IWGMaterialSource IWGLightingMakeBasicMaterial(void) {
     IWGMaterialSource materialSource = {
-        {0.0, 0.0, 0.0},// Ambient
+        {0.15, 0.15, 0.15},// Ambient
         {0.4, 0.4, 1.0, 1.0}// Diffuse
     };
     return materialSource;

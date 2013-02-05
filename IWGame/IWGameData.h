@@ -31,6 +31,9 @@
 
 #pragma mark - Game Logic Data
 
+bool gdGameIsPaused;
+float gdPauseTime;
+
 IWPlayerData gdPlayerDataStart;
 IWPlayerData gdPlayerData;
 IWPlayerData gdPlayerDataSave;
@@ -50,6 +53,8 @@ IWIndexListData gdStandardCubeIndexList;
 
 //unsigned int gdNOverdriveCubes;
 float gdZMax;
+
+IWCubeData gdSkyCube;
 
 #pragma mark - Second VBO array scaffolding
 
@@ -83,14 +88,21 @@ bool gdResetControllerPosition;
 
 bool gdDropCamera;
 
+bool gdRunningInSimulator;
+
 #pragma mark - Open GL Buffer
+
+GLint gdMasterShaderID;
 
 IWGMultiBufferData gdTriangleDoubleBuffer;
 
+GLuint gdSkyTriangleVertexArray;
+GLuint gdSkyTriangleVertexBuffer;
+
 IWGMultiBufferData gdUITriangleDoubleBuffer;
 
-GLuint gdUITriangleVertexArray;
 GLuint gdUITriangleVertexBuffer;
+
 GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
 
@@ -105,5 +117,7 @@ GLKMatrix3 gdNormalMatrix;
 
 IWGLightSource gdLightSourceData;
 IWGMaterialSource gdMaterialSourceData;
+
+IWVector4 gdClearColor;
 
 #endif

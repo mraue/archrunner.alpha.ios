@@ -116,6 +116,15 @@ void main ()
             gl_FragColor = vColor;
         }
     }
+    else if ( ShaderType == 2 )
+    {
+        gl_FragColor = vColor;
+    }
+    else if ( ShaderType == 4 )
+    {
+        gl_FragColor = vColor;
+        //gl_FragColor = Material.Diffuse;
+    }
     else
     {
         gl_FragColor = vColor;

@@ -16,6 +16,9 @@
 #define IWUI_COLOR_DARK_GOLD(a) IWVector4Make(132.0 / 255.0, 106.0 / 255.0, 25.0 / 255.0, a)
 #define IWUI_COLOR_PURPLE(a) IWVector4Make(181.0 / 255.0, 63.0 / 255.0, 244.0 / 255.0, a)
 #define IWUI_COLOR_DARK_PURPLE(a) IWVector4Make(93.0 / 255.0, 17.0 / 255.0, 136.0 / 255.0, a)
+#define IWUI_COLOR_RED(a) IWVector4Make(1.0, 0.0, 0.0, a)
+#define IWUI_COLOR_DARK_RED(a) IWVector4Make(196.0 / 255.0, 0.0 / 255.0, 25.0 / 255.0, a)
+#define IWUI_COLOR_WHITE(a) IWVector4Make(1.0, 1.0, 1.0, a)
 
 typedef enum {
     IWUI_ORIENTATION_HORIZONTAL,

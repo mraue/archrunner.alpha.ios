@@ -110,6 +110,9 @@ GLuint N_VERT2 = 0;
     // Prevent screen diming and autolock
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     
+    // Are we running on a simulator
+    gdRunningInSimulator = ([[[[UIDevice currentDevice] model] uppercaseString] rangeOfString:@"SIMULATOR"].location == NSNotFound) ? false : true;
+    
     switchColor = NO;
     //[aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
     switch1.on = NO;
@@ -248,7 +251,7 @@ GLuint N_VERT2 = 0;
         }
     }
     
-    if (!orientationNeutralSetAccelerometer || gdResetControllerPosition) {
+    if (!orientationNeutralSetAccelerometer || gdResetControllerPosition || gdGameIsPaused) {
         IWControllerDataUpdateReferenceDirection(&controllerDataAccelerometer, IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z)), IWVector3Make(0.0, 0.0, -1.0));
 //        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
         orientationNeutralSetAccelerometer = YES;
@@ -287,7 +290,7 @@ GLuint N_VERT2 = 0;
     //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
 
     // Update player position
-    float speed = gdPlayerData.speed;
+    float speed = gdGameIsPaused ? 0.0 : gdPlayerData.speed;
     gdPlayerData.position = IWVector3Add(gdPlayerData.position,
                                          IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
                                                                  self.timeSinceLastUpdate * speed));
@@ -298,7 +301,8 @@ GLuint N_VERT2 = 0;
     GLKVector3 upGLV = GLKVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
     float rotationSpeedX = 0.0, rotationSpeedY = 0.0, rotationSpeedZ = 0.0;
-    if (_isTouched) {
+
+    if (_isTouched && gdRunningInSimulator) {
         float touchActiveArea = 0.25;
         float touchFracX = _touchLocation.x / self.view.bounds.size.width;
         float touchFracY = 1. - _touchLocation.y / self.view.bounds.size.height;
@@ -335,8 +339,10 @@ GLuint N_VERT2 = 0;
 //        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
 //    }
 
-    gdPlayerData.direction = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV).v);
-    gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
+//    if (!gdGameIsPaused) {
+        gdPlayerData.direction = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV).v);
+        gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
+//    }
     
     // Display player data
     [xLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.x]];

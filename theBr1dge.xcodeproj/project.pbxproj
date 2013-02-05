@@ -339,8 +339,8 @@
 				646F594416A56C0200704F45 /* MasterShader.fsh */,
 				646F591F16A555B000704F45 /* BasicLightShader.vsh */,
 				646F591E16A555B000704F45 /* BasicLightShader.fsh */,
-				646F592016A555B000704F45 /* Shader.fsh */,
 				646F592116A555B000704F45 /* Shader.vsh */,
+				646F592016A555B000704F45 /* Shader.fsh */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";

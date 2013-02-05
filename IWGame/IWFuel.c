@@ -37,7 +37,8 @@ IWFuel IWFuelMakeDefaultStart()
     //IWRectangle rectangle = {{0.97, 0.25}, {0.99, 0.75}};
     IWRectangle rectangle = {{0.01, 0.96}, {0.5, 0.99}};
     IWFuel fuel = IWFuelMake(0.6, 0.6, 1.0, 0.33,
-                             IWUI_COLOR_LIGHT_BLUE(0.6), IWUI_COLOR_BLUE(0.4), IWUI_COLOR_DARK_BLUE(0.4),
+                             //IWUI_COLOR_LIGHT_BLUE(0.6), IWUI_COLOR_BLUE(0.4), IWUI_COLOR_DARK_BLUE(0.4),
+                             IWUI_COLOR_WHITE(0.6), IWUI_COLOR_WHITE(0.4), IWUI_COLOR_WHITE(0.2),
                              IWVector4Make(255.0 / 255.0, 139.0 / 255.0, 139.0 / 255.0, 0.6),
                              rectangle);
     return fuel;

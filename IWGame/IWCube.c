@@ -16,65 +16,40 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
+unsigned int IWCubeFacesToNumber(IWCUBE_FACES cubeFaces)
+{
+    unsigned int nFaces = 0;
+    for (unsigned int i = 0; i < 6; i++) {
+        nFaces += (1 <<  i) & cubeFaces ? 1 : 0;
+    }
+    return nFaces;
+}
+
 IWCubeData IWCubeMake(IWCUBE_TYPE type,
-                      IWVector3 centerPosition, IWVector4 color,
-                      float halfLengthX, float collisionRadius,
-                      bool isVisible, bool isInteractive,
+                      IWVector3 centerPosition,
+                      IWVector4 color,
+                      IWVector3 dimensions,
+                      IWCUBE_FACES faces,
+                      IWCUBE_NORMALS normals,
+                      float collisionRadius,
+                      bool isVisible,
+                      bool isInteractive,
                       IWVector3Transition positionTransition)
 {
     IWCubeData cubeData = {
         type,
         centerPosition,
         color,
-        halfLengthX,
+        dimensions,
+        faces,
+        normals,
         collisionRadius,
         isVisible, isInteractive,
         positionTransition,
-        IWGPrimitiveBufferDataMakeEmpty()
+        IWGPrimitiveBufferDataMake(0, 10, 0, NULL, 0, 0, 0, 7, 3, 0, 0)
     };
-    cubeData.triangleBufferData.size = 6 * 6 * 10;// 6 sides * 6 vertices * 6 GLfloats (pos + norm)
-    cubeData.triangleBufferData.stride = 10;
-    cubeData.triangleBufferData.positionOffset = 0;
-    cubeData.triangleBufferData.colorOffset = 3;
-    cubeData.triangleBufferData.normalOffset = 7;
+    cubeData.triangleBufferData.size = IWCubeFacesToNumber(cubeData.faces) * 6 * 10;
     return cubeData;
-}
-
-IWCubeData* IWCubeMakeCubeOfCube(int nx, int ny, int nz, float l, float d,
-                                 IWVector4 color,
-                                 unsigned int nRandomizePositions, float randomDistance)
-{
-    unsigned int n = nx * ny * nz;
-    IWCubeData* cubeOfCubeDataStart = malloc(n * sizeof(IWCubeData));
-    IWCubeData* cubePtr = cubeOfCubeDataStart;
-    int max = MAX(nx, MAX(ny, nz));
-    float sc = 2. / (max * l  + (max + 1) * d) / l;
-    float p0 = sc * (l + d);
-    for (int x=0; x < nx; x++) {
-        for (int y=0; y < ny; y++) {
-            for (int z=0; z < nz; z++) {
-                cubePtr->centerPosition.x = x * p0  - 1. + p0 - l / 2. * sc;
-                cubePtr->centerPosition.y = y * p0  - 1. + p0 - l / 2. * sc;
-                cubePtr->centerPosition.z = z * p0  - 1. + p0 - l / 2. * sc;
-                for (unsigned int i = 0; i < nRandomizePositions; i++) {
-                    cubePtr->centerPosition = IWVector3Add(cubePtr->centerPosition,
-                                                           IWVector3Make((IW_FRAND - 0.5) * 2.0 * randomDistance,
-                                                                         (IW_FRAND - 0.5) * 2.0 * randomDistance,
-                                                                         (IW_FRAND - 0.5) * 2.0 * randomDistance));
-                }
-                cubePtr->type = IWCUBE_TYPE_STANDARD;
-                cubePtr->color = color;
-                cubePtr->halfLengthX = l * 0.5;
-                cubePtr->collisionRadius = l * 1.4142;
-                cubePtr->isVisible = true;
-                cubePtr->isInteractive = true;
-                cubePtr->positionTransition = IWVector3TransitionMakeEmpty();
-                cubePtr->triangleBufferData = IWGPrimitiveBufferDataMakeEmpty();
-                cubePtr++;
-            }
-        }
-    }
-    return cubeOfCubeDataStart;
 }
 
 IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
@@ -93,23 +68,17 @@ IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
     for (float x = x0; x <= x0 + dx; x += d + l) {
         for (float y = y0; y < y0 + dy; y += d + l) {
             for (float z = z0; z < z0 + dz; z += d + l) {
-                cubePtr->centerPosition.x = x;
-                cubePtr->centerPosition.y = y;
-                cubePtr->centerPosition.z = z;
+                IWVector3 centerPosition = IWVector3Make(x, y, z);
+                IWVector3 dimensions =  IWVector3Make(l, l, l);
+                *cubePtr = IWCubeMake(IWCUBE_TYPE_STANDARD, centerPosition, color, dimensions,
+                                      IWCUBE_FACES_ALL, IWCUBE_NORMALS_OUTWARDS, l * 1.4142, true, true,
+                                      IWVector3TransitionMakeEmpty());
                 for (unsigned int i = 0; i < nRandomizePositions; i++) {
                     cubePtr->centerPosition = IWVector3Add(cubePtr->centerPosition,
                                                            IWVector3Make((IW_FRAND - 0.5) * 2.0 * randomDistance,
                                                                          (IW_FRAND - 0.5) * 2.0 * randomDistance,
                                                                          (IW_FRAND - 0.5) * 2.0 * randomDistance));
                 }
-                cubePtr->type = IWCUBE_TYPE_STANDARD;
-                cubePtr->color = color;
-                cubePtr->halfLengthX = l * 0.5;
-                cubePtr->collisionRadius = l * 1.4142;
-                cubePtr->isVisible = true;
-                cubePtr->isInteractive = true;
-                cubePtr->positionTransition = IWVector3TransitionMakeEmpty();
-                cubePtr->triangleBufferData = IWGPrimitiveBufferDataMakeEmpty();
                 cubePtr++;
             }
         }
@@ -123,10 +92,15 @@ IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPositi
     IWVector3* pointsStart = points;
     IWVector3* pointsEnd = points + nPositions;
 
-    float b, boffset, br, r1, r2;
-    float r1_sign1, r1_sign2, r1_sin1, r1_sin2, r1_exp;
-    float r2_sign1, r2_sign2, r2_sin1, r2_sin2, r2_exp;
-    float r3_atan, r3_sign;
+//    float b, boffset, br, r1, r2;
+//    float r1_sign1, r1_sign2, r1_sin1, r1_sin2, r1_exp;
+//    float r2_sign1, r2_sign2, r2_sin1, r2_sin2, r2_exp;
+//    float r3_atan, r3_sign;
+//    IWVector3 newPointOffset;
+    float b, boffset, r1, r2;
+    float r1_sign1, r1_sin1, r1_sin2;
+    float r2_sign1, r2_sin1, r2_sin2;
+    
     IWVector3 newPointOffset;
     
     unsigned int iseed = (unsigned int)time(NULL);
@@ -135,9 +109,7 @@ IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPositi
     b = 0.0;
     boffset = 0.0;
     float bNextMax = 2.0 * M_PI;
-    //unsigned int i = 0;
-
-    //*points++ = startingPosition;
+    
     while (points < pointsEnd) {
         if (b == 0.0 || b > bNextMax) {
             r1_sign1 = IW_RAND_SIGN;
@@ -178,9 +150,20 @@ IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPositi
     return pointsStart;
 }
 
+#define IWCUBETOTRIANGLES_SET_COLOR *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
+#define IWCUBETOTRIANGLES_SET_NORMAL(x, y, z) *p++ = x; *p++ = y; *p++ = z;
+
 size_t IWCubeToTriangles(IWCubeData* cube)
 {
-    float lh = cube->halfLengthX;
+    float lhx = cube->dimensions.x / 2.0;
+    float lhy = cube->dimensions.y / 2.0;
+    float lhz = cube->dimensions.z / 2.0;
+
+    float normal = 1.0;
+    if (cube->normals == IWCUBE_NORMALS_INWARD)
+        normal *= -1.0;
+    float negNormal = normal * -1.0;
+    
     GLfloat x = cube->centerPosition.x;
     GLfloat y = cube->centerPosition.y;
     GLfloat z = cube->centerPosition.z;
@@ -188,127 +171,146 @@ size_t IWCubeToTriangles(IWCubeData* cube)
     GLfloat cg = cube->color.y;
     GLfloat cb = cube->color.z;
     GLfloat ca = cube->color.w;
+
     GLfloat *p = cube->triangleBufferData.startCPU;
-    // back 1
-    *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
-    *p++ = x + lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
-    *p++ = x + lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
-    // back 2
-    *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
-    *p++ = x + lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
-    *p++ = x - lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = -1.0;
-    // top 1
-    *p++ = x - lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 1.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 1.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 1.0; *p++ = 0.0;
-    // top 2
-    *p++ = x + lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 1.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 1.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 1.0; *p++ = 0.0;
-    // front 1
-    *p++ = x + lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = 1.0;
-    *p++ = x + lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = 1.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = 1.0;
-    // front 2
-    *p++ = x + lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = 1.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = 1.0;
-    *p++ = x - lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = 0.0; *p++ = 1.0;
-    // bottom 1
-    *p++ = x + lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = -1.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = -1.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = -1.0; *p++ = 0.0;
-    // bottom 2
-    *p++ = x + lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = -1.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = -1.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 0.0; *p++ = -1.0; *p++ = 0.0;
-    // right 1
-    *p++ = x + lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 1.0; *p++ = 0.0; *p++ = 0.0;
-    // right 2
-    *p++ = x + lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x + lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = 1.0; *p++ = 0.0; *p++ = 0.0;
-    // left 1
-    *p++ = x - lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y + lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
-    // left 1
-    *p++ = x - lh; *p++ = y - lh; *p++ = z + lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y - lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
-    *p++ = x - lh; *p++ = y + lh; *p++ = z - lh;
-    *p++ = cr; *p++ = cg; *p++ = cb; *p++ = ca;
-    *p++ = -1.0; *p++ = 0.0; *p++ = 0.0;
+
+    if (cube->faces & IWCUBE_FACES_BACK) {
+        // back 1
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, negNormal)
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, negNormal)
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, negNormal)
+        // back 2
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, negNormal)
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, negNormal)
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, negNormal)
+    }
+
+    if (cube->faces & IWCUBE_FACES_TOP) {
+        // top 1
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, normal, 0.0)
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, normal, 0.0)
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, normal, 0.0)
+        // top 2
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, normal, 0.0)
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, normal, 0.0)
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, normal, 0.0)
+    }
+    
+    if (cube->faces & IWCUBE_FACES_FRONT) {
+        // front 1
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, normal)
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, normal)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, normal)
+        // front 2
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, normal)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, normal)
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, 0.0, normal)
+    }
+    
+    if (cube->faces & IWCUBE_FACES_BOTTOM) {
+        // bottom 1
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, negNormal, 0.0)
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, negNormal, 0.0)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, negNormal, 0.0)
+        // bottom 2
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, negNormal, 0.0)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, negNormal, 0.0)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(0.0, negNormal, 0.0)
+    }
+    
+    if (cube->faces & IWCUBE_FACES_RIGHT) {
+        // right 1
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(normal, 0.0, 0.0)
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(normal, 0.0, 0.0)
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(normal, 0.0, 0.0)
+        // right 2
+        *p++ = x + lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(normal, 0.0, 0.0)
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(normal, 0.0, 0.0)
+        *p++ = x + lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(normal, 0.0, 0.0)
+    }
+    
+    if (cube->faces & IWCUBE_FACES_LEFT) {
+        // left 1
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(negNormal, 0.0, 0.0)
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(negNormal, 0.0, 0.0)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(negNormal, 0.0, 0.0)
+        // left 1
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z + lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(negNormal, 0.0, 0.0)
+        *p++ = x - lhx; *p++ = y  - lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(negNormal, 0.0, 0.0)
+        *p++ = x - lhx; *p++ = y + lhy; *p++ = z - lhz;
+        IWCUBETOTRIANGLES_SET_COLOR
+        IWCUBETOTRIANGLES_SET_NORMAL(negNormal, 0.0, 0.0)
+    }
     //
     return cube->triangleBufferData.size = (p - cube->triangleBufferData.startCPU);
 }

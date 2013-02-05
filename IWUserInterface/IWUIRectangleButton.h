@@ -42,12 +42,6 @@ struct _IWUIRectangleButton {
     IWRectangle rectangle;// [0.0 - 1.0]
     IWGPrimitiveBufferData triangleBuffer;
     IWGPrimitiveBufferData lineBuffer;
-//    size_t nTriangleVertices;
-//    GLfloat *triangleBufferStart;
-//    size_t triangleBufferSize;// [CGFloat]
-//    size_t nLineVertices;
-//    GLfloat *lineBufferStart;
-//    size_t lineBufferSize;// [CGFloat]
     IWColorTransition colorTransition;
     bool isTouched;
 };

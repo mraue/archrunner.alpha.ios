@@ -45,6 +45,7 @@ uniform int LightingType;
 //
 //     0 : 2D flat shader
 //     1 : Standard geometry shader with dynamic lighting (no specular term)
+//     2 : Simple light shader
 //
 uniform int ShaderType;
 
@@ -57,12 +58,12 @@ varying vec4 vColor;
 // Vertex shader entry.
 void main ()
 {
-    if ( ShaderType == 0)
+    if ( ShaderType == 0 )
     {
         gl_Position = vec4(Vertex, 1.0);
         vColor = Color;
     }
-    else if ( ShaderType == 1)
+    else if ( ShaderType == 1 )
     {
         //
         // Standard geometry shader with dynamic lighting
@@ -125,5 +126,37 @@ void main ()
             vColor = Color;
         }
         
+    }
+    else if ( ShaderType == 2 )
+    {
+        vec3 eyeNormal = normalize(NormalMatrix * Normal);
+        
+        float nDotVP = max(0.0, dot(eyeNormal, normalize(Light[0].Position)));
+        
+        vColor = max(Color * nDotVP, Color * vec4(Material.Ambient, 1.0));
+        
+        gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(Vertex, 1.0);
+    }
+    else if ( ShaderType == 3 )
+    {
+        vec3 eyeNormal = normalize(NormalMatrix * Normal);
+        
+        float nDotVP = max(0.0, dot(eyeNormal, normalize(Light[0].Position)));
+        
+        vColor = max(Color * nDotVP, Color * vec4(Material.Ambient, 1.0));
+        
+        // to greyscale
+        float colors = (vColor.r + vColor.g + vColor.b + vColor.a) / 4.0;
+        // to lightgrey
+        colors = 0.6 + 0.4 * colors;
+        vColor = vec4(colors, colors, colors, 1.0);
+        
+        gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(Vertex, 1.0);
+    }
+    else if ( ShaderType == 4 )
+    {
+        //vColor = Color.xyz;
+        vColor = Color;
+        gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(Vertex, 1.0);
     }
 }
