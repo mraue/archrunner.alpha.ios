@@ -29,6 +29,7 @@
 
 #include "IWGFontMap.h"
 #include "IWGFontMapEntry.h"
+#include "IWGTextLine.h"
 
 #include "IWGameData.h"
 
@@ -227,15 +228,23 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     //
     // Text
     //
+    float aspect = fabsf(viewWidth / viewHeight);
     
     GLuint textureHandlerId;
     glGenTextures(1, &textureHandlerId);
     
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
+    IWGTextLineData textLine = IWGTextLineDataMake("Hello World!",
+                                                   IWVector2Make(-0.1, 0.7),
+                                                   0.25,
+                                                   IWUI_COLOR_GOLD(0.8),
+                                                   1. / aspect,
+                                                   &gdFontMap);
+    
     gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
-        gdTextTriangleDoubleBuffer.nVertices[k] = 6;
+        gdTextTriangleDoubleBuffer.nVertices[k] = textLine.triangleBufferData.size / textLine.triangleBufferData.stride;
     }
     
     // Fill buffers
@@ -244,15 +253,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
         IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
         
         glBindTexture(GL_TEXTURE_2D, textureHandlerId);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
-        
-        glBufferData(GL_ARRAY_BUFFER, 6 * 9 * sizeof(GLfloat),
-                     IWGFontMapEntryToTriangles(&gdFontMap.map[88],
-                                                IWVector2Make(0.5, 0.5),
-                                                IWVector2Make(1.0, 1.0),
-                                                IWVector4Make(1.0, 1.0, 1.0, 1.0)) - 6 * 9,
+
+        glBufferData(GL_ARRAY_BUFFER, textLine.triangleBufferData.size * sizeof(GLfloat),
+                     textLine.triangleBufferData.startCPU,
                      GL_DYNAMIC_DRAW);
         
         glEnableVertexAttribArray(positionSlot);
@@ -263,11 +269,11 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
         glVertexAttribPointer(textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     
+    glBindVertexArrayOES(0);
+    
     //
     // Head up display data
     //
-    
-    float aspect = fabsf(viewWidth / viewHeight);
     printf("aspect = %f\n", aspect);
     
     // Some buttons
@@ -278,21 +284,21 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                                                 IWUI_COLOR_WHITE(0.25),
                                                 IWUI_COLOR_WHITE(0.5),
                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT),
-                                                0.035, aspect);
+                                                0.035, 1. / aspect);
     gdRectangleButton2 = IWUIRectangleButtonMake(0.82, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.18, 0.19,
                                                  IWUI_COLOR_PURPLE(0.3), IWUI_COLOR_WHITE(0.25),
                                                  IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
-                                                 0.035, aspect);
+                                                 0.035, 1. / aspect);
     gdRectangleButton3 = IWUIRectangleButtonMake(0.63, -0.001,
                                                  IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.18, 0.19,
                                                  IWUI_COLOR_GOLD(0.3), IWUI_COLOR_WHITE(0.25),
                                                  IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
-                                                 0.035, aspect);
+                                                 0.035, 1. / aspect);
 
     gdFuel = IWFuelMakeDefaultStart();
     //gdFuel.stateBar.direction = IWUI_DIRECTION_REVERSE;// need larger buffer! -> 4 x 6
@@ -488,7 +494,7 @@ void IWGRendererRender(void)
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
                 5);
     
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
     

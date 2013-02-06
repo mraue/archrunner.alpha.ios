@@ -23,8 +23,8 @@ IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVect
                                       float aspectRatio, unsigned int nDivisions, GLfloat *bufferPointer)
 {
     IWUIElementData circle = {
-        {{centerPoint.x - radiusX, centerPoint.y - radiusX * aspectRatio},
-        {centerPoint.x + radiusX, centerPoint.y + radiusX * aspectRatio}},
+        {{centerPoint.x - radiusX, centerPoint.y - radiusX / aspectRatio},
+        {centerPoint.x + radiusX, centerPoint.y + radiusX / aspectRatio}},
         0, NULL, 0, 0, bufferPointer, 0
     };
     float angleStep = 2.0 * M_PI / (nDivisions - 1);
@@ -32,7 +32,7 @@ IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVect
     // REFACTOR: This is scaffolded and needs massive refactoring
     for (float angle = 0.0; angle < 2.0 * M_PI; angle += angleStep) {
         *bufferPointer++ = (centerPoint.x + sinf(angle) * radiusX) * 2.0 - 1.0;
-        *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX * aspectRatio * 0.85) * 2.0 - 1.0;
+        *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX / aspectRatio) * 2.0 - 1.0;
         *bufferPointer++ = -1.0;
         *bufferPointer++ = color.x;
         *bufferPointer++ = color.y;
@@ -42,7 +42,7 @@ IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVect
             first = false;
         } else {
             *bufferPointer++ = (centerPoint.x + sinf(angle) * radiusX) * 2.0 - 1.0;
-            *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX * aspectRatio * 0.85) * 2.0 - 1.0;
+            *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX / aspectRatio) * 2.0 - 1.0;
             *bufferPointer++ = -1.0;
             *bufferPointer++ = color.x;
             *bufferPointer++ = color.y;
@@ -51,7 +51,7 @@ IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVect
         }
     }
     *bufferPointer++ = centerPoint.x * 2.0 - 1.0;
-    *bufferPointer++ = (centerPoint.y + radiusX * aspectRatio * 0.85) * 2.0 - 1.0;
+    *bufferPointer++ = (centerPoint.y + radiusX / aspectRatio) * 2.0 - 1.0;
     *bufferPointer++ = -1.0;
     *bufferPointer++ = color.x;
     *bufferPointer++ = color.y;

@@ -25,9 +25,12 @@ typedef struct {
 IWGFontMapEntryData IWGFontMapEntryMakeEmpty();
 IWGFontMapEntryData IWGFontMapEntryMake(IWVector2 lowerLeft, IWVector2 upperRight);
 
-GLfloat* IWGFontMapEntryToTriangles(IWGFontMapEntryData *fontMapEntry,
-                                    IWVector2 lowerLeft,
-                                    IWVector2 upperRight,
-                                    IWVector4 color);
+float IWGFontMapEntryGetAspectRatio(IWGFontMapEntryData* fontMapEntry);
+
+unsigned int IWGFontMapEntryToTriangles(GLfloat *p,
+                                        IWGFontMapEntryData *fontMapEntry,
+                                        IWVector2 lowerLeft,
+                                        IWVector2 upperRight,
+                                        IWVector4 color);
 
 #endif

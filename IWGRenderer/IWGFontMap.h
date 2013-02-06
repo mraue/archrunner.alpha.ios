@@ -21,5 +21,4 @@ typedef struct {
 IWGFontMapData IWGFontMapMakeEmpty();
 IWGFontMapData IWGFontMapCreateFromFile(const char* filename);
 
-
 #endif
