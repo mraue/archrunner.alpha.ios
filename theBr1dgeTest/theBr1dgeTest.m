@@ -9,8 +9,9 @@
 #import "theBr1dgeTest.h"
 
 #import "IWMathUtils.h"
-
+#import "IWGFontMap.h"
 #import "IWIndexList.h"
+#import "IWFileTools.h"
 
 @implementation theBr1dgeTest
 
@@ -28,6 +29,12 @@
     [super tearDown];
 }
 
+- (void)testIWGFontMap
+{
+    NSString *fontMapFileName = [[NSBundle bundleForClass:self.class] pathForResource:@"fontmap01" ofType:@"txt"];
+    IWGFontMapCreateFromFile([fontMapFileName UTF8String]);
+}
+
 - (void)testIWIndexList
 {
     // Setup index list
@@ -36,6 +43,7 @@
         indexListData.map[i] = i;
         indexListData.reverseMap[i] = i;
     }
+    indexListData.nEntries = 10;
     IWIndexListReplaceWithLast(&indexListData, 0);
     STAssertTrue(indexListData.map[0] == 9, @"%u", indexListData.map[0]);
     STAssertTrue(indexListData.reverseMap[9] == 0, @"%u", indexListData.reverseMap[0]);

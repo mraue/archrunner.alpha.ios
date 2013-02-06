@@ -54,6 +54,9 @@ varying vec4 vWorldVertex;
 varying vec3 vWorldNormal;
 varying vec3 vViewVec;
 varying vec4 vColor;
+varying vec2 vTextureOffset;
+
+uniform sampler2D Sampler;
 
 // Fragment shader entry.
 void main ()
@@ -123,6 +126,11 @@ void main ()
     else if ( ShaderType == 4 )
     {
         gl_FragColor = vColor;
+        //gl_FragColor = Material.Diffuse;
+    }
+    else if ( ShaderType == 5 )
+    {
+        gl_FragColor = texture2D(Sampler, vTextureOffset) * vColor;
         //gl_FragColor = Material.Diffuse;
     }
     else

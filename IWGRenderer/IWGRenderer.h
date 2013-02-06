@@ -44,8 +44,11 @@ GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
 #pragma mark - Functions
 
-void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentShaderFilename,
-                        float viewWidth, float viewHeight);
+void IWGRendererSetupGL(const char* vertexShaderFilename,
+                        const char* fragmentShaderFilename,
+                        const char* fontMapFilename,
+                        float viewWidth,
+                        float viewHeight);
 void IWGRendererRender(void);
 void IWGRendererTearDownGL(void);
 

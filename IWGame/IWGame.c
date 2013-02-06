@@ -100,13 +100,14 @@ void IWGameUpdate(float timeSinceLastUpdate)
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdGameIsPaused) {
             gdGameIsPaused = false;
-            gdClearColor = IWVector4Make(0.55, 0.55, 0.55, 1.0);
+            gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
             gdMasterShaderID = 2;
+            gdSkyShaderID = 4;
         } else {
             gdGameIsPaused = true;
             gdPauseTime = 0.0;
             gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
-            gdMasterShaderID = 3;
+            gdSkyShaderID = gdMasterShaderID = 3;
         }
     }
     
@@ -133,7 +134,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
     
     // Update fuel
     if (gdTotalRunTime > 5.0 && !gdPlayerData.overdrive) {
-        IWFuelRemoveFuel(&gdFuel, 0.05 * timeSinceLastUpdate);
+        IWFuelRemoveFuel(&gdFuel, 0.05 / 0.6 * timeSinceLastUpdate);
     }
 
     // Spawn pooled cubes

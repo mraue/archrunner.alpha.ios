@@ -93,12 +93,14 @@ unsigned int IWIndexListRemoveRandom(IWIndexListData *indexList)
         printf("ERROR IWIndexListRemoveRandom: list is empty\n");
         return 0;
     }
-    unsigned int i = (unsigned int)(IW_RAND_UNIFORM(0.0, indexList->nEntries) - 1E-4);
-    if (i > indexList->nEntries - 1) {
-        printf("ERROR IWIndexListRemoveRandom - index out of range\n");
-        i = indexList->nEntries - 1;
-    }
+
+    unsigned int i = (unsigned int)IW_RAND_UNIFORM(0.0, indexList->nEntries);
+
+    if (i == indexList->nEntries)
+        i--;
+
     unsigned int ii = indexList->map[i];
+
     if (IWIndexListReplaceWithLast(indexList, i) != -1) {
         return ii;
     } else {

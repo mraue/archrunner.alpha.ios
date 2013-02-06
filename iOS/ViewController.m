@@ -191,9 +191,17 @@ GLuint N_VERT2 = 0;
     NSString *vertShaderPathname, *fragShaderPathname;
     vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"vsh"];
     fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"fsh"];
+    
+    // Deal with font maps
+    NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:@"fontmap01" ofType:@"txt"];
+    UIImage* uiImage = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fontmap01" ofType:@"png"]]retain];
+    CGImageRef cgImage = uiImage.CGImage;
+    CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
+    gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
 
     IWGRendererSetupGL([vertShaderPathname UTF8String],
                        [fragShaderPathname UTF8String],
+                       [fontMapFilename UTF8String],
                        self.view.bounds.size.width,
                        self.view.bounds.size.height);
 }

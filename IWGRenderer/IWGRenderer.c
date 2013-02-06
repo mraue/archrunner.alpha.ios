@@ -27,16 +27,23 @@
 #include "IWGBufferSubData.h"
 //#include "IWGMultiBuffer.h"
 
+#include "IWGFontMap.h"
+#include "IWGFontMapEntry.h"
+
 #include "IWGameData.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentShaderFilename,
-                        float viewWidth, float viewHeight)
+void IWGRendererSetupGL(const char* vertexShaderFilename,
+                        const char* fragmentShaderFilename,
+                        const char* fontMapFilename,
+                        float viewWidth,
+                        float viewHeight)
 {
     gdMasterShaderID = 2;
+    gdSkyShaderID = 4;
     
-    gdClearColor = IWVector4Make(0.55, 0.55, 0.55, 1.0);
+    gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
     
     gdLightSourceData = IWGLightingMakeBasicLight();
@@ -141,6 +148,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     GLuint positionSlot = glGetAttribLocation(programID, "Vertex");
     GLuint normalSlot = glGetAttribLocation(programID, "Normal");
     GLuint colorSlot = glGetAttribLocation(programID, "Color");
+    GLuint textureOffsetSlot = glGetAttribLocation(programID, "TextureOffset");
     
     // Get uniform locations.
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
@@ -215,6 +223,45 @@ void IWGRendererSetupGL(const char* vertexShaderFilename, const char* fragmentSh
     glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     
     glBindVertexArrayOES(0);
+    
+    //
+    // Text
+    //
+    
+    GLuint textureHandlerId;
+    glGenTextures(1, &textureHandlerId);
+    
+    gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
+    
+    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
+    for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
+        gdTextTriangleDoubleBuffer.nVertices[k] = 6;
+    }
+    
+    // Fill buffers
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+
+        IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
+        
+        glBindTexture(GL_TEXTURE_2D, textureHandlerId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
+        
+        glBufferData(GL_ARRAY_BUFFER, 6 * 9 * sizeof(GLfloat),
+                     IWGFontMapEntryToTriangles(&gdFontMap.map[88],
+                                                IWVector2Make(0.5, 0.5),
+                                                IWVector2Make(1.0, 1.0),
+                                                IWVector4Make(1.0, 1.0, 1.0, 1.0)) - 6 * 9,
+                     GL_DYNAMIC_DRAW);
+        
+        glEnableVertexAttribArray(positionSlot);
+        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(colorSlot);
+        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(textureOffsetSlot);
+        glVertexAttribPointer(textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+    }
     
     //
     // Head up display data
@@ -393,16 +440,19 @@ void IWGRendererRender(void)
 
     glBindVertexArrayOES(0);
     
+    //
     // Draw sky
+    //
+    
     //glDisable(GL_DITHER);
     glDisable(GL_CULL_FACE);
     
     glBindVertexArrayOES(gdSkyTriangleVertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
 
-    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-                gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 4);
+    //glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
+    //            gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdSkyShaderID);
     
     gdSkyCube.centerPosition.x = gdPlayerData.position.x;
     gdSkyCube.centerPosition.z = gdPlayerData.position.z;
@@ -425,7 +475,27 @@ void IWGRendererRender(void)
                 gdMaterialSourceData.Diffuse.w);
     glBindVertexArrayOES(0);
     
+    //
+    // Draw text
+    //
+    
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    
+    IWGMultiBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
+    
+    // Set master shader switch
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
+                5);
+    
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    
+    glBindVertexArrayOES(0);
+    
+    //
     // Draw user interface
+    //
+    
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     //glBlendFunc(GL_ONE, GL_ONE);

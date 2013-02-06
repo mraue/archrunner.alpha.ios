@@ -29,6 +29,7 @@
 #include "IWIndexList.h"
 #include "IWCubeCounter.h"
 #include "IWGCircle.h"
+#include "IWGFontMap.h"
 
 #pragma mark - Game Logic Data
 
@@ -75,6 +76,9 @@ IWColorTransition gdOverdriveColorTransition;
 
 bool gdSpawnCubes;
 
+IWGFontMapData gdFontMap;
+void *gdFontMapTextureData;
+
 #pragma mark - User Interface
 
 bool gdIsTouched;
@@ -96,6 +100,9 @@ bool gdRunningInSimulator;
 #pragma mark - Open GL Buffer
 
 GLint gdMasterShaderID;
+GLint gdSkyShaderID;
+
+IWGMultiBufferData gdTextTriangleDoubleBuffer;
 
 IWGMultiBufferData gdTriangleDoubleBuffer;
 

@@ -23,6 +23,7 @@ struct MaterialSource
 attribute vec3 Vertex;
 attribute vec3 Normal;
 attribute vec4 Color;
+attribute vec2 TextureOffset;
 
 // Uniform variables.
 uniform mat4 ProjectionMatrix;
@@ -54,6 +55,7 @@ varying vec4 vWorldVertex;
 varying vec3 vWorldNormal;
 varying vec3 vViewVec;
 varying vec4 vColor;
+varying vec2 vTextureOffset;
 
 // Vertex shader entry.
 void main ()
@@ -158,5 +160,12 @@ void main ()
         //vColor = Color.xyz;
         vColor = Color;
         gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(Vertex, 1.0);
+    }
+    else if ( ShaderType == 5 )
+    {
+        //vColor = Color.xyz;
+        vColor = Color;
+        vTextureOffset = TextureOffset;
+        gl_Position = vec4(Vertex, 1.0);
     }
 }

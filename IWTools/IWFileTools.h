@@ -9,6 +9,6 @@
 #ifndef theBr1dge_IWFileTools_h
 #define theBr1dge_IWFileTools_h
 
-const char* IWFileToolsReadFileToString(const char *filename);
+char* IWFileToolsReadFileToString(const char *filename);
 
 #endif
