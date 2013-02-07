@@ -198,13 +198,16 @@ GLuint N_VERT2 = 0;
     CGImageRef cgImage = uiImage.CGImage;
     CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
+    
+    printf("View dimensions: %f %f\n", self.view.bounds.size.width, self.view.bounds.size.height);
+    printf("Screen dimensions: %f %f\n", [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
+    
 
     IWGRendererSetupGL([vertShaderPathname UTF8String],
                        [fragShaderPathname UTF8String],
                        [fontMapFilename UTF8String],
                        [[UIScreen mainScreen] bounds].size.width,
-                       [[UIScreen mainScreen] bounds].size.height//self.view.bounds.size.width,
-                       //self.view.bounds.size.height
+                       [[UIScreen mainScreen] bounds].size.height
                        );
 }
 
