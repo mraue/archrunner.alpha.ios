@@ -16,7 +16,7 @@
 
 typedef struct {
     const char* text;
-    IWPoint start;
+    IWPoint2D start;
     float size;
     float aspect;
     IWVector4 color;
@@ -25,7 +25,7 @@ typedef struct {
 } IWGTextLineData;
 
 IWGTextLineData IWGTextLineDataMake(const char* text,
-                                    IWPoint start,
+                                    IWPoint2D start,
                                     float size,
                                     IWVector4 color,
                                     float aspect,

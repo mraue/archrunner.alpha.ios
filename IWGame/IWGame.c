@@ -31,6 +31,8 @@
 #include "IWCubeCounter.h"
 #include "IWFuel.h"
 
+#include "IWScoreCounter.h"
+
 void IWGameSetup(void)
 {
 //    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
@@ -52,6 +54,8 @@ void IWGameSetup(void)
     gdGameIsPaused = false;
     // DEBUG
     gdSpawnCubes = true;
+    //
+    gdScoreCounter = IWScoreCounterMakeEmpty();
     //
     return;
 }
@@ -124,9 +128,29 @@ void IWGameUpdate(float timeSinceLastUpdate)
     
     gdTotalRunTime += timeSinceLastUpdate;
     
-    gdZMax = MAX(gdZMax, gdPlayerData.position.z);
+    // Udpate score and score display
+    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
-    // Switch draw buffer
+    gdScoreCounter.runningTimeTotal += timeSinceLastUpdate;
+
+    gdZMax = MAX(gdZMax, gdPlayerData.position.z);
+    gdScoreCounter.zMax = gdZMax;
+    
+    unsigned int oldScore = gdScoreCounter.scoreInt;
+    IWScoreCounterUpdateScore(&gdScoreCounter);
+    
+    if (gdScoreCounter.scoreInt != oldScore) {
+        char s[10];
+        sprintf(s, "%u", gdScoreCounter.scoreInt);
+        IWGTextFieldSetText(&gdScoreTextField, s);
+        IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+                              0,
+                              gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                              gdScoreTextField.triangleBufferData.startCPU,
+                              false);
+    }
+    
+    // Switch main draw buffer
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
 
     // Update overdrive
@@ -233,6 +257,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
 
                     gdCubeCounter.bridge++;
                     gdCubeCounter.spawned--;
+                    
+                    gdScoreCounter.nGridCubes++;
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
 
@@ -252,6 +278,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
                     
                     gdCubeCounter.bridge--;
                     gdCubeCounter.pool++;
+                    
+                    gdScoreCounter.nBridgeCubes++;
                     
                     gdClearColorTransition.currentTransitionTime = 0.0;
                     gdClearColorTransition.transitionHasFinished = false;
@@ -302,6 +330,10 @@ void IWGameUpdate(float timeSinceLastUpdate)
         // DEBUG
         //gdPlayerData = gdPlayerDataStart;
         //gdFuel.currentLevel = gdFuel.currentMaxLevel;
+        printf("GAME OVER\n");
+        IWScoreCounterPrintScore(&gdScoreCounter);
+        gdGameIsPaused = true;
+        gdFuel.currentLevel = 1.0;
     } else if (gdPlayerData.overdrive) {
         if (IWColorTransitionUpdate(&gdOverdriveColorTransition, timeSinceLastUpdate)) {
             gdOverdriveColorTransition.endColor = gdOverdriveColorTransition.startColor;

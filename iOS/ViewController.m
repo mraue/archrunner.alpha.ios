@@ -62,17 +62,10 @@ GLuint N_VERT2 = 0;
     CLLocationManager *locationManager;
     CMMotionManager *motionManager;
     CMAttitude *savedAttitude;
-    
-    UILabel *xLabel, *yLabel, *zLabel, *rxLabel, *ryLabel, *rzLabel;
-    UIButton *aButton;
-    UISwitch *switch1;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CMMotionManager *motionManager;
-@property (nonatomic, retain) IBOutlet UILabel *xLabel, *yLabel, *zLabel, *rxLabel, *ryLabel, *rzLabel;
-@property (nonatomic, retain) IBOutlet UIButton *aButton;
-@property (nonatomic, retain) IBOutlet UISwitch *switch1;
 
 - (void)updateControllerNeutralPosition;
 
@@ -82,9 +75,6 @@ GLuint N_VERT2 = 0;
 
 @synthesize locationManager;
 @synthesize motionManager;
-@synthesize xLabel, yLabel, zLabel, rxLabel, ryLabel, rzLabel;
-@synthesize aButton;
-@synthesize switch1;
 
 - (void)dealloc
 {
@@ -115,8 +105,6 @@ GLuint N_VERT2 = 0;
     
     switchColor = NO;
     //[aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
-    switch1.on = NO;
-    switch1.hidden = YES;
     
     // Default setting for 3GS
     self.preferredFramesPerSecond = 30;
@@ -193,15 +181,16 @@ GLuint N_VERT2 = 0;
     fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"fsh"];
     
     // Deal with font map textures
-    NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:@"fontmap01" ofType:@"txt"];
-    UIImage* uiImage = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fontmap01" ofType:@"png"]]retain];
+    NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:@"fontmap02" ofType:@"txt"];
+    UIImage* uiImage = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fontmap02" ofType:@"png"]]retain];
     CGImageRef cgImage = uiImage.CGImage;
     CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
     
-    printf("View dimensions: %f %f\n", self.view.bounds.size.width, self.view.bounds.size.height);
-    printf("Screen dimensions: %f %f\n", [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
-    
+    printf("View dimensions: %.1f %.1f\n",
+           self.view.bounds.size.width, self.view.bounds.size.height);
+    printf("Screen dimensions: %.1f %.1f\n",
+           [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
 
     IWGRendererSetupGL([vertShaderPathname UTF8String],
                        [fragShaderPathname UTF8String],
@@ -330,7 +319,7 @@ GLuint N_VERT2 = 0;
             rotationSpeedY = -1.;
         }
     } else {
-        if (switch1.on) {
+        if (0) {
             rotationSpeedX = controllerDataCompass.rotationSpeed.x;
             rotationSpeedY = controllerDataCompass.rotationSpeed.y;
         } else {
@@ -357,13 +346,6 @@ GLuint N_VERT2 = 0;
         gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
 //    }
     
-    // Display player data
-    [xLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.x]];
-    [yLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.y]];
-    [zLabel setText:[NSString stringWithFormat:@"%.4f", gdPlayerData.position.z]];
-    [rxLabel setText:[NSString stringWithFormat:@"%u", gdStandardCubeIndexList.nEntries]];
-    [ryLabel setText:[NSString stringWithFormat:@"%u", gdCubeCounter.bridge]];
-    [rzLabel setText:[NSString stringWithFormat:@"%.2f", gdZMax]];
     
     // Compute the model view matrix for the object rendered with ES2
     // REFACTOR: does not change, could only be calculated and intialized to uniforms once

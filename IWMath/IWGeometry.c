@@ -10,8 +10,8 @@
 
 #include "IWGeometry.h"
 
-IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,
-                                                   enum IWRECTANGLE_ANCHOR_POSITION anchorPosition)
+IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint2D anchor, IWVector2 dimensions,
+                                                   IWGEOMETRY_ANCHOR_POSITION anchorPosition)
 {
     IWRectangle rectangle = {
         {0.0, 0.0},
@@ -20,28 +20,28 @@ IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dim
     
     switch (anchorPosition) {
             
-        case IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT:
+        case IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT:
             rectangle.lowerLeft.x = anchor.x;
             rectangle.lowerLeft.y = anchor.y;
             rectangle.upperRight.x = anchor.x + dimensions.x;
             rectangle.upperRight.y = anchor.y + dimensions.y;
             break;
             
-        case IWRECTANGLE_ANCHOR_POSITION_UPPER_LEFT:
+        case IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT:
             rectangle.lowerLeft.x = anchor.x;
             rectangle.lowerLeft.y = anchor.y - dimensions.y;
             rectangle.upperRight.x = anchor.x + dimensions.x;
             rectangle.upperRight.y = anchor.y;
             break;
             
-        case IWRECTANGLE_ANCHOR_POSITION_LOWER_RIGHT:
+        case IWGEOMETRY_ANCHOR_POSITION_LOWER_RIGHT:
             rectangle.lowerLeft.x = anchor.x - dimensions.x;
             rectangle.lowerLeft.y = anchor.y;
             rectangle.upperRight.x = anchor.x;
             rectangle.upperRight.y = anchor.y + dimensions.y;
             break;
             
-        case IWRECTANGLE_ANCHOR_POSITION_UPPER_RIGHT:
+        case IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT:
             rectangle.lowerLeft.x = anchor.x - dimensions.x;
             rectangle.lowerLeft.y = anchor.y - dimensions.y;
             rectangle.upperRight.x = anchor.x;

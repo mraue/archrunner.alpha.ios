@@ -30,6 +30,8 @@
 #include "IWCubeCounter.h"
 #include "IWGCircle.h"
 #include "IWGFontMap.h"
+#include "IWScoreCounter.h"
+#include "IWGTextField.h"
 
 #pragma mark - Game Logic Data
 
@@ -43,6 +45,7 @@ IWPlayerData gdPlayerDataSave;
 IWFuel gdFuel;
 
 IWCubeCounterData gdCubeCounter;
+IWScoreCounterData gdScoreCounter;
 
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
@@ -82,7 +85,7 @@ void *gdFontMapTextureData;
 #pragma mark - User Interface
 
 bool gdIsTouched;
-IWPoint gdTouchPoint;
+IWPoint2D gdTouchPoint;
 
 IWUIRectangleButton gdRectangleButton;
 IWUIRectangleButton gdRectangleButton2;
@@ -115,6 +118,8 @@ GLuint gdUITriangleVertexBuffer;
 
 GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
+
+IWGTextFieldData gdScoreTextField;
 
 #pragma mark - Open GL Vertex Transformation Matrices
 

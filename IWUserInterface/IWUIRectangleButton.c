@@ -14,7 +14,7 @@
 #define IWUIRECTANGLEBUTTON_LINE_Z -0.9999
 
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
-                                            enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
+                                            IWGEOMETRY_ANCHOR_POSITION anchorPosition,
                                             float sizeX, float sizeY,
                                             IWVector4 touchedColor, IWVector4 untouchedColor,
                                             IWVector4 lineColor,
@@ -71,7 +71,7 @@ size_t IWUIRectangleButtonLineBufferSize(IWUIRectangleButton *button)//[CGFloat]
     return memSize * 7;
 }
 
-bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, IWPoint touchPoint)
+bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, IWPoint2D touchPoint)
 {
     if (isTouched && IWPointInRectangle(touchPoint, button->rectangle)) {
         if (!button->isTouched) {

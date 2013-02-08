@@ -30,7 +30,7 @@ typedef struct _IWUIElementData IWUIElementData;
 
 IWUIElementData IWUIElementMakeEmpty();
 
-IWUIElementData IWUIElementMakeCircle(IWPoint centerPoint, float radiusX, IWVector4 color,
+IWUIElementData IWUIElementMakeCircle(IWPoint2D centerPoint, float radiusX, IWVector4 color,
                                       float aspectRatio, unsigned int nDivisions, GLfloat* bufferPointer);
 
 

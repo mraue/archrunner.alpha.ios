@@ -29,8 +29,8 @@ enum IWUIRECTANGLEBUTTON_CORNER_CUT {
 };
 
 struct _IWUIRectangleButton {
-    IWPoint anchorPoint;// [0.0, 1.0] coordinates
-    enum IWRECTANGLE_ANCHOR_POSITION anchorPosition;
+    IWPoint2D anchorPoint;// [0.0, 1.0] coordinates
+    IWGEOMETRY_ANCHOR_POSITION anchorPosition;
     IWVector2 size;// [0.0, 1.0] coordinates
     IWVector4 touchedColor;
     IWVector4 untouchedColor;
@@ -49,7 +49,7 @@ struct _IWUIRectangleButton {
 typedef struct _IWUIRectangleButton IWUIRectangleButton;
 
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
-                                            enum IWRECTANGLE_ANCHOR_POSITION anchorPosition,
+                                            IWGEOMETRY_ANCHOR_POSITION anchorPosition,
                                             float sizeX, float sizeY,
                                             IWVector4 touchedColor, IWVector4 untouchedColor,
                                             IWVector4 lineColor,
@@ -59,7 +59,7 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
 size_t IWUIRectangleButtonTriangleBufferSize(IWUIRectangleButton *button);//[CGFloat]
 size_t IWUIRectangleButtonLineBufferSize(IWUIRectangleButton *button);//[CGFloat]
 
-bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton * button, bool isTouched, IWPoint touchPoint);
+bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton * button, bool isTouched, IWPoint2D touchPoint);
 
 size_t IWUIRectangleButtonToTriangleBuffer(IWUIRectangleButton *button, GLfloat* p);
 size_t IWUIRectangleButtonToLineBuffer(IWUIRectangleButton *button, GLfloat* p);

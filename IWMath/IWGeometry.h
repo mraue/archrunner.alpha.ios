@@ -15,21 +15,19 @@
 
 # pragma mark - Data Types
 
-typedef IWVector2 IWPoint;
+typedef IWVector2 IWPoint2D;
 
-struct _IWRectangle {
-    IWPoint lowerLeft;
-    IWPoint upperRight;
-};
+typedef struct {
+    IWPoint2D lowerLeft;
+    IWPoint2D upperRight;
+} IWRectangle;
 
-typedef struct _IWRectangle IWRectangle;
-
-enum IWRECTANGLE_ANCHOR_POSITION {
-    IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
-    IWRECTANGLE_ANCHOR_POSITION_UPPER_LEFT,
-    IWRECTANGLE_ANCHOR_POSITION_LOWER_RIGHT,
-    IWRECTANGLE_ANCHOR_POSITION_UPPER_RIGHT
-};
+typedef enum {
+    IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
+    IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
+    IWGEOMETRY_ANCHOR_POSITION_LOWER_RIGHT,
+    IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT
+} IWGEOMETRY_ANCHOR_POSITION;
 
 typedef enum {
     IWGEOMETRY_AXIS_X,
@@ -45,14 +43,14 @@ static __inline__ IWRectangle IWRectangleMake(float x1, float y1, float x2, floa
     return rectangle;
 }
 
-IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint anchor, IWVector2 dimensions,
-                                                   enum IWRECTANGLE_ANCHOR_POSITION anchorPosition);
+IWRectangle IWRectangleMakeFromAnchorAndDimensions(IWPoint2D anchor, IWVector2 dimensions,
+                                                   IWGEOMETRY_ANCHOR_POSITION anchorPosition);
 
-static __inline__ bool IWPointInRectangle(IWPoint point, IWRectangle rectangle);
+static __inline__ bool IWPointInRectangle(IWPoint2D point, IWRectangle rectangle);
 
 # pragma mark - Inline implementation
 
-static __inline__ bool IWPointInRectangle(IWPoint point, IWRectangle rectangle)
+static __inline__ bool IWPointInRectangle(IWPoint2D point, IWRectangle rectangle)
 {
     return ((point.x >= rectangle.lowerLeft.x) && (point.x < rectangle.upperRight.x)
             && (point.y >= rectangle.lowerLeft.y) && (point.y < rectangle.upperRight.y));

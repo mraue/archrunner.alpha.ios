@@ -30,6 +30,7 @@
 #include "IWGFontMap.h"
 #include "IWGFontMapEntry.h"
 #include "IWGTextLine.h"
+#include "IWGTextField.h"
 
 #include "IWGameData.h"
 
@@ -235,16 +236,36 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
-    IWGTextLineData textLine = IWGTextLineDataMake("Hello World!",
-                                                   IWVector2Make(-0.1, 0.7),
-                                                   0.25,
-                                                   IWUI_COLOR_GOLD(0.8),
-                                                   1. / aspect,
-                                                   &gdFontMap);
+//    IWGTextLineData textLine = IWGTextLineDataMake("67",
+//                                                   IWVector2Make(0.6, 0.5),
+//                                                   0.1,
+//                                                   IWUI_COLOR_GOLD(1.0),
+//                                                   1. / aspect,
+//                                                   &gdFontMap);
+//    IWGTextFieldData textField = IWGTextFieldMake(IWVector2Make(0.0, 0.0),
+//                                                  IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
+//                                                  3, 11,
+//                                                  1. / aspect,
+//                                                  "HELLO WORLD\nMY NAME IS\nGAME ONE",
+//                                                  0.2, -0.05,
+//                                                  IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+//                                                  IWUI_COLOR_GOLD(0.8),
+//                                                  &gdFontMap,
+//                                                  NULL);
+    gdScoreTextField = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
+                                        IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
+                                        1, 10,
+                                        1. / aspect,
+                                        "",
+                                        0.4, -0.04,
+                                        IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+                                        IWVector4Make(1.0, 1.0, 1.0, 0.7),
+                                        &gdFontMap,
+                                        NULL);
     
     gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
-        gdTextTriangleDoubleBuffer.nVertices[k] = textLine.triangleBufferData.size / textLine.triangleBufferData.stride;
+        gdTextTriangleDoubleBuffer.nVertices[k] = gdScoreTextField.triangleBufferData.size / gdScoreTextField.triangleBufferData.stride;
     }
     
     // Fill buffers
@@ -255,10 +276,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
         glBindTexture(GL_TEXTURE_2D, textureHandlerId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
 
-        glBufferData(GL_ARRAY_BUFFER, textLine.triangleBufferData.size * sizeof(GLfloat),
-                     textLine.triangleBufferData.startCPU,
+        glBufferData(GL_ARRAY_BUFFER, gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                     gdScoreTextField.triangleBufferData.startCPU,
                      GL_DYNAMIC_DRAW);
         
         glEnableVertexAttribArray(positionSlot);
@@ -278,7 +301,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     
     // Some buttons
     gdRectangleButton = IWUIRectangleButtonMake(0.0, -0.001,
-                                                IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
                                                 0.18, 0.19,
                                                 IWUI_COLOR_WHITE(0.5),
                                                 IWUI_COLOR_WHITE(0.25),
@@ -286,14 +309,14 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT),
                                                 0.035, 1. / aspect);
     gdRectangleButton2 = IWUIRectangleButtonMake(0.82, -0.001,
-                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                 IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.18, 0.19,
                                                  IWUI_COLOR_PURPLE(0.3), IWUI_COLOR_WHITE(0.25),
                                                  IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, 1. / aspect);
     gdRectangleButton3 = IWUIRectangleButtonMake(0.63, -0.001,
-                                                 IWRECTANGLE_ANCHOR_POSITION_LOWER_LEFT,
+                                                 IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
                                                  0.18, 0.19,
                                                  IWUI_COLOR_GOLD(0.3), IWUI_COLOR_WHITE(0.25),
                                                  IWUI_COLOR_WHITE(0.5),

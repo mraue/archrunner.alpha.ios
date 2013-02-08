@@ -18,7 +18,7 @@
 #include "IWGFontMapEntry.h"
 
 IWGTextLineData IWGTextLineDataMake(const char* text,
-                                    IWPoint start,
+                                    IWPoint2D start,
                                     float size,
                                     IWVector4 color,
                                     float aspect,
