@@ -74,7 +74,7 @@ int IWIndexListReplaceWithLast(IWIndexListData *indexList, unsigned int entry)
         printf("ERROR IWIndexListReplaceWithLast: list is empty\n");
         return -1;
     } else if (entry > indexList->nEntries - 1) {
-        printf("ERROR IWIndexListReplaceWithLast: entry %u is out of range \n", entry);
+        printf("ERROR IWIndexListReplaceWithLast: entry %u is out of range (%u)\n", entry, indexList->nEntries);
         return -1;
     } else if (entry == indexList->nEntries - 1) {
         indexList->nEntries--;

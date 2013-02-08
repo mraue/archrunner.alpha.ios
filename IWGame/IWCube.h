@@ -76,6 +76,9 @@ IWCubeData IWCubeMake(unsigned int id,
 IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
                             IWVector3 center, IWVector4 color,
                             unsigned int nRandomizePositions, float randomDistance);
+IWVector3* IWCubeMakeCubePositions(int nx, int ny, int nz, float l, float d,
+                                   IWVector3 center,
+                                   unsigned int nRandomizePositions, float randomDistance);
 
 IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPosition, IWGEOMETRY_AXIS axis);
 

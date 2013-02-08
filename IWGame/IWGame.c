@@ -28,7 +28,6 @@
 
 #include "IWUserInterface.h"
 
-#include "IWCubeCounter.h"
 #include "IWFuel.h"
 
 #include "IWScoreCounter.h"
@@ -110,9 +109,13 @@ void IWGameUpdate(float timeSinceLastUpdate)
         } else {
             gdGameIsPaused = true;
             gdPauseTime = 0.0;
-            gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
-            gdSkyShaderID = gdMasterShaderID = 3;
+
         }
+    }
+    
+    if (gdGameIsPaused) {
+        //gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
+        //gdSkyShaderID = gdMasterShaderID = 3;
     }
     
     if (!gdRectangleButton.colorTransition.transitionHasFinished) {
@@ -169,11 +172,20 @@ void IWGameUpdate(float timeSinceLastUpdate)
         int i;
 
         IWVector3 newCenter = gdSecondaryPosition[gdSecondaryPositionCounter];
-        newCenter.z += 0.7;
+        newCenter.z += 0.6;
         
         free(gdSecondaryPosition);
         gdSecondaryPosition = IWCubeMakeCubeCurve(gdNCubes, newCenter, IWGEOMETRY_AXIS_Z);
         gdSecondaryPositionCounter = 0;
+        
+        unsigned int nCubesX, nCubesY, nCubesZ;
+        nCubesZ = nCubesY = nCubesX = (unsigned int)pow(gdPoolCubeIndexList.nEntries, 1. / 3.);
+        //nCubesZ = (unsigned int)gdPoolCubeIndexList.nEntries / nCubesX / nCubesY;
+        nCubesX++; nCubesY++; nCubesZ++;
+        IWVector3 *newPositions = IWCubeMakeCubePositions(nCubesX, nCubesY, nCubesZ,
+                                                          .04, .12,
+                                                          newCenter,
+                                                          1, 0.05);
         
         for (int j = 0; j < gdPoolCubeIndexList.nEntries; j++) {
             i = gdPoolCubeIndexList.map[j];
@@ -186,13 +198,13 @@ void IWGameUpdate(float timeSinceLastUpdate)
                                                    IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0),
                                                    IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0));
             IWVector3 spawnPosition = IWVector3Add(newCenter, randomOffset);
-            IWVector3 randomOffset2 = IWVector3Make(IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
-                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
-                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3));
+//            IWVector3 randomOffset2 = IWVector3Make(IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
+//                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
+//                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3));
             float transitionTime = 2.0;
             
             gdCubeData[i].positionTransition = IWVector3TransitionMake(spawnPosition,
-                                                                       IWVector3Add(newCenter, randomOffset2),
+                                                                       newPositions[j],//IWVector3Add(newCenter, randomOffset2),
                                                                        spawnPosition,
                                                                        transitionTime, 0.0, false, false);
             gdCubeData[i].centerPosition = spawnPosition;
@@ -200,6 +212,9 @@ void IWGameUpdate(float timeSinceLastUpdate)
             gdCubeData[i].triangleBufferData.bufferIDGPU = IWIndexListAppendObjectId(&gdGPUBufferPositionIndexList, i);
             gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDataUpdateBuffer] += gdCubeData[i].triangleBufferData.size / gdCubeData[i].triangleBufferData.stride;
         }
+        
+        free(newPositions);
+        
         gdPoolCubeIndexList.nEntries = 0;
         //gdSpawnCubes = false;
     }
@@ -215,8 +230,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
         unsigned int i = IWIndexListRemoveRandom(&gdStandardCubeIndexList);
         //printf("DEBUG: Removing cube %u\n", i);
         IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
-        
-        gdCubeCounter.spawned--;
     }
     
     // Collision detection
@@ -255,9 +268,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
                     //gdCubeData[i].color = IWUI_COLOR_DARK_PURPLE(1.0);
                     //gdClearColorTransition.startColor = IWUI_COLOR_DARK_BLUE(1.0);
 
-                    gdCubeCounter.bridge++;
-                    gdCubeCounter.spawned--;
-                    
                     gdScoreCounter.nGridCubes++;
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
@@ -275,9 +285,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
                     gdOverdriveColorTransition.transitionHasFinished = false;
                     
                     //gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
-                    
-                    gdCubeCounter.bridge--;
-                    gdCubeCounter.pool++;
                     
                     gdScoreCounter.nBridgeCubes++;
                     
@@ -333,6 +340,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
         printf("GAME OVER\n");
         IWScoreCounterPrintScore(&gdScoreCounter);
         gdGameIsPaused = true;
+        gdPauseTime = 0.0;
         gdFuel.currentLevel = 1.0;
     } else if (gdPlayerData.overdrive) {
         if (IWColorTransitionUpdate(&gdOverdriveColorTransition, timeSinceLastUpdate)) {
@@ -361,19 +369,11 @@ void IWGameUpdate(float timeSinceLastUpdate)
                            gdFuel.stateBar.triangleBufferData.bufferStartCPU,
                            false);
     
-//    // Update cube counter bar
-//    IWCubeCounterUpdateStateBar(&gdCubeCounter);
-//    IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
-//    IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdCubeCounter.stateBar.triangleBufferData, false);
-    
     // Check button interaction
 
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
         gdPlayerData = gdPlayerDataStart;
         gdFuel.currentLevel = gdFuel.currentMaxLevel;
-    }
-    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton3, gdIsTouched, gdTouchPoint)) {
-        gdResetControllerPosition = true;
     }
     
     if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
@@ -381,12 +381,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
         gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
         IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
         IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton2.triangleBuffer, false);
-    }
-    if (!gdRectangleButton3.colorTransition.transitionHasFinished) {
-        IWColorTransitionUpdate(&gdRectangleButton3.colorTransition, timeSinceLastUpdate);
-        gdRectangleButton3.color = gdRectangleButton3.colorTransition.currentColor;
-        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton3);
-        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton3.triangleBuffer, false);
     }
     glBindVertexArrayOES(0);
 

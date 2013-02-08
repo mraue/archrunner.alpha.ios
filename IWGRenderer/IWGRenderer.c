@@ -19,7 +19,6 @@
 #include "IWFileTools.h"
 #include "IWCube.h"
 #include "IWFuel.h"
-#include "IWCubeCounter.h"
 #include "IWGCircle.h"
 
 #include "IWGLighting.h"
@@ -315,24 +314,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                                                  IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, 1. / aspect);
-    gdRectangleButton3 = IWUIRectangleButtonMake(0.63, -0.001,
-                                                 IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
-                                                 0.18, 0.19,
-                                                 IWUI_COLOR_GOLD(0.3), IWUI_COLOR_WHITE(0.25),
-                                                 IWUI_COLOR_WHITE(0.5),
-                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
-                                                 0.035, 1. / aspect);
 
     gdFuel = IWFuelMakeDefaultStart();
     //gdFuel.stateBar.direction = IWUI_DIRECTION_REVERSE;// need larger buffer! -> 4 x 6
-    
-    gdCubeCounter = IWCubeCounterMake(n);
-    gdCubeCounter.spawned = n;
-    IWCubeCounterUpdateStateBar(&gdCubeCounter);
 
     gdUINTriangleVertices = ((IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
-                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)
-                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton3)) / 7
+                             + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)) / 7
                              + 6 * 3// 4 for reverse, 3 for normal
                              //+ 6 * 4// cube counter
                              );
@@ -344,21 +331,11 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
     gdRectangleButton2.triangleBuffer.bufferOffsetGPU = offset;
     offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
-    gdRectangleButton3.triangleBuffer.bufferOffsetGPU = offset;
-    offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton3, mypos2 + offset);
     
     gdFuel.stateBar.triangleBufferData.bufferStartCPU = mypos2 + offset;
     gdFuel.stateBar.triangleBufferData.bufferOffsetGPU = offset;
     gdFuel.stateBar.triangleBufferData.size = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
     offset += gdFuel.stateBar.triangleBufferData.size;
-    
-//    gdCubeCounter.stateBar.triangleBufferData.bufferStartCPU = mypos2 + offset;
-//    gdCubeCounter.stateBar.triangleBufferData.bufferOffsetGPU = offset;
-//    gdCubeCounter.stateBar.triangleBufferData.size = IWUIStateBarToTriangles(&gdCubeCounter.stateBar);
-//    offset += gdCubeCounter.stateBar.triangleBufferData.size;
-    
-    //gdRectangleButton.color = IWVector4Make(255.0 / 255.0, 236. / 255., 147. / 255, 0.3);
-    //IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
     
     gdUITriangleDoubleBuffer = IWGMultiBufferGen();
 
@@ -379,7 +356,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     
     gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
                          + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)
-                         + IWUIRectangleButtonLineBufferSize(&gdRectangleButton3)
                          + 2 * 52 * 7) / 7;
     
     mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);

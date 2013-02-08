@@ -27,7 +27,6 @@
 #include "IWGBufferSubData.h"
 #include "IWTimer.h"
 #include "IWIndexList.h"
-#include "IWCubeCounter.h"
 #include "IWGCircle.h"
 #include "IWGFontMap.h"
 #include "IWScoreCounter.h"
@@ -44,7 +43,6 @@ IWPlayerData gdPlayerDataSave;
 
 IWFuel gdFuel;
 
-IWCubeCounterData gdCubeCounter;
 IWScoreCounterData gdScoreCounter;
 
 IWCubeData* gdCubeData;

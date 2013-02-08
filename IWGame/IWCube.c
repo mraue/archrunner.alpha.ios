@@ -89,6 +89,36 @@ IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
     return cubeOfCubeDataStart;
 }
 
+IWVector3* IWCubeMakeCubePositions(int nx, int ny, int nz, float l, float d,
+                                   IWVector3 center,
+                                   unsigned int nRandomizePositions, float randomDistance)
+{
+    unsigned int n = nx * ny * nz;
+    IWVector3* positionsStart = malloc(n * sizeof(IWVector3));
+    IWVector3* vectorPtr = positionsStart;
+    float dx = nx * (l + d) - d;
+    float dy = ny * (l + d) - d;
+    float dz = nz * (l + d) - d;
+    float x0 = center.x - dx / 2.;
+    float y0 = center.y - dy / 2.;
+    float z0 = center.z - dz / 2.;
+    for (float x = x0; x <= x0 + dx; x += d + l) {
+        for (float y = y0; y < y0 + dy; y += d + l) {
+            for (float z = z0; z < z0 + dz; z += d + l) {
+                *vectorPtr = IWVector3Make(x, y, z);
+                for (unsigned int i = 0; i < nRandomizePositions; i++) {
+                    *vectorPtr = IWVector3Add(*vectorPtr,
+                                              IWVector3Make((IW_FRAND - 0.5) * 2.0 * randomDistance,
+                                                            (IW_FRAND - 0.5) * 2.0 * randomDistance,
+                                                            (IW_FRAND - 0.5) * 2.0 * randomDistance));
+                }
+                vectorPtr++;
+            }
+        }
+    }
+    return positionsStart;
+}
+
 IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPosition, IWGEOMETRY_AXIS axis)
 {
     IWVector3* points = malloc(nPositions * sizeof(IWVector3));
