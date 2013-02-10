@@ -16,6 +16,8 @@
 static __inline__ IWVector3 IWVector3Make(float x, float y, float z);
 static __inline__ IWVector3 IWVector3MakeWithArray(float val[3]);
 
+static __inline__ IWVector3 IWVector3Negate(IWVector3 vector);
+                                         
 static __inline__ IWVector3 IWVector3Add(IWVector3 vectorLeft, IWVector3 vectorRight);
 static __inline__ IWVector3 IWVector3Substract(IWVector3 vectorLeft, IWVector3 vectorRight);
 static __inline__ IWVector3 IWVector3Multiply(IWVector3 vectorLeft, IWVector3 vectorRight);
@@ -54,6 +56,12 @@ static __inline__ IWVector3 IWVector3Make(float x, float y, float z) {
 
 static __inline__ IWVector3 IWVector3MakeWithArray(float val[3]) {
     IWVector3 v = {val[0], val[1], val[2]};
+    return v;
+}
+
+
+static __inline__ IWVector3 IWVector3Negate(IWVector3 vector) {
+    IWVector3 v = {-vector.x, -vector.y, -vector.z};
     return v;
 }
 

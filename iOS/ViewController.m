@@ -53,27 +53,22 @@ GLuint N_VERT2 = 0;
     IWVector3 _filteredAttitude;
     
     IWControllerData controllerDataAccelerometer;
-    IWControllerData controllerDataCompass;
 
     BOOL orientationNeutralSetAccelerometer;
     BOOL orientationNeutralSetCompass;
     BOOL switchColor;
 
-    CLLocationManager *locationManager;
     CMMotionManager *motionManager;
     CMAttitude *savedAttitude;
 }
 @property (strong, nonatomic) EAGLContext *context;
-@property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CMMotionManager *motionManager;
 
-- (void)updateControllerNeutralPosition;
 
 @end
 
 @implementation ViewController
 
-@synthesize locationManager;
 @synthesize motionManager;
 
 - (void)dealloc
@@ -85,9 +80,6 @@ GLuint N_VERT2 = 0;
     }
     
     [_context release];
-    // Stop the compass
-	[locationManager stopUpdatingHeading];
-    [locationManager release];
     if (motionManager.isDeviceMotionActive)
         [motionManager stopDeviceMotionUpdates];
     [super dealloc];
@@ -104,7 +96,6 @@ GLuint N_VERT2 = 0;
     gdRunningInSimulator = ([[[[UIDevice currentDevice] model] uppercaseString] rangeOfString:@"SIMULATOR"].location == NSNotFound) ? false : true;
     
     switchColor = NO;
-    //[aButton addTarget:self action:@selector(updateControllerNeutralPosition) forControlEvents:(UIControlEventTouchDown)];
     
     // Default setting for 3GS
     self.preferredFramesPerSecond = 30;
@@ -118,24 +109,6 @@ GLuint N_VERT2 = 0;
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
-    
-    // This can be removed, since I guess we won't be using the
-    // the compass after all (too slow/buggy)
-    self.locationManager = [[[CLLocationManager alloc] init] autorelease];
-	
-	// check if the hardware has a compass
-	if ([CLLocationManager headingAvailable] == NO) {
-        self.locationManager = nil;
-	} else {
-        // heading service configuration
-        locationManager.headingFilter = kCLHeadingFilterNone;
-        
-        // setup delegate callbacks
-        locationManager.delegate = self;
-        
-        // start the compass
-        [locationManager startUpdatingHeading];
-    }
     
     motionManager = [[CMMotionManager alloc] init]; // motionManager is an instance variable
     motionManager.accelerometerUpdateInterval = 0.01; // 100Hz
@@ -166,11 +139,8 @@ GLuint N_VERT2 = 0;
     }
 
     controllerDataAccelerometer = IWControllerDataMakeDefault();
-
-    controllerDataCompass = IWControllerDataMakeDefault();
     
     orientationNeutralSetAccelerometer = NO;
-    orientationNeutralSetCompass = NO;
     
     IWGameSetup();
     
@@ -253,15 +223,26 @@ GLuint N_VERT2 = 0;
         }
     }
     
-    if (!orientationNeutralSetAccelerometer || gdResetControllerPosition || gdGameIsPaused) {
-        IWControllerDataUpdateReferenceDirection(&controllerDataAccelerometer, IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z)), IWVector3Make(0.0, 0.0, -1.0));
+    if (!orientationNeutralSetAccelerometer
+        || gdResetControllerPosition
+        || gdGameIsPaused) {
+        IWControllerDataUpdateReferenceDirection(&controllerDataAccelerometer,
+                                                 IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
+                                                                                  _filteredAcceleration.y,
+                                                                                  _filteredAcceleration.z)
+                                                                    ),
+                                                 IWVector3Make(0.0, 0.0, -1.0));
 //        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
         orientationNeutralSetAccelerometer = YES;
         gdResetControllerPosition = false;
         savedAttitude = [motionManager.deviceMotion.attitude retain];
     }
-    controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
+
+    controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
+                                                                             _filteredAcceleration.y,
+                                                                             _filteredAcceleration.z));
     
+
     if (motionManager.isDeviceMotionAvailable) {
         // Needs to be better determined under the assumption of 60 FPS
         alpha = 0.5;
@@ -281,8 +262,6 @@ GLuint N_VERT2 = 0;
     } else {
         IWControllerUpdateRotationSpeed(&controllerDataAccelerometer, self.timeSinceLastUpdate);
     }
-
-    IWControllerUpdateRotationSpeed(&controllerDataCompass, self.timeSinceLastUpdate);
     
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     
@@ -319,15 +298,11 @@ GLuint N_VERT2 = 0;
             rotationSpeedY = -1.;
         }
     } else {
-        if (0) {
-            rotationSpeedX = controllerDataCompass.rotationSpeed.x;
-            rotationSpeedY = controllerDataCompass.rotationSpeed.y;
-        } else {
-            rotationSpeedX = controllerDataAccelerometer.rotationSpeed.x;
-            rotationSpeedY = controllerDataAccelerometer.rotationSpeed.y;
-            rotationSpeedZ = controllerDataAccelerometer.rotationSpeed.z;
-        }
+        rotationSpeedX = controllerDataAccelerometer.rotationSpeed.x;
+        rotationSpeedY = controllerDataAccelerometer.rotationSpeed.y;
+        rotationSpeedZ = controllerDataAccelerometer.rotationSpeed.z;
     }
+
     GLKMatrix4 yRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
                                                               upGLV.x, upGLV.y, upGLV.z);
     GLKVector3 normGLV = GLKVector3CrossProduct(dirGLV, upGLV);
@@ -378,34 +353,6 @@ GLuint N_VERT2 = 0;
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
     IWGRendererRender();
-}
-
-#pragma mark -  CLLocation Manager delegate methods
-
-// This delegate method is invoked when the location manager has heading data.
-- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)heading {
-    if (!orientationNeutralSetCompass) {
-        controllerDataCompass.referenceDirection = IWVector3Normalize(IWVector3Make(heading.x, heading.y, heading.z));
-        orientationNeutralSetCompass = YES;
-    } else {
-        controllerDataCompass.direction = IWVector3Normalize(IWVector3Make(heading.x, heading.y, heading.z));
-    }
-}
-
-// This delegate method is invoked when the location managed encounters an error condition.
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    if ([error code] == kCLErrorDenied) {
-        // This error indicates that the user has denied the application's request to use location services.
-        [manager stopUpdatingHeading];
-    } else if ([error code] == kCLErrorHeadingFailure) {
-        // This error indicates that the heading could not be determined, most likely because of strong magnetic interference.
-    }
-}
-
-- (void)updateControllerNeutralPosition {
-    orientationNeutralSetAccelerometer = NO;
-    orientationNeutralSetCompass = NO;
-    gdPlayerData.position = IWVector3Make(0.0, 0.0, 0.0);
 }
 
 #pragma mark -  Track touch

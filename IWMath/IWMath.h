@@ -16,4 +16,6 @@
 #include "IWVector3.h"
 #include "IWVector4.h"
 
+#include "IWMatrix4.h"
+
 #endif

@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
-#import <CoreLocation/CoreLocation.h>
 #import <CoreMotion/CoreMotion.h>
 
-@interface ViewController : GLKViewController <CLLocationManagerDelegate>
+@interface ViewController : GLKViewController
 
 @end

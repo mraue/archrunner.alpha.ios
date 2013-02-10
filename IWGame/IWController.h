@@ -9,8 +9,6 @@
 #ifndef gameoneB_IWController_h
 #define gameoneB_IWController_h
 
-#include "GLKit/GLKMath.h"
-
 #include "IWMath.h"
 
 typedef struct {
@@ -19,7 +17,7 @@ typedef struct {
     IWVector3 pitchAngleMin;
     IWVector3 pitchAngleMax;
     IWVector3 rotationSpeed;
-    GLKMatrix4 referenceRotationMatrix;
+    IWMatrix4 referenceRotationMatrix;
     IWVector3 debug;
 } IWControllerData;
 
