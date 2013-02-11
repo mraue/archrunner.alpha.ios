@@ -417,13 +417,13 @@ void IWGRendererRender(void)
     IWGMultiBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
     
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
-                       1, 0, gdModelMatrix.m);
+                       1, 0, &gdModelMatrix.m00);
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
-                       1, 0, gdViewMatrix.m);
+                       1, 0, &gdViewMatrix.m00);
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
-                       1, 0, gdProjectionMatrix.m);
+                       1, 0, &gdProjectionMatrix.m00);
     glUniformMatrix3fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX],
-                       1, 0, gdNormalMatrix.m);
+                       1, 0, &gdNormalMatrix.m00);
 
 //    //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 0.4, 0.4, 1.0, 1.0);
 //    gdLightSourceData.Position = gdPlayerData.position;

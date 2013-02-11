@@ -39,7 +39,6 @@
 @property (strong, nonatomic) EAGLContext *context;
 @property (nonatomic, retain) CMMotionManager *motionManager;
 
-
 @end
 
 @implementation ViewController
@@ -175,26 +174,24 @@
         // This is somehwat of a hack to filter out the first few data sets
         // which seem to be corrupt/wrong
         if (gdTotalRunTime < 0.5) {
-            _filteredAcceleration.x = gravity.x;
-            _filteredAcceleration.y = gravity.y;
-            _filteredAcceleration.z = gravity.z;
+            _filteredAcceleration = gravity;
             gdResetControllerPosition = true;
         } else {
-            _filteredAcceleration.x = _filteredAcceleration.x * (1.0-alpha) + gravity.x * alpha;
-            _filteredAcceleration.y = _filteredAcceleration.y * (1.0-alpha) + gravity.y * alpha;
-            _filteredAcceleration.z = _filteredAcceleration.z * (1.0-alpha) + gravity.z * alpha;
+            _filteredAcceleration = IWVector3Lerp(_filteredAcceleration, gravity, alpha);
         }
     } else {
         CMAccelerometerData *newestAccel = motionManager.accelerometerData;
         if (gdTotalRunTime < 0.5) {
-            _filteredAcceleration.x = newestAccel.acceleration.x;
-            _filteredAcceleration.y = newestAccel.acceleration.y;
-            _filteredAcceleration.z = newestAccel.acceleration.z;
+            _filteredAcceleration = IWVector3Make(newestAccel.acceleration.x,
+                                                  newestAccel.acceleration.y,
+                                                  newestAccel.acceleration.z);
             gdResetControllerPosition = true;
         } else {
-            _filteredAcceleration.x = _filteredAcceleration.x * (1.0-alpha) + newestAccel.acceleration.x * alpha;
-            _filteredAcceleration.y = _filteredAcceleration.y * (1.0-alpha) + newestAccel.acceleration.y * alpha;
-            _filteredAcceleration.z = _filteredAcceleration.z * (1.0-alpha) + newestAccel.acceleration.z * alpha;
+            _filteredAcceleration = IWVector3Lerp(_filteredAcceleration,
+                                                  IWVector3Make(newestAccel.acceleration.x,
+                                                                newestAccel.acceleration.y,
+                                                                newestAccel.acceleration.z),
+                                                  alpha);
         }
     }
     
