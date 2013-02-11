@@ -39,6 +39,8 @@
 @property (strong, nonatomic) EAGLContext *context;
 @property (nonatomic, retain) CMMotionManager *motionManager;
 
+- (void)processControllInput;
+
 @end
 
 @implementation ViewController
@@ -162,15 +164,14 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - GLKView and GLKViewController delegate methods
 
-- (void)update
+- (void)processControllInput
 {
-    IWGameUpdate(self.timeSinceLastUpdate);
-
     float alpha = 0.2;
     if (motionManager.isDeviceMotionAvailable) {
-        IWVector3 gravity = IWVector3Make(motionManager.deviceMotion.gravity.x, motionManager.deviceMotion.gravity.y, motionManager.deviceMotion.gravity.z);
+        IWVector3 gravity = IWVector3Make(motionManager.deviceMotion.gravity.x,
+                                          motionManager.deviceMotion.gravity.y,
+                                          motionManager.deviceMotion.gravity.z);
         // This is somehwat of a hack to filter out the first few data sets
         // which seem to be corrupt/wrong
         if (gdTotalRunTime < 0.5) {
@@ -204,17 +205,17 @@
                                                                                   _filteredAcceleration.z)
                                                                     ),
                                                  IWVector3Make(0.0, 0.0, -1.0));
-//        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
+        //        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
         orientationNeutralSetAccelerometer = YES;
         gdResetControllerPosition = false;
         savedAttitude = [motionManager.deviceMotion.attitude retain];
     }
-
+    
     controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
                                                                              _filteredAcceleration.y,
                                                                              _filteredAcceleration.z));
     
-
+    
     if (motionManager.isDeviceMotionAvailable) {
         // Needs to be better determined under the assumption of 60 FPS
         alpha = 0.5;
@@ -235,18 +236,12 @@
         IWControllerUpdateRotationSpeed(&controllerDataAccelerometer, self.timeSinceLastUpdate);
     }
     
-    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    
-    // REFACTOR: does not change, could only be created and intialized to uniform once
-    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspect, 0.01f, 100.0f);
-    
-    //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
-
     // Update player position
     float speed = gdGameIsPaused ? 0.0 : gdPlayerData.speed;
     gdPlayerData.position = IWVector3Add(gdPlayerData.position,
                                          IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
                                                                  self.timeSinceLastUpdate * speed));
+
     float rotationSpeedMax = 100.0 / 180.0 * M_PI * self.timeSinceLastUpdate;
     
     // Update y rotation
@@ -254,7 +249,7 @@
     IWVector3 upGLV = IWVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
     float rotationSpeedX = 0.0, rotationSpeedY = 0.0, rotationSpeedZ = 0.0;
-
+    
     if (_isTouched && gdRunningInSimulator) {
         float touchActiveArea = 0.25;
         float touchFracX = _touchLocation.x / self.view.bounds.size.width;
@@ -274,49 +269,40 @@
         rotationSpeedY = controllerDataAccelerometer.rotationSpeed.y;
         rotationSpeedZ = controllerDataAccelerometer.rotationSpeed.z;
     }
-
+    
     IWMatrix4 yRotationUpdateMatrix = IWMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
-                                                              upGLV.x, upGLV.y, upGLV.z);
+                                                            upGLV.x, upGLV.y, upGLV.z);
     //for (unsigned int i = 0; i < 16; i++)
     //    yRotationUpdateMatrix.m[i] = yRotationUpdateMatrix2.m[i];
     
     IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
     
     IWMatrix4 xRotationUpdateMatrix = IWMatrix4MakeRotation(rotationSpeedX * rotationSpeedMax,
-                                                              normGLV.x, normGLV.y, normGLV.z);
+                                                            normGLV.x, normGLV.y, normGLV.z);
     
     IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
-
-//    if (motionManager.isDeviceMotionAvailable) {
-//        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
-//                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
-//        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
-//    }
-
-//    if (!gdGameIsPaused) {
-        gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
-        gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
-//    }
     
+    //    if (motionManager.isDeviceMotionAvailable) {
+    //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
+    //                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
+    //        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+    //    }
     
-    // Compute the model view matrix for the object rendered with ES2
-    // REFACTOR: does not change, could only be calculated and intialized to uniforms once
-    IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+    //    if (!gdGameIsPaused) {
+    gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
+    gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
+    //    }
+}
 
-    //for (unsigned int i = 0; i < 16; i++)
-    //    modelMatrix.m[i] = modelMatrix2.m[i];
+#pragma mark - GLKView and GLKViewController delegate methods
+
+- (void)update
+{
+    [self processControllInput];
     
-    // Check this
-    IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
-                                               gdPlayerData.position.x + gdPlayerData.direction.x,
-                                               gdPlayerData.position.y + gdPlayerData.direction.y,
-                                               gdPlayerData.position.z + gdPlayerData.direction.z,
-                                               gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
-
-    gdNormalMatrix = IWMatrix4GetMatrix3(modelMatrix);//GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
-    gdModelMatrix = modelMatrix;
-    gdProjectionMatrix = projectionMatrix;
-    gdViewMatrix = viewMatrix;
+    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    
+    IWGameMainHandler(self.timeSinceLastUpdate, aspect);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect

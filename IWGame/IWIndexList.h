@@ -28,4 +28,6 @@ int IWIndexListAppendObjectId(IWIndexListData *indexList, unsigned int objectId)
 int IWIndexListReplaceWithLast(IWIndexListData *indexList, unsigned int entry);
 unsigned int IWIndexListRemoveRandom(IWIndexListData *indexList);
 
+void IWIndexListDeallocData(IWIndexListData *indexList);
+
 #endif

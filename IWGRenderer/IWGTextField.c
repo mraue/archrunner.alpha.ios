@@ -42,6 +42,8 @@ IWGTextFieldData IWGTextFieldMake(IWPoint2D anchorPoint,
     if (!bufferStartPtr) {
         textField.triangleBufferData.startCPU = malloc(nRows * nColumns * 6 * 9 * sizeof(GLfloat));
         textField.manageBuffer = true;
+    } else {
+        textField.triangleBufferData.startCPU = bufferStartPtr;
     }
 
     IWGTextFieldSetText(&textField, text);
@@ -56,26 +58,28 @@ void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text)
     GLfloat* p = textField->triangleBufferData.startCPU;
     
     IWVector2 lowerLeft, upperRight;
+    lowerLeft = upperRight = textField->anchorPoint;
     float xStart = textField->anchorPoint.x;
+    float mWidth =  textField->fontHeight * IWGFontMapEntryGetAspectRatio(&textField->fontMap->map['M'])  / textField->aspect;
     switch (textField->anchorPosition) {
         case IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT:
-            lowerLeft = upperRight = textField->anchorPoint;
             lowerLeft.y -= textField->fontHeight;
             break;
         case IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT:
-            lowerLeft = upperRight = textField->anchorPoint;
             lowerLeft.y += (textField->nRows - 1) * (textField->fontHeight + textField->lineExtraOffset) + textField->lineExtraOffset;
             upperRight.y = lowerLeft.y + textField->fontHeight;
             break;
         case IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT:
-            lowerLeft = upperRight = textField->anchorPoint;
             lowerLeft.y -= textField->fontHeight;
-            float mWidth = textField->fontHeight * IWGFontMapEntryGetAspectRatio(&textField->fontMap->map['M'])  / textField->aspect;
+            xStart = lowerLeft.x = upperRight.x = textField->anchorPoint.x - textField->nColumns * mWidth;
+            break;
+        case IWGEOMETRY_ANCHOR_POSITION_LOWER_RIGHT:
+            lowerLeft.y += (textField->nRows - 1) * (textField->fontHeight + textField->lineExtraOffset) + textField->lineExtraOffset;
+            upperRight.y = lowerLeft.y + textField->fontHeight;
             xStart = lowerLeft.x = upperRight.x = textField->anchorPoint.x - textField->nColumns * mWidth;
             break;
         default:
             printf("ERROR IWGTextFieldSetText: Unknown anchor position. Using IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT\n");
-            lowerLeft = upperRight = textField->anchorPoint;
             lowerLeft.y -= textField->fontHeight;
             break;
     }
@@ -84,6 +88,7 @@ void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text)
     char emtpyChar = ' ';
     
     char *textVar = malloc(strlen(text) + 1);
+    
     strcpy(textVar, text);
     char *line = strtok(textVar, "\n");
     

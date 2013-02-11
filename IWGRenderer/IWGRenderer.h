@@ -49,7 +49,22 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                         const char* fontMapFilename,
                         float viewWidth,
                         float viewHeight);
+
+void IWGRendererSetupStartMenuAssets(float viewWidth,
+                                     float viewHeight);
+void IWGRendererTearDownStartMenuAssets(void);
+
+void IWGRendererSetupGameAssets(float viewWidth,
+                                float viewHeight);
+void IWGRendererTearDownGameAssets(void);
+
 void IWGRendererRender(void);
+
+void IWGRendererRenderCubes(void);
+void IWGRendererRenderInGameUI(void);
+void IWGRendererRenderSkybox(void);
+void IWGRendererRenderInGameText(void);
+
 void IWGRendererTearDownGL(void);
 
 #endif

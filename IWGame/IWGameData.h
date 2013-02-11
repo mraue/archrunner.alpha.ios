@@ -34,6 +34,8 @@
 
 #pragma mark - Game Logic Data
 
+IWGAME_STATUS gdCurrentGameStatus;
+
 bool gdGameIsPaused;
 float gdPauseTime;
 
@@ -47,6 +49,7 @@ IWScoreCounterData gdScoreCounter;
 
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
+unsigned int gdNCubesPerAxis;
 
 float gdTotalRunTime;
 
@@ -56,29 +59,30 @@ IWIndexListData gdStandardCubeIndexList;
 IWIndexListData gdPoolCubeIndexList;
 IWIndexListData gdGPUBufferPositionIndexList;
 
+unsigned int gdSecondaryPositionCounter;
+IWVector3 *gdSecondaryPosition;
+
 //unsigned int gdNOverdriveCubes;
 float gdZMax;
 
 IWCubeData gdSkyCube;
 IWGCircleData gdSun;
 
-#pragma mark - Second VBO array scaffolding
-
-IWGMultiBufferData gdTriangleDoubleBuffer2;
-GLuint gdTriangleNVertices2;
-
 #pragma mark - Debug / Testing
-
-unsigned int gdSecondaryPositionCounter;
-IWVector3 *gdSecondaryPosition;
 
 IWColorTransition gdClearColorTransition;
 IWColorTransition gdOverdriveColorTransition;
 
-bool gdSpawnCubes;
+#pragma mark - Asset and memory management
 
 IWGFontMapData gdFontMap;
 void *gdFontMapTextureData;
+
+GLfloat *gdCubeTriangleBufferStartCPU;
+GLfloat *gdSkyTriangleBufferStartCPU;
+GLfloat *gdInGameTextTriangleBufferStartCPU;
+GLfloat *gdInGameUITriangleBufferStartCPU;
+GLfloat *gdInGameUILineBufferStartCPU;
 
 #pragma mark - User Interface
 
@@ -87,7 +91,6 @@ IWPoint2D gdTouchPoint;
 
 IWUIRectangleButton gdRectangleButton;
 IWUIRectangleButton gdRectangleButton2;
-IWUIRectangleButton gdRectangleButton3;
 
 unsigned int gdUINTriangleVertices;
 unsigned int gdUINLineVertices;
@@ -97,6 +100,8 @@ bool gdResetControllerPosition;
 bool gdRunningInSimulator;
 
 #pragma mark - Open GL Buffer
+
+GLuint gdGLProgramID;
 
 GLint gdMasterShaderID;
 GLint gdSkyShaderID;
@@ -116,6 +121,12 @@ GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
 
 IWGTextFieldData gdScoreTextField;
+
+IWGTextFieldData gdTitleTextField;
+IWGTextFieldData gdVersionTextField;
+IWGTextFieldData gdStartTextField;
+
+IWVector4Transition gdStartTextFieldColorTransition;
 
 #pragma mark - Open GL Vertex Transformation Matrices
 

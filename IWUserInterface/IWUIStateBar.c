@@ -98,3 +98,13 @@ size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar)
     }
     return (p - pstart);
 }
+
+void IWUIStateBarDeallocData(IWUIStateBar *stateBar)
+{
+    free(stateBar->colors);
+    stateBar->colors = NULL;
+    free(stateBar->states);
+    stateBar->states = NULL;
+    stateBar->nStates = 0;
+    return;
+}

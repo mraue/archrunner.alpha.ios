@@ -41,6 +41,331 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                         float viewWidth,
                         float viewHeight)
 {
+    // Basic lighting program
+    shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
+                                             IWFileToolsReadFileToString(fragmentShaderFilename));
+    gdGLProgramID = shaderProgramData.programID;
+    
+    if (gdGLProgramID == 0) {
+        printf("ERROR: Could not create GL program");
+        return;
+    }
+    
+    glUseProgram(gdGLProgramID);
+    
+    // Get and save uniform locations.
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
+    = glGetUniformLocation(gdGLProgramID, "ModelMatrix");
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
+    = glGetUniformLocation(gdGLProgramID, "ViewMatrix");
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
+    = glGetUniformLocation(gdGLProgramID, "ProjectionMatrix");
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
+    = glGetUniformLocation(gdGLProgramID, "NormalMatrix");
+    
+    gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
+    
+    gdTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdUITriangleDoubleBuffer = IWGMultiBufferGen();
+    
+    // Could swith to multi buffer, ey!
+    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+    glBindVertexArrayOES(0);
+    
+    glGenVertexArraysOES(1, &gdUILineVertexArray);
+    glBindVertexArrayOES(gdUILineVertexArray);
+    glGenBuffers(1, &gdUILineVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, gdUILineVertexBuffer);
+    glBindVertexArrayOES(0);
+
+    //IWGRendererSetupGameAssets(viewWidth, viewHeight);
+    IWGRendererSetupStartMenuAssets(viewWidth, viewHeight);
+
+    return;
+}
+
+void IWGRendererSetupStartMenuAssets(float viewWidth,
+                                     float viewHeight)
+{
+    gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(-0.8, 0.0, -1.),
+                                                              IWVector3Normalize(IWVector3Make(0.4, 0.0, 1.0)),
+                                                              IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
+    
+    gdGameIsPaused  =true;
+    
+    gdMasterShaderID = 2;
+    gdSkyShaderID = 4;
+    
+    gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
+    
+    IWColorTransition clearColorTransition = {
+        {0.8, 0.8, 0.8, 1.0},
+        gdClearColor,
+        {0.8, 0.8, 0.8, 1.0},
+        0.8, 0.0, true, false
+    };
+    gdClearColorTransition = clearColorTransition;
+    
+    gdLightSourceData = IWGLightingMakeBasicLight();
+    gdMaterialSourceData = IWGLightingMakeBasicMaterial();
+    
+    int nx, ny, nz;
+    nx = ny = nz = 8;
+    
+    int n = nx * ny * nz;
+    size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
+    printf("Allocating %d position with total size %d\n", n * 6 * 6 * 10, (int)mypos_size);
+    gdCubeTriangleBufferStartCPU = malloc(mypos_size);
+    
+    gdStandardCubeIndexList = IWIndexListMake(n);
+    gdPoolCubeIndexList = IWIndexListMake(n);
+    gdPoolCubeIndexList.nEntries = 0;
+    gdGPUBufferPositionIndexList = IWIndexListMake(n);
+    
+    IWVector4 cubeBaseColor = {0.5, 0.5, 0.5, 1.0};
+
+    gdCubeData = IWCubeMakeCubes(nx, ny, nz, .04, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
+    gdNCubes = nx * ny * nz;
+    
+    gdSecondaryPosition = IWCubeMakeCubeCurve(gdNCubes, IWVector3Make(0.0, 0.0, 0.0), IWGEOMETRY_AXIS_Z);
+    gdSecondaryPositionCounter = 0;
+    
+    GLfloat *memPtr = gdCubeTriangleBufferStartCPU;
+    for (int nc=0; nc < n; nc++) {
+        // Spawn cube
+        gdCubeData[nc].type = IWCUBE_TYPE_STANDARD;
+        gdCubeData[nc].isInteractive = false;
+
+        //
+        gdCubeData[nc].triangleBufferData.bufferStartCPU = gdCubeTriangleBufferStartCPU;
+        gdCubeData[nc].triangleBufferData.startCPU = memPtr;
+        gdCubeData[nc].triangleBufferData.bufferIDGPU = nc;
+        //
+        //gdCubeData[nc].faces = IWCUBE_FACES_BOWL;
+        //
+        gdCubeData[nc].triangleBufferData.bufferOffsetGPU = memPtr - gdCubeTriangleBufferStartCPU;
+        //
+        memPtr += IWCubeToTriangles(&gdCubeData[nc]);
+        // Setup primitive data buffer chain
+        //gdStandardCubeIndexList.map[nc] = nc;
+        //gdStandardCubeIndexList.reverseMap[nc] = nc;
+        IWIndexListAppendObjectId(&gdStandardCubeIndexList, nc);
+        IWIndexListAppendObjectId(&gdGPUBufferPositionIndexList, nc);
+    }
+    
+    unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
+    printf("nVertices = %u\n", nVertices);
+    
+    // Get attribute locations
+    GLuint positionSlot = glGetAttribLocation(gdGLProgramID, "Vertex");
+    GLuint normalSlot = glGetAttribLocation(gdGLProgramID, "Normal");
+    GLuint colorSlot = glGetAttribLocation(gdGLProgramID, "Color");
+    GLuint textureOffsetSlot = glGetAttribLocation(gdGLProgramID, "TextureOffset");
+    
+    IWGLightingInitializeUniformLocations(gdGLProgramID);
+    IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
+    
+    for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
+        gdTriangleDoubleBuffer.nVertices[k] = nVertices;
+    }
+    
+    // Fill buffers
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        IWGMultiBufferBind(&gdTriangleDoubleBuffer, i);
+        
+        glBufferData(GL_ARRAY_BUFFER, mypos_size, gdCubeTriangleBufferStartCPU, GL_DYNAMIC_DRAW);
+        
+        glEnableVertexAttribArray(positionSlot);
+        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(colorSlot);
+        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(normalSlot);
+        glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+        //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
+    }
+    
+    glBindVertexArrayOES(0);
+    
+    //
+    // Sky box
+    //
+    
+    gdSkyCube = IWCubeMake(n, IWCUBE_TYPE_STANDARD,
+                           IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
+                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
+                           IWVector3Make(60.0, 20.0, 60.0),
+                           IWCUBE_FACES_BOWL,
+                           IWCUBE_NORMALS_INWARD,
+                           0.0, true, false, IWVector3TransitionMakeEmpty());
+    
+    gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
+    
+    size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
+    
+    gdSkyTriangleBufferStartCPU = malloc(skySize);
+    gdSkyCube.triangleBufferData.startCPU = gdSkyTriangleBufferStartCPU;
+    
+    gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
+    
+    gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
+    gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
+    
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
+    
+    glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
+    
+    glEnableVertexAttribArray(positionSlot);
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(colorSlot);
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(normalSlot);
+    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+    
+    glBindVertexArrayOES(0);
+    
+    //
+    // Text
+    //
+    
+    float aspect = fabsf(viewWidth / viewHeight);
+    
+    GLuint textureHandlerId;
+    glGenTextures(1, &textureHandlerId);
+    
+    gdInGameTextTriangleBufferStartCPU = malloc((2 * 10 + 1 * 9 + 1 * 10) * 6 * 9 * sizeof(GLfloat));
+    
+    gdTitleTextField = IWGTextFieldMake(IWVector2Make(0.95, 0.96),
+                                        IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
+                                        2, 10,
+                                        1. / aspect,
+                                        "ARCHRUNNER\nALPHA",
+                                        0.18, -0.04,
+                                        IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+                                        IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                        &gdFontMap,
+                                        gdInGameTextTriangleBufferStartCPU);
+    
+    gdVersionTextField = IWGTextFieldMake(IWVector2Make(0.98, -0.99),
+                                          IWGEOMETRY_ANCHOR_POSITION_LOWER_RIGHT,
+                                          1, 9,
+                                          1. / aspect,
+                                          "v0.0.1",
+                                          0.1, 0.0,
+                                          IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+                                          IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                          &gdFontMap,
+                                          gdInGameTextTriangleBufferStartCPU
+                                          + gdTitleTextField.triangleBufferData.size);
+    gdStartTextField = IWGTextFieldMake(IWVector2Make(0.85, 0.0),
+                                          IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
+                                          1, 10,
+                                          1. / aspect,
+                                          "[START]",
+                                          0.18, 0.0,
+                                          IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+                                          IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                          &gdFontMap,
+                                          gdInGameTextTriangleBufferStartCPU
+                                          + gdTitleTextField.triangleBufferData.size
+                                        + gdVersionTextField.triangleBufferData.size);
+    
+    gdStartTextFieldColorTransition = IWVector4TransitionMake(IWVector4Make(1.0, 1.0, 1.0, 0.4),
+                                                              IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                                              IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                                              1.0, 0.0, false, false);
+    //gdInGameTextTriangleBufferStartCPU = gdTitleTextField.triangleBufferData.bufferStartCPU;
+    
+    unsigned int textSizeTotal = gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size + gdStartTextField.triangleBufferData.size;
+    
+    for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
+        gdTextTriangleDoubleBuffer.nVertices[k] = textSizeTotal / gdTitleTextField.triangleBufferData.stride;
+    }
+    
+    // Fill buffers
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        
+        IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
+        
+        glBindTexture(GL_TEXTURE_2D, textureHandlerId);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
+        //glGenerateMipmap(GL_TEXTURE_2D);
+        
+        glBufferData(GL_ARRAY_BUFFER,
+                     textSizeTotal* sizeof(GLfloat),
+                     gdInGameTextTriangleBufferStartCPU,
+                     GL_DYNAMIC_DRAW);
+        
+        glEnableVertexAttribArray(positionSlot);
+        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(colorSlot);
+        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(textureOffsetSlot);
+        glVertexAttribPointer(textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+    }
+    
+    glBindVertexArrayOES(0);
+    
+    //    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
+    //
+    return;
+}
+
+void IWGRendererTearDownStartMenuAssets(void)
+{
+    free(gdCubeData);
+    gdCubeData = NULL;
+    
+    free(gdCubeTriangleBufferStartCPU);
+    gdCubeTriangleBufferStartCPU = NULL;
+    
+    free(gdSkyTriangleBufferStartCPU);
+    gdSkyTriangleBufferStartCPU = NULL;
+    
+    free(gdInGameTextTriangleBufferStartCPU);
+    gdInGameTextTriangleBufferStartCPU = NULL;
+    
+//    free(gdInGameUILineBufferStartCPU);
+//    gdInGameUILineBufferStartCPU = NULL;
+//    
+//    free(gdInGameUITriangleBufferStartCPU);
+//    gdInGameUITriangleBufferStartCPU = NULL;
+//    
+    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    
+//    free(gdScoreTextField.triangleBufferData.startCPU);
+//    gdScoreTextField.triangleBufferData.startCPU = NULL;
+    
+    free(gdInGameTextTriangleBufferStartCPU);
+    gdInGameTextTriangleBufferStartCPU = NULL;
+    
+    free(gdSecondaryPosition);
+    gdSecondaryPosition = NULL;
+    
+    IWIndexListDeallocData(&gdStandardCubeIndexList);
+    IWIndexListDeallocData(&gdPoolCubeIndexList);
+    IWIndexListDeallocData(&gdGPUBufferPositionIndexList);
+    
+    IWUIStateBarDeallocData(&gdFuel.stateBar);
+}
+
+void IWGRendererSetupGameAssets(float viewWidth,
+                                float viewHeight)
+{
     gdMasterShaderID = 2;
     gdSkyShaderID = 4;
     
@@ -67,13 +392,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     gdOverdriveColorTransition = overdriveColorTransition;
     
     int nx, ny, nz;
-    
-    nx = ny = nz = 5;// 8
+    nx = ny = nz = gdNCubesPerAxis;
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
     printf("Allocating %d position with total size %d\n", n * 6 * 6 * 10, (int)mypos_size);
-    GLfloat *mypos = malloc(mypos_size);
+    gdCubeTriangleBufferStartCPU = malloc(mypos_size);
 
     gdStandardCubeIndexList = IWIndexListMake(n);
     gdPoolCubeIndexList = IWIndexListMake(n);
@@ -89,7 +413,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     gdSecondaryPosition = IWCubeMakeCubeCurve(gdNCubes, IWVector3Make(0.0, 0.0, 0.0), IWGEOMETRY_AXIS_Z);
     gdSecondaryPositionCounter = 0;
     
-    GLfloat *memPtr = mypos;
+    GLfloat *memPtr = gdCubeTriangleBufferStartCPU;
     for (int nc=0; nc < n; nc++) {
         // DBUG
         //gdCubeData[nc].secondaryPosition = points[nc];
@@ -102,7 +426,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
         
         IWVector3 spawnPosition = IWVector3MultiplyScalar(IWVector3Normalize(gdCubeData[nc].centerPosition),
                                                           IW_RAND_UNIFORM(2.0, 4.0));
-        float transitionTime = 2.5;
+        float transitionTime = 2.;
         
         gdCubeData[nc].positionTransition = IWVector3TransitionMake(spawnPosition,
                                                                     gdCubeData[nc].centerPosition,
@@ -112,13 +436,13 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
         //gdCubeData[nc].color = IWUI_COLOR_DARK_BLUE(1.0);
         gdCubeData[nc].color = IWVector4Make(0.5, 0.5, 0.5, 1.0);
         //
-        gdCubeData[nc].triangleBufferData.bufferStartCPU = mypos;
+        gdCubeData[nc].triangleBufferData.bufferStartCPU = gdCubeTriangleBufferStartCPU;
         gdCubeData[nc].triangleBufferData.startCPU = memPtr;
         gdCubeData[nc].triangleBufferData.bufferIDGPU = nc;
         //
         //gdCubeData[nc].faces = IWCUBE_FACES_BOWL;
         //
-        gdCubeData[nc].triangleBufferData.bufferOffsetGPU = memPtr - mypos;
+        gdCubeData[nc].triangleBufferData.bufferOffsetGPU = memPtr - gdCubeTriangleBufferStartCPU;
         //
         memPtr += IWCubeToTriangles(&gdCubeData[nc]);
         // Setup primitive data buffer chain
@@ -128,43 +452,18 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
         IWIndexListAppendObjectId(&gdGPUBufferPositionIndexList, nc);
     }
     
-    unsigned int nVertices = (memPtr - mypos) / gdCubeData[0].triangleBufferData.stride;
+    unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
     printf("nVertices = %u\n", nVertices);
     
-    // Basic lighting program
-    shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
-                                             IWFileToolsReadFileToString(fragmentShaderFilename));
-    GLuint programID = shaderProgramData.programID;
-    
-    if (programID == 0) {
-        printf("ERROR: Could not create GL program");
-        return;
-    }
-    
-    glUseProgram(programID);
-    
-    glEnable(GL_DEPTH_TEST);
-    
     // Get attribute locations
-    GLuint positionSlot = glGetAttribLocation(programID, "Vertex");
-    GLuint normalSlot = glGetAttribLocation(programID, "Normal");
-    GLuint colorSlot = glGetAttribLocation(programID, "Color");
-    GLuint textureOffsetSlot = glGetAttribLocation(programID, "TextureOffset");
-    
-    // Get uniform locations.
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
-        = glGetUniformLocation(programID, "ModelMatrix");
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
-        = glGetUniformLocation(programID, "ViewMatrix");
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
-        = glGetUniformLocation(programID, "ProjectionMatrix");
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
-        = glGetUniformLocation(programID, "NormalMatrix");
+    GLuint positionSlot = glGetAttribLocation(gdGLProgramID, "Vertex");
+    GLuint normalSlot = glGetAttribLocation(gdGLProgramID, "Normal");
+    GLuint colorSlot = glGetAttribLocation(gdGLProgramID, "Color");
+    GLuint textureOffsetSlot = glGetAttribLocation(gdGLProgramID, "TextureOffset");
 
-    IWGLightingInitializeUniformLocations(programID);
+    IWGLightingInitializeUniformLocations(gdGLProgramID);
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
-    
-    gdTriangleDoubleBuffer = IWGMultiBufferGen();
+
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTriangleDoubleBuffer.nVertices[k] = nVertices;
     }
@@ -173,7 +472,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         IWGMultiBufferBind(&gdTriangleDoubleBuffer, i);
 
-        glBufferData(GL_ARRAY_BUFFER, mypos_size, mypos, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mypos_size, gdCubeTriangleBufferStartCPU, GL_DYNAMIC_DRAW);
 
         glEnableVertexAttribArray(positionSlot);
         glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
@@ -190,28 +489,27 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     // Sky box
     //
     
-    gdSkyCube= IWCubeMake(n, IWCUBE_TYPE_STANDARD,
-                          IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
-                          IWVector4Make(0.5, 0.5, 0.5, 1.0),
-                          IWVector3Make(60.0, 20.0, 60.0),
-                          IWCUBE_FACES_BOWL,
-                          IWCUBE_NORMALS_INWARD,
-                          0.0, true, false, IWVector3TransitionMakeEmpty());
+    gdSkyCube = IWCubeMake(n, IWCUBE_TYPE_STANDARD,
+                           IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
+                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
+                           IWVector3Make(60.0, 20.0, 60.0),
+                           IWCUBE_FACES_BOWL,
+                           IWCUBE_NORMALS_INWARD,
+                           0.0, true, false, IWVector3TransitionMakeEmpty());
 
     gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
 
     size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
-    gdSkyCube.triangleBufferData.startCPU = malloc(skySize);
+
+    gdSkyTriangleBufferStartCPU = malloc(skySize);
+    gdSkyCube.triangleBufferData.startCPU = gdSkyTriangleBufferStartCPU;
     
     gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
 
     gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
     gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
-
-    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
     
-    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
     
     glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
@@ -228,29 +526,12 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     //
     // Text
     //
+    
     float aspect = fabsf(viewWidth / viewHeight);
     
     GLuint textureHandlerId;
     glGenTextures(1, &textureHandlerId);
-    
-    gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
-    
-//    IWGTextLineData textLine = IWGTextLineDataMake("67",
-//                                                   IWVector2Make(0.6, 0.5),
-//                                                   0.1,
-//                                                   IWUI_COLOR_GOLD(1.0),
-//                                                   1. / aspect,
-//                                                   &gdFontMap);
-//    IWGTextFieldData textField = IWGTextFieldMake(IWVector2Make(0.0, 0.0),
-//                                                  IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
-//                                                  3, 11,
-//                                                  1. / aspect,
-//                                                  "HELLO WORLD\nMY NAME IS\nGAME ONE",
-//                                                  0.2, -0.05,
-//                                                  IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
-//                                                  IWUI_COLOR_GOLD(0.8),
-//                                                  &gdFontMap,
-//                                                  NULL);
+
     gdScoreTextField = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
                                         1, 10,
@@ -261,8 +542,9 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                                         IWVector4Make(1.0, 1.0, 1.0, 0.7),
                                         &gdFontMap,
                                         NULL);
+
+    gdInGameTextTriangleBufferStartCPU = gdScoreTextField.triangleBufferData.bufferStartCPU;
     
-    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTextTriangleDoubleBuffer.nVertices[k] = gdScoreTextField.triangleBufferData.size / gdScoreTextField.triangleBufferData.stride;
     }
@@ -296,6 +578,7 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     //
     // Head up display data
     //
+    
     printf("aspect = %f\n", aspect);
     
     // Some buttons
@@ -325,23 +608,21 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                              );
     
     size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
-    GLfloat *mypos2 = malloc(mypos_size2);
+    gdInGameUITriangleBufferStartCPU = malloc(mypos_size2);
     
     gdRectangleButton.triangleBuffer.bufferOffsetGPU = 0;    
-    size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, mypos2);
+    size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, gdInGameUITriangleBufferStartCPU);
     gdRectangleButton2.triangleBuffer.bufferOffsetGPU = offset;
-    offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, mypos2 + offset);
+    offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, gdInGameUITriangleBufferStartCPU + offset);
     
-    gdFuel.stateBar.triangleBufferData.bufferStartCPU = mypos2 + offset;
+    gdFuel.stateBar.triangleBufferData.bufferStartCPU = gdInGameUITriangleBufferStartCPU + offset;
     gdFuel.stateBar.triangleBufferData.bufferOffsetGPU = offset;
-    gdFuel.stateBar.triangleBufferData.size = IWFuelToTriangleBuffer(&gdFuel, mypos2 + offset);
+    gdFuel.stateBar.triangleBufferData.size = IWFuelToTriangleBuffer(&gdFuel, gdInGameUITriangleBufferStartCPU + offset);
     offset += gdFuel.stateBar.triangleBufferData.size;
-    
-    gdUITriangleDoubleBuffer = IWGMultiBufferGen();
 
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         IWGMultiBufferBind(&gdUITriangleDoubleBuffer, i);
-        glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mypos_size2, gdInGameUITriangleBufferStartCPU, GL_DYNAMIC_DRAW);
         
         glEnableVertexAttribArray(positionSlot);
         glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
@@ -351,7 +632,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     
     glBindVertexArrayOES(0);
     
-    glGenVertexArraysOES(1, &gdUILineVertexArray);
     glBindVertexArrayOES(gdUILineVertexArray);
     
     gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
@@ -359,26 +639,25 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
                          + 2 * 52 * 7) / 7;
     
     mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);
-    mypos2 = malloc(mypos_size2);
+    gdInGameUILineBufferStartCPU = malloc(mypos_size2);
     
     gdRectangleButton.lineBuffer.bufferOffsetGPU = 0;
-    offset = IWUIRectangleButtonToLineBuffer(&gdRectangleButton, mypos2);
+    offset = IWUIRectangleButtonToLineBuffer(&gdRectangleButton, gdInGameUILineBufferStartCPU);
     gdRectangleButton2.lineBuffer.bufferOffsetGPU = offset;
-    offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, mypos2 + offset);
-    gdRectangleButton3.lineBuffer.bufferOffsetGPU = offset;
-    offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton3, mypos2 + offset);
+    offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, gdInGameUILineBufferStartCPU + offset);
     
     IWUIElementData uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.06,//0.05,//0.3,//0.03,
-                                                        IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 41, mypos2 + offset);
+                                                            IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 41,
+                                                            gdInGameUILineBufferStartCPU + offset);
     offset += uiCentralCircle.lineBufferSize;
     
     IWUIElementData uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
-                                                        IWVector4Make(1.0, 1.0, 1.0, 0.4), aspect, 11, mypos2 + offset);
+                                                             IWVector4Make(1.0, 1.0, 1.0, 0.4), aspect, 11,
+                                                             gdInGameUILineBufferStartCPU + offset);
     offset += uiCentralCircle2.lineBufferSize;
-    
-    glGenBuffers(1, &gdUILineVertexBuffer);
+
     glBindBuffer(GL_ARRAY_BUFFER, gdUILineVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, mypos_size2, mypos2, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mypos_size2, gdInGameUILineBufferStartCPU, GL_DYNAMIC_DRAW);
     
     glEnableVertexAttribArray(positionSlot);
     glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
@@ -387,7 +666,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
 
     glBindVertexArrayOES(0);
     
-//    // Slowed it down :(
 //    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
@@ -395,25 +673,48 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     return;
 }
 
-void IWGRendererRender(void)
+void IWGRendererTearDownGameAssets(void)
 {
-    //glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
-    if (gdClearColorTransition.transitionHasFinished) {
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
-    } else {
-        glClearColor(gdClearColorTransition.currentColor.x,
-                     gdClearColorTransition.currentColor.y,
-                     gdClearColorTransition.currentColor.z,
-                     gdClearColorTransition.currentColor.w);
-    }
-    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    glEnable(GL_CULL_FACE);
-    
-    // Draw cubes
+    free(gdCubeData);
+    gdCubeData = NULL;
 
+    free(gdCubeTriangleBufferStartCPU);
+    gdCubeTriangleBufferStartCPU = NULL;
+    
+    free(gdSkyTriangleBufferStartCPU);
+    gdSkyTriangleBufferStartCPU = NULL;
+    
+    free(gdInGameTextTriangleBufferStartCPU);
+    gdInGameTextTriangleBufferStartCPU = NULL;
+    
+    free(gdInGameUILineBufferStartCPU);
+    gdInGameUILineBufferStartCPU = NULL;
+    
+    free(gdInGameUITriangleBufferStartCPU);
+    gdInGameUITriangleBufferStartCPU = NULL;
+    
+    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
+    IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    
+    free(gdScoreTextField.triangleBufferData.startCPU);
+    gdScoreTextField.triangleBufferData.startCPU = NULL;
+    
+    free(gdSecondaryPosition);
+    gdSecondaryPosition = NULL;
+    
+    IWIndexListDeallocData(&gdStandardCubeIndexList);
+    IWIndexListDeallocData(&gdPoolCubeIndexList);
+    IWIndexListDeallocData(&gdGPUBufferPositionIndexList);
+    
+    IWUIStateBarDeallocData(&gdFuel.stateBar);
+}
+
+void IWGRendererRenderCubes(void)
+{
+    // Render cubes
+    
     IWGMultiBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
     
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
@@ -424,37 +725,22 @@ void IWGRendererRender(void)
                        1, 0, &gdProjectionMatrix.m00);
     glUniformMatrix3fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX],
                        1, 0, &gdNormalMatrix.m00);
-
-//    //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 0.4, 0.4, 1.0, 1.0);
-//    gdLightSourceData.Position = gdPlayerData.position;
-//    //_lightSource.Direction = IWVector3MultiplyScalar(playerData.direction, -1.0);
-//    gdLightSourceData.Direction = gdPlayerData.direction;
-//    
-    //
-    //IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
-//    
-//    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_POSITION],
-//                gdLightSourceData.Position.x, gdLightSourceData.Position.y, gdLightSourceData.Position.z);
-//    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
-//                gdLightSourceData.Direction.x, gdLightSourceData.Direction.y, gdLightSourceData.Direction.z);
     
     // Set master shader switch
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdMasterShaderID);
-
+    
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
-
+    
     glBindVertexArrayOES(0);
-    
-    //
-    // Draw sky
-    //
-    
-    //glDisable(GL_DITHER);
-    glDisable(GL_CULL_FACE);
-    
+}
+
+void IWGRendererRenderSkybox(void)
+{
+    // Render sky box
+
     glBindVertexArrayOES(gdSkyTriangleVertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
-
+    
     //glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
     //            gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdSkyShaderID);
@@ -474,37 +760,16 @@ void IWGRendererRender(void)
     glDrawArrays(GL_TRIANGLES, 0,
                  (gdSkyCube.triangleBufferData.size + gdSun.triangleBufferData.size) / gdSkyCube.triangleBufferData.stride);
     
-    //glEnable(GL_DITHER);
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
                 gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z,
                 gdMaterialSourceData.Diffuse.w);
+
     glBindVertexArrayOES(0);
-    
-    //
-    // Draw text
-    //
-    
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    
-    IWGMultiBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
-    
-    // Set master shader switch
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
-                5);
-    
-    glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
-    
-    glBindVertexArrayOES(0);
-    
-    //
-    // Draw user interface
-    //
-    
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    //glBlendFunc(GL_ONE, GL_ONE);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void IWGRendererRenderInGameUI(void)
+{
+    // Draw in game user interface
     
     IWGMultiBufferBindCurrentDrawBuffer(&gdUITriangleDoubleBuffer);
     
@@ -519,18 +784,88 @@ void IWGRendererRender(void)
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
     glDrawArrays(GL_TRIANGLES, 0, gdUINTriangleVertices);
-
+    
     glBindVertexArrayOES(gdUILineVertexArray);
-
+    
     glLineWidth(0.5);
     glDrawArrays(GL_LINES, 0, gdUINLineVertices);
-
-    // Set master shader switch
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 2);
     
     glBindVertexArrayOES(0);
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+}
+
+void IWGRendererRenderInGameText(void)
+{
+    // Draw in game text
+    
+    IWGMultiBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
+    
+    // Set master shader switch
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
+                5);
+    
+    glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
+    
+    glBindVertexArrayOES(0);
+}
+
+void IWGRendererRender(void)
+{
+    //glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
+    if (gdClearColorTransition.transitionHasFinished) {
+        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
+    } else {
+        glClearColor(gdClearColorTransition.currentColor.x,
+                     gdClearColorTransition.currentColor.y,
+                     gdClearColorTransition.currentColor.z,
+                     gdClearColorTransition.currentColor.w);
+    }
+    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
+        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+
+        IWGRendererRenderCubes();
+
+        glDisable(GL_CULL_FACE);
+
+        IWGRendererRenderSkybox();
+
+        glDisable(GL_DEPTH_TEST);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        IWGRendererRenderInGameText();
+
+        IWGRendererRenderInGameUI();
+
+        glDisable(GL_BLEND);
+        
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        
+        IWGRendererRenderCubes();
+        
+        glDisable(GL_CULL_FACE);
+        
+        IWGRendererRenderSkybox();
+        
+        glDisable(GL_DEPTH_TEST);
+        
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        IWGRendererRenderInGameText();
+        
+        IWGRendererRenderInGameUI();
+        
+        glDisable(GL_BLEND);
+    }
     
     return;
 }

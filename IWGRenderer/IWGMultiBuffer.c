@@ -98,3 +98,17 @@ void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
                           bindBuffer);
     return;
 }
+
+void IWGMultiBufferPurgeBufferSubData(IWGMultiBufferData *multiBufferData)
+{
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        IWGBufferSubData *bufferSubDataNext = NULL;
+        IWGBufferSubData *bufferSubData = multiBufferData->bufferSubData[i];
+        while (bufferSubData) {
+            bufferSubDataNext = bufferSubData->next;
+            free(bufferSubData);
+            bufferSubData = bufferSubDataNext;
+        }
+        multiBufferData->bufferSubData[i] = NULL;
+    }
+}

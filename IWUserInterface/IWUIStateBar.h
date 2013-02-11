@@ -32,4 +32,6 @@ IWUIStateBar IWUIStateBarMake(unsigned int nStates, float *states,
 
 size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar);
 
+void IWUIStateBarDeallocData(IWUIStateBar *stateBar);
+
 #endif

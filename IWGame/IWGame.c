@@ -32,31 +32,99 @@
 
 #include "IWScoreCounter.h"
 
+#include "IWGRenderer.h"
+
 void IWGameSetup(void)
 {
 //    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
 //                                    IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0)),
 //                                    IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
-    gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.5),
+    gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.3),
                                                IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
                                                IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
     // DEBUG
     //gdPlayerDataStart.speed = 0.0;
     // END DEBUG
+    //
     gdPlayerData = gdPlayerDataStart;
+    //
+    gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+    //
     gdTotalRunTime = 0.0;
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
-    // DEBUG
-    //gdRandomRemoveCubeTimer.duration = 0.5 ;
-    // END DEBUG
     gdZMax = 0.0;
     gdGameIsPaused = false;
-    // DEBUG
-    gdSpawnCubes = true;
-    //
     gdScoreCounter = IWScoreCounterMakeEmpty();
+    gdNCubesPerAxis = 5;// [5]
+    //
+    gdCubeTriangleBufferStartCPU = NULL;
+    gdSkyTriangleBufferStartCPU = NULL;
+    gdInGameTextTriangleBufferStartCPU = NULL;
+    gdInGameUITriangleBufferStartCPU = NULL;
+    gdInGameUILineBufferStartCPU = NULL;
+    gdCubeData = NULL;
     //
     return;
+}
+
+void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
+{
+    if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
+        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        IWGameUpdate(timeSinceLastUpdate, aspectRatio);
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+        IWGameStartMenuHandler(timeSinceLastUpdate, aspectRatio);
+    }
+    return;
+}
+
+void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
+{
+    IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
+    if (gdIsTouched
+        && IWPointInRectangle(gdTouchPoint, startButton)) {
+        IWGRendererTearDownStartMenuAssets();
+        IWGRendererSetupGameAssets(320.0, 480.0);
+        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+        gdGameIsPaused = false;
+        gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.3),
+                                                                  IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
+                                                                  IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
+        return;
+    }
+    
+    IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
+
+    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+    
+    if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
+        IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
+    }
+    gdStartTextField.color = gdStartTextFieldColorTransition.currentVector;
+    IWGTextFieldSetText(&gdStartTextField, gdStartTextField.text);
+    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+                          (gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size) * sizeof(GLfloat),
+                          gdStartTextField.triangleBufferData.size * sizeof(GLfloat),
+                          gdStartTextField.triangleBufferData.startCPU,
+                          false);
+    
+    // Setup view matrices
+    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
+    
+    // Compute the model view matrix for the object rendered with ES2
+    // REFACTOR: does not change, could only be calculated and intialized to uniforms once
+    IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+    
+    IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
+                                               gdPlayerData.position.x + gdPlayerData.direction.x,
+                                               gdPlayerData.position.y + gdPlayerData.direction.y,
+                                               gdPlayerData.position.z + gdPlayerData.direction.z,
+                                               gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    
+    gdNormalMatrix = IWMatrix4GetMatrix3(modelMatrix);//GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
+    gdModelMatrix = modelMatrix;
+    gdProjectionMatrix = projectionMatrix;
+    gdViewMatrix = viewMatrix;
 }
 
 void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
@@ -92,14 +160,13 @@ void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
     }
     gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDataUpdateBuffer] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
     
-//    for (unsigned int k=0; k < IWGMULTIBUFFER_MAX; k++) {
-//        gdTriangleDoubleBuffer.nVertices[k] -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
-//    }
     return;
 }
 
-void IWGameUpdate(float timeSinceLastUpdate)
+void IWGameUpdate(float timeSinceLastUpdate,
+                  float aspectRatio)
 {
+    // Check if pause button has been pressed
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdGameIsPaused) {
             gdGameIsPaused = false;
@@ -166,8 +233,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
 
     // Spawn pooled cubes
     if (gdPoolCubeIndexList.nEntries > 10
-        && gdPlayerData.position.z + 0.5 >= gdSecondaryPosition[gdSecondaryPositionCounter - 1].z
-        && gdSpawnCubes) {
+        && gdPlayerData.position.z + 0.5 >= gdSecondaryPosition[gdSecondaryPositionCounter - 1].z) {
 
         int i;
 
@@ -180,8 +246,8 @@ void IWGameUpdate(float timeSinceLastUpdate)
         
         unsigned int nCubesX, nCubesY, nCubesZ;
         nCubesZ = nCubesY = nCubesX = (unsigned int)pow(gdPoolCubeIndexList.nEntries, 1. / 3.);
-        //nCubesZ = (unsigned int)gdPoolCubeIndexList.nEntries / nCubesX / nCubesY;
         nCubesX++; nCubesY++; nCubesZ++;
+        
         IWVector3 *newPositions = IWCubeMakeCubePositions(nCubesX, nCubesY, nCubesZ,
                                                           .04, .12,
                                                           newCenter,
@@ -198,9 +264,7 @@ void IWGameUpdate(float timeSinceLastUpdate)
                                                    IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0),
                                                    IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0));
             IWVector3 spawnPosition = IWVector3Add(newCenter, randomOffset);
-//            IWVector3 randomOffset2 = IWVector3Make(IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
-//                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3),
-//                                                   IW_RAND_SIGN * IW_RAND_UNIFORM(0.0, 0.3));
+
             float transitionTime = 2.0;
             
             gdCubeData[i].positionTransition = IWVector3TransitionMake(spawnPosition,
@@ -216,7 +280,6 @@ void IWGameUpdate(float timeSinceLastUpdate)
         free(newPositions);
         
         gdPoolCubeIndexList.nEntries = 0;
-        //gdSpawnCubes = false;
     }
     
     // Auto remove standard cubes
@@ -370,10 +433,16 @@ void IWGameUpdate(float timeSinceLastUpdate)
                            false);
     
     // Check button interaction
-
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
+        IWGRendererTearDownGameAssets();
+        IWGRendererSetupGameAssets(320.0, 480.0);
         gdPlayerData = gdPlayerDataStart;
         gdFuel.currentLevel = gdFuel.currentMaxLevel;
+        gdTotalRunTime = 0.0;
+        gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
+        gdZMax = 0.0;
+        gdGameIsPaused = false;
+        gdScoreCounter = IWScoreCounterMakeEmpty();
     }
     
     if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
@@ -383,6 +452,24 @@ void IWGameUpdate(float timeSinceLastUpdate)
         IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton2.triangleBuffer, false);
     }
     glBindVertexArrayOES(0);
+    
+    // Setup view matrices
+    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
+    
+    // Compute the model view matrix for the object rendered with ES2
+    // REFACTOR: does not change, could only be calculated and intialized to uniforms once
+    IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+    
+    IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
+                                               gdPlayerData.position.x + gdPlayerData.direction.x,
+                                               gdPlayerData.position.y + gdPlayerData.direction.y,
+                                               gdPlayerData.position.z + gdPlayerData.direction.z,
+                                               gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    
+    gdNormalMatrix = IWMatrix4GetMatrix3(modelMatrix);//GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
+    gdModelMatrix = modelMatrix;
+    gdProjectionMatrix = projectionMatrix;
+    gdViewMatrix = viewMatrix;
 
     return;
 }

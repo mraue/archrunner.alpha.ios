@@ -108,3 +108,10 @@ unsigned int IWIndexListRemoveRandom(IWIndexListData *indexList)
         return 0;
     }
 }
+
+void IWIndexListDeallocData(IWIndexListData *indexList)
+{
+    indexList->nEntries = indexList->nEntriesMax = 0;
+    free(indexList->map); indexList->map = NULL;
+    free(indexList->reverseMap); indexList->reverseMap = NULL;
+}

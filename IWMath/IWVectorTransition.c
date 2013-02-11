@@ -62,6 +62,16 @@ void IWVector4TransitionResetAndStart(IWVector4Transition *vector4Transition)
     return;
 }
 
+void IWVector4TransitionReverseAndStart(IWVector4Transition *vector4Transition)
+{
+    vector4Transition->transitionHasFinished = false;
+    vector4Transition->currentVector = vector4Transition->endVector;
+    vector4Transition->endVector = vector4Transition->startVector;
+    vector4Transition->startVector = vector4Transition->currentVector;
+    vector4Transition->currentTransitionTime = 0.0;
+    return;
+}
+
 IWVector3Transition IWVector3TransitionMakeEmpty(void)
 {
     IWVector3Transition vector3Transition = {
