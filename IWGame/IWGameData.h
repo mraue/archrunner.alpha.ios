@@ -94,8 +94,6 @@ unsigned int gdUINLineVertices;
 
 bool gdResetControllerPosition;
 
-bool gdDropCamera;
-
 bool gdRunningInSimulator;
 
 #pragma mark - Open GL Buffer
@@ -121,10 +119,10 @@ IWGTextFieldData gdScoreTextField;
 
 #pragma mark - Open GL Vertex Transformation Matrices
 
-GLKMatrix4 gdModelMatrix;
-GLKMatrix4 gdViewMatrix;
-GLKMatrix4 gdProjectionMatrix;
-GLKMatrix3 gdNormalMatrix;
+IWMatrix4 gdModelMatrix;
+IWMatrix4 gdViewMatrix;
+IWMatrix4 gdProjectionMatrix;
+IWMatrix3 gdNormalMatrix;
 
 #pragma mark - Open GL Lightsource Data
 

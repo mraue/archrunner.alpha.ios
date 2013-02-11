@@ -15,10 +15,10 @@
 #include "IWVector4.h"
 
 static const IWMatrix4 IWMatrix4Identity = {
-    1.0, 1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0, 1.0
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
 };
 
 /*
@@ -63,6 +63,12 @@ static __inline__ IWMatrix4 IWMatrix4MakeLookAt(float eyeX, float eyeY, float ey
                                                   float centerX, float centerY, float centerZ,
                                                   float upX, float upY, float upZ);
 
+/*
+ Returns the upper left 3x3 portion of the 4x4 matrix.
+ */
+static __inline__ IWMatrix3 IWMatrix4GetMatrix3(IWMatrix4 matrix);
+
+
 static __inline__ IWMatrix4 IWMatrix4Transpose(IWMatrix4 matrix);
 
 //IWMatrix4 IWMatrix4Invert(IWMatrix4 matrix, bool *isInvertible);
@@ -101,7 +107,6 @@ static __inline__ IWMatrix4 IWMatrix4Make(float m00, float m01, float m02, float
     return m;
 }
 
-
 static __inline__ IWMatrix4 IWMatrix4MakeTranslation(float tx, float ty, float tz)
 {
     IWMatrix4 m = IWMatrix4Identity;
@@ -124,25 +129,25 @@ static __inline__ IWMatrix4 IWMatrix4MakeRotation(float radians, float x, float 
 {
     IWVector3 v = IWVector3Normalize(IWVector3Make(x, y, z));
     float cos = cosf(radians);
-    float cosp = 1.0f - cos;
+    float cosp = 1.0 - cos;
     float sin = sinf(radians);
     
     IWMatrix4 m = { cos + cosp * v.x * v.x,
         cosp * v.x * v.y + v.z * sin,
         cosp * v.x * v.z - v.y * sin,
-        0.0f,
+        0.0,
         cosp * v.x * v.y - v.z * sin,
         cos + cosp * v.y * v.y,
         cosp * v.y * v.z + v.x * sin,
-        0.0f,
+        0.0,
         cosp * v.x * v.z + v.y * sin,
         cosp * v.y * v.z - v.x * sin,
         cos + cosp * v.z * v.z,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        1.0f };
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0 };
     
     return m;
 }
@@ -152,10 +157,10 @@ static __inline__ IWMatrix4 IWMatrix4MakeXRotation(float radians)
     float cos = cosf(radians);
     float sin = sinf(radians);
     
-    IWMatrix4 m = { 1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, cos, sin, 0.0f,
-        0.0f, -sin, cos, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f };
+    IWMatrix4 m = { 1.0, 0.0, 0.0, 0.0,
+        0.0, cos, sin, 0.0,
+        0.0, -sin, cos, 0.0,
+        0.0, 0.0, 0.0, 1.0 };
     
     return m;
 }
@@ -165,10 +170,10 @@ static __inline__ IWMatrix4 IWMatrix4MakeYRotation(float radians)
     float cos = cosf(radians);
     float sin = sinf(radians);
     
-    IWMatrix4 m = { cos, 0.0f, -sin, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        sin, 0.0f, cos, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f };
+    IWMatrix4 m = { cos, 0.0, -sin, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        sin, 0.0, cos, 0.0,
+        0.0, 0.0, 0.0, 1.0 };
     
     return m;
 }
@@ -178,22 +183,22 @@ static __inline__ IWMatrix4 IWMatrix4MakeZRotation(float radians)
     float cos = cosf(radians);
     float sin = sinf(radians);
     
-    IWMatrix4 m = { cos, sin, 0.0f, 0.0f,
-        -sin, cos, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f };
+    IWMatrix4 m = { cos, sin, 0.0, 0.0,
+        -sin, cos, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0 };
     
     return m;
 }
 
 static __inline__ IWMatrix4 IWMatrix4MakePerspective(float fovyRadians, float aspect, float nearZ, float farZ)
 {
-    float cotan = 1.0f / tanf(fovyRadians / 2.0f);
+    float cotan = 1.0 / tanf(fovyRadians / 2.0);
     
-    IWMatrix4 m = { cotan / aspect, 0.0f, 0.0f, 0.0f,
-        0.0f, cotan, 0.0f, 0.0f,
-        0.0f, 0.0f, (farZ + nearZ) / (nearZ - farZ), -1.0f,
-        0.0f, 0.0f, (2.0f * farZ * nearZ) / (nearZ - farZ), 0.0f };
+    IWMatrix4 m = { cotan / aspect, 0.0, 0.0, 0.0,
+        0.0, cotan, 0.0, 0.0,
+        0.0, 0.0, (farZ + nearZ) / (nearZ - farZ), -1.0,
+        0.0, 0.0, (2.0f * farZ * nearZ) / (nearZ - farZ), 0.0 };
     
     return m;
 }
@@ -209,10 +214,10 @@ static __inline__ IWMatrix4 IWMatrix4MakeFrustum(float left, float right,
     float fan = farZ + nearZ;
     float fsn = farZ - nearZ;
     
-    IWMatrix4 m = { 2.0f * nearZ / rsl, 0.0f, 0.0f, 0.0f,
-        0.0f, 2.0f * nearZ / tsb, 0.0f, 0.0f,
-        ral / rsl, tab / tsb, -fan / fsn, -1.0f,
-        0.0f, 0.0f, (-2.0f * farZ * nearZ) / fsn, 0.0f };
+    IWMatrix4 m = { 2.0 * nearZ / rsl, 0.0, 0.0, 0.0,
+        0.0, 2.0 * nearZ / tsb, 0.0, 0.0,
+        ral / rsl, tab / tsb, -fan / fsn, -1.0,
+        0.0, 0.0, (-2.0 * farZ * nearZ) / fsn, 0.0 };
     
     return m;
 }
@@ -228,10 +233,10 @@ static __inline__ IWMatrix4 IWMatrix4MakeOrtho(float left, float right,
     float fan = farZ + nearZ;
     float fsn = farZ - nearZ;
     
-    IWMatrix4 m = { 2.0f / rsl, 0.0f, 0.0f, 0.0f,
-        0.0f, 2.0f / tsb, 0.0f, 0.0f,
-        0.0f, 0.0f, -2.0f / fsn, 0.0f,
-        -ral / rsl, -tab / tsb, -fan / fsn, 1.0f };
+    IWMatrix4 m = { 2.0 / rsl, 0.0, 0.0, 0.0,
+        0.0, 2.0 / tsb, 0.0, 0.0,
+        0.0, 0.0, -2.0 / fsn, 0.0,
+        -ral / rsl, -tab / tsb, -fan / fsn, 1.0 };
     
     return m;
 }
@@ -247,14 +252,22 @@ static __inline__ IWMatrix4 IWMatrix4MakeLookAt(float eyeX, float eyeY, float ey
     IWVector3 u = IWVector3Normalize(IWVector3CrossProduct(uv, n));
     IWVector3 v = IWVector3CrossProduct(n, u);
     
-    IWMatrix4 m = { u.x, v.x, n.x, 0.0f,
-        u.y, v.y, n.y, 0.0f,
-        u.z, v.z, n.z, 0.0f,
+    IWMatrix4 m = { u.x, v.x, n.x, 0.0,
+        u.y, v.y, n.y, 0.0,
+        u.z, v.z, n.z, 0.0,
         IWVector3DotProduct(IWVector3Negate(u), ev),
         IWVector3DotProduct(IWVector3Negate(v), ev),
         IWVector3DotProduct(IWVector3Negate(n), ev),
-        1.0f };
+        1.0 };
     
+    return m;
+}
+
+static __inline__ IWMatrix3 IWMatrix4GetMatrix3(IWMatrix4 matrix)
+{
+    IWMatrix3 m = { matrix.m00, matrix.m01, matrix.m02,
+        matrix.m10, matrix.m11, matrix.m12,
+        matrix.m20, matrix.m21, matrix.m22 };
     return m;
 }
 

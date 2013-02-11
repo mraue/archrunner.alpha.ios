@@ -21,29 +21,6 @@
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-// Uniform index.
-enum
-{
-    UNIFORM_MODEL_MATRIX,
-    UNIFORM_VIEW_MATRIX,
-    UNIFORM_PROJECTION_MATRIX,
-    UNIFORM_NORMAL_MATRIX,
-    UNIFORM_LIGHT_DIFFUSE_COLOR,
-    NUM_UNIFORMS
-};
-GLint uniforms[NUM_UNIFORMS];
-
-// Attribute index.
-enum
-{
-    ATTRIB_VERTEX,
-    ATTRIB_NORMAL,
-    NUM_ATTRIBUTES
-};
-
-GLuint N_VERT = 0;
-GLuint N_VERT2 = 0;
-
 @interface ViewController () {
     
     bool _isTouched;
@@ -55,8 +32,6 @@ GLuint N_VERT2 = 0;
     IWControllerData controllerDataAccelerometer;
 
     BOOL orientationNeutralSetAccelerometer;
-    BOOL orientationNeutralSetCompass;
-    BOOL switchColor;
 
     CMMotionManager *motionManager;
     CMAttitude *savedAttitude;
@@ -95,21 +70,21 @@ GLuint N_VERT2 = 0;
     // Are we running on a simulator
     gdRunningInSimulator = ([[[[UIDevice currentDevice] model] uppercaseString] rangeOfString:@"SIMULATOR"].location == NSNotFound) ? false : true;
     
-    switchColor = NO;
-    
     // Default setting for 3GS
     self.preferredFramesPerSecond = 30;
     
+    // Create open gl context
     self.context = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
-
     if (!self.context) {
         NSLog(@"Failed to create ES context");
     }
     
+    // Setup view
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
+    // Initialize motion manager
     motionManager = [[CMMotionManager alloc] init]; // motionManager is an instance variable
     motionManager.accelerometerUpdateInterval = 0.01; // 100Hz
     [motionManager startAccelerometerUpdates];
@@ -266,7 +241,7 @@ GLuint N_VERT2 = 0;
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     
     // REFACTOR: does not change, could only be created and intialized to uniform once
-    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.01f, 100.0f);
+    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspect, 0.01f, 100.0f);
     
     //GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
 
@@ -278,8 +253,8 @@ GLuint N_VERT2 = 0;
     float rotationSpeedMax = 100.0 / 180.0 * M_PI * self.timeSinceLastUpdate;
     
     // Update y rotation
-    GLKVector3 dirGLV = GLKVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
-    GLKVector3 upGLV = GLKVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    IWVector3 dirGLV = IWVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
+    IWVector3 upGLV = IWVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
     float rotationSpeedX = 0.0, rotationSpeedY = 0.0, rotationSpeedZ = 0.0;
 
@@ -303,12 +278,17 @@ GLuint N_VERT2 = 0;
         rotationSpeedZ = controllerDataAccelerometer.rotationSpeed.z;
     }
 
-    GLKMatrix4 yRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
+    IWMatrix4 yRotationUpdateMatrix = IWMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
                                                               upGLV.x, upGLV.y, upGLV.z);
-    GLKVector3 normGLV = GLKVector3CrossProduct(dirGLV, upGLV);
-    GLKMatrix4 xRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedX * rotationSpeedMax,
+    //for (unsigned int i = 0; i < 16; i++)
+    //    yRotationUpdateMatrix.m[i] = yRotationUpdateMatrix2.m[i];
+    
+    IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
+    
+    IWMatrix4 xRotationUpdateMatrix = IWMatrix4MakeRotation(rotationSpeedX * rotationSpeedMax,
                                                               normGLV.x, normGLV.y, normGLV.z);
-    GLKMatrix4 rotationUpdateMatrix = GLKMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
+    
+    IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
 
 //    if (motionManager.isDeviceMotionAvailable) {
 //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
@@ -317,34 +297,26 @@ GLuint N_VERT2 = 0;
 //    }
 
 //    if (!gdGameIsPaused) {
-        gdPlayerData.direction = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV).v);
-        gdPlayerData.up = IWVector3MakeWithArray(GLKMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV).v);
+        gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
+        gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
 //    }
     
     
     // Compute the model view matrix for the object rendered with ES2
     // REFACTOR: does not change, could only be calculated and intialized to uniforms once
-    GLKMatrix4 modelMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+    IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+
+    //for (unsigned int i = 0; i < 16; i++)
+    //    modelMatrix.m[i] = modelMatrix2.m[i];
     
     // Check this
-    GLKMatrix4 viewMatrix;
-    if (!gdDropCamera) {
-        viewMatrix = GLKMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
-                                          gdPlayerData.position.x + gdPlayerData.direction.x,
-                                          gdPlayerData.position.y + gdPlayerData.direction.y,
-                                          gdPlayerData.position.z + gdPlayerData.direction.z,
-                                          gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
-    } else {
-        viewMatrix = GLKMatrix4MakeLookAt(gdPlayerDataSave.position.x,
-                                          gdPlayerDataSave.position.y,
-                                          gdPlayerDataSave.position.z,
-                                          gdPlayerData.position.x,
-                                          gdPlayerData.position.y,
-                                          gdPlayerData.position.z,
-                                          gdPlayerDataSave.up.x, gdPlayerDataSave.up.y, gdPlayerDataSave.up.z);
-    }
+    IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
+                                               gdPlayerData.position.x + gdPlayerData.direction.x,
+                                               gdPlayerData.position.y + gdPlayerData.direction.y,
+                                               gdPlayerData.position.z + gdPlayerData.direction.z,
+                                               gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
 
-    gdNormalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
+    gdNormalMatrix = IWMatrix4GetMatrix3(modelMatrix);//GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
     gdModelMatrix = modelMatrix;
     gdProjectionMatrix = projectionMatrix;
     gdViewMatrix = viewMatrix;
