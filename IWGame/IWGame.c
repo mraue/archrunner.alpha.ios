@@ -53,7 +53,7 @@ void IWGameSetup(void)
     gdTotalRunTime = 0.0;
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
     gdZMax = 0.0;
-    gdGameIsPaused = false;
+    //gdGameIsPaused = false;
     gdScoreCounter = IWScoreCounterMakeEmpty();
     gdNCubesPerAxis = 5;// [5]
     //
@@ -63,6 +63,8 @@ void IWGameSetup(void)
     gdInGameUITriangleBufferStartCPU = NULL;
     gdInGameUILineBufferStartCPU = NULL;
     gdCubeData = NULL;
+    //
+    gdControllerDataAccelerometer = IWControllerDataMakeDefault();
     //
     return;
 }
@@ -84,9 +86,9 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
     if (gdIsTouched
         && IWPointInRectangle(gdTouchPoint, startButton)) {
         IWGRendererTearDownStartMenuAssets();
-        IWGRendererSetupGameAssets(320.0, 480.0);
+        IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-        gdGameIsPaused = false;
+        //gdGameIsPaused = false;
         gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.3),
                                                                   IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
                                                                   IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
@@ -168,19 +170,21 @@ void IWGameUpdate(float timeSinceLastUpdate,
 {
     // Check if pause button has been pressed
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
-        if (gdGameIsPaused) {
-            gdGameIsPaused = false;
+        if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+            //gdGameIsPaused = false;
+            gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
             gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
             gdMasterShaderID = 2;
             gdSkyShaderID = 4;
         } else {
-            gdGameIsPaused = true;
+            //gdGameIsPaused = true;
+            gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
             gdPauseTime = 0.0;
 
         }
     }
     
-    if (gdGameIsPaused) {
+    if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
         //gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         //gdSkyShaderID = gdMasterShaderID = 3;
     }
@@ -192,9 +196,46 @@ void IWGameUpdate(float timeSinceLastUpdate,
         IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton.triangleBuffer, true);
     }
     
-    if (gdGameIsPaused) {
+    if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
         return;
     }
+    
+    // Update player position
+    float speed = gdCurrentGameStatus == IWGAME_STATUS_PAUSED ? 0.0 : gdPlayerData.speed;
+    gdPlayerData.position = IWVector3Add(gdPlayerData.position,
+                                         IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
+                                                                 timeSinceLastUpdate * speed));
+    
+    float rotationSpeedMax = 100.0 / 180.0 * M_PI * timeSinceLastUpdate;
+    
+    // Update y rotation
+    IWVector3 dirGLV = IWVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
+    IWVector3 upGLV = IWVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    
+    IWMatrix4 yRotationUpdateMatrix =
+        IWMatrix4MakeRotation(gdControllerDataAccelerometer.rotationSpeed.y * rotationSpeedMax,
+                              upGLV.x, upGLV.y, upGLV.z);
+    
+    IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
+    
+    IWMatrix4 xRotationUpdateMatrix =
+        IWMatrix4MakeRotation(gdControllerDataAccelerometer.rotationSpeed.x * rotationSpeedMax,
+                              normGLV.x, normGLV.y, normGLV.z);
+    
+    IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
+    
+    //    if (motionManager.isDeviceMotionAvailable) {
+    //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
+    //                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
+    //        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+    //    }
+    
+    gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
+    gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
+    
+    //
+    //
+    //
     
     gdTotalRunTime += timeSinceLastUpdate;
     
@@ -203,7 +244,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     
     gdScoreCounter.runningTimeTotal += timeSinceLastUpdate;
 
-    gdZMax = MAX(gdZMax, gdPlayerData.position.z);
+    gdZMax = IW_MAX(gdZMax, gdPlayerData.position.z);
     gdScoreCounter.zMax = gdZMax;
     
     unsigned int oldScore = gdScoreCounter.scoreInt;
@@ -402,7 +443,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
         //gdFuel.currentLevel = gdFuel.currentMaxLevel;
         printf("GAME OVER\n");
         IWScoreCounterPrintScore(&gdScoreCounter);
-        gdGameIsPaused = true;
+        //gdGameIsPaused = true;
+        gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
         gdPauseTime = 0.0;
         gdFuel.currentLevel = 1.0;
     } else if (gdPlayerData.overdrive) {
@@ -435,13 +477,14 @@ void IWGameUpdate(float timeSinceLastUpdate,
     // Check button interaction
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
         IWGRendererTearDownGameAssets();
-        IWGRendererSetupGameAssets(320.0, 480.0);
+        IWGRendererSetupGameAssets();
         gdPlayerData = gdPlayerDataStart;
         gdFuel.currentLevel = gdFuel.currentMaxLevel;
         gdTotalRunTime = 0.0;
         gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
         gdZMax = 0.0;
-        gdGameIsPaused = false;
+        //gdGameIsPaused = false;
+        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
         gdScoreCounter = IWScoreCounterMakeEmpty();
     }
     

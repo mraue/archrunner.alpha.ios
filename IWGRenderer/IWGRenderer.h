@@ -46,16 +46,12 @@ GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
 void IWGRendererSetupGL(const char* vertexShaderFilename,
                         const char* fragmentShaderFilename,
-                        const char* fontMapFilename,
-                        float viewWidth,
-                        float viewHeight);
+                        const char* fontMapFilename);
 
-void IWGRendererSetupStartMenuAssets(float viewWidth,
-                                     float viewHeight);
+void IWGRendererSetupStartMenuAssets(void);
 void IWGRendererTearDownStartMenuAssets(void);
 
-void IWGRendererSetupGameAssets(float viewWidth,
-                                float viewHeight);
+void IWGRendererSetupGameAssets(void);
 void IWGRendererTearDownGameAssets(void);
 
 void IWGRendererRender(void);

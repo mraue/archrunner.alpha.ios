@@ -31,12 +31,13 @@
 #include "IWGFontMap.h"
 #include "IWScoreCounter.h"
 #include "IWGTextField.h"
+#include "IWController.h"
 
 #pragma mark - Game Logic Data
 
 IWGAME_STATUS gdCurrentGameStatus;
 
-bool gdGameIsPaused;
+//bool gdGameIsPaused;
 float gdPauseTime;
 
 IWPlayerData gdPlayerDataStart;
@@ -67,6 +68,10 @@ float gdZMax;
 
 IWCubeData gdSkyCube;
 IWGCircleData gdSun;
+
+#pragma mark - User input
+
+IWControllerData gdControllerDataAccelerometer;
 
 #pragma mark - Debug / Testing
 
@@ -100,6 +105,9 @@ bool gdResetControllerPosition;
 bool gdRunningInSimulator;
 
 #pragma mark - Open GL Buffer
+
+float gdScreenWidth;
+float gdScreenHeight;
 
 GLuint gdGLProgramID;
 

@@ -12,7 +12,7 @@
 #include <math.h>
 #include <time.h>
 
-#define MAX(a, b) (a > b ? a : b)
+#define IW_MAX(a, b) (a > b ? a : b)
 
 #define IW_DEG_TO_RAD M_PI / 180.0
 #define IW_RAD_TO_DEG 180.0 / M_PI

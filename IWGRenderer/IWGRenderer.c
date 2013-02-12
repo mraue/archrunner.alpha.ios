@@ -37,9 +37,7 @@
 
 void IWGRendererSetupGL(const char* vertexShaderFilename,
                         const char* fragmentShaderFilename,
-                        const char* fontMapFilename,
-                        float viewWidth,
-                        float viewHeight)
+                        const char* fontMapFilename)
 {
     // Basic lighting program
     shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
@@ -82,19 +80,19 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     glBindVertexArrayOES(0);
 
     //IWGRendererSetupGameAssets(viewWidth, viewHeight);
-    IWGRendererSetupStartMenuAssets(viewWidth, viewHeight);
+    IWGRendererSetupStartMenuAssets();
 
     return;
 }
 
-void IWGRendererSetupStartMenuAssets(float viewWidth,
-                                     float viewHeight)
+void IWGRendererSetupStartMenuAssets(void)
 {
     gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(-0.8, 0.0, -1.),
                                                               IWVector3Normalize(IWVector3Make(0.4, 0.0, 1.0)),
                                                               IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
     
-    gdGameIsPaused  =true;
+    gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+    //gdGameIsPaused =true;
     
     gdMasterShaderID = 2;
     gdSkyShaderID = 4;
@@ -231,7 +229,7 @@ void IWGRendererSetupStartMenuAssets(float viewWidth,
     // Text
     //
     
-    float aspect = fabsf(viewWidth / viewHeight);
+    float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
     GLuint textureHandlerId;
     glGenTextures(1, &textureHandlerId);
@@ -363,8 +361,7 @@ void IWGRendererTearDownStartMenuAssets(void)
     IWUIStateBarDeallocData(&gdFuel.stateBar);
 }
 
-void IWGRendererSetupGameAssets(float viewWidth,
-                                float viewHeight)
+void IWGRendererSetupGameAssets(void)
 {
     gdMasterShaderID = 2;
     gdSkyShaderID = 4;
@@ -527,7 +524,7 @@ void IWGRendererSetupGameAssets(float viewWidth,
     // Text
     //
     
-    float aspect = fabsf(viewWidth / viewHeight);
+    float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
     GLuint textureHandlerId;
     glGenTextures(1, &textureHandlerId);

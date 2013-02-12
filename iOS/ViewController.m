@@ -28,8 +28,6 @@
     
     IWVector3 _filteredAcceleration;
     IWVector3 _filteredAttitude;
-    
-    IWControllerData controllerDataAccelerometer;
 
     BOOL orientationNeutralSetAccelerometer;
 
@@ -113,10 +111,16 @@
         _filteredAcceleration.y = newestAccel.acceleration.y;
         _filteredAcceleration.z = newestAccel.acceleration.z;
     }
-
-    controllerDataAccelerometer = IWControllerDataMakeDefault();
     
     orientationNeutralSetAccelerometer = NO;
+    
+    gdScreenHeight = self.view.bounds.size.height;
+    gdScreenWidth = self.view.bounds.size.width;
+    
+    printf("View dimensions: %.1f %.1f\n",
+           self.view.bounds.size.width, self.view.bounds.size.height);
+    printf("Screen dimensions: %.1f %.1f\n",
+           [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
     
     IWGameSetup();
     
@@ -132,18 +136,10 @@
     CGImageRef cgImage = uiImage.CGImage;
     CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
-    
-    printf("View dimensions: %.1f %.1f\n",
-           self.view.bounds.size.width, self.view.bounds.size.height);
-    printf("Screen dimensions: %.1f %.1f\n",
-           [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
 
     IWGRendererSetupGL([vertShaderPathname UTF8String],
                        [fragShaderPathname UTF8String],
-                       [fontMapFilename UTF8String],
-                       [[UIScreen mainScreen] bounds].size.width,
-                       [[UIScreen mainScreen] bounds].size.height
-                       );
+                       [fontMapFilename UTF8String]);
 }
 
 - (void)didReceiveMemoryWarning
@@ -198,8 +194,8 @@
     
     if (!orientationNeutralSetAccelerometer
         || gdResetControllerPosition
-        || gdGameIsPaused) {
-        IWControllerDataUpdateReferenceDirection(&controllerDataAccelerometer,
+        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        IWControllerDataUpdateReferenceDirection(&gdControllerDataAccelerometer,
                                                  IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
                                                                                   _filteredAcceleration.y,
                                                                                   _filteredAcceleration.z)
@@ -211,7 +207,7 @@
         savedAttitude = [motionManager.deviceMotion.attitude retain];
     }
     
-    controllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
+    gdControllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
                                                                              _filteredAcceleration.y,
                                                                              _filteredAcceleration.z));
     
@@ -227,71 +223,31 @@
                                                                                    -1.0 * currentAttitude.pitch * IW_RAD_TO_DEG,
                                                                                    -1.0 * currentAttitude.yaw * IW_RAD_TO_DEG),
                                                                      alpha));
-            IWControllerAttitudeToRotationSpeed(&controllerDataAccelerometer,
+            IWControllerAttitudeToRotationSpeed(&gdControllerDataAccelerometer,
                                                 _filteredAttitude);
         } else {
             savedAttitude = [motionManager.deviceMotion.attitude retain];
         }
     } else {
-        IWControllerUpdateRotationSpeed(&controllerDataAccelerometer, self.timeSinceLastUpdate);
+        IWControllerUpdateRotationSpeed(&gdControllerDataAccelerometer, self.timeSinceLastUpdate);
     }
     
-    // Update player position
-    float speed = gdGameIsPaused ? 0.0 : gdPlayerData.speed;
-    gdPlayerData.position = IWVector3Add(gdPlayerData.position,
-                                         IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
-                                                                 self.timeSinceLastUpdate * speed));
-
-    float rotationSpeedMax = 100.0 / 180.0 * M_PI * self.timeSinceLastUpdate;
-    
-    // Update y rotation
-    IWVector3 dirGLV = IWVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
-    IWVector3 upGLV = IWVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
-    
-    float rotationSpeedX = 0.0, rotationSpeedY = 0.0, rotationSpeedZ = 0.0;
-    
-    if (_isTouched && gdRunningInSimulator) {
+    // Simulator on screen controls
+    if (gdIsTouched && gdRunningInSimulator) {
         float touchActiveArea = 0.25;
-        float touchFracX = _touchLocation.x / self.view.bounds.size.width;
-        float touchFracY = 1. - _touchLocation.y / self.view.bounds.size.height;
+        float touchFracX = gdTouchPoint.x;
+        float touchFracY = gdTouchPoint.y;
         if (touchFracY < touchActiveArea) {
-            rotationSpeedX = -1.;
+            gdControllerDataAccelerometer.rotationSpeed.x = -1.;
         } else if (touchFracY > 1. - touchActiveArea) {
-            rotationSpeedX = 1.;
+            gdControllerDataAccelerometer.rotationSpeed.x = 1.;
         }
         if (touchFracX < touchActiveArea) {
-            rotationSpeedY = 1.;
+            gdControllerDataAccelerometer.rotationSpeed.y = 1.;
         } else if (touchFracX > 1. - touchActiveArea) {
-            rotationSpeedY = -1.;
+            gdControllerDataAccelerometer.rotationSpeed.y = -1.;
         }
-    } else {
-        rotationSpeedX = controllerDataAccelerometer.rotationSpeed.x;
-        rotationSpeedY = controllerDataAccelerometer.rotationSpeed.y;
-        rotationSpeedZ = controllerDataAccelerometer.rotationSpeed.z;
     }
-    
-    IWMatrix4 yRotationUpdateMatrix = IWMatrix4MakeRotation(rotationSpeedY * rotationSpeedMax,
-                                                            upGLV.x, upGLV.y, upGLV.z);
-    //for (unsigned int i = 0; i < 16; i++)
-    //    yRotationUpdateMatrix.m[i] = yRotationUpdateMatrix2.m[i];
-    
-    IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
-    
-    IWMatrix4 xRotationUpdateMatrix = IWMatrix4MakeRotation(rotationSpeedX * rotationSpeedMax,
-                                                            normGLV.x, normGLV.y, normGLV.z);
-    
-    IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
-    
-    //    if (motionManager.isDeviceMotionAvailable) {
-    //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
-    //                                                                  dirGLV.x, dirGLV.y, dirGLV.z);
-    //        rotationUpdateMatrix = GLKMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
-    //    }
-    
-    //    if (!gdGameIsPaused) {
-    gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
-    gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
-    //    }
 }
 
 #pragma mark - GLKView and GLKViewController delegate methods
