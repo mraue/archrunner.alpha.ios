@@ -201,7 +201,6 @@
                                                                                   _filteredAcceleration.z)
                                                                     ),
                                                  IWVector3Make(0.0, 0.0, -1.0));
-        //        controllerDataAccelerometer.referenceDirection = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x, _filteredAcceleration.y, _filteredAcceleration.z));
         orientationNeutralSetAccelerometer = YES;
         gdResetControllerPosition = false;
         savedAttitude = [motionManager.deviceMotion.attitude retain];
@@ -214,15 +213,15 @@
     
     if (motionManager.isDeviceMotionAvailable) {
         // Needs to be better determined under the assumption of 60 FPS
-        alpha = 0.5;
+        alpha = 0.3;
         if (savedAttitude) {
             CMAttitude *currentAttitude = [motionManager.deviceMotion.attitude retain];
             [currentAttitude multiplyByInverseOfAttitude: savedAttitude];
-            _filteredAttitude = IWVector3Add(IWVector3MultiplyScalar(_filteredAttitude, (1.0-alpha)),
-                                             IWVector3MultiplyScalar(IWVector3Make(currentAttitude.roll * IW_RAD_TO_DEG,
-                                                                                   -1.0 * currentAttitude.pitch * IW_RAD_TO_DEG,
-                                                                                   -1.0 * currentAttitude.yaw * IW_RAD_TO_DEG),
-                                                                     alpha));
+            _filteredAttitude = IWVector3Lerp(_filteredAttitude,
+                                             IWVector3Make(currentAttitude.roll * IW_RAD_TO_DEG,
+                                                            -1.0 * currentAttitude.pitch * IW_RAD_TO_DEG,
+                                                            -1.0 * currentAttitude.yaw * IW_RAD_TO_DEG),
+                                              alpha);
             IWControllerAttitudeToRotationSpeed(&gdControllerDataAccelerometer,
                                                 _filteredAttitude);
         } else {

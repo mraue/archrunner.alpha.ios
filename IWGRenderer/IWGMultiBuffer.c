@@ -112,3 +112,10 @@ void IWGMultiBufferPurgeBufferSubData(IWGMultiBufferData *multiBufferData)
         multiBufferData->bufferSubData[i] = NULL;
     }
 }
+
+void IWGMultiBufferResetNVertices(IWGMultiBufferData *multiBufferData)
+{
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        multiBufferData->nVertices[i] = 0;
+    }
+}

@@ -96,9 +96,12 @@ void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text)
         for (unsigned int x = 0; x < textField->nColumns; x++) {
             char c = emtpyChar;
             if (textField->alignment == IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT
-                && (line && x < strlen(line))) {
+                && line
+                && x < strlen(line)) {
                 c = line[x];
-            } else if (line && x >= textField->nColumns - strlen(line)) {
+            } else if (textField->alignment == IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT
+                       && line
+                       && x >= textField->nColumns - strlen(line)) {
                 c = line[x - (textField->nColumns - strlen(line))];
             }
             float aspectTotal = IWGFontMapEntryGetAspectRatio(&textField->fontMap->map[c]) / textField->aspect;

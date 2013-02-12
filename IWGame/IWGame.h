@@ -19,6 +19,8 @@ typedef enum {
 
 void IWGameSetup(void);
 
+void IWGameReset(void);
+
 void IWGameUpdate(float timeSinceLastUpdate, float aspectRatio);
 
 void IWGameTearDown(void);

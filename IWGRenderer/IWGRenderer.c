@@ -31,6 +31,8 @@
 #include "IWGTextLine.h"
 #include "IWGTextField.h"
 
+#include "IWScoreCounter.h"
+
 #include "IWGameData.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -76,7 +78,6 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     glGenVertexArraysOES(1, &gdUILineVertexArray);
     glBindVertexArrayOES(gdUILineVertexArray);
     glGenBuffers(1, &gdUILineVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, gdUILineVertexBuffer);
     glBindVertexArrayOES(0);
 
     //IWGRendererSetupGameAssets(viewWidth, viewHeight);
@@ -92,8 +93,7 @@ void IWGRendererSetupStartMenuAssets(void)
                                                               IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
     
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
-    //gdGameIsPaused =true;
-    
+
     gdMasterShaderID = 2;
     gdSkyShaderID = 4;
     
@@ -115,7 +115,7 @@ void IWGRendererSetupStartMenuAssets(void)
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
-    printf("Allocating %d position with total size %d\n", n * 6 * 6 * 10, (int)mypos_size);
+
     gdCubeTriangleBufferStartCPU = malloc(mypos_size);
     
     gdStandardCubeIndexList = IWIndexListMake(n);
@@ -155,7 +155,6 @@ void IWGRendererSetupStartMenuAssets(void)
     }
     
     unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
-    printf("nVertices = %u\n", nVertices);
     
     // Get attribute locations
     GLuint positionSlot = glGetAttribLocation(gdGLProgramID, "Vertex");
@@ -330,23 +329,15 @@ void IWGRendererTearDownStartMenuAssets(void)
     
     free(gdSkyTriangleBufferStartCPU);
     gdSkyTriangleBufferStartCPU = NULL;
-    
-    free(gdInGameTextTriangleBufferStartCPU);
-    gdInGameTextTriangleBufferStartCPU = NULL;
-    
-//    free(gdInGameUILineBufferStartCPU);
-//    gdInGameUILineBufferStartCPU = NULL;
-//    
-//    free(gdInGameUITriangleBufferStartCPU);
-//    gdInGameUITriangleBufferStartCPU = NULL;
-//    
+
     IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
     IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
-//    IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferResetNVertices(&gdTriangleDoubleBuffer);
+    //IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+    //IWGMultiBufferResetNVertices(&gdUITriangleDoubleBuffer);
     IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
-    
-//    free(gdScoreTextField.triangleBufferData.startCPU);
-//    gdScoreTextField.triangleBufferData.startCPU = NULL;
+    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
     
     free(gdInGameTextTriangleBufferStartCPU);
     gdInGameTextTriangleBufferStartCPU = NULL;
@@ -363,6 +354,8 @@ void IWGRendererTearDownStartMenuAssets(void)
 
 void IWGRendererSetupGameAssets(void)
 {
+    IWGameReset();
+    
     gdMasterShaderID = 2;
     gdSkyShaderID = 4;
     
@@ -393,7 +386,7 @@ void IWGRendererSetupGameAssets(void)
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
-    printf("Allocating %d position with total size %d\n", n * 6 * 6 * 10, (int)mypos_size);
+
     gdCubeTriangleBufferStartCPU = malloc(mypos_size);
 
     gdStandardCubeIndexList = IWIndexListMake(n);
@@ -450,7 +443,6 @@ void IWGRendererSetupGameAssets(void)
     }
     
     unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
-    printf("nVertices = %u\n", nVertices);
     
     // Get attribute locations
     GLuint positionSlot = glGetAttribLocation(gdGLProgramID, "Vertex");
@@ -529,6 +521,8 @@ void IWGRendererSetupGameAssets(void)
     GLuint textureHandlerId;
     glGenTextures(1, &textureHandlerId);
 
+    gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 1 * 10 + 3 * 12) * 6 * 9 * sizeof(GLfloat));
+
     gdScoreTextField = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
                                         1, 10,
@@ -538,9 +532,42 @@ void IWGRendererSetupGameAssets(void)
                                         IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
                                         IWVector4Make(1.0, 1.0, 1.0, 0.7),
                                         &gdFontMap,
-                                        NULL);
+                                        gdInGameTextTriangleBufferStartCPU);
+    
+    gdGameOverTextField = IWGTextFieldMake(IWVector2Make(-0.95, 0.95),
+                                           IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
+                                           1, 10,
+                                           1. / aspect,
+                                           "GAME OVER",
+                                           0.4, 0.0,
+                                           IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT,
+                                           IWVector4Make(0.2, 0.2, 0.2, 0.8),
+                                           &gdFontMap,
+                                           gdInGameTextTriangleBufferStartCPU
+                                           + gdScoreTextField.triangleBufferData.size);
 
-    gdInGameTextTriangleBufferStartCPU = gdScoreTextField.triangleBufferData.bufferStartCPU;
+    gdGameOverMenuTextField = IWGTextFieldMake(IWVector2Make(-0.95, 0.0),
+                                               IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
+                                               3, 12,
+                                               1. / aspect,
+                                               "[RETRY]\n\n[START MENU]",
+                                               0.25, 0.04,
+                                               IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT,
+                                               IWVector4Make(0.2, 0.2, 0.2, 0.8),
+                                               &gdFontMap,
+                                               gdInGameTextTriangleBufferStartCPU
+                                               + gdGameOverTextField.triangleBufferData.size
+                                               + gdScoreTextField.triangleBufferData.size);
+    
+    unsigned int totalTextFieldsSize =
+        gdScoreTextField.triangleBufferData.size
+        + gdGameOverTextField.triangleBufferData.size
+        + gdGameOverMenuTextField.triangleBufferData.size;
+    
+    gdStartTextFieldColorTransition = IWVector4TransitionMake(IWVector4Make(0.2, 0.2, 0.2, 0.8),
+                                                              IWVector4Make(0.2, 0.2, 0.2, 0.5),
+                                                              IWVector4Make(0.2, 0.2, 0.2, 0.8),
+                                                              1.0, 0.0, false, false);
     
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTextTriangleDoubleBuffer.nVertices[k] = gdScoreTextField.triangleBufferData.size / gdScoreTextField.triangleBufferData.stride;
@@ -558,8 +585,9 @@ void IWGRendererSetupGameAssets(void)
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
 
-        glBufferData(GL_ARRAY_BUFFER, gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
-                     gdScoreTextField.triangleBufferData.startCPU,
+        glBufferData(GL_ARRAY_BUFFER,
+                     totalTextFieldsSize * sizeof(GLfloat),
+                     gdInGameTextTriangleBufferStartCPU,
                      GL_DYNAMIC_DRAW);
         
         glEnableVertexAttribArray(positionSlot);
@@ -575,8 +603,6 @@ void IWGRendererSetupGameAssets(void)
     //
     // Head up display data
     //
-    
-    printf("aspect = %f\n", aspect);
     
     // Some buttons
     gdRectangleButton = IWUIRectangleButtonMake(0.0, -0.001,
@@ -595,7 +621,6 @@ void IWGRendererSetupGameAssets(void)
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, 1. / aspect);
 
-    gdFuel = IWFuelMakeDefaultStart();
     //gdFuel.stateBar.direction = IWUI_DIRECTION_REVERSE;// need larger buffer! -> 4 x 6
 
     gdUINTriangleVertices = ((IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
@@ -691,12 +716,18 @@ void IWGRendererTearDownGameAssets(void)
     gdInGameUITriangleBufferStartCPU = NULL;
     
     IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
     IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
+    IWGMultiBufferResetNVertices(&gdTriangleDoubleBuffer);
     IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferResetNVertices(&gdUITriangleDoubleBuffer);
     IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
     
-    free(gdScoreTextField.triangleBufferData.startCPU);
-    gdScoreTextField.triangleBufferData.startCPU = NULL;
+    gdUINLineVertices = 0;
+    
+    free(gdInGameTextTriangleBufferStartCPU);
+    gdInGameTextTriangleBufferStartCPU = NULL;
     
     free(gdSecondaryPosition);
     gdSecondaryPosition = NULL;
@@ -784,8 +815,8 @@ void IWGRendererRenderInGameUI(void)
     
     glBindVertexArrayOES(gdUILineVertexArray);
     
-    glLineWidth(0.5);
-    glDrawArrays(GL_LINES, 0, gdUINLineVertices);
+    glLineWidth(1.0);
+    //glDrawArrays(GL_LINES, 0, gdUINLineVertices);
     
     glBindVertexArrayOES(0);
 }
@@ -842,7 +873,8 @@ void IWGRendererRender(void)
 
         glDisable(GL_BLEND);
         
-    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU
+               || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         
@@ -858,8 +890,6 @@ void IWGRendererRender(void)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         IWGRendererRenderInGameText();
-        
-        IWGRendererRenderInGameUI();
         
         glDisable(GL_BLEND);
     }

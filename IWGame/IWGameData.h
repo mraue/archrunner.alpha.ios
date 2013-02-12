@@ -37,7 +37,6 @@
 
 IWGAME_STATUS gdCurrentGameStatus;
 
-//bool gdGameIsPaused;
 float gdPauseTime;
 
 IWPlayerData gdPlayerDataStart;
@@ -68,6 +67,8 @@ float gdZMax;
 
 IWCubeData gdSkyCube;
 IWGCircleData gdSun;
+
+IWTimerData gdStateSwitchTimer;
 
 #pragma mark - User input
 
@@ -129,6 +130,8 @@ GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
 
 IWGTextFieldData gdScoreTextField;
+IWGTextFieldData gdGameOverTextField;
+IWGTextFieldData gdGameOverMenuTextField;
 
 IWGTextFieldData gdTitleTextField;
 IWGTextFieldData gdVersionTextField;

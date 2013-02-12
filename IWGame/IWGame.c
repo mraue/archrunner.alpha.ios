@@ -36,25 +36,12 @@
 
 void IWGameSetup(void)
 {
-//    gdPlayerData = IWPlayerDataMake(IWVector3Make(1.4, 0.8, 1.4),
-//                                    IWVector3Normalize(IWVector3Make(-1.0, 0.0, -1.0)),
-//                                    IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
-    gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.3),
-                                               IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
-                                               IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
-    // DEBUG
-    //gdPlayerDataStart.speed = 0.0;
-    // END DEBUG
-    //
-    gdPlayerData = gdPlayerDataStart;
     //
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
     //
-    gdTotalRunTime = 0.0;
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
-    gdZMax = 0.0;
+    gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
     //gdGameIsPaused = false;
-    gdScoreCounter = IWScoreCounterMakeEmpty();
     gdNCubesPerAxis = 5;// [5]
     //
     gdCubeTriangleBufferStartCPU = NULL;
@@ -66,13 +53,35 @@ void IWGameSetup(void)
     //
     gdControllerDataAccelerometer = IWControllerDataMakeDefault();
     //
+    IWGameReset();
+    //
     return;
+}
+
+void IWGameReset(void)
+{
+    IWVector3 playerPosition = IWVector3Make(-0.4, 0.4, -1.2);
+    IWVector3 playerDirection = IWVector3Normalize(IWVector3Make(0.25, -0.25, 1.0));
+    IWVector3 normalDirectionVec = IWVector3CrossProduct(IWVector3Make(0.0, 0.0, 1.0), playerDirection);
+    float angle = IWVector3DotProduct(IWVector3Make(0.0, 0.0, 1.0), playerDirection);
+    IWMatrix4 rotationMatrix = IWMatrix4MakeRotation(acosf(angle), normalDirectionVec.x, normalDirectionVec.y , normalDirectionVec.z);
+    IWVector3 playerUp = IWMatrix4MultiplyVector3(rotationMatrix, IWVector3Make(0.0, 1.0, 0.0));
+    
+    gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(playerPosition,
+                                                              playerDirection,
+                                                              playerUp);
+    gdTotalRunTime = 0.0;
+    gdZMax = 0.0;
+    gdScoreCounter = IWScoreCounterMakeEmpty();
+    gdFuel = IWFuelMakeDefaultStart();
+    //IWFuelRemoveFuel(&gdFuel, 0.95);
 }
 
 void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
 {
     if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
-        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED
+        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
         IWGameUpdate(timeSinceLastUpdate, aspectRatio);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
         IWGameStartMenuHandler(timeSinceLastUpdate, aspectRatio);
@@ -83,15 +92,12 @@ void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
 void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
 {
     IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
-    if (gdIsTouched
+    if (IWTimerUpdate(&gdStateSwitchTimer, timeSinceLastUpdate)
+        && gdIsTouched
         && IWPointInRectangle(gdTouchPoint, startButton)) {
         IWGRendererTearDownStartMenuAssets();
         IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-        //gdGameIsPaused = false;
-        gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.3),
-                                                                  IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0)),
-                                                                  IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
         return;
     }
     
@@ -168,6 +174,56 @@ void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
 void IWGameUpdate(float timeSinceLastUpdate,
                   float aspectRatio)
 {
+    // Check if we are game over
+    if (gdFuel.currentLevel == 0.0
+        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
+            printf("GAME OVER\n");
+            IWScoreCounterPrintScore(&gdScoreCounter);
+            gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
+            for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
+                gdTextTriangleDoubleBuffer.nVertices[k] =
+                    (gdScoreTextField.triangleBufferData.size
+                     + gdGameOverTextField.triangleBufferData.size
+                     + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
+            }
+            gdMasterShaderID = 3;
+            gdSkyShaderID = 3;
+            gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
+            gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
+        }
+        IWRectangle toStartMenuRect = IWRectangleMake(0.0, 0.2, 0.5, 0.35);
+        IWRectangle retryRect = IWRectangleMake(0.0, 0.35, 0.5, 0.5);
+        if (gdIsTouched
+            && IWPointInRectangle(gdTouchPoint, toStartMenuRect)) {
+            IWGRendererTearDownGameAssets();
+            IWGRendererSetupStartMenuAssets();
+            gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+            gdIsTouched = false;
+            gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
+            return;
+        } else if (gdIsTouched
+                    && IWPointInRectangle(gdTouchPoint, retryRect)) {
+            IWGRendererTearDownGameAssets();
+            IWGRendererSetupGameAssets();
+            gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+            gdIsTouched = false;
+            return;
+        }
+        if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
+            IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
+        }
+        gdGameOverMenuTextField.color = gdStartTextFieldColorTransition.currentVector;
+        IWGTextFieldSetText(&gdGameOverMenuTextField, gdGameOverMenuTextField.text);
+        IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+                              (gdScoreTextField.triangleBufferData.size
+                               + gdGameOverTextField.triangleBufferData.size) * sizeof(GLfloat),
+                              gdGameOverMenuTextField.triangleBufferData.size * sizeof(GLfloat),
+                              gdGameOverMenuTextField.triangleBufferData.startCPU,
+                              false);
+        return;
+    }
+        
     // Check if pause button has been pressed
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
@@ -208,7 +264,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     
     float rotationSpeedMax = 100.0 / 180.0 * M_PI * timeSinceLastUpdate;
     
-    // Update y rotation
+    // Update direction
     IWVector3 dirGLV = IWVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
     IWVector3 upGLV = IWVector3Make(gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
     
@@ -437,17 +493,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     }
     
     // Update fuel status bar
-    if (gdFuel.currentLevel == 0.0) {
-        // DEBUG
-        //gdPlayerData = gdPlayerDataStart;
-        //gdFuel.currentLevel = gdFuel.currentMaxLevel;
-        printf("GAME OVER\n");
-        IWScoreCounterPrintScore(&gdScoreCounter);
-        //gdGameIsPaused = true;
-        gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
-        gdPauseTime = 0.0;
-        gdFuel.currentLevel = 1.0;
-    } else if (gdPlayerData.overdrive) {
+    if (gdPlayerData.overdrive) {
         if (IWColorTransitionUpdate(&gdOverdriveColorTransition, timeSinceLastUpdate)) {
             gdOverdriveColorTransition.endColor = gdOverdriveColorTransition.startColor;
             gdOverdriveColorTransition.startColor = gdOverdriveColorTransition.currentColor;
@@ -478,14 +524,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
         IWGRendererTearDownGameAssets();
         IWGRendererSetupGameAssets();
-        gdPlayerData = gdPlayerDataStart;
-        gdFuel.currentLevel = gdFuel.currentMaxLevel;
-        gdTotalRunTime = 0.0;
-        gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
-        gdZMax = 0.0;
         //gdGameIsPaused = false;
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-        gdScoreCounter = IWScoreCounterMakeEmpty();
     }
     
     if (!gdRectangleButton2.colorTransition.transitionHasFinished) {

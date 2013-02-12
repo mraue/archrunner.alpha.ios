@@ -47,5 +47,6 @@ void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
                                           bool bindBuffer);
 
 void IWGMultiBufferPurgeBufferSubData(IWGMultiBufferData *multiBufferData);
+void IWGMultiBufferResetNVertices(IWGMultiBufferData *multiBufferData);
 
 #endif
