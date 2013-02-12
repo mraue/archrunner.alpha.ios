@@ -119,3 +119,13 @@ void IWGMultiBufferResetNVertices(IWGMultiBufferData *multiBufferData)
         multiBufferData->nVertices[i] = 0;
     }
 }
+
+void IWGMultiBufferDealloc(IWGMultiBufferData *multiBufferData)
+{
+    IWGMultiBufferPurgeBufferSubData(multiBufferData);
+    IWGMultiBufferResetNVertices(multiBufferData);
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        glDeleteBuffers(1, &multiBufferData->vertexBuffer[i]);
+        glDeleteVertexArraysOES(1, &multiBufferData->vertexArray[i]);
+    }
+}

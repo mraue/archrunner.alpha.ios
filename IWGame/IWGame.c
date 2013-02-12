@@ -526,6 +526,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
         IWGRendererSetupGameAssets();
         //gdGameIsPaused = false;
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+        return;
     }
     
     if (!gdRectangleButton2.colorTransition.transitionHasFinished) {

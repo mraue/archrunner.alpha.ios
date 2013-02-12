@@ -90,6 +90,8 @@ GLfloat *gdInGameTextTriangleBufferStartCPU;
 GLfloat *gdInGameUITriangleBufferStartCPU;
 GLfloat *gdInGameUILineBufferStartCPU;
 
+GLuint gdTextureHandlerId;
+
 #pragma mark - User Interface
 
 bool gdIsTouched;

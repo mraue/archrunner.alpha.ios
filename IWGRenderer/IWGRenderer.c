@@ -88,6 +88,15 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
 
 void IWGRendererSetupStartMenuAssets(void)
 {
+    gdTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
+    
+    // Could swith to multi buffer, ey!
+    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+    glBindVertexArrayOES(0);
+    
     gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(-0.8, 0.0, -1.),
                                                               IWVector3Normalize(IWVector3Make(0.4, 0.0, 1.0)),
                                                               IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
@@ -330,14 +339,27 @@ void IWGRendererTearDownStartMenuAssets(void)
     free(gdSkyTriangleBufferStartCPU);
     gdSkyTriangleBufferStartCPU = NULL;
 
-    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdTriangleDoubleBuffer);
-    //IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
-    //IWGMultiBufferResetNVertices(&gdUITriangleDoubleBuffer);
-    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
+    
+    glDeleteTextures(1, &gdTextureHandlerId);
+    
+    //IWGMultiBufferDealloc(&gdUITriangleDoubleBuffer);
+    
+//    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdTriangleDoubleBuffer);
+//    //IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+//    //IWGMultiBufferResetNVertices(&gdUITriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
+
+    glDeleteBuffers(1, &gdSkyTriangleVertexBuffer);
+    glDeleteVertexArraysOES(1, &gdSkyTriangleVertexArray);
+    
+    //glDeleteBuffers(1, &gdUILineVertexBuffer);
+    //glDeleteVertexArraysOES(1, &gdUILineVertexArray);
     
     free(gdInGameTextTriangleBufferStartCPU);
     gdInGameTextTriangleBufferStartCPU = NULL;
@@ -354,6 +376,21 @@ void IWGRendererTearDownStartMenuAssets(void)
 
 void IWGRendererSetupGameAssets(void)
 {
+    gdTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdUITriangleDoubleBuffer = IWGMultiBufferGen();
+    
+    // Could swith to multi buffer, ey!
+    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+    glBindVertexArrayOES(0);
+    
+    glGenVertexArraysOES(1, &gdUILineVertexArray);
+    glBindVertexArrayOES(gdUILineVertexArray);
+    glGenBuffers(1, &gdUILineVertexBuffer);
+    glBindVertexArrayOES(0);
+    
     IWGameReset();
     
     gdMasterShaderID = 2;
@@ -518,8 +555,7 @@ void IWGRendererSetupGameAssets(void)
     
     float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
-    GLuint textureHandlerId;
-    glGenTextures(1, &textureHandlerId);
+    glGenTextures(1, &gdTextureHandlerId);
 
     gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 1 * 10 + 3 * 12) * 6 * 9 * sizeof(GLfloat));
 
@@ -578,7 +614,7 @@ void IWGRendererSetupGameAssets(void)
 
         IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
         
-        glBindTexture(GL_TEXTURE_2D, textureHandlerId);
+        glBindTexture(GL_TEXTURE_2D, gdTextureHandlerId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -715,14 +751,26 @@ void IWGRendererTearDownGameAssets(void)
     free(gdInGameUITriangleBufferStartCPU);
     gdInGameUITriangleBufferStartCPU = NULL;
     
-    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdTriangleDoubleBuffer);
-    IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdUITriangleDoubleBuffer);
-    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdTriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdTriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdUITriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdUITriangleDoubleBuffer);
+//    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
+    
+    glDeleteTextures(1, &gdTextureHandlerId);
+    
+    IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
+    IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
+    IWGMultiBufferDealloc(&gdUITriangleDoubleBuffer);
+    
+    glDeleteBuffers(1, &gdSkyTriangleVertexBuffer);
+    glDeleteVertexArraysOES(1, &gdSkyTriangleVertexArray);
+    
+    glDeleteBuffers(1, &gdUILineVertexBuffer);
+    glDeleteVertexArraysOES(1, &gdUILineVertexArray);
     
     gdUINLineVertices = 0;
     
@@ -812,13 +860,15 @@ void IWGRendererRenderInGameUI(void)
     
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
     glDrawArrays(GL_TRIANGLES, 0, gdUINTriangleVertices);
-    
-    glBindVertexArrayOES(gdUILineVertexArray);
-    
-    glLineWidth(1.0);
-    //glDrawArrays(GL_LINES, 0, gdUINLineVertices);
-    
     glBindVertexArrayOES(0);
+    
+    if (gdUINLineVertices) {
+        glBindVertexArrayOES(gdUILineVertexArray);
+        glLineWidth(1.0);
+        glDrawArrays(GL_LINES, 0, gdUINLineVertices);
+        glBindVertexArrayOES(0);
+    }
+    
 }
 
 void IWGRendererRenderInGameText(void)
