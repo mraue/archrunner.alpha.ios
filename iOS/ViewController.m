@@ -127,8 +127,8 @@
     [EAGLContext setCurrentContext:self.context];
 
     NSString *vertShaderPathname, *fragShaderPathname;
-    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"vsh"];
-    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader" ofType:@"fsh"];
+    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"vsh"];
+    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"fsh"];
     
     // Deal with font map textures
     NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:@"fontmap02" ofType:@"txt"];

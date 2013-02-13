@@ -33,7 +33,9 @@ typedef struct {
     IWVector4 groundColorDay, groundColorNight;
     IWVector4 sunColorDay, sunColorNight;
     IWVector4 moonColorDay, moonColorNight;
+    IWVector3 moonPosition, sunPosition;
     float colorTransitionTime;
+    float transitionTime;
     IWVector4Transition skyColorTransition;
     IWVector4Transition groundColorTransition;
     IWVector4Transition sunColorTransition;

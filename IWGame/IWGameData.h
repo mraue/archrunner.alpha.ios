@@ -145,8 +145,9 @@ IWMatrix3 gdNormalMatrix;
 
 #pragma mark - Open GL Lightsource Data
 
-IWGLightSource gdLightSourceData;
-IWGMaterialSource gdMaterialSourceData;
+IWGBasicLightSourceData gdSunLightSource;
+IWGBasicLightSourceData gdMoonLightSource;
+IWGPointLightSourceData gdPLayerLightSource;
 
 IWVector4 gdClearColor;
 

@@ -22,7 +22,8 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     IWGSkyBoxData skyBox;
     
     skyBox.colorTransitionTime = 8.0 * 60.0;
-
+    skyBox.transitionTime = 0.0;
+    
     skyBox.skyColorDay = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     skyBox.skyColorNight = IWUI_COLOR_BLUE(1.0);
     skyBox.sky = IWCubeMake(0, IWCUBE_TYPE_STANDARD,
@@ -55,7 +56,8 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     
     skyBox.sunColorDay = IWUI_COLOR_GOLD(1.0);
     skyBox.sunColorNight = IWUI_COLOR_DARK_RED(1.0);
-    skyBox.sun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5),
+    skyBox.sunPosition = IWVector3Make(0.0, -1.0, 30.5);
+    skyBox.sun = IWGCircleMake(skyBox.sunPosition,
                                IWVector3Make(0.0, 0.0, 1.0),
                                skyBox.sunColorDay,
                                5.0, 41);
@@ -71,8 +73,13 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
 //                                IWVector3Normalize(IWVector3Make(1.0, 1.0, -1.0)),
 //                                skyBox.moonColorDay,
 //                                2.0, 41);
-    skyBox.moon = IWGCircleMake(IWVector3MultiplyScalar(IWVector3Normalize(IWVector3Make(1.0, 0.5, 1.0)), 30.5),
-                                IWVector3Normalize(IWVector3Make(1.0, 0.5, 1.0)),
+//    skyBox.moon = IWGCircleMake(IWVector3MultiplyScalar(IWVector3Normalize(IWVector3Make(1.0, 0.5, 1.0)), 30.5),
+//                                IWVector3Normalize(IWVector3Make(1.0, 0.5, 1.0)),
+//                                skyBox.moonColorDay,
+//                                2.0, 41);
+    skyBox.moonPosition = IWVector3MultiplyScalar(IWVector3Normalize(IWVector3Make(3.0, 2.5, -2.0)), 30.5);
+    skyBox.moon = IWGCircleMake(skyBox.moonPosition,
+                                IWVector3Normalize(IWVector3Make(3.0, 2.5, -2.0)),
                                 skyBox.moonColorDay,
                                 2.0, 41);
     skyBox.moonColorTransition = IWVector4TransitionMake(skyBox.moonColorDay,
@@ -133,6 +140,8 @@ void IWGSkyBoxFillVBO(IWGSkyBoxData *skyBox, GLuint positionSlot,GLuint colorSlo
 
 void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerData *player, bool updateColor)
 {
+    skyBox->transitionTime += timeSinceLastUpdate;
+    
     if (updateColor) {
         if (!skyBox->skyColorTransition.transitionHasFinished)
             IWVector4TransitionUpdate(&skyBox->skyColorTransition, timeSinceLastUpdate);
@@ -174,8 +183,8 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
                           skyBox->ground.triangleBufferData.startCPU,
                           false);
 
-    skyBox->sun.centerLocation.x = player->position.x;
-    skyBox->sun.centerLocation.z = player->position.z + 30.5;
+    skyBox->sun.centerLocation.x = player->position.x + skyBox->sunPosition.x;
+    skyBox->sun.centerLocation.z = player->position.z + skyBox->sunPosition.z;
     skyBox->sun.radius = (1. + player->position.z / 30.0) * 5.0;
     
     if (skyBox->sun.centerLocation.y > -10.0)
@@ -193,6 +202,9 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
                           skyBox->sun.triangleBufferData.startCPU,
                           false);
     
+    skyBox->moon.centerLocation.x = player->position.x + skyBox->moonPosition.x;
+    skyBox->moon.centerLocation.z = player->position.z + skyBox->moonPosition.z;
+    
     if (updateColor)
         skyBox->moon.color = skyBox->moonColorTransition.currentVector;
     
@@ -206,6 +218,17 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
                           skyBox->moon.triangleBufferData.startCPU,
                           false);
     
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
+                1.0, 1.0, 1.0,
+                IW_MAX(0.0, 1.0 - skyBox->transitionTime / (skyBox->colorTransitionTime * 0.9)));
+    
+    float tmp = skyBox->transitionTime / (skyBox->colorTransitionTime * 1.2);
+    tmp *= tmp;
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
+                0.7, 0.7, 0.7,
+                IW_MIN(1.0, tmp));
+    
+
     return;
 }
 

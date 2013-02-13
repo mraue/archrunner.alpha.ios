@@ -65,6 +65,17 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
     = glGetUniformLocation(gdGLProgramID, "NormalMatrix");
     
+    gdSunLightSource = IWGBasicLightSourceMakeDefault();
+    gdMoonLightSource = IWGBasicLightSourceMakeDefault();
+    
+    gdMoonLightSource.Direction = IWVector3Normalize(IWVector3Make(3.0, 2.5, -2.0));
+    gdMoonLightSource.Color = IWVector4Make(1.0, 1.0, 1.0, 1.0);
+    
+    gdPLayerLightSource = IWGPointLightSourceMakeDefault();
+    
+    IWGLightingInitializeUniformLocations(gdGLProgramID);
+    IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
+    
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
     gdTriangleDoubleBuffer = IWGMultiBufferGen();
@@ -94,7 +105,7 @@ void IWGRendererSetupStartMenuAssets(void)
     
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
 
-    gdMasterShaderID = 2;
+    gdMasterShaderID = 1;
     gdSkyShaderID = 4;
     
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
@@ -106,9 +117,6 @@ void IWGRendererSetupStartMenuAssets(void)
         0.8, 0.0, true, false
     };
     gdClearColorTransition = clearColorTransition;
-    
-    gdLightSourceData = IWGLightingMakeBasicLight();
-    gdMaterialSourceData = IWGLightingMakeBasicMaterial();
     
     int nx, ny, nz;
     nx = ny = nz = 8;
@@ -162,9 +170,6 @@ void IWGRendererSetupStartMenuAssets(void)
     GLuint colorSlot = glGetAttribLocation(gdGLProgramID, "Color");
     GLuint textureOffsetSlot = glGetAttribLocation(gdGLProgramID, "TextureOffset");
     
-    IWGLightingInitializeUniformLocations(gdGLProgramID);
-    IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
-    
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTriangleDoubleBuffer.nVertices[k] = nVertices;
     }
@@ -192,6 +197,11 @@ void IWGRendererSetupStartMenuAssets(void)
     
     gdSkyBox = IWGSkyBoxMakeDefault();
     IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
+    
+    gdSunLightSource.Color = gdSkyBox.sunColorDay;
+    //gdSunLightSource.Color.w = 0.5;
+    gdSunLightSource.Direction = gdSkyBox.sun.direction;
+    IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
 
     //
     // Text
@@ -330,14 +340,11 @@ void IWGRendererSetupGameAssets(void)
     
     IWGameReset();
     
-    gdMasterShaderID = 2;
+    gdMasterShaderID = 1;
     gdSkyShaderID = 4;
     
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
-    
-    gdLightSourceData = IWGLightingMakeBasicLight();
-    gdMaterialSourceData = IWGLightingMakeBasicMaterial();
     
     IWColorTransition clearColorTransition = {
         {0.8, 0.8, 0.8, 1.0},
@@ -423,9 +430,6 @@ void IWGRendererSetupGameAssets(void)
     GLuint normalSlot = glGetAttribLocation(gdGLProgramID, "Normal");
     GLuint colorSlot = glGetAttribLocation(gdGLProgramID, "Color");
     GLuint textureOffsetSlot = glGetAttribLocation(gdGLProgramID, "TextureOffset");
-
-    IWGLightingInitializeUniformLocations(gdGLProgramID);
-    IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
     
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {

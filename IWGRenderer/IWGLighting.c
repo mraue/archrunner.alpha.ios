@@ -7,24 +7,26 @@
 //
 
 #include <stdio.h>
+#include <math.h>
 
 #include "IWGLighting.h"
 
 const char* IWGLIGHTING_UNIFORM_STRINGS[] = {
-    "Light[0].Position",
-    "Light[0].Attenuation",
-    "Light[0].Direction",
-    "Light[0].Color",
-    "Light[0].HasSpotlight",    
-    "Light[0].OuterCutoff",
-    "Light[0].InnerCutoff",
-    "Light[0].Exponent",
-    "Light[0].VignettingExponent",    
-    "Material.Ambient",
-    "Material.Diffuse",
-    "NumLight",
+    "PlayerLight.Position",
+    "PlayerLight.Attenuation",
+    "PlayerLight.Direction",
+    "PlayerLight.Color",
+    "PlayerLight.HasSpotlight",    
+    "PlayerLight.OuterCutoff",
+    "PlayerLight.InnerCutoff",
+    "PlayerLight.Exponent",
+    "PlayerLight.VignettingExponent",
     "LightingType",
-    "ShaderType"
+    "ShaderType",
+    "Sun.Direction",
+    "Sun.Color",
+    "Moon.Direction",
+    "Moon.Color"
 };
 
 void IWGLightingInitializeUniformLocations(GLuint program)
@@ -36,63 +38,69 @@ void IWGLightingInitializeUniformLocations(GLuint program)
     }
 }
 
-void IWGLightingSetUniforms(IWGLightSource lightSource,
-                            IWGMaterialSource materialSource)
+
+void IWGLightingSetUniforms(IWGBasicLightSourceData *sunLightSource,
+                            IWGBasicLightSourceData *moonLightSource,
+                            IWGPointLightSourceData *playerLightSource)
 {
     // Set shader type
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
-                1);
-    // Set number of lights
-    // Here, fixed to one
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_NUM_LIGHT],
                 1);
     // Gets or sets whether vertex lighting (Gouraud Shading) or
     // fragment lighting (Phong Shading) is used.
     glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHTING_TYPE],
                 0);
     // Set light source uniforms
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_POSITION],
-                lightSource.Position.x, lightSource.Position.y, lightSource.Position.z);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_ATTENUATION],
-                lightSource.Attenuation.x, lightSource.Attenuation.y, lightSource.Attenuation.z);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_DIRECTION],
-                lightSource.Direction.x, lightSource.Direction.y, lightSource.Direction.z);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_COLOR],
-                lightSource.Color.x, lightSource.Color.y, lightSource.Color.z);
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_HAS_SPOT_LIGHT],
-                lightSource.HasSpotlight);
-    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_OUTER_CUTOFF],
-                lightSource.OuterCutoff);
-    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_INNER_CUTOFF],
-                lightSource.InnerCutoff);
-    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_EXPONENT],
-                lightSource.Exponent);
-    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHT0_VIGNETTING_EXPONENT],
-                lightSource.VignettingExponent);
-    // Set material uniforms
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_AMBIENT],
-                materialSource.Ambient.x, materialSource.Ambient.y, materialSource.Ambient.z);
-    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-                materialSource.Diffuse.x, materialSource.Diffuse.y, materialSource.Diffuse.z, materialSource.Diffuse.w);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
+                playerLightSource->Position.x, playerLightSource->Position.y, playerLightSource->Position.z);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_ATTENUATION],
+                playerLightSource->Attenuation.x, playerLightSource->Attenuation.y, playerLightSource->Attenuation.z);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
+                playerLightSource->Direction.x, playerLightSource->Direction.y, playerLightSource->Direction.z);
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
+                playerLightSource->Color.x, playerLightSource->Color.y, playerLightSource->Color.z,
+                playerLightSource->Color.w);
+    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_HAS_SPOT_LIGHT],
+                playerLightSource->HasSpotlight);
+    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_OUTER_CUTOFF],
+                playerLightSource->OuterCutoff);
+    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_INNER_CUTOFF],
+                playerLightSource->InnerCutoff);
+    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_EXPONENT],
+                playerLightSource->Exponent);
+    glUniform1f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_VIGNETTING_EXPONENT],
+                playerLightSource->VignettingExponent);
+    // Sun
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_DIRECTION],
+                sunLightSource->Direction.x, sunLightSource->Direction.y, sunLightSource->Direction.z);
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
+                sunLightSource->Color.x, sunLightSource->Color.y, sunLightSource->Color.z, sunLightSource->Color.w);
+    // Moon
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MOON_DIRECTION],
+                moonLightSource->Direction.x, moonLightSource->Direction.y, moonLightSource->Direction.z);
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MOON_COLOR],
+                moonLightSource->Color.x, moonLightSource->Color.y, moonLightSource->Color.z, moonLightSource->Color.w);
 }
 
-IWGLightSource IWGLightingMakeBasicLight(void) {
-    IWGLightSource lightSource = {
+IWGPointLightSourceData IWGPointLightSourceMakeDefault(void)
+{
+    IWGPointLightSourceData lightSource = {
         {3.0, 2.5, -2.0},// Position
-        {0.5, 0.1, 0.4},// Attenuation
+        {0.5, 0.2, 0.5},// Attenuation
         {0.0, 0.0, 0.0},// Direction
-        {1.0, 1.0, 1.0},// Color
-        0,// HasSpotlight
-        0.0, 0.0, 0.0,// OuterCutoff, InnerCutoff, Exponent
+        {0.8, 0.8, 0.8, 1.0},// Color
+        1,// HasSpotlight
+        cosf(25.0 * IW_DEG_TO_RAD), cosf(15.0 * IW_DEG_TO_RAD), 2.0,// OuterCutoff, InnerCutoff, Exponent
         7.//VignettingExponent
     };
     return lightSource;
 }
 
-IWGMaterialSource IWGLightingMakeBasicMaterial(void) {
-    IWGMaterialSource materialSource = {
-        {0.15, 0.15, 0.15},// Ambient
-        {0.4, 0.4, 1.0, 1.0}// Diffuse
+IWGBasicLightSourceData IWGBasicLightSourceMakeDefault(void)
+{
+    IWGBasicLightSourceData lightSource = {
+        {1.0, 1.0, 1.0},
+        {1.0, 1.0, 1.0, 1.0}
     };
-    return materialSource;
+    return lightSource;
 }

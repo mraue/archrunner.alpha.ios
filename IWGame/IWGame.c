@@ -41,7 +41,7 @@ void IWGameSetup(void)
     //
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
     //
-    gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.0, false);
+    gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.1, false);
     gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
     //gdGameIsPaused = false;
     gdNCubesPerAxis = 5;// [5]
@@ -228,7 +228,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
              + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
         }
         gdMasterShaderID = 3;
-        gdSkyShaderID = 3;
+        //gdSkyShaderID = 3;
+        gdSkyBox.mainShaderId = 3;
         gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
         return;
@@ -240,8 +241,9 @@ void IWGameUpdate(float timeSinceLastUpdate,
             //gdGameIsPaused = false;
             gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
             gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
-            gdMasterShaderID = 2;
-            gdSkyShaderID = 4;
+            gdMasterShaderID = 1;
+            //gdSkyShaderID = 4;
+            gdSkyBox.mainShaderId = 4;
         } else {
             //gdGameIsPaused = true;
             gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
@@ -567,6 +569,11 @@ void IWGameUpdate(float timeSinceLastUpdate,
     gdModelMatrix = modelMatrix;
     gdProjectionMatrix = projectionMatrix;
     gdViewMatrix = viewMatrix;
+    
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
+                gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
+                gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
 
     return;
 }
