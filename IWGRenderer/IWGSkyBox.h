@@ -32,10 +32,12 @@ typedef struct {
     IWVector4 skyColorDay, skyColorNight;    
     IWVector4 groundColorDay, groundColorNight;
     IWVector4 sunColorDay, sunColorNight;
+    IWVector4 moonColorDay, moonColorNight;
     float colorTransitionTime;
     IWVector4Transition skyColorTransition;
-    IWVector4Transition sunColorTransition;
     IWVector4Transition groundColorTransition;
+    IWVector4Transition sunColorTransition;
+    IWVector4Transition moonColorTransition;
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
     IWGMultiBufferData multiBuffer;

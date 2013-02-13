@@ -64,11 +64,24 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
                                                         skyBox.sunColorDay,
                                                         skyBox.colorTransitionTime,
                                                         0.0, false, false);
-
-    skyBox.moon = IWGCircleMake(IWVector3MultiplyScalar(IWVector3Normalize(IWVector3Make(1.0, 1.0, 1.0)), 30.5),
-                                IWVector3Normalize(IWVector3Make(1.0, 1.0, 1.0)),
-                                IWUI_COLOR_WHITE(1.0),
-                                3.0, 41);
+    
+    skyBox.moonColorDay = IWVector4Make(0.65, 0.65, 0.65, 1.0);
+    skyBox.moonColorNight = IWUI_COLOR_WHITE(1.0);
+//    skyBox.moon = IWGCircleMake(IWVector3MultiplyScalar(IWVector3Normalize(IWVector3Make(1.0, 2.0, -1.0)), 30.5),
+//                                IWVector3Normalize(IWVector3Make(1.0, 1.0, -1.0)),
+//                                skyBox.moonColorDay,
+//                                2.0, 41);
+    skyBox.moon = IWGCircleMake(IWVector3MultiplyScalar(IWVector3Normalize(IWVector3Make(1.0, 0.5, 1.0)), 30.5),
+                                IWVector3Normalize(IWVector3Make(1.0, 0.5, 1.0)),
+                                skyBox.moonColorDay,
+                                2.0, 41);
+    skyBox.moonColorTransition = IWVector4TransitionMake(skyBox.moonColorDay,
+                                                         skyBox.moonColorNight,
+                                                         skyBox.moonColorDay,
+                                                         skyBox.colorTransitionTime,
+                                                         0.0, false, false);
+    
+    
     skyBox.dataBufferSize = (skyBox.sky.triangleBufferData.size
         + skyBox.ground.triangleBufferData.size
         + skyBox.sun.triangleBufferData.size
@@ -127,6 +140,8 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
             IWVector4TransitionUpdate(&skyBox->groundColorTransition, timeSinceLastUpdate);
         if (!skyBox->sunColorTransition.transitionHasFinished)
             IWVector4TransitionUpdate(&skyBox->sunColorTransition, timeSinceLastUpdate);
+        if (!skyBox->moonColorTransition.transitionHasFinished)
+            IWVector4TransitionUpdate(&skyBox->moonColorTransition, timeSinceLastUpdate);
     }
     
     IWGMultiBufferBindCurrentDataUpdateBuffer(&skyBox->multiBuffer);
@@ -164,7 +179,7 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     skyBox->sun.radius = (1. + player->position.z / 30.0) * 5.0;
     
     if (skyBox->sun.centerLocation.y > -10.0)
-        skyBox->sun.centerLocation.y -= 5. * timeSinceLastUpdate / (60. * 7.);
+        skyBox->sun.centerLocation.y -= 5. * timeSinceLastUpdate / (skyBox->colorTransitionTime * 0.9);
 
     if (updateColor)
         skyBox->sun.color = skyBox->sunColorTransition.currentVector;
@@ -177,6 +192,20 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
                           skyBox->sun.triangleBufferData.size * sizeof(GLfloat),
                           skyBox->sun.triangleBufferData.startCPU,
                           false);
+    
+    if (updateColor)
+        skyBox->moon.color = skyBox->moonColorTransition.currentVector;
+    
+    IWGCircleToTriangles(&skyBox->moon);
+    
+    IWGMultiBufferSubData(&skyBox->multiBuffer,
+                          (skyBox->sky.triangleBufferData.size
+                           + skyBox->ground.triangleBufferData.size
+                           + skyBox->moon.triangleBufferData.size) * sizeof(GLfloat),
+                          skyBox->moon.triangleBufferData.size * sizeof(GLfloat),
+                          skyBox->moon.triangleBufferData.startCPU,
+                          false);
+    
     return;
 }
 
