@@ -32,6 +32,8 @@
 
 #include "IWScoreCounter.h"
 
+#include "IWGSkyBox.h"
+
 #include "IWGRenderer.h"
 
 void IWGameSetup(void)
@@ -45,7 +47,7 @@ void IWGameSetup(void)
     gdNCubesPerAxis = 5;// [5]
     //
     gdCubeTriangleBufferStartCPU = NULL;
-    gdSkyTriangleBufferStartCPU = NULL;
+    //gdSkyTriangleBufferStartCPU = NULL;
     gdInGameTextTriangleBufferStartCPU = NULL;
     gdInGameUITriangleBufferStartCPU = NULL;
     gdInGameUILineBufferStartCPU = NULL;
@@ -62,10 +64,7 @@ void IWGameReset(void)
 {
     IWVector3 playerPosition = IWVector3Make(-0.4, 0.4, -1.2);
     IWVector3 playerDirection = IWVector3Normalize(IWVector3Make(0.25, -0.25, 1.0));
-    IWVector3 normalDirectionVec = IWVector3CrossProduct(IWVector3Make(0.0, 0.0, 1.0), playerDirection);
-    float angle = IWVector3DotProduct(IWVector3Make(0.0, 0.0, 1.0), playerDirection);
-    IWMatrix4 rotationMatrix = IWMatrix4MakeRotation(acosf(angle), normalDirectionVec.x, normalDirectionVec.y , normalDirectionVec.z);
-    IWVector3 playerUp = IWMatrix4MultiplyVector3(rotationMatrix, IWVector3Make(0.0, 1.0, 0.0));
+    IWVector3 playerUp = IWControllerGetYUpForDirection(playerDirection);
     
     gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(playerPosition,
                                                               playerDirection,
@@ -80,12 +79,53 @@ void IWGameReset(void)
 void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
 {
     if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
-        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED
-        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
         IWGameUpdate(timeSinceLastUpdate, aspectRatio);
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+        IWGameGameOverHandler(timeSinceLastUpdate, aspectRatio);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
         IWGameStartMenuHandler(timeSinceLastUpdate, aspectRatio);
     }
+    return;
+}
+
+void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
+{
+    IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
+    IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
+    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+    
+    IWRectangle toStartMenuRect = IWRectangleMake(0.0, 0.2, 0.5, 0.35);
+    IWRectangle retryRect = IWRectangleMake(0.0, 0.35, 0.5, 0.5);
+    if (gdIsTouched
+        && IWPointInRectangle(gdTouchPoint, toStartMenuRect)) {
+        IWGRendererTearDownGameAssets();
+        IWGRendererSetupStartMenuAssets();
+        gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+        gdIsTouched = false;
+        gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
+        return;
+    } else if (gdIsTouched
+               && IWPointInRectangle(gdTouchPoint, retryRect)) {
+        IWGRendererTearDownGameAssets();
+        IWGRendererSetupGameAssets();
+        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+        gdIsTouched = false;
+        return;
+    }
+    
+    if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
+        IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
+    }
+    
+    gdGameOverMenuTextField.color = gdStartTextFieldColorTransition.currentVector;
+    IWGTextFieldSetText(&gdGameOverMenuTextField, gdGameOverMenuTextField.text);
+    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+                          (gdScoreTextField.triangleBufferData.size
+                           + gdGameOverTextField.triangleBufferData.size) * sizeof(GLfloat),
+                          gdGameOverMenuTextField.triangleBufferData.size * sizeof(GLfloat),
+                          gdGameOverMenuTextField.triangleBufferData.startCPU,
+                          false);
     return;
 }
 
@@ -101,8 +141,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
         return;
     }
     
-    IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
-
+    IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
     if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
@@ -115,6 +154,8 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
                           gdStartTextField.triangleBufferData.size * sizeof(GLfloat),
                           gdStartTextField.triangleBufferData.startCPU,
                           false);
+    
+    IWGSkyBoxUpdate(&gdSkyBox, timeSinceLastUpdate, &gdPlayerData, true);
     
     // Setup view matrices
     IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
@@ -175,55 +216,24 @@ void IWGameUpdate(float timeSinceLastUpdate,
                   float aspectRatio)
 {
     // Check if we are game over
-    if (gdFuel.currentLevel == 0.0
-        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
-        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
-            printf("GAME OVER\n");
-            IWScoreCounterPrintScore(&gdScoreCounter);
-            gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
-            for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
-                gdTextTriangleDoubleBuffer.nVertices[k] =
-                    (gdScoreTextField.triangleBufferData.size
-                     + gdGameOverTextField.triangleBufferData.size
-                     + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
-            }
-            gdMasterShaderID = 3;
-            gdSkyShaderID = 3;
-            gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
-            gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
+    if (gdFuel.currentLevel == 0.0) {
+        gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
+        printf("GAME OVER\n");
+        IWScoreCounterPrintScore(&gdScoreCounter);
+        gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
+        for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
+            gdTextTriangleDoubleBuffer.nVertices[k] =
+            (gdScoreTextField.triangleBufferData.size
+             + gdGameOverTextField.triangleBufferData.size
+             + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
         }
-        IWRectangle toStartMenuRect = IWRectangleMake(0.0, 0.2, 0.5, 0.35);
-        IWRectangle retryRect = IWRectangleMake(0.0, 0.35, 0.5, 0.5);
-        if (gdIsTouched
-            && IWPointInRectangle(gdTouchPoint, toStartMenuRect)) {
-            IWGRendererTearDownGameAssets();
-            IWGRendererSetupStartMenuAssets();
-            gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
-            gdIsTouched = false;
-            gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
-            return;
-        } else if (gdIsTouched
-                    && IWPointInRectangle(gdTouchPoint, retryRect)) {
-            IWGRendererTearDownGameAssets();
-            IWGRendererSetupGameAssets();
-            gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-            gdIsTouched = false;
-            return;
-        }
-        if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
-            IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
-        }
-        gdGameOverMenuTextField.color = gdStartTextFieldColorTransition.currentVector;
-        IWGTextFieldSetText(&gdGameOverMenuTextField, gdGameOverMenuTextField.text);
-        IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
-                              (gdScoreTextField.triangleBufferData.size
-                               + gdGameOverTextField.triangleBufferData.size) * sizeof(GLfloat),
-                              gdGameOverMenuTextField.triangleBufferData.size * sizeof(GLfloat),
-                              gdGameOverMenuTextField.triangleBufferData.startCPU,
-                              false);
+        gdMasterShaderID = 3;
+        gdSkyShaderID = 3;
+        gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
+        gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
         return;
     }
-        
+    
     // Check if pause button has been pressed
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
@@ -295,6 +305,9 @@ void IWGameUpdate(float timeSinceLastUpdate,
     
     gdTotalRunTime += timeSinceLastUpdate;
     
+    // Update sky
+    IWGSkyBoxUpdate(&gdSkyBox, timeSinceLastUpdate, &gdPlayerData, true);
+    
     // Udpate score and score display
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
@@ -327,7 +340,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (gdTotalRunTime > 5.0 && !gdPlayerData.overdrive) {
         IWFuelRemoveFuel(&gdFuel, 0.05 / 0.6 * timeSinceLastUpdate);
     }
-
+    
     // Spawn pooled cubes
     if (gdPoolCubeIndexList.nEntries > 10
         && gdPlayerData.position.z + 0.5 >= gdSecondaryPosition[gdSecondaryPositionCounter - 1].z) {

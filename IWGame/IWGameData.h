@@ -32,6 +32,7 @@
 #include "IWScoreCounter.h"
 #include "IWGTextField.h"
 #include "IWController.h"
+#include "IWGSkyBox.h"
 
 #pragma mark - Game Logic Data
 
@@ -65,8 +66,14 @@ IWVector3 *gdSecondaryPosition;
 //unsigned int gdNOverdriveCubes;
 float gdZMax;
 
-IWCubeData gdSkyCube;
-IWGCircleData gdSun;
+IWGSkyBoxData gdSkyBox;
+
+//IWCubeData gdSkyCube;
+//IWGCircleData gdSun;
+//
+//IWVector4Transition gdSkyColorTransition;
+//IWVector4Transition gdSunColorTransition;
+//IWVector4Transition gdFloorColorTransition;
 
 IWTimerData gdStateSwitchTimer;
 
@@ -85,7 +92,7 @@ IWGFontMapData gdFontMap;
 void *gdFontMapTextureData;
 
 GLfloat *gdCubeTriangleBufferStartCPU;
-GLfloat *gdSkyTriangleBufferStartCPU;
+//GLfloat *gdSkyTriangleBufferStartCPU;
 GLfloat *gdInGameTextTriangleBufferStartCPU;
 GLfloat *gdInGameUITriangleBufferStartCPU;
 GLfloat *gdInGameUILineBufferStartCPU;
@@ -121,8 +128,8 @@ IWGMultiBufferData gdTextTriangleDoubleBuffer;
 
 IWGMultiBufferData gdTriangleDoubleBuffer;
 
-GLuint gdSkyTriangleVertexArray;
-GLuint gdSkyTriangleVertexBuffer;
+//GLuint gdSkyTriangleVertexArray;
+//GLuint gdSkyTriangleVertexBuffer;
 
 IWGMultiBufferData gdUITriangleDoubleBuffer;
 

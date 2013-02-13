@@ -25,7 +25,7 @@ IWGCircleData IWGCircleMake(IWVector3 centerLocation,
         color,
         radius,
         nTriangles,
-        IWGPrimitiveBufferDataMake(0, 10, NULL, NULL, 0, 0, 0, 7, 3, 0, 0)
+        IWGPrimitiveBufferDataMake(nTriangles * 3 * 10, 10, NULL, NULL, 0, 0, 0, 7, 3, 0, 0)
     };
     return circleData;
 }
@@ -49,24 +49,40 @@ unsigned int IWGCircleToTriangles(IWGCircleData *circle)
         return 0 ;
     }
 
-    float x, y, z, xc, yc, zc, r, xn, yn;
+    float x, y, z, xc, yc, zc, r, xn, yn, zn, xr, yr;
     
     r = circle->radius;
     IWVector4 color = circle->color;
     IWVector3 normal = IWVector3Make(0.0, 0.0, 1.0);
+    
+    IWVector3 normalDirectionVec = IWVector3CrossProduct(IWVector3Make(0.0, 0.0, 1.0), circle->direction);
+    float angle = IWVector3DotProduct(IWVector3Make(0.0, 0.0, 1.0), circle->direction);
+    IWMatrix4 rotationMatrix = IWMatrix4MakeRotation(acosf(angle), normalDirectionVec.x, normalDirectionVec.y , normalDirectionVec.z);
+    IWVector3 newPos, newR;
     
     x = xc = circle->centerLocation.x;
     yc = circle->centerLocation.y;
     y = yc - r;
     z = zc = circle->centerLocation.z;
     
+    newPos = IWMatrix4MultiplyVector3(rotationMatrix, IWVector3Make(x, y, z));
+    
+    newR = IWMatrix4MultiplyVector3(rotationMatrix, IWVector3Make(0.0, -r, 0.0));
+    x = xc + newR.x;
+    y = yc + newR.y;
+    z = zc + newR.z;
+    
     for (float angle = angleStep; angle < 2.0 * M_PI + angleStep * 1.5; angle += angleStep) {
-        xn = xc + sinf(angle) * r;
-        yn = yc + cosf(angle) * r;
-        p = IWGCircleToTrianglesAddPoint(p, xn, yn, z, color, normal);
-        p = IWGCircleToTrianglesAddPoint(p, xc, yc, z, color, normal);
+        xr = sinf(angle) * r;
+        yr = cosf(angle) * r;
+        newR = IWMatrix4MultiplyVector3(rotationMatrix, IWVector3Make(xr, yr, 0.0));
+        xn = xc + newR.x;
+        yn = yc + newR.y;
+        zn = zc + newR.z;
+        p = IWGCircleToTrianglesAddPoint(p, xn, yn, zn, color, normal);
+        p = IWGCircleToTrianglesAddPoint(p, xc, yc, zc, color, normal);
         p = IWGCircleToTrianglesAddPoint(p, x, y, z, color, normal);
-        x = xn; y = yn;
+        x = xn; y = yn; z = zn;
     }
 
     return (p - circle->triangleBufferData.startCPU);

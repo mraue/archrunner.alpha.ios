@@ -30,4 +30,6 @@ void IWControllerDataUpdateReferenceDirection(IWControllerData *controllerData,
 void IWControllerUpdateRotationSpeed(IWControllerData* cd, float deltaT);
 void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVector3 attitude);
 
+IWVector3 IWControllerGetYUpForDirection(IWVector3 direction);
+
 #endif

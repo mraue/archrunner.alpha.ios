@@ -33,6 +33,8 @@
 
 #include "IWScoreCounter.h"
 
+#include "IWGSkyBox.h"
+
 #include "IWGameData.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -70,10 +72,10 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     gdUITriangleDoubleBuffer = IWGMultiBufferGen();
     
     // Could swith to multi buffer, ey!
-    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
-    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
-    glBindVertexArrayOES(0);
+//    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+//    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+//    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+//    glBindVertexArrayOES(0);
     
     glGenVertexArraysOES(1, &gdUILineVertexArray);
     glBindVertexArrayOES(gdUILineVertexArray);
@@ -92,10 +94,10 @@ void IWGRendererSetupStartMenuAssets(void)
     gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
     
     // Could swith to multi buffer, ey!
-    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
-    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
-    glBindVertexArrayOES(0);
+//    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+//    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+//    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+//    glBindVertexArrayOES(0);
     
     gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(-0.8, 0.0, -1.),
                                                               IWVector3Normalize(IWVector3Make(0.4, 0.0, 1.0)),
@@ -199,39 +201,52 @@ void IWGRendererSetupStartMenuAssets(void)
     // Sky box
     //
     
-    gdSkyCube = IWCubeMake(n, IWCUBE_TYPE_STANDARD,
-                           IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
-                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
-                           IWVector3Make(60.0, 20.0, 60.0),
-                           IWCUBE_FACES_BOWL,
-                           IWCUBE_NORMALS_INWARD,
-                           0.0, true, false, IWVector3TransitionMakeEmpty());
+    gdSkyBox = IWGSkyBoxMakeDefault();
+    IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
     
-    gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
-    
-    size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
-    
-    gdSkyTriangleBufferStartCPU = malloc(skySize);
-    gdSkyCube.triangleBufferData.startCPU = gdSkyTriangleBufferStartCPU;
-    
-    gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
-    
-    gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
-    gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
-    
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
-    
-    glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
-    
-    glEnableVertexAttribArray(positionSlot);
-    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(colorSlot);
-    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(normalSlot);
-    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
-    
-    glBindVertexArrayOES(0);
+//    gdSkyCube = IWCubeMake(n, IWCUBE_TYPE_STANDARD,
+//                           IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
+//                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
+//                           IWVector3Make(60.0, 20.0, 60.0),
+//                           IWCUBE_FACES_BOWL,
+//                           IWCUBE_NORMALS_INWARD,
+//                           0.0, true, false, IWVector3TransitionMakeEmpty());
+//    
+//    gdFloorColorTransition = IWVector4TransitionMake(gdSkyCube.color,
+//                                                     IWUI_COLOR_DARK_BLUE(1.0),
+//                                                     gdSkyCube.color,
+//                                                     8.0 * 60.0, 0.0, false, false);
+//    
+//    gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
+//    
+//    gdSunColorTransition = IWVector4TransitionMake(gdSun.color,
+//                                                   IWUI_COLOR_DARK_RED(1.0),
+//                                                   gdSun.color,
+//                                                   8.0 * 60.0, 0.0, false, false);
+//    
+//    size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
+//    
+//    gdSkyTriangleBufferStartCPU = malloc(skySize);
+//    gdSkyCube.triangleBufferData.startCPU = gdSkyTriangleBufferStartCPU;
+//    
+//    gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
+//    
+//    gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
+//    gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
+//    
+//    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+//    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
+//    
+//    glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
+//    
+//    glEnableVertexAttribArray(positionSlot);
+//    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+//    glEnableVertexAttribArray(colorSlot);
+//    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+//    glEnableVertexAttribArray(normalSlot);
+//    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+//    
+//    glBindVertexArrayOES(0);
     
     //
     // Text
@@ -336,9 +351,11 @@ void IWGRendererTearDownStartMenuAssets(void)
     free(gdCubeTriangleBufferStartCPU);
     gdCubeTriangleBufferStartCPU = NULL;
     
-    free(gdSkyTriangleBufferStartCPU);
-    gdSkyTriangleBufferStartCPU = NULL;
+//    free(gdSkyTriangleBufferStartCPU);
+//    gdSkyTriangleBufferStartCPU = NULL;
 
+    IWGSkyBoxPurgeData(&gdSkyBox);
+    
     IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
     IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
     
@@ -355,8 +372,8 @@ void IWGRendererTearDownStartMenuAssets(void)
 //    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
 //    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
 
-    glDeleteBuffers(1, &gdSkyTriangleVertexBuffer);
-    glDeleteVertexArraysOES(1, &gdSkyTriangleVertexArray);
+//    glDeleteBuffers(1, &gdSkyTriangleVertexBuffer);
+//    glDeleteVertexArraysOES(1, &gdSkyTriangleVertexArray);
     
     //glDeleteBuffers(1, &gdUILineVertexBuffer);
     //glDeleteVertexArraysOES(1, &gdUILineVertexArray);
@@ -381,10 +398,10 @@ void IWGRendererSetupGameAssets(void)
     gdUITriangleDoubleBuffer = IWGMultiBufferGen();
     
     // Could swith to multi buffer, ey!
-    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
-    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
-    glBindVertexArrayOES(0);
+//    glGenVertexArraysOES(1, &gdSkyTriangleVertexArray);
+//    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+//    glGenBuffers(1, &gdSkyTriangleVertexBuffer);
+//    glBindVertexArrayOES(0);
     
     glGenVertexArraysOES(1, &gdUILineVertexArray);
     glBindVertexArrayOES(gdUILineVertexArray);
@@ -489,16 +506,15 @@ void IWGRendererSetupGameAssets(void)
 
     IWGLightingInitializeUniformLocations(gdGLProgramID);
     IWGLightingSetUniforms(gdLightSourceData, gdMaterialSourceData);
-
-    for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
-        gdTriangleDoubleBuffer.nVertices[k] = nVertices;
-    }
     
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+
         IWGMultiBufferBind(&gdTriangleDoubleBuffer, i);
 
         glBufferData(GL_ARRAY_BUFFER, mypos_size, gdCubeTriangleBufferStartCPU, GL_DYNAMIC_DRAW);
+        
+        gdTriangleDoubleBuffer.nVertices[i] = nVertices;
 
         glEnableVertexAttribArray(positionSlot);
         glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
@@ -506,7 +522,6 @@ void IWGRendererSetupGameAssets(void)
         glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(normalSlot);
         glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
-        //glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *ptr)
     }
     
     glBindVertexArrayOES(0);
@@ -515,38 +530,56 @@ void IWGRendererSetupGameAssets(void)
     // Sky box
     //
     
-    gdSkyCube = IWCubeMake(n, IWCUBE_TYPE_STANDARD,
-                           IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
-                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
-                           IWVector3Make(60.0, 20.0, 60.0),
-                           IWCUBE_FACES_BOWL,
-                           IWCUBE_NORMALS_INWARD,
-                           0.0, true, false, IWVector3TransitionMakeEmpty());
-
-    gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
-
-    size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
-
-    gdSkyTriangleBufferStartCPU = malloc(skySize);
-    gdSkyCube.triangleBufferData.startCPU = gdSkyTriangleBufferStartCPU;
+    gdSkyBox = IWGSkyBoxMakeDefault();
+    IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
     
-    gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
-
-    gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
-    gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
-    
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
-    
-    glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
-    
-    glEnableVertexAttribArray(positionSlot);
-    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(colorSlot);
-    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(normalSlot);
-    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
-    
+//    gdSkyColorTransition = IWVector4TransitionMake(gdClearColor,
+//                                                   IWUI_COLOR_BLUE(1.0),
+//                                                   gdClearColor,
+//                                                   8.0 * 60.0, 0.0, false, false);
+//    
+//    gdSkyCube = IWCubeMake(n, IWCUBE_TYPE_STANDARD,
+//                           IWVector3Make(gdPlayerData.position.x, -10.0, gdPlayerData.position.z),
+//                           IWVector4Make(0.5, 0.5, 0.5, 1.0),
+//                           IWVector3Make(60.0, 20.0, 60.0),
+//                           IWCUBE_FACES_BOWL,
+//                           IWCUBE_NORMALS_INWARD,
+//                           0.0, true, false, IWVector3TransitionMakeEmpty());
+//    
+//    gdFloorColorTransition = IWVector4TransitionMake(gdSkyCube.color,
+//                                                     IWUI_COLOR_DARK_BLUE(1.0),
+//                                                     gdSkyCube.color,
+//                                                     8.0 * 60.0, 0.0, false, false);
+//
+//    gdSun = IWGCircleMake(IWVector3Make(0.0, -1.0, 30.5), IWVector3Make(0.0, 0.0, 1.0), IWUI_COLOR_GOLD(1.0), 5.0, 41);
+//
+//    gdSunColorTransition = IWVector4TransitionMake(gdSun.color,
+//                                                   IWUI_COLOR_DARK_RED(1.0),
+//                                                   gdSun.color,
+//                                                   7.0 * 60.0, 0.0, false, false);
+//    
+//    size_t skySize = (1 * 5 * 6 + gdSun.nTriangles * 3)* 10 * sizeof(GLfloat);
+//
+//    gdSkyTriangleBufferStartCPU = malloc(skySize);
+//    gdSkyCube.triangleBufferData.startCPU = gdSkyTriangleBufferStartCPU;
+//    
+//    gdSkyCube.triangleBufferData.size = IWCubeToTriangles(&gdSkyCube);
+//
+//    gdSun.triangleBufferData.startCPU = gdSkyCube.triangleBufferData.startCPU + gdSkyCube.triangleBufferData.size;
+//    gdSun.triangleBufferData.size = IWGCircleToTriangles(&gdSun);
+//    
+//    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+//    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
+//    
+//    glBufferData(GL_ARRAY_BUFFER, skySize, gdSkyCube.triangleBufferData.startCPU, GL_DYNAMIC_DRAW);
+//    
+//    glEnableVertexAttribArray(positionSlot);
+//    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+//    glEnableVertexAttribArray(colorSlot);
+//    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+//    glEnableVertexAttribArray(normalSlot);
+//    glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+//    
     glBindVertexArrayOES(0);
     
     //
@@ -605,13 +638,11 @@ void IWGRendererSetupGameAssets(void)
                                                               IWVector4Make(0.2, 0.2, 0.2, 0.8),
                                                               1.0, 0.0, false, false);
     
-    for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
-        gdTextTriangleDoubleBuffer.nVertices[k] = gdScoreTextField.triangleBufferData.size / gdScoreTextField.triangleBufferData.stride;
-    }
-    
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
 
+        gdTextTriangleDoubleBuffer.nVertices[i] = gdScoreTextField.triangleBufferData.size / gdScoreTextField.triangleBufferData.stride;
+        
         IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
         
         glBindTexture(GL_TEXTURE_2D, gdTextureHandlerId);
@@ -739,8 +770,8 @@ void IWGRendererTearDownGameAssets(void)
     free(gdCubeTriangleBufferStartCPU);
     gdCubeTriangleBufferStartCPU = NULL;
     
-    free(gdSkyTriangleBufferStartCPU);
-    gdSkyTriangleBufferStartCPU = NULL;
+//    free(gdSkyTriangleBufferStartCPU);
+//    gdSkyTriangleBufferStartCPU = NULL;
     
     free(gdInGameTextTriangleBufferStartCPU);
     gdInGameTextTriangleBufferStartCPU = NULL;
@@ -750,6 +781,8 @@ void IWGRendererTearDownGameAssets(void)
     
     free(gdInGameUITriangleBufferStartCPU);
     gdInGameUITriangleBufferStartCPU = NULL;
+    
+    IWGSkyBoxPurgeData(&gdSkyBox);
     
 //    IWGMultiBufferPurgeBufferSubData(&gdTextTriangleDoubleBuffer);
 //    IWGMultiBufferResetNVertices(&gdTextTriangleDoubleBuffer);
@@ -765,9 +798,9 @@ void IWGRendererTearDownGameAssets(void)
     IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
     IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
     IWGMultiBufferDealloc(&gdUITriangleDoubleBuffer);
-    
-    glDeleteBuffers(1, &gdSkyTriangleVertexBuffer);
-    glDeleteVertexArraysOES(1, &gdSkyTriangleVertexArray);
+//    
+//    glDeleteBuffers(1, &gdSkyTriangleVertexBuffer);
+//    glDeleteVertexArraysOES(1, &gdSkyTriangleVertexArray);
     
     glDeleteBuffers(1, &gdUILineVertexBuffer);
     glDeleteVertexArraysOES(1, &gdUILineVertexArray);
@@ -814,33 +847,36 @@ void IWGRendererRenderSkybox(void)
 {
     // Render sky box
 
-    glBindVertexArrayOES(gdSkyTriangleVertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
-    
-    //glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-    //            gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdSkyShaderID);
-    
-    gdSkyCube.centerPosition.x = gdPlayerData.position.x;
-    gdSkyCube.centerPosition.z = gdPlayerData.position.z;
-    IWCubeToTriangles(&gdSkyCube);
-    glBufferSubData(GL_ARRAY_BUFFER, 0,
-                    gdSkyCube.triangleBufferData.size * sizeof(GLfloat), gdSkyCube.triangleBufferData.startCPU);
-    
-    gdSun.centerLocation.x = gdPlayerData.position.x;
-    gdSun.centerLocation.z = gdPlayerData.position.z + 30.5;
-    IWGCircleToTriangles(&gdSun);
-    glBufferSubData(GL_ARRAY_BUFFER, gdSkyCube.triangleBufferData.size * sizeof(GLfloat),
-                    gdSun.triangleBufferData.size * sizeof(GLfloat), gdSun.triangleBufferData.startCPU);
-    
-    glDrawArrays(GL_TRIANGLES, 0,
-                 (gdSkyCube.triangleBufferData.size + gdSun.triangleBufferData.size) / gdSkyCube.triangleBufferData.stride);
-    
-    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-                gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z,
-                gdMaterialSourceData.Diffuse.w);
-
-    glBindVertexArrayOES(0);
+//    glBindVertexArrayOES(gdSkyTriangleVertexArray);
+//    glBindBuffer(GL_ARRAY_BUFFER, gdSkyTriangleVertexBuffer);
+//    
+//    //glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
+//    //            gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
+//    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdSkyShaderID);
+//    
+//    gdSkyCube.centerPosition.x = gdPlayerData.position.x;
+//    gdSkyCube.centerPosition.z = gdPlayerData.position.z;
+//    gdSkyCube.color = gdFloorColorTransition.currentVector;
+//    IWCubeToTriangles(&gdSkyCube);
+//    glBufferSubData(GL_ARRAY_BUFFER, 0,
+//                    gdSkyCube.triangleBufferData.size * sizeof(GLfloat), gdSkyCube.triangleBufferData.startCPU);
+//    
+//    gdSun.centerLocation.x = gdPlayerData.position.x;
+//    gdSun.centerLocation.z = gdPlayerData.position.z + 30.5;
+//    gdSun.radius = (1. + gdPlayerData.position.z / 30.0) * 5.0;
+//    gdSun.color = gdSunColorTransition.currentVector;
+//    IWGCircleToTriangles(&gdSun);
+//    glBufferSubData(GL_ARRAY_BUFFER, gdSkyCube.triangleBufferData.size * sizeof(GLfloat),
+//                    gdSun.triangleBufferData.size * sizeof(GLfloat), gdSun.triangleBufferData.startCPU);
+//    
+//    glDrawArrays(GL_TRIANGLES, 0,
+//                 (gdSkyCube.triangleBufferData.size + gdSun.triangleBufferData.size) / gdSkyCube.triangleBufferData.stride);
+//    
+//    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
+//                gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z,
+//                gdMaterialSourceData.Diffuse.w);
+//
+//    glBindVertexArrayOES(0);
 }
 
 void IWGRendererRenderInGameUI(void)
@@ -910,7 +946,8 @@ void IWGRendererRender(void)
 
         glDisable(GL_CULL_FACE);
 
-        IWGRendererRenderSkybox();
+        //IWGRendererRenderSkybox();
+        IWGSkyBoxRender(&gdSkyBox, false);
 
         glDisable(GL_DEPTH_TEST);
 
@@ -932,7 +969,8 @@ void IWGRendererRender(void)
         
         glDisable(GL_CULL_FACE);
         
-        IWGRendererRenderSkybox();
+        //IWGRendererRenderSkybox();
+        IWGSkyBoxRender(&gdSkyBox, false);
         
         glDisable(GL_DEPTH_TEST);
         

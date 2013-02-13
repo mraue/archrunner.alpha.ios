@@ -30,4 +30,6 @@ void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio);
 void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio);
 void IWGamePauseMenuHandler(float timeSinceLastUpdate, float aspectRatio);
 
+void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio);
+
 #endif

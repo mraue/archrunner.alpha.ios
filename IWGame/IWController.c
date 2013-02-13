@@ -138,3 +138,11 @@ void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVec
     controllerData->rotationSpeed = rotationSpeed;
     return;
 }
+
+IWVector3 IWControllerGetYUpForDirection(IWVector3 direction)
+{
+    IWVector3 normalDirectionVec = IWVector3CrossProduct(IWVector3Make(0.0, 0.0, 1.0), direction);
+    float angle = IWVector3DotProduct(IWVector3Make(0.0, 0.0, 1.0), direction);
+    IWMatrix4 rotationMatrix = IWMatrix4MakeRotation(acosf(angle), normalDirectionVec.x, normalDirectionVec.y , normalDirectionVec.z);
+    return IWMatrix4MultiplyVector3(rotationMatrix, IWVector3Make(0.0, 1.0, 0.0));
+}
