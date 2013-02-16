@@ -40,13 +40,12 @@ typedef enum _IWGRENDERER_ATTRIBUTE_ID_INDEX IWGRENDERER_ATTRIBUTE_ID_INDEX;
 
 IWGShaderProgramData shaderProgramData;
 GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
+GLuint skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
 GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
 #pragma mark - Functions
 
-void IWGRendererSetupGL(const char* vertexShaderFilename,
-                        const char* fragmentShaderFilename,
-                        const char* fontMapFilename);
+void IWGRendererSetupGL(const char* fontMapFilename);
 
 void IWGRendererSetupStartMenuAssets(void);
 void IWGRendererTearDownStartMenuAssets(void);

@@ -39,31 +39,22 @@
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-void IWGRendererSetupGL(const char* vertexShaderFilename,
-                        const char* fragmentShaderFilename,
-                        const char* fontMapFilename)
+void IWGRendererSetupGL(const char* fontMapFilename)
 {
-    // Basic lighting program
-    shaderProgramData = IWGShaderProgramMake(IWFileToolsReadFileToString(vertexShaderFilename),
-                                             IWFileToolsReadFileToString(fragmentShaderFilename));
-    gdGLProgramID = shaderProgramData.programID;
+    // Main lighting shader program
+    IWGShaderProgramInitFromFiles(&gdMainShaderProgram);
     
-    if (gdGLProgramID == 0) {
-        printf("ERROR: Could not create GL program");
-        return;
-    }
-    
-    glUseProgram(gdGLProgramID);
+    glUseProgram(gdMainShaderProgram.programID);
     
     // Get and save uniform locations.
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
-    = glGetUniformLocation(gdGLProgramID, "ModelMatrix");
+        = glGetUniformLocation(gdMainShaderProgram.programID, "ModelMatrix");
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
-    = glGetUniformLocation(gdGLProgramID, "ViewMatrix");
+        = glGetUniformLocation(gdMainShaderProgram.programID, "ViewMatrix");
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
-    = glGetUniformLocation(gdGLProgramID, "ProjectionMatrix");
+        = glGetUniformLocation(gdMainShaderProgram.programID, "ProjectionMatrix");
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
-    = glGetUniformLocation(gdGLProgramID, "NormalMatrix");
+        = glGetUniformLocation(gdMainShaderProgram.programID, "NormalMatrix");
     
     gdSunLightSource = IWGBasicLightSourceMakeDefault();
     gdMoonLightSource = IWGBasicLightSourceMakeDefault();
@@ -73,8 +64,24 @@ void IWGRendererSetupGL(const char* vertexShaderFilename,
     
     gdPLayerLightSource = IWGPointLightSourceMakeDefault();
     
-    IWGLightingInitializeUniformLocations(gdGLProgramID);
+    IWGLightingInitializeUniformLocations(gdMainShaderProgram.programID);
     IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
+    
+    IWGShaderProgramInitFromFiles(&gdTextShaderProgram);
+    
+    IWGShaderProgramInitFromFiles(&gdUIShaderProgram);
+    
+    IWGShaderProgramInitFromFiles(&gdSkyboxShaderProgram);
+    
+    glUseProgram(gdSkyboxShaderProgram.programID);
+    
+    // Get and save uniform locations.
+    skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
+        = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ModelMatrix");
+    skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
+        = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ViewMatrix");
+    skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
+        = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ProjectionMatrix");
     
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
@@ -165,10 +172,10 @@ void IWGRendererSetupStartMenuAssets(void)
     unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
     
     // Get attribute locations
-    GLuint positionSlot = glGetAttribLocation(gdGLProgramID, "Vertex");
-    GLuint normalSlot = glGetAttribLocation(gdGLProgramID, "Normal");
-    GLuint colorSlot = glGetAttribLocation(gdGLProgramID, "Color");
-    GLuint textureOffsetSlot = glGetAttribLocation(gdGLProgramID, "TextureOffset");
+    GLuint positionSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Vertex");
+    GLuint normalSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Normal");
+    GLuint colorSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Color");
+    GLuint textureOffsetSlot = glGetAttribLocation(gdMainShaderProgram.programID, "TextureOffset");
     
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTriangleDoubleBuffer.nVertices[k] = nVertices;
@@ -194,6 +201,12 @@ void IWGRendererSetupStartMenuAssets(void)
     //
     // Sky box
     //
+    
+    glUseProgram(gdSkyboxShaderProgram.programID);
+    
+    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
+    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
+    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
     
     gdSkyBox = IWGSkyBoxMakeDefault();
     IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
@@ -261,6 +274,12 @@ void IWGRendererSetupStartMenuAssets(void)
         gdTextTriangleDoubleBuffer.nVertices[k] = textSizeTotal / gdTitleTextField.triangleBufferData.stride;
     }
     
+    glUseProgram(gdTextShaderProgram.programID);
+    
+    positionSlot = glGetAttribLocation(gdTextShaderProgram.programID, "Vertex");
+    colorSlot = glGetAttribLocation(gdTextShaderProgram.programID, "Color");
+    textureOffsetSlot = glGetAttribLocation(gdTextShaderProgram.programID, "TextureOffset");
+    
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
@@ -268,10 +287,10 @@ void IWGRendererSetupStartMenuAssets(void)
         
         glBindTexture(GL_TEXTURE_2D, textureHandlerId);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
         //glGenerateMipmap(GL_TEXTURE_2D);
@@ -426,10 +445,10 @@ void IWGRendererSetupGameAssets(void)
     unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
     
     // Get attribute locations
-    GLuint positionSlot = glGetAttribLocation(gdGLProgramID, "Vertex");
-    GLuint normalSlot = glGetAttribLocation(gdGLProgramID, "Normal");
-    GLuint colorSlot = glGetAttribLocation(gdGLProgramID, "Color");
-    GLuint textureOffsetSlot = glGetAttribLocation(gdGLProgramID, "TextureOffset");
+    GLuint positionSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Vertex");
+    GLuint normalSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Normal");
+    GLuint colorSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Color");
+    GLuint textureOffsetSlot = glGetAttribLocation(gdMainShaderProgram.programID, "TextureOffset");
     
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
@@ -454,6 +473,12 @@ void IWGRendererSetupGameAssets(void)
     // Sky box
     //
     
+    glUseProgram(gdSkyboxShaderProgram.programID);
+    
+    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
+    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
+    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
+
     gdSkyBox = IWGSkyBoxMakeDefault();
     IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
     
@@ -513,6 +538,12 @@ void IWGRendererSetupGameAssets(void)
                                                               IWVector4Make(0.2, 0.2, 0.2, 0.8),
                                                               1.0, 0.0, false, false);
     
+    glUseProgram(gdTextShaderProgram.programID);
+    
+    positionSlot = glGetAttribLocation(gdTextShaderProgram.programID, "Vertex");
+    colorSlot = glGetAttribLocation(gdTextShaderProgram.programID, "Color");
+    textureOffsetSlot = glGetAttribLocation(gdTextShaderProgram.programID, "TextureOffset");
+    
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
 
@@ -521,11 +552,15 @@ void IWGRendererSetupGameAssets(void)
         IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
         
         glBindTexture(GL_TEXTURE_2D, gdTextureHandlerId);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
+        //glGenerateMipmap(GL_TEXTURE_2D);
 
         glBufferData(GL_ARRAY_BUFFER,
                      totalTextFieldsSize * sizeof(GLfloat),
@@ -541,6 +576,8 @@ void IWGRendererSetupGameAssets(void)
     }
     
     glBindVertexArrayOES(0);
+    
+    glUseProgram(gdMainShaderProgram.programID);
     
     //
     // Head up display data
@@ -583,6 +620,11 @@ void IWGRendererSetupGameAssets(void)
     gdFuel.stateBar.triangleBufferData.bufferOffsetGPU = offset;
     gdFuel.stateBar.triangleBufferData.size = IWFuelToTriangleBuffer(&gdFuel, gdInGameUITriangleBufferStartCPU + offset);
     offset += gdFuel.stateBar.triangleBufferData.size;
+    
+    glUseProgram(gdUIShaderProgram.programID);
+    
+    positionSlot = glGetAttribLocation(gdUIShaderProgram.programID, "Vertex");
+    colorSlot = glGetAttribLocation(gdUIShaderProgram.programID, "Color");
 
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         IWGMultiBufferBind(&gdUITriangleDoubleBuffer, i);
@@ -696,7 +738,7 @@ void IWGRendererRenderCubes(void)
                        1, 0, &gdNormalMatrix.m00);
     
     // Set master shader switch
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdMasterShaderID);
+    //glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdMasterShaderID);
     
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
@@ -738,10 +780,6 @@ void IWGRendererRenderInGameText(void)
     
     IWGMultiBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
     
-    // Set master shader switch
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
-                5);
-    
     glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
@@ -764,12 +802,40 @@ void IWGRendererRender(void)
     
     if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
         || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        
+        glUseProgram(gdMainShaderProgram.programID);
+        
+        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
+                    1.0, 1.0, 1.0,
+                    IW_MAX(0.0, 1.0 - gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 0.9)));
+        
+        float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
+        tmp *= tmp;
+        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
+                    0.7, 0.7, 0.7,
+                    IW_MIN(1.0, tmp));
+        
+        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
+                    gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
+        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
+                    gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
+        
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
 
         IWGRendererRenderCubes();
 
         glDisable(GL_CULL_FACE);
+        
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        
+        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
+                           1, 0, &gdModelMatrix.m00);
+        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
+                           1, 0, &gdViewMatrix.m00);
+        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
+                           1, 0, &gdProjectionMatrix.m00);
+        
 
         IWGSkyBoxRender(&gdSkyBox, false);
 
@@ -778,8 +844,12 @@ void IWGRendererRender(void)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        glUseProgram(gdTextShaderProgram.programID);
+        
         IWGRendererRenderInGameText();
 
+        glUseProgram(gdUIShaderProgram.programID);
+        
         IWGRendererRenderInGameUI();
 
         glDisable(GL_BLEND);
@@ -789,16 +859,44 @@ void IWGRendererRender(void)
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         
+        glUseProgram(gdMainShaderProgram.programID);
+        
+        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
+                    1.0, 1.0, 1.0,
+                    IW_MAX(0.0, 1.0 - gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 0.9)));
+        
+        float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
+        tmp *= tmp;
+        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
+                    0.7, 0.7, 0.7,
+                    IW_MIN(1.0, tmp));
+        
+        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
+                    gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
+        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
+                    gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
+        
         IWGRendererRenderCubes();
         
         glDisable(GL_CULL_FACE);
         
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        
+        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
+                           1, 0, &gdModelMatrix.m00);
+        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
+                           1, 0, &gdViewMatrix.m00);
+        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
+                           1, 0, &gdProjectionMatrix.m00);
+
         IWGSkyBoxRender(&gdSkyBox, false);
         
         glDisable(GL_DEPTH_TEST);
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        glUseProgram(gdTextShaderProgram.programID);
         
         IWGRendererRenderInGameText();
         

@@ -63,7 +63,7 @@ void IWGMultiBufferSwitchBuffer(IWGMultiBufferData *multiBufferData)
         }
     }
     multiBufferData->nVertices[currentBuffer] = multiBufferData->nVertices[previousBuffer];
-    multiBufferData->currentDrawBuffer = (currentBuffer + 1) % IWGMULTIBUFFER_MAX;
+    multiBufferData->currentDrawBuffer = (currentBuffer + IWGMULTIBUFFER_MAX / 2) % IWGMULTIBUFFER_MAX;
 }
 
 void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,

@@ -446,9 +446,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     gdScoreCounter.nGridCubes++;
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
-
-                    // Remove cube
-                    IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
                     
                     // Activate overdrive
                     IWPlayerActivatOverdrive(&gdPlayerData);
@@ -458,43 +455,71 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     gdOverdriveColorTransition.currentColor = IWUI_COLOR_GOLD(0.4);
                     gdOverdriveColorTransition.currentTransitionTime = 0.0;
                     gdOverdriveColorTransition.transitionHasFinished = false;
+
+//                    gdClearColorTransition.currentTransitionTime = 0.0;
+//                    gdClearColorTransition.transitionHasFinished = false;
+                    
+                    gdCubeData[i].type = IWCUBE_TYPE_POPPING;
+                    
+                    IWVector3 dimensions = gdCubeData[i].dimensions;
+                    gdCubeData[i].positionTransition = IWVector3TransitionMake(dimensions,
+                                                                               IWVector3MultiplyScalar(dimensions, 0.01),
+                                                                               dimensions, 0.15, 0.0, false, false);
                     
                     //gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
-                    
-                    gdScoreCounter.nBridgeCubes++;
-                    
-                    gdClearColorTransition.currentTransitionTime = 0.0;
-                    gdClearColorTransition.transitionHasFinished = false;
-                    IWIndexListAppendObjectId(&gdPoolCubeIndexList, i);
+
                 }
             }
         } else if (!gdCubeData[i].positionTransition.transitionHasFinished) {
             
             IWVector3TransitionUpdate(&gdCubeData[i].positionTransition, timeSinceLastUpdate);
-
-            if (gdCubeData[i].positionTransition.transitionHasFinished) {
-                gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.endVector;
-                if (gdCubeData[i].type == IWCUBE_TYPE_TRANSITION) {
-                    // Cube has arrived at bridge position
-                    //IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_GOLD(1.0));
-                    gdCubeData[i].color = IWUI_COLOR_RED(1.0);
-                    gdCubeData[i].isInteractive = true;
-                    gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
+            
+            bool updateBuffer = true;
+            
+            if (gdCubeData[i].type == IWCUBE_TYPE_TRANSITION
+                || gdCubeData[i].type == IWCUBE_TYPE_SPAWNING) {
+                if (gdCubeData[i].positionTransition.transitionHasFinished) {
+                    gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.endVector;
+                    if (gdCubeData[i].type == IWCUBE_TYPE_TRANSITION) {
+                        // Cube has arrived at bridge position
+                        //IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_GOLD(1.0));
+                        gdCubeData[i].color = IWUI_COLOR_RED(1.0);
+                        gdCubeData[i].isInteractive = true;
+                        gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
+                    } else {
+                        //gdCubeData[i].color = IWUI_COLOR_BLUE(1.0);
+                        gdCubeData[i].isInteractive = true;
+                        gdCubeData[i].type = IWCUBE_TYPE_STANDARD;
+                    }
                 } else {
-                    //gdCubeData[i].color = IWUI_COLOR_BLUE(1.0);
-                    gdCubeData[i].isInteractive = true;
-                    gdCubeData[i].type = IWCUBE_TYPE_STANDARD;
+                    // Continue moving cube
+                    gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.currentVector;  
                 }
-            } else {
-                // Continue moving cube
-                gdCubeData[i].centerPosition = gdCubeData[i].positionTransition.currentVector;  
+            } else if (gdCubeData[i].type == IWCUBE_TYPE_POPPING) {
+                if (gdCubeData[i].positionTransition.transitionHasFinished) {
+                    gdCubeData[i].type = IWCUBE_TYPE_POOL;
+                    
+                    gdScoreCounter.nBridgeCubes++;
+                    
+                    IWIndexListAppendObjectId(&gdPoolCubeIndexList, i);
+                    
+                    // Remove cube
+                    IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
+                    updateBuffer = false;
+                    gdCubeData[i].dimensions = gdCubeData[i].positionTransition.startVector;
+                } else {
+                    gdCubeData[i].dimensions = gdCubeData[i].positionTransition.currentVector;
+                }
             }
-            IWCubeToTriangles(&gdCubeData[i]);
-            IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
-                                   gdCubeData[i].triangleBufferData.size * gdCubeData[i].triangleBufferData.bufferIDGPU * sizeof(GLfloat),
-                                   gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
-                                   gdCubeData[i].triangleBufferData.startCPU,
-                                   false);
+            
+            if (updateBuffer) {
+                IWCubeToTriangles(&gdCubeData[i]);
+                IWGMultiBufferSubData(&gdTriangleDoubleBuffer,
+                                       gdCubeData[i].triangleBufferData.size * gdCubeData[i].triangleBufferData.bufferIDGPU * sizeof(GLfloat),
+                                       gdCubeData[i].triangleBufferData.size * sizeof(GLfloat),
+                                       gdCubeData[i].triangleBufferData.startCPU,
+                                       false);
+            }
         }
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -569,11 +594,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
     gdModelMatrix = modelMatrix;
     gdProjectionMatrix = projectionMatrix;
     gdViewMatrix = viewMatrix;
-    
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
-                gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
-    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
-                gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
 
     return;
 }

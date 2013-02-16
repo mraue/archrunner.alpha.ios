@@ -11,15 +11,31 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "IWFileTools.h"
+
 IWGShaderProgramData IWGShaderProgramMake(const char* vertexShaderDataString,
                                           const char* fragmentShaderDataString)
 {
     IWGShaderProgramData programData = {
-        vertexShaderDataString, fragmentShaderDataString, 0, 0, 0
+        "", "", vertexShaderDataString, fragmentShaderDataString, 0, 0, 0
     };
     
-    GLuint vertexShader = IWGShaderProgramBuildShader(vertexShaderDataString, GL_VERTEX_SHADER);
-    GLuint fragmentShader = IWGShaderProgramBuildShader(fragmentShaderDataString, GL_FRAGMENT_SHADER);
+    IWGShaderProgramSetupPrograms(&programData);
+    
+    return programData;
+}
+
+void IWGShaderProgramInitFromFiles(IWGShaderProgramData *shaderProgram)
+{
+    shaderProgram->vertexShaderDataString = IWFileToolsReadFileToString(shaderProgram->vertexShaderFilename);
+    shaderProgram->fragmentShaderDataString = IWFileToolsReadFileToString(shaderProgram->fragmentShaderFilename);
+    IWGShaderProgramSetupPrograms(shaderProgram);
+}
+
+void IWGShaderProgramSetupPrograms(IWGShaderProgramData *shaderProgram)
+{
+    GLuint vertexShader = IWGShaderProgramBuildShader(shaderProgram->vertexShaderDataString, GL_VERTEX_SHADER);
+    GLuint fragmentShader = IWGShaderProgramBuildShader(shaderProgram->fragmentShaderDataString, GL_FRAGMENT_SHADER);
     
     GLuint prog = glCreateProgram();
     glAttachShader(prog, vertexShader);
@@ -45,12 +61,13 @@ IWGShaderProgramData IWGShaderProgramMake(const char* vertexShaderDataString,
             glDeleteProgram(prog);
             prog = 0;
         }
-        return programData;
+        return;
     }
-    programData.programID = prog;
-    programData.vertexShaderID = vertexShader;
-    programData.fragmentShaderID = fragmentShader;
-    return programData;
+    shaderProgram->programID = prog;
+    shaderProgram->vertexShaderID = vertexShader;
+    shaderProgram->fragmentShaderID = fragmentShader;
+    
+    return;
 }
 
 GLuint IWGShaderProgramBuildProgram(const char* vertexShaderSource,

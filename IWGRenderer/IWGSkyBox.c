@@ -60,7 +60,7 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     skyBox.sun = IWGCircleMake(skyBox.sunPosition,
                                IWVector3Make(0.0, 0.0, 1.0),
                                skyBox.sunColorDay,
-                               5.0, 41);
+                               5.0, 31);
     skyBox.sunColorTransition = IWVector4TransitionMake(skyBox.sunColorDay,
                                                         skyBox.sunColorNight,
                                                         skyBox.sunColorDay,
@@ -81,7 +81,7 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     skyBox.moon = IWGCircleMake(skyBox.moonPosition,
                                 IWVector3Normalize(IWVector3Make(3.0, 2.5, -2.0)),
                                 skyBox.moonColorDay,
-                                2.0, 41);
+                                2.0, 31);
     skyBox.moonColorTransition = IWVector4TransitionMake(skyBox.moonColorDay,
                                                          skyBox.moonColorNight,
                                                          skyBox.moonColorDay,
@@ -111,8 +111,8 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     
     skyBox.multiBuffer = IWGMultiBufferGen();
     
-    skyBox.mainShaderId = 4;
-    
+    skyBox.mainShaderId = 4;// [4]
+
     return skyBox;
 }
 
@@ -125,7 +125,7 @@ void IWGSkyBoxFillVBO(IWGSkyBoxData *skyBox, GLuint positionSlot,GLuint colorSlo
         skyBox->multiBuffer.nVertices[i] = skyBox->dataBufferSize / 10;
         
         glBufferData(GL_ARRAY_BUFFER, skyBox->dataBufferSize * sizeof(GLfloat),
-                     skyBox->dataBufferStart, GL_DYNAMIC_DRAW);
+                     skyBox->dataBufferStart, GL_STREAM_DRAW);
         
         glEnableVertexAttribArray(positionSlot);
         glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
@@ -163,11 +163,11 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     
     IWCubeToTriangles(&skyBox->sky);
     
-    IWGMultiBufferSubData(&skyBox->multiBuffer,
-                          0,
-                          skyBox->sky.triangleBufferData.size * sizeof(GLfloat),
-                          skyBox->sky.triangleBufferData.startCPU,
-                          false);
+//    IWGMultiBufferSubData(&skyBox->multiBuffer,
+//                          0,
+//                          skyBox->sky.triangleBufferData.size * sizeof(GLfloat),
+//                          skyBox->sky.triangleBufferData.startCPU,
+//                          false);
     
     skyBox->ground.centerPosition.x = player->position.x;
     skyBox->ground.centerPosition.z = player->position.z;
@@ -177,11 +177,11 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     
     IWCubeToTriangles(&skyBox->ground);
     
-    IWGMultiBufferSubData(&skyBox->multiBuffer,
-                          skyBox->sky.triangleBufferData.size * sizeof(GLfloat),
-                          skyBox->ground.triangleBufferData.size * sizeof(GLfloat),
-                          skyBox->ground.triangleBufferData.startCPU,
-                          false);
+//    IWGMultiBufferSubData(&skyBox->multiBuffer,
+//                          skyBox->sky.triangleBufferData.size * sizeof(GLfloat),
+//                          skyBox->ground.triangleBufferData.size * sizeof(GLfloat),
+//                          skyBox->ground.triangleBufferData.startCPU,
+//                          false);
 
     skyBox->sun.centerLocation.x = player->position.x + skyBox->sunPosition.x;
     skyBox->sun.centerLocation.z = player->position.z + skyBox->sunPosition.z;
@@ -195,12 +195,12 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     
     IWGCircleToTriangles(&skyBox->sun);
     
-    IWGMultiBufferSubData(&skyBox->multiBuffer,
-                          (skyBox->sky.triangleBufferData.size
-                           + skyBox->ground.triangleBufferData.size) * sizeof(GLfloat),
-                          skyBox->sun.triangleBufferData.size * sizeof(GLfloat),
-                          skyBox->sun.triangleBufferData.startCPU,
-                          false);
+//    IWGMultiBufferSubData(&skyBox->multiBuffer,
+//                          (skyBox->sky.triangleBufferData.size
+//                           + skyBox->ground.triangleBufferData.size) * sizeof(GLfloat),
+//                          skyBox->sun.triangleBufferData.size * sizeof(GLfloat),
+//                          skyBox->sun.triangleBufferData.startCPU,
+//                          false);
     
     skyBox->moon.centerLocation.x = player->position.x + skyBox->moonPosition.x;
     skyBox->moon.centerLocation.z = player->position.z + skyBox->moonPosition.z;
@@ -210,23 +210,19 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     
     IWGCircleToTriangles(&skyBox->moon);
     
+//    IWGMultiBufferSubData(&skyBox->multiBuffer,
+//                          (skyBox->sky.triangleBufferData.size
+//                           + skyBox->ground.triangleBufferData.size
+//                           + skyBox->sun.triangleBufferData.size) * sizeof(GLfloat),
+//                          skyBox->moon.triangleBufferData.size * sizeof(GLfloat),
+//                          skyBox->moon.triangleBufferData.startCPU,
+//                          false);
+    
     IWGMultiBufferSubData(&skyBox->multiBuffer,
-                          (skyBox->sky.triangleBufferData.size
-                           + skyBox->ground.triangleBufferData.size
-                           + skyBox->moon.triangleBufferData.size) * sizeof(GLfloat),
-                          skyBox->moon.triangleBufferData.size * sizeof(GLfloat),
-                          skyBox->moon.triangleBufferData.startCPU,
+                          0,
+                          skyBox->dataBufferSize * sizeof(GLfloat),
+                          skyBox->dataBufferStart,
                           false);
-    
-    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                1.0, 1.0, 1.0,
-                IW_MAX(0.0, 1.0 - skyBox->transitionTime / (skyBox->colorTransitionTime * 0.9)));
-    
-    float tmp = skyBox->transitionTime / (skyBox->colorTransitionTime * 1.2);
-    tmp *= tmp;
-    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
-                0.7, 0.7, 0.7,
-                IW_MIN(1.0, tmp));
     
 
     return;
@@ -236,15 +232,7 @@ void IWGSkyBoxRender(IWGSkyBoxData *skyBox, bool setGLStates)
 {
     IWGMultiBufferBindCurrentDrawBuffer(&skyBox->multiBuffer);
     
-    //glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-    //            gdSkyCube.color.x, gdSkyCube.color.y, gdSkyCube.color.z, gdSkyCube.color.w);
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], skyBox->mainShaderId);
-    
     glDrawArrays(GL_TRIANGLES, 0, skyBox->multiBuffer.nVertices[skyBox->multiBuffer.currentDrawBuffer]);
-    
-//    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_MATERIAL_DIFFUSE],
-//                gdMaterialSourceData.Diffuse.x, gdMaterialSourceData.Diffuse.y, gdMaterialSourceData.Diffuse.z,
-//                gdMaterialSourceData.Diffuse.w);
     
     glBindVertexArrayOES(0);
     

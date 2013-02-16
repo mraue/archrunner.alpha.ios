@@ -20,7 +20,6 @@
 		641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590716A555B000704F45 /* IWGShaderProgram.c */; };
 		641E0D7616A834FE0077785D /* IWGRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D6F16A809560077785D /* IWGRenderer.c */; };
 		641E0D7A16A844710077785D /* IWGame.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7916A844710077785D /* IWGame.c */; };
-		641E0D7C16A962580077785D /* IWVector4.h in Resources */ = {isa = PBXBuildFile; fileRef = 641E0D7B16A962580077785D /* IWVector4.h */; };
 		641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7F16A9662D0077785D /* IWColorTransition.c */; };
 		641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8116AAF8D80077785D /* IWUIElement.c */; };
 		641E0D8916AD69720077785D /* IWCube.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8816AD69720077785D /* IWCube.c */; };
@@ -49,7 +48,6 @@
 		646F593B16A5573400704F45 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F592016A555B000704F45 /* Shader.fsh */; };
 		646F593C16A5573800704F45 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F592116A555B000704F45 /* Shader.vsh */; };
 		646F594316A56BF100704F45 /* MasterShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594216A56BF100704F45 /* MasterShader.vsh */; };
-		646F594616A577DF00704F45 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F594416A56C0200704F45 /* MasterShader.fsh */; };
 		64765C1A16AEC758007E5C7A /* IWFuel.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C1916AEC758007E5C7A /* IWFuel.c */; };
 		64765C2816AFD8E9007E5C7A /* IWUIRectangleButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */; };
 		64765C2916AFD8E9007E5C7A /* IWUIStateBar.c in Sources */ = {isa = PBXBuildFile; fileRef = 64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */; };
@@ -62,11 +60,19 @@
 		64822E691695E9BF003C5415 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E681695E9BF003C5415 /* OpenGLES.framework */; };
 		64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EA8169DB8A8003C5415 /* CoreLocation.framework */; };
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
-		648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */ = {isa = PBXBuildFile; fileRef = 648E756916A6B7E8004DE1A4 /* IWVector2.h */; };
 		64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A2F02716B67CCC00655F68 /* IWVectorTransition.c */; };
 		64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C0386216CB65AB00C4F491 /* IWGSkyBox.c */; };
 		64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386416CB8E9700C4F491 /* MasterShader2.vsh */; };
 		64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */; };
+		64F25EFE16CF752600EC3E78 /* MainShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25EFA16CF74F300EC3E78 /* MainShader.vsh */; };
+		64F25EFF16CF752B00EC3E78 /* MainShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25EFC16CF750A00EC3E78 /* MainShader.fsh */; };
+		64F25F0416CF78EB00EC3E78 /* TextShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0016CF78BE00EC3E78 /* TextShader.vsh */; };
+		64F25F0516CF78F900EC3E78 /* TextShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0216CF78C700EC3E78 /* TextShader.fsh */; };
+		64F25F0816CF822500EC3E78 /* SkyboxShader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */; };
+		64F25F0916CF823700EC3E78 /* SkyboxShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0616CF821900EC3E78 /* SkyboxShader.vsh */; };
+		64F25F0A16CF823B00EC3E78 /* SkyboxShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */; };
+		64F25F0D16CF8B0F00EC3E78 /* UIShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0B16CF8AA400EC3E78 /* UIShader.vsh */; };
+		64F25F0E16CF8B1200EC3E78 /* UIShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */; };
 		64F4208316C2714B00121DE6 /* fontmap01.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F4208216C2714B00121DE6 /* fontmap01.png */; };
 		64F4208516C29F6100121DE6 /* IWGTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208416C29F6100121DE6 /* IWGTexture.c */; };
 		64F4208816C2AB4000121DE6 /* IWGTextLine.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208716C2AB4000121DE6 /* IWGTextLine.c */; };
@@ -171,6 +177,14 @@
 		64C0386416CB8E9700C4F491 /* MasterShader2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64F133B416BE6E4900E0AC68 /* IWUIDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWUIDefinitions.h; sourceTree = "<group>"; };
+		64F25EFA16CF74F300EC3E78 /* MainShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MainShader.vsh; sourceTree = "<group>"; };
+		64F25EFC16CF750A00EC3E78 /* MainShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MainShader.fsh; sourceTree = "<group>"; };
+		64F25F0016CF78BE00EC3E78 /* TextShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = TextShader.vsh; sourceTree = "<group>"; };
+		64F25F0216CF78C700EC3E78 /* TextShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = TextShader.fsh; sourceTree = "<group>"; };
+		64F25F0616CF821900EC3E78 /* SkyboxShader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = SkyboxShader.vsh; sourceTree = "<group>"; };
+		64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SkyboxShader.fsh; sourceTree = "<group>"; };
+		64F25F0B16CF8AA400EC3E78 /* UIShader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = UIShader.vsh; sourceTree = "<group>"; };
+		64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = UIShader.fsh; sourceTree = "<group>"; };
 		64F4208216C2714B00121DE6 /* fontmap01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontmap01.png; sourceTree = "<group>"; };
 		64F4208416C29F6100121DE6 /* IWGTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTexture.c; sourceTree = "<group>"; };
 		64F4208616C29F6A00121DE6 /* IWGTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTexture.h; sourceTree = "<group>"; };
@@ -399,6 +413,14 @@
 			children = (
 				64C0386416CB8E9700C4F491 /* MasterShader2.vsh */,
 				64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */,
+				64F25EFA16CF74F300EC3E78 /* MainShader.vsh */,
+				64F25EFC16CF750A00EC3E78 /* MainShader.fsh */,
+				64F25F0016CF78BE00EC3E78 /* TextShader.vsh */,
+				64F25F0216CF78C700EC3E78 /* TextShader.fsh */,
+				64F25F0616CF821900EC3E78 /* SkyboxShader.vsh */,
+				64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */,
+				64F25F0B16CF8AA400EC3E78 /* UIShader.vsh */,
+				64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */,
 				646F594216A56BF100704F45 /* MasterShader.vsh */,
 				646F594416A56C0200704F45 /* MasterShader.fsh */,
 				646F591F16A555B000704F45 /* BasicLightShader.vsh */,
@@ -531,11 +553,16 @@
 				646F593B16A5573400704F45 /* Shader.fsh in Resources */,
 				646F593C16A5573800704F45 /* Shader.vsh in Resources */,
 				646F594316A56BF100704F45 /* MasterShader.vsh in Resources */,
-				646F594616A577DF00704F45 /* MasterShader.fsh in Resources */,
 				64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */,
 				64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */,
-				648E756A16A6B7E8004DE1A4 /* IWVector2.h in Resources */,
-				641E0D7C16A962580077785D /* IWVector4.h in Resources */,
+				64F25EFE16CF752600EC3E78 /* MainShader.vsh in Resources */,
+				64F25EFF16CF752B00EC3E78 /* MainShader.fsh in Resources */,
+				64F25F0416CF78EB00EC3E78 /* TextShader.vsh in Resources */,
+				64F25F0516CF78F900EC3E78 /* TextShader.fsh in Resources */,
+				64F25F0916CF823700EC3E78 /* SkyboxShader.vsh in Resources */,
+				64F25F0A16CF823B00EC3E78 /* SkyboxShader.fsh in Resources */,
+				64F25F0D16CF8B0F00EC3E78 /* UIShader.vsh in Resources */,
+				64F25F0E16CF8B1200EC3E78 /* UIShader.fsh in Resources */,
 				641AC1CC16C2550600DDD2EB /* fontmap01.txt in Resources */,
 				64F4208316C2714B00121DE6 /* fontmap01.png in Resources */,
 				64F4208D16C3DB4100121DE6 /* fontmap02.txt in Resources */,
@@ -610,6 +637,7 @@
 				64F4209516C50C1B00121DE6 /* IWScoreCounter.c in Sources */,
 				643D9EFA16C7A168005627AB /* IWMatrix4.c in Sources */,
 				64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */,
+				64F25F0816CF822500EC3E78 /* SkyboxShader.fsh in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

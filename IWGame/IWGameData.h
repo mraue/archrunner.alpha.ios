@@ -33,6 +33,7 @@
 #include "IWGTextField.h"
 #include "IWController.h"
 #include "IWGSkyBox.h"
+#include "IWGShaderProgram.h"
 
 #pragma mark - Game Logic Data
 
@@ -110,7 +111,12 @@ bool gdRunningInSimulator;
 float gdScreenWidth;
 float gdScreenHeight;
 
-GLuint gdGLProgramID;
+//GLuint gdMainShaderProgram.programID;
+
+IWGShaderProgramData gdMainShaderProgram;
+IWGShaderProgramData gdTextShaderProgram;
+IWGShaderProgramData gdSkyboxShaderProgram;
+IWGShaderProgramData gdUIShaderProgram;
 
 GLint gdMasterShaderID;
 GLint gdSkyShaderID;

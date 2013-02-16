@@ -70,7 +70,7 @@
     gdRunningInSimulator = ([[[[UIDevice currentDevice] model] uppercaseString] rangeOfString:@"SIMULATOR"].location == NSNotFound) ? false : true;
     
     // Default setting for 3GS
-    self.preferredFramesPerSecond = 30;
+    self.preferredFramesPerSecond = 60;
     
     // Create open gl context
     self.context = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
@@ -126,9 +126,28 @@
     
     [EAGLContext setCurrentContext:self.context];
 
-    NSString *vertShaderPathname, *fragShaderPathname;
-    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"vsh"];
-    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"fsh"];
+//    NSString *vertShaderPathname, *fragShaderPathname,*vertShaderPathname2, *fragShaderPathname2;
+//    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"vsh"];
+//    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"fsh"];
+//    vertShaderPathname2 = [[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"];
+//    fragShaderPathname2 = [[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"];
+    
+    gdMainShaderProgram.vertexShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String];
+    gdMainShaderProgram.fragmentShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"] UTF8String];
+    gdTextShaderProgram.vertexShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"TextShader" ofType:@"vsh"] UTF8String];
+    gdTextShaderProgram.fragmentShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"TextShader" ofType:@"fsh"] UTF8String];
+    gdSkyboxShaderProgram.vertexShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"SkyboxShader" ofType:@"vsh"] UTF8String];
+    gdSkyboxShaderProgram.fragmentShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"SkyboxShader" ofType:@"fsh"] UTF8String];
+    gdUIShaderProgram.vertexShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"vsh"] UTF8String];
+    gdUIShaderProgram.fragmentShaderFilename
+        = [[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"fsh"] UTF8String];
     
     // Deal with font map textures
     NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:@"fontmap02" ofType:@"txt"];
@@ -137,9 +156,7 @@
     CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
 
-    IWGRendererSetupGL([vertShaderPathname UTF8String],
-                       [fragShaderPathname UTF8String],
-                       [fontMapFilename UTF8String]);
+    IWGRendererSetupGL([fontMapFilename UTF8String]);
 }
 
 - (void)didReceiveMemoryWarning

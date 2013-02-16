@@ -18,7 +18,7 @@
 
 #include "IWGPrimitiveBuffer.h"
 
-#define IWGMULTIBUFFER_MAX 2
+#define IWGMULTIBUFFER_MAX 4
 
 typedef struct {
     unsigned int currentDrawBuffer;
