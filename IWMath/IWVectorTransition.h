@@ -55,6 +55,6 @@ IWVector3Transition IWVector3TransitionMake(IWVector3 startVector,
                                             bool quadraticEaseIn);
 bool IWVector3TransitionUpdate(IWVector3Transition *vector3Transition, float timeSinceLastUpdate);
 void IWVector3TransitionResetAndStart(IWVector3Transition *vector3Transition);
-
+void IWVector3TransitionReverseAndStart(IWVector3Transition *vector3Transition);
 
 #endif

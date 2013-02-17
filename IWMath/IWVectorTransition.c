@@ -122,3 +122,13 @@ void IWVector3TransitionResetAndStart(IWVector3Transition *vector3Transition)
     vector3Transition->currentTransitionTime = 0.0;
     return;
 }
+
+void IWVector3TransitionReverseAndStart(IWVector3Transition *vector3Transition)
+{
+    vector3Transition->transitionHasFinished = false;
+    vector3Transition->currentVector = vector3Transition->endVector;
+    vector3Transition->endVector = vector3Transition->startVector;
+    vector3Transition->startVector = vector3Transition->currentVector;
+    vector3Transition->currentTransitionTime = 0.0;
+    return;
+}

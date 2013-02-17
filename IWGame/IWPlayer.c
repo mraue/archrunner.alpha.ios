@@ -14,7 +14,7 @@ IWPlayerData IWPlayerDataMakeSimple(IWVector3 aPosition,
                                     IWVector3 aDirection,
                                     IWVector3 aUp) {
     return IWPlayerDataMake(aPosition, aDirection, aUp,
-                            0.12, 0.25, 3.0, 2.0);
+                            0.14, 0.25, 3.0, 2.0);// speed default 0.12
 }
 
 IWPlayerData IWPlayerDataMake(IWVector3 aPosition,

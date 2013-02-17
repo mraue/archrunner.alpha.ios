@@ -55,6 +55,11 @@ void IWGameSetup(void)
     //
     gdControllerDataAccelerometer = IWControllerDataMakeDefault();
     //
+    gdGrayScaleTransitionDefault = gdGrayScaleTransition = IWVector3TransitionMake(IWVector3Make(1.0, 0.4, 0.0),
+                                                                                   IWVector3Make(0.0, 0.4, 0.0),
+                                                                                   IWVector3Make(1.0, 0.4, 0.0),
+                                                                                   1.0, 0.0, false, false);
+    //
     IWGameReset();
     //
     return;
@@ -73,6 +78,7 @@ void IWGameReset(void)
     gdZMax = 0.0;
     gdScoreCounter = IWScoreCounterMakeEmpty();
     gdFuel = IWFuelMakeDefaultStart();
+    gdGrayScaleTransition = gdGrayScaleTransitionDefault;
     //IWFuelRemoveFuel(&gdFuel, 0.95);
 }
 
@@ -94,6 +100,18 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+    
+    if (!gdGrayScaleTransition.transitionHasFinished) {
+        IWVector3TransitionUpdate(&gdGrayScaleTransition, timeSinceLastUpdate);
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"),
+                    gdGrayScaleTransition.currentVector.x,
+                    gdGrayScaleTransition.currentVector.y);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"),
+                    gdGrayScaleTransition.currentVector.x,
+                    gdGrayScaleTransition.currentVector.y);
+    }
     
     IWRectangle toStartMenuRect = IWRectangleMake(0.0, 0.2, 0.5, 0.35);
     IWRectangle retryRect = IWRectangleMake(0.0, 0.35, 0.5, 0.5);
@@ -223,6 +241,18 @@ void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGMultiBufferData *buffer)
 void IWGameUpdate(float timeSinceLastUpdate,
                   float aspectRatio)
 {
+    if (!gdGrayScaleTransition.transitionHasFinished) {
+        IWVector3TransitionUpdate(&gdGrayScaleTransition, timeSinceLastUpdate);
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"),
+                    gdGrayScaleTransition.currentVector.x,
+                    gdGrayScaleTransition.currentVector.y);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"),
+                    gdGrayScaleTransition.currentVector.x,
+                    gdGrayScaleTransition.currentVector.y);
+    }
+
     // Check if we are game over
     if (gdFuel.currentLevel == 0.0) {
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
@@ -237,10 +267,11 @@ void IWGameUpdate(float timeSinceLastUpdate,
         }
         gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
+        IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
         glUseProgram(gdSkyboxShaderProgram.programID);
-        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 1.0, 0.4);
-        glUseProgram(gdMainShaderProgram.programID);
-        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 1.0, 0.4);
+        //glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 1.0, 0.4);
+        //glUseProgram(gdMainShaderProgram.programID);
+        //glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 1.0, 0.4);
         return;
     }
     
@@ -248,11 +279,15 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
             gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-            gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
+            gdGrayScaleTransition = gdGrayScaleTransitionDefault;
+            //gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
+            
         } else {
             gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
             gdPauseTime = 0.0;
-
+            IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
+            gdGrayScaleTransition.transitionTime = 0.5;
+            //IWVector3TransitionResetAndStart(&gdGrayScaleTransition);
         }
     }
     
@@ -273,7 +308,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                                          IWVector3MultiplyScalar(IWVector3Normalize(gdPlayerData.direction),
                                                                  timeSinceLastUpdate * speed));
     
-    float rotationSpeedMax = 100.0 / 180.0 * M_PI * timeSinceLastUpdate;
+    float rotationSpeedMax = 80.0 / 180.0 * M_PI * timeSinceLastUpdate;
     
     // Update direction
     IWVector3 dirGLV = IWVector3Make(gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
@@ -291,12 +326,12 @@ void IWGameUpdate(float timeSinceLastUpdate,
     
     IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
     
-    if (gdControllerDataAccelerometer.rotationSpeed.z != 0.0) {
+    //if (gdControllerDataAccelerometer.rotationSpeed.z != 0.0) {
         IWMatrix4 zRotationUpdateMatrix =
             IWMatrix4MakeRotation(gdControllerDataAccelerometer.rotationSpeed.z * rotationSpeedMax,
                                   dirGLV.x, dirGLV.y, dirGLV.z);
         rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
-    }
+    //}
     
     //    if (motionManager.isDeviceMotionAvailable) {
     //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,

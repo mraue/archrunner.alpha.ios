@@ -72,6 +72,9 @@ IWTimerData gdStateSwitchTimer;
 
 IWColorTransition gdOverdriveColorTransition;
 
+IWVector3Transition gdGrayScaleTransition;
+IWVector3Transition gdGrayScaleTransitionDefault;
+
 #pragma mark - User input
 
 IWControllerData gdControllerDataAccelerometer;
