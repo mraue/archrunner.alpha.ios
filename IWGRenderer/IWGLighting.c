@@ -44,12 +44,12 @@ void IWGLightingSetUniforms(IWGBasicLightSourceData *sunLightSource,
                             IWGPointLightSourceData *playerLightSource)
 {
     // Set shader type
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
-                1);
+    //glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE],
+    //            1);
     // Gets or sets whether vertex lighting (Gouraud Shading) or
     // fragment lighting (Phong Shading) is used.
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHTING_TYPE],
-                0);
+    //glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_LIGHTING_TYPE],
+    //            0);
     // Set light source uniforms
     glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
                 playerLightSource->Position.x, playerLightSource->Position.y, playerLightSource->Position.z);

@@ -64,7 +64,7 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     skyBox.sunColorTransition = IWVector4TransitionMake(skyBox.sunColorDay,
                                                         skyBox.sunColorNight,
                                                         skyBox.sunColorDay,
-                                                        skyBox.colorTransitionTime,
+                                                        skyBox.colorTransitionTime * 0.6,
                                                         0.0, false, false);
     
     skyBox.moonColorDay = IWVector4Make(0.65, 0.65, 0.65, 1.0);
@@ -131,8 +131,8 @@ void IWGSkyBoxFillVBO(IWGSkyBoxData *skyBox, GLuint positionSlot,GLuint colorSlo
         glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
         glEnableVertexAttribArray(colorSlot);
         glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(normalSlot);
-        glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+        //glEnableVertexAttribArray(normalSlot);
+        //glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     glBindVertexArrayOES(0);
     return;
@@ -163,12 +163,6 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     
     IWCubeToTriangles(&skyBox->sky);
     
-//    IWGMultiBufferSubData(&skyBox->multiBuffer,
-//                          0,
-//                          skyBox->sky.triangleBufferData.size * sizeof(GLfloat),
-//                          skyBox->sky.triangleBufferData.startCPU,
-//                          false);
-    
     skyBox->ground.centerPosition.x = player->position.x;
     skyBox->ground.centerPosition.z = player->position.z;
     
@@ -176,12 +170,6 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
         skyBox->ground.color = skyBox->groundColorTransition.currentVector;
     
     IWCubeToTriangles(&skyBox->ground);
-    
-//    IWGMultiBufferSubData(&skyBox->multiBuffer,
-//                          skyBox->sky.triangleBufferData.size * sizeof(GLfloat),
-//                          skyBox->ground.triangleBufferData.size * sizeof(GLfloat),
-//                          skyBox->ground.triangleBufferData.startCPU,
-//                          false);
 
     skyBox->sun.centerLocation.x = player->position.x + skyBox->sunPosition.x;
     skyBox->sun.centerLocation.z = player->position.z + skyBox->sunPosition.z;
@@ -195,13 +183,6 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     
     IWGCircleToTriangles(&skyBox->sun);
     
-//    IWGMultiBufferSubData(&skyBox->multiBuffer,
-//                          (skyBox->sky.triangleBufferData.size
-//                           + skyBox->ground.triangleBufferData.size) * sizeof(GLfloat),
-//                          skyBox->sun.triangleBufferData.size * sizeof(GLfloat),
-//                          skyBox->sun.triangleBufferData.startCPU,
-//                          false);
-    
     skyBox->moon.centerLocation.x = player->position.x + skyBox->moonPosition.x;
     skyBox->moon.centerLocation.z = player->position.z + skyBox->moonPosition.z;
     
@@ -209,14 +190,6 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
         skyBox->moon.color = skyBox->moonColorTransition.currentVector;
     
     IWGCircleToTriangles(&skyBox->moon);
-    
-//    IWGMultiBufferSubData(&skyBox->multiBuffer,
-//                          (skyBox->sky.triangleBufferData.size
-//                           + skyBox->ground.triangleBufferData.size
-//                           + skyBox->sun.triangleBufferData.size) * sizeof(GLfloat),
-//                          skyBox->moon.triangleBufferData.size * sizeof(GLfloat),
-//                          skyBox->moon.triangleBufferData.startCPU,
-//                          false);
     
     IWGMultiBufferSubData(&skyBox->multiBuffer,
                           0,

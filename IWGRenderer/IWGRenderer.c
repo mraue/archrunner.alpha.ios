@@ -56,8 +56,14 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
         = glGetUniformLocation(gdMainShaderProgram.programID, "NormalMatrix");
     
+    GLuint grayScaleId = glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale");
+    
+    glUniform2f(grayScaleId, 0.0, 0.4);
+    
     gdSunLightSource = IWGBasicLightSourceMakeDefault();
     gdMoonLightSource = IWGBasicLightSourceMakeDefault();
+    
+    gdSunLightSource.Direction = IWVector3Normalize(IWVector3Make(0.0, 0.0, 1.0));
     
     gdMoonLightSource.Direction = IWVector3Normalize(IWVector3Make(3.0, 2.5, -2.0));
     gdMoonLightSource.Color = IWVector4Make(1.0, 1.0, 1.0, 1.0);
@@ -75,6 +81,10 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     glUseProgram(gdSkyboxShaderProgram.programID);
     
+    grayScaleId = glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale");
+    
+    glUniform2f(grayScaleId, 0.0, 0.4);
+    
     // Get and save uniform locations.
     skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
         = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ModelMatrix");
@@ -90,12 +100,17 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     gdUITriangleDoubleBuffer = IWGMultiBufferGen();
     
     // Could swith to multi buffer, ey!
-    
     glGenVertexArraysOES(1, &gdUILineVertexArray);
     glBindVertexArrayOES(gdUILineVertexArray);
     glGenBuffers(1, &gdUILineVertexBuffer);
     glBindVertexArrayOES(0);
-
+    
+    // Open GL base settings
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
+    glLineWidth(1.2);
+    
     IWGRendererSetupStartMenuAssets();
 
     return;
@@ -116,14 +131,7 @@ void IWGRendererSetupStartMenuAssets(void)
     gdSkyShaderID = 4;
     
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
-    
-    IWColorTransition clearColorTransition = {
-        {0.8, 0.8, 0.8, 1.0},
-        gdClearColor,
-        {0.8, 0.8, 0.8, 1.0},
-        0.8, 0.0, true, false
-    };
-    gdClearColorTransition = clearColorTransition;
+    glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
     
     int nx, ny, nz;
     nx = ny = nz = 8;
@@ -211,10 +219,10 @@ void IWGRendererSetupStartMenuAssets(void)
     gdSkyBox = IWGSkyBoxMakeDefault();
     IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
     
-    gdSunLightSource.Color = gdSkyBox.sunColorDay;
+    //gdSunLightSource.Color = gdSkyBox.sunColorDay;
     //gdSunLightSource.Color.w = 0.5;
-    gdSunLightSource.Direction = gdSkyBox.sun.direction;
-    IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
+    //gdSunLightSource.Direction = gdSkyBox.sun.direction;
+    //IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
 
     //
     // Text
@@ -310,10 +318,6 @@ void IWGRendererSetupStartMenuAssets(void)
     
     glBindVertexArrayOES(0);
     
-    //    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CW);
-    //
     return;
 }
 
@@ -364,14 +368,7 @@ void IWGRendererSetupGameAssets(void)
     
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
-    
-    IWColorTransition clearColorTransition = {
-        {0.8, 0.8, 0.8, 1.0},
-        gdClearColor,
-        {0.8, 0.8, 0.8, 1.0},
-        0.8, 0.0, true, false
-    };
-    gdClearColorTransition = clearColorTransition;
+    glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
     
     IWColorTransition overdriveColorTransition = {
         IWUI_COLOR_WHITE(0.4),
@@ -672,10 +669,6 @@ void IWGRendererSetupGameAssets(void)
 
     glBindVertexArrayOES(0);
     
-//    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CW);
-//
     return;
 }
 
@@ -767,7 +760,6 @@ void IWGRendererRenderInGameUI(void)
     
     if (gdUINLineVertices) {
         glBindVertexArrayOES(gdUILineVertexArray);
-        glLineWidth(1.0);
         glDrawArrays(GL_LINES, 0, gdUINLineVertices);
         glBindVertexArrayOES(0);
     }
@@ -787,17 +779,6 @@ void IWGRendererRenderInGameText(void)
 
 void IWGRendererRender(void)
 {
-    //glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
-    if (gdClearColorTransition.transitionHasFinished) {
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
-    } else {
-        glClearColor(gdClearColorTransition.currentColor.x,
-                     gdClearColorTransition.currentColor.y,
-                     gdClearColorTransition.currentColor.z,
-                     gdClearColorTransition.currentColor.w);
-    }
-    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
@@ -805,14 +786,17 @@ void IWGRendererRender(void)
         
         glUseProgram(gdMainShaderProgram.programID);
         
+        IWVector4 sunColor = IWVector4Lerp(gdSkyBox.sunColorTransition.currentVector,
+                                           IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                           0.85);
         glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                    1.0, 1.0, 1.0,
+                    sunColor.x, sunColor.y, sunColor.z,
                     IW_MAX(0.0, 1.0 - gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 0.9)));
         
         float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
         tmp *= tmp;
         glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
-                    0.7, 0.7, 0.7,
+                    0.75, 0.75, 0.75,
                     IW_MIN(1.0, tmp));
         
         glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
@@ -842,7 +826,6 @@ void IWGRendererRender(void)
         glDisable(GL_DEPTH_TEST);
 
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glUseProgram(gdTextShaderProgram.programID);
         
@@ -861,8 +844,11 @@ void IWGRendererRender(void)
         
         glUseProgram(gdMainShaderProgram.programID);
         
+        IWVector4 sunColor = IWVector4Lerp(gdSkyBox.sunColorTransition.currentVector,
+                                           IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                           0.85);
         glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                    1.0, 1.0, 1.0,
+                    sunColor.x, sunColor.y, sunColor.z,
                     IW_MAX(0.0, 1.0 - gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 0.9)));
         
         float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
@@ -894,7 +880,6 @@ void IWGRendererRender(void)
         glDisable(GL_DEPTH_TEST);
         
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         glUseProgram(gdTextShaderProgram.programID);
         

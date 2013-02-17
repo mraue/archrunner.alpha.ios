@@ -76,7 +76,6 @@ IWControllerData gdControllerDataAccelerometer;
 
 #pragma mark - Debug / Testing
 
-IWColorTransition gdClearColorTransition;
 IWColorTransition gdOverdriveColorTransition;
 
 #pragma mark - Asset and memory management

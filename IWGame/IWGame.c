@@ -104,6 +104,10 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
         gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
         gdIsTouched = false;
         gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.4);
         return;
     } else if (gdIsTouched
                && IWPointInRectangle(gdTouchPoint, retryRect)) {
@@ -111,6 +115,10 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
         IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
         gdIsTouched = false;
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.4);
         return;
     }
     
@@ -232,6 +240,10 @@ void IWGameUpdate(float timeSinceLastUpdate,
         gdSkyBox.mainShaderId = 3;
         gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 1.0, 0.4);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 1.0, 0.4);
         return;
     }
     
@@ -291,6 +303,13 @@ void IWGameUpdate(float timeSinceLastUpdate,
                               normGLV.x, normGLV.y, normGLV.z);
     
     IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
+    
+    //if (gdControllerDataAccelerometer.rotationSpeed.z != 0.0) {
+        IWMatrix4 zRotationUpdateMatrix =
+            IWMatrix4MakeRotation(gdControllerDataAccelerometer.rotationSpeed.z * rotationSpeedMax,
+                                  dirGLV.x, dirGLV.y, dirGLV.z);
+        rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+    //}
     
     //    if (motionManager.isDeviceMotionAvailable) {
     //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
@@ -441,7 +460,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     IWGPrimitiveBufferDataUpdateColor(&gdCubeData[i].triangleBufferData, IWUI_COLOR_RED(1.0));
                     gdCubeData[i].color = IWUI_COLOR_DARK_RED(1.0);
                     //gdCubeData[i].color = IWUI_COLOR_DARK_PURPLE(1.0);
-                    //gdClearColorTransition.startColor = IWUI_COLOR_DARK_BLUE(1.0);
 
                     gdScoreCounter.nGridCubes++;
 
@@ -455,9 +473,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     gdOverdriveColorTransition.currentColor = IWUI_COLOR_GOLD(0.4);
                     gdOverdriveColorTransition.currentTransitionTime = 0.0;
                     gdOverdriveColorTransition.transitionHasFinished = false;
-
-//                    gdClearColorTransition.currentTransitionTime = 0.0;
-//                    gdClearColorTransition.transitionHasFinished = false;
                     
                     gdCubeData[i].type = IWCUBE_TYPE_POPPING;
                     
@@ -465,9 +480,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     gdCubeData[i].positionTransition = IWVector3TransitionMake(dimensions,
                                                                                IWVector3MultiplyScalar(dimensions, 0.01),
                                                                                dimensions, 0.15, 0.0, false, false);
-                    
-                    //gdClearColorTransition.startColor = IWUI_COLOR_DARK_GOLD(1.0);
-
                 }
             }
         } else if (!gdCubeData[i].positionTransition.transitionHasFinished) {
@@ -526,11 +538,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
 
     // Switch UI VBO object
     IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);    
-    
-    // Update background color transition
-    if (!gdClearColorTransition.transitionHasFinished) {
-        IWColorTransitionUpdate(&gdClearColorTransition, timeSinceLastUpdate);
-    }
     
     // Update fuel status bar
     if (gdPlayerData.overdrive) {

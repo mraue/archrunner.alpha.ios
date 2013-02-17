@@ -68,7 +68,6 @@
 		64F25EFF16CF752B00EC3E78 /* MainShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25EFC16CF750A00EC3E78 /* MainShader.fsh */; };
 		64F25F0416CF78EB00EC3E78 /* TextShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0016CF78BE00EC3E78 /* TextShader.vsh */; };
 		64F25F0516CF78F900EC3E78 /* TextShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0216CF78C700EC3E78 /* TextShader.fsh */; };
-		64F25F0816CF822500EC3E78 /* SkyboxShader.fsh in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */; };
 		64F25F0916CF823700EC3E78 /* SkyboxShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0616CF821900EC3E78 /* SkyboxShader.vsh */; };
 		64F25F0A16CF823B00EC3E78 /* SkyboxShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */; };
 		64F25F0D16CF8B0F00EC3E78 /* UIShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0B16CF8AA400EC3E78 /* UIShader.vsh */; };
@@ -637,7 +636,6 @@
 				64F4209516C50C1B00121DE6 /* IWScoreCounter.c in Sources */,
 				643D9EFA16C7A168005627AB /* IWMatrix4.c in Sources */,
 				64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */,
-				64F25F0816CF822500EC3E78 /* SkyboxShader.fsh in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

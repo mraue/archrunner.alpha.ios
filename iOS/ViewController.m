@@ -195,6 +195,7 @@
         }
     } else {
         CMAccelerometerData *newestAccel = motionManager.accelerometerData;
+        alpha = 0.6;
         if (gdTotalRunTime < 0.5) {
             _filteredAcceleration = IWVector3Make(newestAccel.acceleration.x,
                                                   newestAccel.acceleration.y,
@@ -224,8 +225,8 @@
     }
     
     gdControllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
-                                                                             _filteredAcceleration.y,
-                                                                             _filteredAcceleration.z));
+                                                                               _filteredAcceleration.y,
+                                                                               _filteredAcceleration.z));
     
     
     if (motionManager.isDeviceMotionAvailable) {
@@ -246,6 +247,21 @@
         }
     } else {
         IWControllerUpdateRotationSpeed(&gdControllerDataAccelerometer, self.timeSinceLastUpdate);
+    }
+    
+    IWRectangle rollLeft = IWRectangleMake(0.0, 0.3, 0.3, 0.7);
+    IWRectangle rollRight = IWRectangleMake(0.7, 0.3, 1.0, 0.7);
+    if (gdIsTouched) {
+        alpha = 0.5;
+        if (IWPointInRectangle(gdTouchPoint, rollLeft)) {
+            gdControllerDataAccelerometer.rotationSpeed.z =
+                gdControllerDataAccelerometer.rotationSpeed.z * alpha + (1.0 - alpha) * -1.0;
+        } else if (IWPointInRectangle(gdTouchPoint, rollRight)) {
+            gdControllerDataAccelerometer.rotationSpeed.z =
+                gdControllerDataAccelerometer.rotationSpeed.z * alpha + (1.0 - alpha) * 1.0;
+        }
+    } else {
+        gdControllerDataAccelerometer.rotationSpeed.z = 0.0;
     }
     
     // Simulator on screen controls
