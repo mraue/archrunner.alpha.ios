@@ -66,6 +66,9 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
                                                         skyBox.sunColorDay,
                                                         skyBox.colorTransitionTime * 0.6,
                                                         0.0, false, false);
+    skyBox.sunColorLight = IWVector4Lerp(skyBox.sunColorDay,
+                                         IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                         0.85);
     
     skyBox.moonColorDay = IWVector4Make(0.65, 0.65, 0.65, 1.0);
     skyBox.moonColorNight = IWUI_COLOR_WHITE(1.0);
@@ -110,8 +113,6 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     bufferOffset += IWGCircleToTriangles(&skyBox.moon);
     
     skyBox.multiBuffer = IWGMultiBufferGen();
-    
-    skyBox.mainShaderId = 4;// [4]
 
     return skyBox;
 }
@@ -180,6 +181,12 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
 
     if (updateColor)
         skyBox->sun.color = skyBox->sunColorTransition.currentVector;
+    
+    skyBox->sunColorLight = IWVector4Lerp(skyBox->sunColorTransition.currentVector,
+                                         IWVector4Make(1.0, 1.0, 1.0, 1.0),
+                                         0.85);
+    
+    skyBox->sunColorLight.w = IW_MAX(0.0, 1.0 - skyBox->transitionTime / (skyBox->colorTransitionTime * 1.1));
     
     IWGCircleToTriangles(&skyBox->sun);
     

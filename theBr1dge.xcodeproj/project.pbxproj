@@ -72,6 +72,8 @@
 		64F25F0A16CF823B00EC3E78 /* SkyboxShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */; };
 		64F25F0D16CF8B0F00EC3E78 /* UIShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0B16CF8AA400EC3E78 /* UIShader.vsh */; };
 		64F25F0E16CF8B1200EC3E78 /* UIShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */; };
+		64F25F1016D14F3A00EC3E78 /* 01Vladivostok.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */; };
+		64F25F1416D1500400EC3E78 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F25F1316D1500400EC3E78 /* AVFoundation.framework */; };
 		64F4208316C2714B00121DE6 /* fontmap01.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F4208216C2714B00121DE6 /* fontmap01.png */; };
 		64F4208516C29F6100121DE6 /* IWGTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208416C29F6100121DE6 /* IWGTexture.c */; };
 		64F4208816C2AB4000121DE6 /* IWGTextLine.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208716C2AB4000121DE6 /* IWGTextLine.c */; };
@@ -184,6 +186,8 @@
 		64F25F0716CF822500EC3E78 /* SkyboxShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SkyboxShader.fsh; sourceTree = "<group>"; };
 		64F25F0B16CF8AA400EC3E78 /* UIShader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = UIShader.vsh; sourceTree = "<group>"; };
 		64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = UIShader.fsh; sourceTree = "<group>"; };
+		64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 01Vladivostok.mp3; sourceTree = "<group>"; };
+		64F25F1316D1500400EC3E78 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		64F4208216C2714B00121DE6 /* fontmap01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontmap01.png; sourceTree = "<group>"; };
 		64F4208416C29F6100121DE6 /* IWGTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTexture.c; sourceTree = "<group>"; };
 		64F4208616C29F6A00121DE6 /* IWGTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTexture.h; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64F25F1416D1500400EC3E78 /* AVFoundation.framework in Frameworks */,
 				64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */,
 				64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */,
 				64822E611695E9BF003C5415 /* UIKit.framework in Frameworks */,
@@ -396,6 +401,7 @@
 		646F591016A555B000704F45 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */,
 				646F591116A555B000704F45 /* Default-568h@2x.png */,
 				646F591216A555B000704F45 /* Default.png */,
 				646F591316A555B000704F45 /* Default@2x.png */,
@@ -452,6 +458,7 @@
 		64822E5F1695E9BF003C5415 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				64F25F1316D1500400EC3E78 /* AVFoundation.framework */,
 				64822EAA169DB901003C5415 /* CoreMotion.framework */,
 				64822EA8169DB8A8003C5415 /* CoreLocation.framework */,
 				64822E601695E9BF003C5415 /* UIKit.framework */,
@@ -543,6 +550,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64F25F1016D14F3A00EC3E78 /* 01Vladivostok.mp3 in Resources */,
 				646F592D16A555B000704F45 /* Default-568h@2x.png in Resources */,
 				646F592E16A555B000704F45 /* Default.png in Resources */,
 				646F592F16A555B000704F45 /* Default@2x.png in Resources */,

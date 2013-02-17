@@ -126,9 +126,6 @@ void IWGRendererSetupStartMenuAssets(void)
                                                               IWVector3Normalize(IWVector3Make(0.0, 1.0, 0.0)));
     
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
-
-    gdMasterShaderID = 1;
-    gdSkyShaderID = 4;
     
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
@@ -362,9 +359,6 @@ void IWGRendererSetupGameAssets(void)
     glBindVertexArrayOES(0);
     
     IWGameReset();
-    
-    gdMasterShaderID = 1;
-    gdSkyShaderID = 4;
     
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
@@ -730,9 +724,6 @@ void IWGRendererRenderCubes(void)
     glUniformMatrix3fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX],
                        1, 0, &gdNormalMatrix.m00);
     
-    // Set master shader switch
-    //glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], gdMasterShaderID);
-    
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
@@ -786,12 +777,9 @@ void IWGRendererRender(void)
         
         glUseProgram(gdMainShaderProgram.programID);
         
-        IWVector4 sunColor = IWVector4Lerp(gdSkyBox.sunColorTransition.currentVector,
-                                           IWVector4Make(1.0, 1.0, 1.0, 1.0),
-                                           0.85);
         glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                    sunColor.x, sunColor.y, sunColor.z,
-                    IW_MAX(0.0, 1.0 - gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 0.9)));
+                    gdSkyBox.sunColorLight.x, gdSkyBox.sunColorLight.y, gdSkyBox.sunColorLight.z,
+                    gdSkyBox.sunColorLight.w);
         
         float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
         tmp *= tmp;
@@ -844,12 +832,9 @@ void IWGRendererRender(void)
         
         glUseProgram(gdMainShaderProgram.programID);
         
-        IWVector4 sunColor = IWVector4Lerp(gdSkyBox.sunColorTransition.currentVector,
-                                           IWVector4Make(1.0, 1.0, 1.0, 1.0),
-                                           0.85);
         glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                    sunColor.x, sunColor.y, sunColor.z,
-                    IW_MAX(0.0, 1.0 - gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 0.9)));
+                    gdSkyBox.sunColorLight.x, gdSkyBox.sunColorLight.y, gdSkyBox.sunColorLight.z,
+                    gdSkyBox.sunColorLight.w);
         
         float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
         tmp *= tmp;

@@ -70,13 +70,13 @@ IWGSkyBoxData gdSkyBox;
 
 IWTimerData gdStateSwitchTimer;
 
+IWColorTransition gdOverdriveColorTransition;
+
 #pragma mark - User input
 
 IWControllerData gdControllerDataAccelerometer;
 
 #pragma mark - Debug / Testing
-
-IWColorTransition gdOverdriveColorTransition;
 
 #pragma mark - Asset and memory management
 
@@ -116,9 +116,6 @@ IWGShaderProgramData gdMainShaderProgram;
 IWGShaderProgramData gdTextShaderProgram;
 IWGShaderProgramData gdSkyboxShaderProgram;
 IWGShaderProgramData gdUIShaderProgram;
-
-GLint gdMasterShaderID;
-GLint gdSkyShaderID;
 
 IWGMultiBufferData gdTextTriangleDoubleBuffer;
 

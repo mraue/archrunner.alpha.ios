@@ -37,6 +37,7 @@
 @property (strong, nonatomic) EAGLContext *context;
 @property (nonatomic, retain) CMMotionManager *motionManager;
 
+
 - (void)processControllInput;
 
 @end
@@ -44,6 +45,7 @@
 @implementation ViewController
 
 @synthesize motionManager;
+@synthesize player;
 
 - (void)dealloc
 {
@@ -132,6 +134,25 @@
 //    vertShaderPathname2 = [[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"];
 //    fragShaderPathname2 = [[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"];
     
+    NSString *soundFilePath =
+    [[NSBundle mainBundle] pathForResource: @"01Vladivostok"
+                                    ofType: @"mp3"];
+    
+    NSURL *fileURL = [[NSURL alloc] initFileURLWithPath: soundFilePath];
+    
+    AVAudioPlayer *newPlayer =
+    [[AVAudioPlayer alloc] initWithContentsOfURL: fileURL
+                                           error: nil];
+    [fileURL release];
+    
+    self.player = newPlayer;
+    [newPlayer release];
+    
+    [player prepareToPlay];
+    [player setDelegate: self];
+    [player setNumberOfLoops:-1];
+    [player play];
+    
     gdMainShaderProgram.vertexShaderFilename
         = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String];
     gdMainShaderProgram.fragmentShaderFilename
@@ -195,7 +216,6 @@
         }
     } else {
         CMAccelerometerData *newestAccel = motionManager.accelerometerData;
-        alpha = 0.6;
         if (gdTotalRunTime < 0.5) {
             _filteredAcceleration = IWVector3Make(newestAccel.acceleration.x,
                                                   newestAccel.acceleration.y,

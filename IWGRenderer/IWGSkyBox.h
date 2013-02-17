@@ -31,7 +31,7 @@ typedef struct {
     IWGCircleData moon;
     IWVector4 skyColorDay, skyColorNight;    
     IWVector4 groundColorDay, groundColorNight;
-    IWVector4 sunColorDay, sunColorNight;
+    IWVector4 sunColorDay, sunColorNight, sunColorLight;
     IWVector4 moonColorDay, moonColorNight;
     IWVector3 moonPosition, sunPosition;
     float colorTransitionTime;
@@ -43,7 +43,6 @@ typedef struct {
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
     IWGMultiBufferData multiBuffer;
-    unsigned int mainShaderId;
 } IWGSkyBoxData;
 
 IWGSkyBoxData IWGSkyBoxMakeDefault();

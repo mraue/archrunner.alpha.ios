@@ -38,12 +38,12 @@
 
 void IWGameSetup(void)
 {
+    IW_RAND_RANDOMIZE_TIMER
     //
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
     //
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.1, false);
     gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
-    //gdGameIsPaused = false;
     gdNCubesPerAxis = 5;// [5]
     //
     gdCubeTriangleBufferStartCPU = NULL;
@@ -235,9 +235,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
              + gdGameOverTextField.triangleBufferData.size
              + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
         }
-        gdMasterShaderID = 3;
-        //gdSkyShaderID = 3;
-        gdSkyBox.mainShaderId = 3;
         gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
         glUseProgram(gdSkyboxShaderProgram.programID);
@@ -250,23 +247,13 @@ void IWGameUpdate(float timeSinceLastUpdate,
     // Check if pause button has been pressed
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
         if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
-            //gdGameIsPaused = false;
             gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
             gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
-            gdMasterShaderID = 1;
-            //gdSkyShaderID = 4;
-            gdSkyBox.mainShaderId = 4;
         } else {
-            //gdGameIsPaused = true;
             gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
             gdPauseTime = 0.0;
 
         }
-    }
-    
-    if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
-        //gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
-        //gdSkyShaderID = gdMasterShaderID = 3;
     }
     
     if (!gdRectangleButton.colorTransition.transitionHasFinished) {
@@ -304,12 +291,12 @@ void IWGameUpdate(float timeSinceLastUpdate,
     
     IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
     
-    //if (gdControllerDataAccelerometer.rotationSpeed.z != 0.0) {
+    if (gdControllerDataAccelerometer.rotationSpeed.z != 0.0) {
         IWMatrix4 zRotationUpdateMatrix =
             IWMatrix4MakeRotation(gdControllerDataAccelerometer.rotationSpeed.z * rotationSpeedMax,
                                   dirGLV.x, dirGLV.y, dirGLV.z);
         rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
-    //}
+    }
     
     //    if (motionManager.isDeviceMotionAvailable) {
     //        GLKMatrix4 zRotationUpdateMatrix = GLKMatrix4MakeRotation(rotationSpeedZ * rotationSpeedMax,
@@ -571,7 +558,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
         IWGRendererTearDownGameAssets();
         IWGRendererSetupGameAssets();
-        //gdGameIsPaused = false;
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
         return;
     }

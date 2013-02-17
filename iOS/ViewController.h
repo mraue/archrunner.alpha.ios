@@ -11,6 +11,10 @@
 
 #import <CoreMotion/CoreMotion.h>
 
-@interface ViewController : GLKViewController
+#import <AVFoundation/AVFoundation.h>
+
+@interface ViewController : GLKViewController <AVAudioPlayerDelegate>
+
+@property (nonatomic, retain) AVAudioPlayer *player;
 
 @end
