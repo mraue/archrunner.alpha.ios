@@ -79,10 +79,10 @@
 		64F25F2316D3AD8500EC3E78 /* Icon@x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2216D3AD8500EC3E78 /* Icon@x2.png */; };
 		64F25F2516D3AD9700EC3E78 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2416D3AD9600EC3E78 /* Icon-72.png */; };
 		64F25F2716D3AD9A00EC3E78 /* Icon-72@x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */; };
-		64F4208316C2714B00121DE6 /* fontmap01.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F4208216C2714B00121DE6 /* fontmap01.png */; };
+		64F25F2B16D3BA9B00EC3E78 /* fontmap01.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2816D3BA9B00EC3E78 /* fontmap01.png */; };
+		64F25F2C16D3BA9B00EC3E78 /* fontmap02.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2916D3BA9B00EC3E78 /* fontmap02.png */; };
+		64F25F2D16D3BA9B00EC3E78 /* fontmap02.txt in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2A16D3BA9B00EC3E78 /* fontmap02.txt */; };
 		64F4208516C29F6100121DE6 /* IWGTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208416C29F6100121DE6 /* IWGTexture.c */; };
-		64F4208D16C3DB4100121DE6 /* fontmap02.txt in Resources */ = {isa = PBXBuildFile; fileRef = 64F4208C16C3DB4100121DE6 /* fontmap02.txt */; };
-		64F4208F16C3DD8900121DE6 /* fontmap02.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F4208E16C3DD8900121DE6 /* fontmap02.png */; };
 		64F4209216C4E2EA00121DE6 /* IWGTextField.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4209116C4E2E900121DE6 /* IWGTextField.c */; };
 		64F4209516C50C1B00121DE6 /* IWScoreCounter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4209416C50C1B00121DE6 /* IWScoreCounter.c */; };
 /* End PBXBuildFile section */
@@ -156,7 +156,6 @@
 		646F594416A56C0200704F45 /* MasterShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64765C1816AEC74B007E5C7A /* IWFuel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWFuel.h; sourceTree = "<group>"; };
 		64765C1916AEC758007E5C7A /* IWFuel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWFuel.c; sourceTree = "<group>"; };
-		64765C1E16AFD7E7007E5C7A /* IWUserInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUserInterface.h; path = IWUserInterface/IWUserInterface.h; sourceTree = "<group>"; };
 		64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIRectangleButton.c; path = IWUserInterface/IWUIRectangleButton.c; sourceTree = "<group>"; };
 		64765C2516AFD8E9007E5C7A /* IWUIRectangleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIRectangleButton.h; path = IWUserInterface/IWUIRectangleButton.h; sourceTree = "<group>"; };
 		64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIStateBar.c; path = IWUserInterface/IWUIStateBar.c; sourceTree = "<group>"; };
@@ -181,7 +180,6 @@
 		64C0386216CB65AB00C4F491 /* IWGSkyBox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGSkyBox.c; sourceTree = "<group>"; };
 		64C0386416CB8E9700C4F491 /* MasterShader2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
-		64F133B416BE6E4900E0AC68 /* IWUIDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWUIDefinitions.h; sourceTree = "<group>"; };
 		64F25EFA16CF74F300EC3E78 /* MainShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MainShader.vsh; sourceTree = "<group>"; };
 		64F25EFC16CF750A00EC3E78 /* MainShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MainShader.fsh; sourceTree = "<group>"; };
 		64F25F0016CF78BE00EC3E78 /* TextShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = TextShader.vsh; sourceTree = "<group>"; };
@@ -198,11 +196,13 @@
 		64F25F2216D3AD8500EC3E78 /* Icon@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@x2.png"; path = "../Icon@x2.png"; sourceTree = "<group>"; };
 		64F25F2416D3AD9600EC3E78 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "../Icon-72.png"; sourceTree = "<group>"; };
 		64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@x2.png"; path = "../Icon-72@x2.png"; sourceTree = "<group>"; };
-		64F4208216C2714B00121DE6 /* fontmap01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontmap01.png; sourceTree = "<group>"; };
+		64F25F2816D3BA9B00EC3E78 /* fontmap01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fontmap01.png; path = FontMaps/fontmap01.png; sourceTree = "<group>"; };
+		64F25F2916D3BA9B00EC3E78 /* fontmap02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fontmap02.png; path = FontMaps/fontmap02.png; sourceTree = "<group>"; };
+		64F25F2A16D3BA9B00EC3E78 /* fontmap02.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fontmap02.txt; path = FontMaps/fontmap02.txt; sourceTree = "<group>"; };
+		64F25F2E16D3BAEC00EC3E78 /* IWUIDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIDefinitions.h; path = IWUserInterface/IWUIDefinitions.h; sourceTree = "<group>"; };
+		64F25F2F16D3BAF600EC3E78 /* IWUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUserInterface.h; path = IWUserInterface/IWUserInterface.h; sourceTree = "<group>"; };
 		64F4208416C29F6100121DE6 /* IWGTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTexture.c; sourceTree = "<group>"; };
 		64F4208616C29F6A00121DE6 /* IWGTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTexture.h; sourceTree = "<group>"; };
-		64F4208C16C3DB4100121DE6 /* fontmap02.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fontmap02.txt; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
-		64F4208E16C3DD8900121DE6 /* fontmap02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontmap02.png; sourceTree = "<group>"; };
 		64F4209016C4E2E100121DE6 /* IWGTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTextField.h; sourceTree = "<group>"; };
 		64F4209116C4E2E900121DE6 /* IWGTextField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTextField.c; sourceTree = "<group>"; };
 		64F4209316C50C1200121DE6 /* IWScoreCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWScoreCounter.h; sourceTree = "<group>"; };
@@ -241,10 +241,10 @@
 		641AC1CA16C254B600DDD2EB /* FontMaps */ = {
 			isa = PBXGroup;
 			children = (
-				64F4208216C2714B00121DE6 /* fontmap01.png */,
 				641AC1CB16C2550600DDD2EB /* fontmap01.txt */,
-				64F4208E16C3DD8900121DE6 /* fontmap02.png */,
-				64F4208C16C3DB4100121DE6 /* fontmap02.txt */,
+				64F25F2816D3BA9B00EC3E78 /* fontmap01.png */,
+				64F25F2916D3BA9B00EC3E78 /* fontmap02.png */,
+				64F25F2A16D3BA9B00EC3E78 /* fontmap02.txt */,
 			);
 			name = FontMaps;
 			sourceTree = "<group>";
@@ -270,8 +270,8 @@
 		641E0D8316AAF8E00077785D /* IWUserInterface */ = {
 			isa = PBXGroup;
 			children = (
-				64765C1E16AFD7E7007E5C7A /* IWUserInterface.h */,
-				64F133B416BE6E4900E0AC68 /* IWUIDefinitions.h */,
+				64F25F2E16D3BAEC00EC3E78 /* IWUIDefinitions.h */,
+				64F25F2F16D3BAF600EC3E78 /* IWUserInterface.h */,
 				641E0D8416AAF9170077785D /* IWUIElement.h */,
 				641E0D8116AAF8D80077785D /* IWUIElement.c */,
 				64765C2516AFD8E9007E5C7A /* IWUIRectangleButton.h */,
@@ -583,13 +583,13 @@
 				64F25F0D16CF8B0F00EC3E78 /* UIShader.vsh in Resources */,
 				64F25F0E16CF8B1200EC3E78 /* UIShader.fsh in Resources */,
 				641AC1CC16C2550600DDD2EB /* fontmap01.txt in Resources */,
-				64F4208316C2714B00121DE6 /* fontmap01.png in Resources */,
-				64F4208D16C3DB4100121DE6 /* fontmap02.txt in Resources */,
-				64F4208F16C3DD8900121DE6 /* fontmap02.png in Resources */,
 				64F25F2116D3AD8200EC3E78 /* Icon.png in Resources */,
 				64F25F2316D3AD8500EC3E78 /* Icon@x2.png in Resources */,
 				64F25F2516D3AD9700EC3E78 /* Icon-72.png in Resources */,
 				64F25F2716D3AD9A00EC3E78 /* Icon-72@x2.png in Resources */,
+				64F25F2B16D3BA9B00EC3E78 /* fontmap01.png in Resources */,
+				64F25F2C16D3BA9B00EC3E78 /* fontmap02.png in Resources */,
+				64F25F2D16D3BA9B00EC3E78 /* fontmap02.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
