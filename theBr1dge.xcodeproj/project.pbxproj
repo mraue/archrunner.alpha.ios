@@ -194,10 +194,10 @@
 		64F25F1316D1500400EC3E78 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		64F25F1516D386D100EC3E78 /* IWGameStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGameStatus.h; sourceTree = "<group>"; };
 		64F25F1616D386D800EC3E78 /* IWGameStatus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGameStatus.c; sourceTree = "<group>"; };
-		64F25F2016D3AD8100EC3E78 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		64F25F2216D3AD8500EC3E78 /* Icon@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@x2.png"; sourceTree = "<group>"; };
-		64F25F2416D3AD9600EC3E78 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
-		64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@x2.png"; sourceTree = "<group>"; };
+		64F25F2016D3AD8100EC3E78 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../Icon.png; sourceTree = "<group>"; };
+		64F25F2216D3AD8500EC3E78 /* Icon@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@x2.png"; path = "../Icon@x2.png"; sourceTree = "<group>"; };
+		64F25F2416D3AD9600EC3E78 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "../Icon-72.png"; sourceTree = "<group>"; };
+		64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@x2.png"; path = "../Icon-72@x2.png"; sourceTree = "<group>"; };
 		64F4208216C2714B00121DE6 /* fontmap01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontmap01.png; sourceTree = "<group>"; };
 		64F4208416C29F6100121DE6 /* IWGTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTexture.c; sourceTree = "<group>"; };
 		64F4208616C29F6A00121DE6 /* IWGTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTexture.h; sourceTree = "<group>"; };
@@ -413,6 +413,10 @@
 				646F591116A555B000704F45 /* Default-568h@2x.png */,
 				646F591216A555B000704F45 /* Default.png */,
 				646F591316A555B000704F45 /* Default@2x.png */,
+				64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */,
+				64F25F2416D3AD9600EC3E78 /* Icon-72.png */,
+				64F25F2216D3AD8500EC3E78 /* Icon@x2.png */,
+				64F25F2016D3AD8100EC3E78 /* Icon.png */,
 				646F591416A555B000704F45 /* InfoPlist.strings */,
 				646F591A16A555B000704F45 /* main.m */,
 				646F591B16A555B000704F45 /* theBr1dge-Info.plist */,
@@ -447,10 +451,6 @@
 		64822E511695E9BF003C5415 = {
 			isa = PBXGroup;
 			children = (
-				64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */,
-				64F25F2416D3AD9600EC3E78 /* Icon-72.png */,
-				64F25F2216D3AD8500EC3E78 /* Icon@x2.png */,
-				64F25F2016D3AD8100EC3E78 /* Icon.png */,
 				646F58F816A555B000704F45 /* theBr1dge */,
 				6437584016BBF2D700FD222E /* theBr1dgeTest */,
 				64822E5F1695E9BF003C5415 /* Frameworks */,
