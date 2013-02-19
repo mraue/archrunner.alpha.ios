@@ -28,7 +28,6 @@
 
 #include "IWGFontMap.h"
 #include "IWGFontMapEntry.h"
-#include "IWGTextLine.h"
 #include "IWGTextField.h"
 
 #include "IWScoreCounter.h"
