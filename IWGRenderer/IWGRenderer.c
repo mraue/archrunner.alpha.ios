@@ -752,7 +752,7 @@ void IWGRendererRenderInGameUI(void)
     IWGMultiBufferBindCurrentDrawBuffer(&gdUITriangleDoubleBuffer);
     
     // Set master shader switch
-    glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 0);
+    //glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 0);
     
     //glUseProgram(_program);
     

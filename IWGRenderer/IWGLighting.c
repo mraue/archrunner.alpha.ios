@@ -21,8 +21,6 @@ const char* IWGLIGHTING_UNIFORM_STRINGS[] = {
     "PlayerLight.InnerCutoff",
     "PlayerLight.Exponent",
     "PlayerLight.VignettingExponent",
-    "LightingType",
-    "ShaderType",
     "Sun.Direction",
     "Sun.Color",
     "Moon.Direction",
@@ -33,8 +31,8 @@ void IWGLightingInitializeUniformLocations(GLuint program)
 {
     for (int i = 0; i < IWGLIGHTING_UNIFORM_LOC_N; i++) {
         IWGLightingUniformLocations[i] = glGetUniformLocation(program, IWGLIGHTING_UNIFORM_STRINGS[i]);
-        if (IWGLightingUniformLocations[i] == 0)
-            printf("Error: could not get position for uniform %s", IWGLIGHTING_UNIFORM_STRINGS[i]);
+        if (IWGLightingUniformLocations[i] == -1)
+            printf("Error: could not get position for uniform %s\n", IWGLIGHTING_UNIFORM_STRINGS[i]);
     }
 }
 
