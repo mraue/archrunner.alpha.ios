@@ -247,7 +247,7 @@ void IWGRendererSetupStartMenuAssets(void)
                                           IWGEOMETRY_ANCHOR_POSITION_LOWER_RIGHT,
                                           1, 9,
                                           1. / aspect,
-                                          "v0.0.1",
+                                          VERSION,
                                           0.1, 0.0,
                                           IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
                                           IWVector4Make(1.0, 1.0, 1.0, 1.0),
@@ -481,7 +481,7 @@ void IWGRendererSetupGameAssets(void)
     
     glGenTextures(1, &gdTextureHandlerId);
 
-    gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 1 * 10 + 3 * 12) * 6 * 9 * sizeof(GLfloat));
+    gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10 + 1 * 10 + 3 * 12) * 6 * 9 * sizeof(GLfloat));
 
     gdScoreTextField = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
@@ -494,6 +494,18 @@ void IWGRendererSetupGameAssets(void)
                                         &gdFontMap,
                                         gdInGameTextTriangleBufferStartCPU);
     
+    gdGameStatusField = IWGTextFieldMake(IWVector2Make(0.93, 0.62),
+                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
+                                         3, 10,
+                                         1. / aspect,
+                                         "",
+                                         0.1, -0.01,
+                                         IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+                                         IWVector4Make(1.0, 1.0, 1.0, 0.5),
+                                         &gdFontMap,
+                                         gdInGameTextTriangleBufferStartCPU
+                                         + gdScoreTextField.triangleBufferData.size);
+    
     gdGameOverTextField = IWGTextFieldMake(IWVector2Make(-0.95, 0.95),
                                            IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
                                            1, 10,
@@ -504,6 +516,7 @@ void IWGRendererSetupGameAssets(void)
                                            IWVector4Make(0.2, 0.2, 0.2, 0.8),
                                            &gdFontMap,
                                            gdInGameTextTriangleBufferStartCPU
+                                           + gdGameStatusField.triangleBufferData.size
                                            + gdScoreTextField.triangleBufferData.size);
 
     gdGameOverMenuTextField = IWGTextFieldMake(IWVector2Make(-0.95, 0.0),
@@ -516,11 +529,13 @@ void IWGRendererSetupGameAssets(void)
                                                IWVector4Make(0.2, 0.2, 0.2, 0.8),
                                                &gdFontMap,
                                                gdInGameTextTriangleBufferStartCPU
+                                               + gdGameStatusField.triangleBufferData.size
                                                + gdGameOverTextField.triangleBufferData.size
                                                + gdScoreTextField.triangleBufferData.size);
     
     unsigned int totalTextFieldsSize =
         gdScoreTextField.triangleBufferData.size
+        + gdGameStatusField.triangleBufferData.size
         + gdGameOverTextField.triangleBufferData.size
         + gdGameOverMenuTextField.triangleBufferData.size;
     
@@ -538,7 +553,7 @@ void IWGRendererSetupGameAssets(void)
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
 
-        gdTextTriangleDoubleBuffer.nVertices[i] = gdScoreTextField.triangleBufferData.size / gdScoreTextField.triangleBufferData.stride;
+        gdTextTriangleDoubleBuffer.nVertices[i] = (gdScoreTextField.triangleBufferData.size + gdGameStatusField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
         
         IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
         

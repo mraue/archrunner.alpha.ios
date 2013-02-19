@@ -34,6 +34,7 @@
 #include "IWController.h"
 #include "IWGSkyBox.h"
 #include "IWGShaderProgram.h"
+#include "IWGameStatus.h"
 
 #pragma mark - Game Logic Data
 
@@ -48,6 +49,7 @@ IWPlayerData gdPlayerDataSave;
 IWFuel gdFuel;
 
 IWScoreCounterData gdScoreCounter;
+IWGameStatusData gdGameStatus;
 
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
@@ -132,6 +134,7 @@ GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
 
 IWGTextFieldData gdScoreTextField;
+IWGTextFieldData gdGameStatusField;
 IWGTextFieldData gdGameOverTextField;
 IWGTextFieldData gdGameOverMenuTextField;
 

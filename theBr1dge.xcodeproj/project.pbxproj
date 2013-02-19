@@ -74,6 +74,11 @@
 		64F25F0E16CF8B1200EC3E78 /* UIShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */; };
 		64F25F1016D14F3A00EC3E78 /* 01Vladivostok.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */; };
 		64F25F1416D1500400EC3E78 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F25F1316D1500400EC3E78 /* AVFoundation.framework */; };
+		64F25F1716D386D900EC3E78 /* IWGameStatus.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F1616D386D800EC3E78 /* IWGameStatus.c */; };
+		64F25F2116D3AD8200EC3E78 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2016D3AD8100EC3E78 /* Icon.png */; };
+		64F25F2316D3AD8500EC3E78 /* Icon@x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2216D3AD8500EC3E78 /* Icon@x2.png */; };
+		64F25F2516D3AD9700EC3E78 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2416D3AD9600EC3E78 /* Icon-72.png */; };
+		64F25F2716D3AD9A00EC3E78 /* Icon-72@x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */; };
 		64F4208316C2714B00121DE6 /* fontmap01.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F4208216C2714B00121DE6 /* fontmap01.png */; };
 		64F4208516C29F6100121DE6 /* IWGTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208416C29F6100121DE6 /* IWGTexture.c */; };
 		64F4208816C2AB4000121DE6 /* IWGTextLine.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208716C2AB4000121DE6 /* IWGTextLine.c */; };
@@ -188,6 +193,12 @@
 		64F25F0C16CF8AAE00EC3E78 /* UIShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = UIShader.fsh; sourceTree = "<group>"; };
 		64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 01Vladivostok.mp3; sourceTree = "<group>"; };
 		64F25F1316D1500400EC3E78 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		64F25F1516D386D100EC3E78 /* IWGameStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGameStatus.h; sourceTree = "<group>"; };
+		64F25F1616D386D800EC3E78 /* IWGameStatus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGameStatus.c; sourceTree = "<group>"; };
+		64F25F2016D3AD8100EC3E78 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		64F25F2216D3AD8500EC3E78 /* Icon@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@x2.png"; sourceTree = "<group>"; };
+		64F25F2416D3AD9600EC3E78 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@x2.png"; sourceTree = "<group>"; };
 		64F4208216C2714B00121DE6 /* fontmap01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontmap01.png; sourceTree = "<group>"; };
 		64F4208416C29F6100121DE6 /* IWGTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTexture.c; sourceTree = "<group>"; };
 		64F4208616C29F6A00121DE6 /* IWGTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTexture.h; sourceTree = "<group>"; };
@@ -342,6 +353,8 @@
 				6437583316B97FA600FD222E /* IWIndexList.c */,
 				64F4209316C50C1200121DE6 /* IWScoreCounter.h */,
 				64F4209416C50C1B00121DE6 /* IWScoreCounter.c */,
+				64F25F1516D386D100EC3E78 /* IWGameStatus.h */,
+				64F25F1616D386D800EC3E78 /* IWGameStatus.c */,
 			);
 			path = IWGame;
 			sourceTree = "<group>";
@@ -439,6 +452,10 @@
 		64822E511695E9BF003C5415 = {
 			isa = PBXGroup;
 			children = (
+				64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */,
+				64F25F2416D3AD9600EC3E78 /* Icon-72.png */,
+				64F25F2216D3AD8500EC3E78 /* Icon@x2.png */,
+				64F25F2016D3AD8100EC3E78 /* Icon.png */,
 				646F58F816A555B000704F45 /* theBr1dge */,
 				6437584016BBF2D700FD222E /* theBr1dgeTest */,
 				64822E5F1695E9BF003C5415 /* Frameworks */,
@@ -574,6 +591,10 @@
 				64F4208316C2714B00121DE6 /* fontmap01.png in Resources */,
 				64F4208D16C3DB4100121DE6 /* fontmap02.txt in Resources */,
 				64F4208F16C3DD8900121DE6 /* fontmap02.png in Resources */,
+				64F25F2116D3AD8200EC3E78 /* Icon.png in Resources */,
+				64F25F2316D3AD8500EC3E78 /* Icon@x2.png in Resources */,
+				64F25F2516D3AD9700EC3E78 /* Icon-72.png in Resources */,
+				64F25F2716D3AD9A00EC3E78 /* Icon-72@x2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +665,7 @@
 				64F4209516C50C1B00121DE6 /* IWScoreCounter.c in Sources */,
 				643D9EFA16C7A168005627AB /* IWMatrix4.c in Sources */,
 				64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */,
+				64F25F1716D386D900EC3E78 /* IWGameStatus.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

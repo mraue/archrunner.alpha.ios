@@ -18,8 +18,8 @@ typedef enum {
 typedef struct {
     IWGAME_DIFFICULTY difficulty;
     float runningTimeTotal;
-    unsigned int nGridCubes;
-    unsigned int nBridgeCubes;
+    unsigned int nGridCubesConverted;
+    unsigned int nBridgeCubesCollected;
     float zMax;
     float score;
     unsigned int scoreInt;

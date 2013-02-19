@@ -27,8 +27,8 @@ IWScoreCounterData IWScoreCounterMakeEmpty()
 
 float IWScoreCounterUpdateScore(IWScoreCounterData *scoreCounter)
 {
-    scoreCounter->score = (scoreCounter->nGridCubes * SCORE_GRID_CUBE
-                           + scoreCounter->nBridgeCubes * SCORE_BRIDGE_CUBE
+    scoreCounter->score = (scoreCounter->nGridCubesConverted * SCORE_GRID_CUBE
+                           + scoreCounter->nBridgeCubesCollected * SCORE_BRIDGE_CUBE
                            + scoreCounter->runningTimeTotal * SCORE_TIME
                            + (scoreCounter->zMax / SCORE_ZMAX_NORMALIZED) * (scoreCounter->zMax / SCORE_ZMAX_NORMALIZED) * SCORE_ZMAX);
     scoreCounter->scoreInt = (int) scoreCounter->score;
@@ -42,14 +42,14 @@ void IWScoreCounterPrintScore(IWScoreCounterData *scoreCounter)
            scoreCounter->runningTimeTotal,
            scoreCounter->runningTimeTotal * SCORE_TIME,
            scoreCounter->runningTimeTotal * SCORE_TIME / scoreCounter->score * 100.0);
-    printf("  nGridCubes       = %u (%.2f/%.2f%%)\n",
-           scoreCounter->nGridCubes,
-           scoreCounter->nGridCubes * SCORE_GRID_CUBE,
-           scoreCounter->nGridCubes * SCORE_GRID_CUBE / scoreCounter->score * 100.0);
-    printf("  nBridgeCubes     = %u (%.2f/%.2f%%)\n",
-           scoreCounter->nBridgeCubes,
-           scoreCounter->nBridgeCubes * SCORE_BRIDGE_CUBE,
-           scoreCounter->nBridgeCubes * SCORE_BRIDGE_CUBE / scoreCounter->score * 100.0);
+    printf("  nGridCubesConverted       = %u (%.2f/%.2f%%)\n",
+           scoreCounter->nGridCubesConverted,
+           scoreCounter->nGridCubesConverted * SCORE_GRID_CUBE,
+           scoreCounter->nGridCubesConverted * SCORE_GRID_CUBE / scoreCounter->score * 100.0);
+    printf("  nBridgeCubesCollected     = %u (%.2f/%.2f%%)\n",
+           scoreCounter->nBridgeCubesCollected,
+           scoreCounter->nBridgeCubesCollected * SCORE_BRIDGE_CUBE,
+           scoreCounter->nBridgeCubesCollected * SCORE_BRIDGE_CUBE / scoreCounter->score * 100.0);
     printf("  zMax             = %.2f (%.2f/%.2f%%)\n",
            scoreCounter->zMax,
            (scoreCounter->zMax / SCORE_ZMAX_NORMALIZED) * (scoreCounter->zMax / SCORE_ZMAX_NORMALIZED) * SCORE_ZMAX,

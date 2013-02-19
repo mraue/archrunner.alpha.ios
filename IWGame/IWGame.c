@@ -44,7 +44,8 @@ void IWGameSetup(void)
     //
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.1, false);
     gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
-    gdNCubesPerAxis = 5;// [5]
+    //gdNCubesPerAxis = 5;// [5]
+    //gdNCubes = gdNCubesPerAxis * gdNCubesPerAxis * gdNCubesPerAxis;
     //
     gdCubeTriangleBufferStartCPU = NULL;
     //gdSkyTriangleBufferStartCPU = NULL;
@@ -74,9 +75,15 @@ void IWGameReset(void)
     gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(playerPosition,
                                                               playerDirection,
                                                               playerUp);
+    
+    gdNCubesPerAxis = 5;// [5]
+    gdNCubes = gdNCubesPerAxis * gdNCubesPerAxis * gdNCubesPerAxis;
+    
     gdTotalRunTime = 0.0;
     gdZMax = 0.0;
     gdScoreCounter = IWScoreCounterMakeEmpty();
+    gdGameStatus = IWGameStatusMakeEmpty();
+    gdGameStatus.nGridCubes = gdNCubes;
     gdFuel = IWFuelMakeDefaultStart();
     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
     //IWFuelRemoveFuel(&gdFuel, 0.95);
@@ -148,6 +155,7 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
     IWGTextFieldSetText(&gdGameOverMenuTextField, gdGameOverMenuTextField.text);
     IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
                           (gdScoreTextField.triangleBufferData.size
+                           + gdGameStatusField.triangleBufferData.size
                            + gdGameOverTextField.triangleBufferData.size) * sizeof(GLfloat),
                           gdGameOverMenuTextField.triangleBufferData.size * sizeof(GLfloat),
                           gdGameOverMenuTextField.triangleBufferData.startCPU,
@@ -262,6 +270,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
         for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
             gdTextTriangleDoubleBuffer.nVertices[k] =
             (gdScoreTextField.triangleBufferData.size
+             + gdGameStatusField.triangleBufferData.size
              + gdGameOverTextField.triangleBufferData.size
              + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
         }
@@ -373,6 +382,16 @@ void IWGameUpdate(float timeSinceLastUpdate,
                               false);
     }
     
+    // Udpate status display
+    char sTmp[30];
+    sprintf(sTmp, "%u\n%u\n%u", gdGameStatus.nGridCubes, gdGameStatus.nBridgeCubes, gdGameStatus.nPoolCubes);
+    IWGTextFieldSetText(&gdGameStatusField, sTmp);
+    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+                          gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                          gdGameStatusField.triangleBufferData.size * sizeof(GLfloat),
+                          gdGameStatusField.triangleBufferData.startCPU,
+                          false);
+    
     // Switch main draw buffer
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
 
@@ -432,6 +451,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
         
         free(newPositions);
         
+        gdGameStatus.nGridCubes += gdPoolCubeIndexList.nEntries;
+        gdGameStatus.nPoolCubes = 0;
         gdPoolCubeIndexList.nEntries = 0;
     }
     
@@ -446,6 +467,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
         unsigned int i = IWIndexListRemoveRandom(&gdStandardCubeIndexList);
         //printf("DEBUG: Removing cube %u\n", i);
         IWGameRemoveCubeFromBuffer(&gdCubeData[i], &gdTriangleDoubleBuffer);
+        
+        gdGameStatus.nGridCubes -= 1;
     }
     
     // Collision detection
@@ -483,7 +506,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     gdCubeData[i].color = IWUI_COLOR_DARK_RED(1.0);
                     //gdCubeData[i].color = IWUI_COLOR_DARK_PURPLE(1.0);
 
-                    gdScoreCounter.nGridCubes++;
+                    gdScoreCounter.nGridCubesConverted++;
+                    gdGameStatus.nGridCubes -= 1;
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
                     
@@ -502,6 +526,9 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     gdCubeData[i].positionTransition = IWVector3TransitionMake(dimensions,
                                                                                IWVector3MultiplyScalar(dimensions, 0.01),
                                                                                dimensions, 0.15, 0.0, false, false);
+                    
+                    gdGameStatus.nBridgeCubes -= 1;
+                    gdGameStatus.nPoolCubes += 1;
                 }
             }
         } else if (!gdCubeData[i].positionTransition.transitionHasFinished) {
@@ -520,6 +547,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                         gdCubeData[i].color = IWUI_COLOR_RED(1.0);
                         gdCubeData[i].isInteractive = true;
                         gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
+                        gdGameStatus.nBridgeCubes += 1;
                     } else {
                         //gdCubeData[i].color = IWUI_COLOR_BLUE(1.0);
                         gdCubeData[i].isInteractive = true;
@@ -533,7 +561,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                 if (gdCubeData[i].positionTransition.transitionHasFinished) {
                     gdCubeData[i].type = IWCUBE_TYPE_POOL;
                     
-                    gdScoreCounter.nBridgeCubes++;
+                    gdScoreCounter.nBridgeCubesCollected++;
                     
                     IWIndexListAppendObjectId(&gdPoolCubeIndexList, i);
                     
