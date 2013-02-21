@@ -35,6 +35,8 @@
 #include "IWGSkyBox.h"
 #include "IWGShaderProgram.h"
 #include "IWGameStatus.h"
+#include "IWUIMenuPresenter.h"
+#include "IWUIMenu.h"
 
 #pragma mark - Game Logic Data
 
@@ -83,6 +85,9 @@ IWControllerData gdControllerDataAccelerometer;
 
 #pragma mark - Debug / Testing
 
+IWUIMenuPresenterData gdMenuPresenterTest;
+IWUIMenuData gdMenuTest;
+
 #pragma mark - Asset and memory management
 
 IWGFontMapData gdFontMap;
@@ -109,6 +114,8 @@ unsigned int gdUINLineVertices;
 bool gdResetControllerPosition;
 
 bool gdRunningInSimulator;
+
+IWUIMenuData gdPauseMenu;
 
 #pragma mark - Open GL Buffer
 

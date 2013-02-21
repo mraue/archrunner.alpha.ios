@@ -7,13 +7,13 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "IWGRenderer/IWGMultiBuffer.c"
-         timestampString = "382650157.742378"
+         filePath = "IWGame/IWGame.c"
+         timestampString = "383075568.150522"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "67"
-         endingLineNumber = "67"
-         landmarkName = "IWGMultiBufferSwitchBuffer()"
+         startingLineNumber = "300"
+         endingLineNumber = "300"
+         landmarkName = "IWGameUpdate()"
          landmarkType = "7">
       </FileBreakpoint>
    </FileBreakpoints>

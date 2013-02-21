@@ -152,7 +152,7 @@
     [player setDelegate: self];
     [player setNumberOfLoops:-1];
     [player play];
-    
+
     gdMainShaderProgram.vertexShaderFilename
         = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String];
     gdMainShaderProgram.fragmentShaderFilename
@@ -171,8 +171,9 @@
         = [[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"fsh"] UTF8String];
     
     // Deal with font map textures
-    NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:@"fontmap02" ofType:@"txt"];
-    UIImage* uiImage = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"fontmap02" ofType:@"png"]]retain];
+    NSString *fontMapBaseName = @"fontmap02";
+    NSString *fontMapFilename = [[NSBundle mainBundle] pathForResource:fontMapBaseName ofType:@"txt"];
+    UIImage* uiImage = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:fontMapBaseName ofType:@"png"]]retain];
     CGImageRef cgImage = uiImage.CGImage;
     CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
@@ -241,6 +242,7 @@
                                                  IWVector3Make(0.0, 0.0, -1.0));
         orientationNeutralSetAccelerometer = YES;
         gdResetControllerPosition = false;
+        [savedAttitude release];
         savedAttitude = [motionManager.deviceMotion.attitude retain];
     }
     
@@ -262,7 +264,9 @@
                                               alpha);
             IWControllerAttitudeToRotationSpeed(&gdControllerDataAccelerometer,
                                                 _filteredAttitude);
+            [currentAttitude release];
         } else {
+            [savedAttitude release];
             savedAttitude = [motionManager.deviceMotion.attitude retain];
         }
     } else {

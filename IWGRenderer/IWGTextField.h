@@ -55,5 +55,6 @@ IWGTextFieldData IWGTextFieldMake(IWPoint2D anchorPoint,
                                   GLfloat *bufferStartPtr);// If NULL, create and manage own Buffer
 
 void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text);
+float IWGTextFieldGetCharacterWidth(IWGTextFieldData *textField);
 
 #endif

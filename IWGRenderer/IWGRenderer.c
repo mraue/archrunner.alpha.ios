@@ -34,6 +34,11 @@
 
 #include "IWGSkyBox.h"
 
+#include "IWUIMenuItem.h"
+#include "IWUIMenuPage.h"
+#include "IWUIMenuPresenter.h"
+#include "IWUIMenu.h"
+
 #include "IWGameData.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -228,8 +233,8 @@ void IWGRendererSetupStartMenuAssets(void)
     
     GLuint textureHandlerId;
     glGenTextures(1, &textureHandlerId);
-    
-    gdInGameTextTriangleBufferStartCPU = malloc((2 * 10 + 1 * 9 + 1 * 10) * 6 * 9 * sizeof(GLfloat));
+
+    gdInGameTextTriangleBufferStartCPU = malloc(((2 * 10 + 1 * 9 + 1 * 10) * 6 * 9) * sizeof(GLfloat));
     
     gdTitleTextField = IWGTextFieldMake(IWVector2Make(0.95, 0.96),
                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
@@ -270,9 +275,13 @@ void IWGRendererSetupStartMenuAssets(void)
                                                               IWVector4Make(1.0, 1.0, 1.0, 1.0),
                                                               IWVector4Make(1.0, 1.0, 1.0, 1.0),
                                                               1.0, 0.0, false, false);
+    
     //gdInGameTextTriangleBufferStartCPU = gdTitleTextField.triangleBufferData.bufferStartCPU;
     
-    unsigned int textSizeTotal = gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size + gdStartTextField.triangleBufferData.size;
+    // DEBUG
+    // END DEBUG
+    
+    unsigned int textSizeTotal = gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size + gdStartTextField.triangleBufferData.size + gdMenuPresenterTest.triangleBufferData.size;
     
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTextTriangleDoubleBuffer.nVertices[k] = textSizeTotal / gdTitleTextField.triangleBufferData.stride;
@@ -582,7 +591,31 @@ void IWGRendererSetupGameAssets(void)
     
     glBindVertexArrayOES(0);
     
-    glUseProgram(gdMainShaderProgram.programID);
+    // PAUSE Menu
+    
+    gdPauseMenu = IWUIMenuMake(IWUIMenuPresenterMake(2, 12, 1,
+                                                    IWVector2Make(-0.4, 0.6), 1. / aspect,
+                                                    0.22, 1.2,
+                                                    IWVector4Make(0.2, 0.2, 0.2, 0.8),
+                                                    &gdFontMap),
+                              2);
+    gdPauseMenu.pages[0].title = "PAUSED";
+    gdPauseMenu.pages[0].isActive = true;
+    //IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_EMPTY, "", "", 0, NULL, 0);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_ACTION, "[QUIT]", "", 0, NULL, 1);
+    //IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_EMPTY, "", "", 0, NULL, 0);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_ACTION, "[CONTINUE]", "", 0, NULL, 2);
+    gdPauseMenu.pages[1].title = "GAME OVER";
+    gdPauseMenu.pages[1].isActive = false;
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[QUIT]", "", 0, NULL, 1);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[RETRY]", "", 0, NULL, 2);
+    
+    IWUIMenuPresenterInitTextFields(&gdPauseMenu.presenter, gdPauseMenu.dataBufferStart);
+    IWIUMenuPresenterPresentMenu(&gdPauseMenu.presenter, &gdPauseMenu.pages[0]);
+    
+    IWUIMenuFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId, gdFontMapTextureData);
+    
+    //glUseProgram(gdMainShaderProgram.programID);
     
     //
     // Head up display data
@@ -721,6 +754,8 @@ void IWGRendererTearDownGameAssets(void)
     IWIndexListDeallocData(&gdGPUBufferPositionIndexList);
     
     IWUIStateBarDeallocData(&gdFuel.stateBar);
+    
+    IWUIMenuPurgeData(&gdPauseMenu);
 }
 
 void IWGRendererRenderCubes(void)
@@ -787,7 +822,8 @@ void IWGRendererRender(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
-        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        || gdCurrentGameStatus == IWGAME_STATUS_PAUSED
+        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
         
         glUseProgram(gdMainShaderProgram.programID);
         
@@ -830,17 +866,21 @@ void IWGRendererRender(void)
         glEnable(GL_BLEND);
 
         glUseProgram(gdTextShaderProgram.programID);
-        
-        IWGRendererRenderInGameText();
+
+        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING)
+            IWGRendererRenderInGameText();
+        if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED
+            || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER)
+            IWUIMenuRender(&gdPauseMenu);
 
         glUseProgram(gdUIShaderProgram.programID);
         
-        IWGRendererRenderInGameUI();
+        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING)
+            IWGRendererRenderInGameUI();
 
         glDisable(GL_BLEND);
         
-    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU
-               || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         

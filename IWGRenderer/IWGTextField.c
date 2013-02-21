@@ -60,7 +60,7 @@ void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text)
     IWVector2 lowerLeft, upperRight;
     lowerLeft = upperRight = textField->anchorPoint;
     float xStart = textField->anchorPoint.x;
-    float mWidth =  textField->fontHeight * IWGFontMapEntryGetAspectRatio(&textField->fontMap->map['M'])  / textField->aspect;
+    float mWidth = textField->fontHeight * IWGFontMapEntryGetAspectRatio(&textField->fontMap->map['M'])  / textField->aspect;
     switch (textField->anchorPosition) {
         case IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT:
             lowerLeft.y -= textField->fontHeight;
@@ -119,4 +119,9 @@ void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text)
     }
     free(textVar);
     return;
+}
+
+float IWGTextFieldGetCharacterWidth(IWGTextFieldData *textField)
+{
+    return textField->fontHeight * IWGFontMapEntryGetAspectRatio(&textField->fontMap->map['M'])  / textField->aspect;
 }

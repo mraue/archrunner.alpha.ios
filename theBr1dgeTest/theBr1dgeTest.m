@@ -12,6 +12,8 @@
 #import "IWGFontMap.h"
 #import "IWIndexList.h"
 #import "IWFileTools.h"
+#import "IWUIMenuItem.h"
+#import "IWUIMenuPage.h"
 
 @implementation theBr1dgeTest
 
@@ -27,6 +29,15 @@
     // Tear-down code here.
     
     [super tearDown];
+}
+
+- (void)testIWUIMenuPage
+{
+    IWUIMenuPageData menuPage = IWUIMenuPageDataMake("Main", NULL, 0, true, NULL);
+    IWUIMenuPageAddItem(&menuPage, IWUIMENUITEM_ITEM_TYPE_OPTIONS, "SOUND", "LOUD\nSILENT\n", 0, NULL, 0);
+    IWUIMenuPageAddItem(&menuPage, IWUIMENUITEM_ITEM_TYPE_OPTIONS, "SCREEN", "BRIGHT\nDARK\n", 0, NULL, 0);
+    STAssertEquals(menuPage.items[0].type, IWUIMENUITEM_ITEM_TYPE_OPTIONS, @"IWUIMenuPageData Test 1");
+    printf("%s == SOUND \n", menuPage.items[0].title);
 }
 
 - (void)testIWGFontMap

@@ -82,6 +82,12 @@
 		64F25F2B16D3BA9B00EC3E78 /* fontmap01.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2816D3BA9B00EC3E78 /* fontmap01.png */; };
 		64F25F2C16D3BA9B00EC3E78 /* fontmap02.png in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2916D3BA9B00EC3E78 /* fontmap02.png */; };
 		64F25F2D16D3BA9B00EC3E78 /* fontmap02.txt in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F2A16D3BA9B00EC3E78 /* fontmap02.txt */; };
+		64F25F3B16D4DA2000EC3E78 /* IWUIMenuItem.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3316D3CEE900EC3E78 /* IWUIMenuItem.c */; };
+		64F25F3C16D4DA2400EC3E78 /* IWUIMenuPage.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */; };
+		64F25F3D16D4DA2800EC3E78 /* IWUIMenuPresenter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3916D3CF4300EC3E78 /* IWUIMenuPresenter.c */; };
+		64F25F3E16D4E35B00EC3E78 /* IWUIMenuPage.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */; };
+		64F25F3F16D4E35E00EC3E78 /* IWUIMenuItem.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3316D3CEE900EC3E78 /* IWUIMenuItem.c */; };
+		64F25F4216D5126B00EC3E78 /* IWUIMenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F4116D5126A00EC3E78 /* IWUIMenu.c */; };
 		64F4208516C29F6100121DE6 /* IWGTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4208416C29F6100121DE6 /* IWGTexture.c */; };
 		64F4209216C4E2EA00121DE6 /* IWGTextField.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4209116C4E2E900121DE6 /* IWGTextField.c */; };
 		64F4209516C50C1B00121DE6 /* IWScoreCounter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4209416C50C1B00121DE6 /* IWScoreCounter.c */; };
@@ -201,6 +207,14 @@
 		64F25F2A16D3BA9B00EC3E78 /* fontmap02.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fontmap02.txt; path = FontMaps/fontmap02.txt; sourceTree = "<group>"; };
 		64F25F2E16D3BAEC00EC3E78 /* IWUIDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUIDefinitions.h; path = IWUserInterface/IWUIDefinitions.h; sourceTree = "<group>"; };
 		64F25F2F16D3BAF600EC3E78 /* IWUserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IWUserInterface.h; path = IWUserInterface/IWUserInterface.h; sourceTree = "<group>"; };
+		64F25F3016D3CEB200EC3E78 /* IWUIMenuItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenuItem.h; path = IWUserInterface/IWUIMenuItem.h; sourceTree = "<group>"; };
+		64F25F3316D3CEE900EC3E78 /* IWUIMenuItem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenuItem.c; path = IWUserInterface/IWUIMenuItem.c; sourceTree = "<group>"; };
+		64F25F3516D3CF0B00EC3E78 /* IWUIMenuPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenuPage.h; path = IWUserInterface/IWUIMenuPage.h; sourceTree = "<group>"; };
+		64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenuPage.c; path = IWUserInterface/IWUIMenuPage.c; sourceTree = "<group>"; };
+		64F25F3816D3CF2D00EC3E78 /* IWUIMenuPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenuPresenter.h; path = IWUserInterface/IWUIMenuPresenter.h; sourceTree = "<group>"; };
+		64F25F3916D3CF4300EC3E78 /* IWUIMenuPresenter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenuPresenter.c; path = IWUserInterface/IWUIMenuPresenter.c; sourceTree = "<group>"; };
+		64F25F4016D5125700EC3E78 /* IWUIMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenu.h; path = IWUserInterface/IWUIMenu.h; sourceTree = "<group>"; };
+		64F25F4116D5126A00EC3E78 /* IWUIMenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenu.c; path = IWUserInterface/IWUIMenu.c; sourceTree = "<group>"; };
 		64F4208416C29F6100121DE6 /* IWGTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTexture.c; sourceTree = "<group>"; };
 		64F4208616C29F6A00121DE6 /* IWGTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTexture.h; sourceTree = "<group>"; };
 		64F4209016C4E2E100121DE6 /* IWGTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTextField.h; sourceTree = "<group>"; };
@@ -278,6 +292,14 @@
 				64765C2416AFD8E9007E5C7A /* IWUIRectangleButton.c */,
 				64765C2716AFD8E9007E5C7A /* IWUIStateBar.h */,
 				64765C2616AFD8E9007E5C7A /* IWUIStateBar.c */,
+				64F25F3016D3CEB200EC3E78 /* IWUIMenuItem.h */,
+				64F25F3316D3CEE900EC3E78 /* IWUIMenuItem.c */,
+				64F25F3516D3CF0B00EC3E78 /* IWUIMenuPage.h */,
+				64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */,
+				64F25F3816D3CF2D00EC3E78 /* IWUIMenuPresenter.h */,
+				64F25F3916D3CF4300EC3E78 /* IWUIMenuPresenter.c */,
+				64F25F4016D5125700EC3E78 /* IWUIMenu.h */,
+				64F25F4116D5126A00EC3E78 /* IWUIMenu.c */,
 			);
 			name = IWUserInterface;
 			sourceTree = "<group>";
@@ -621,6 +643,8 @@
 				641AC1CE16C257FA00DDD2EB /* IWGFontMapEntry.c in Sources */,
 				641AC1CF16C257FE00DDD2EB /* IWGFontMap.c in Sources */,
 				641AC1D016C2584300DDD2EB /* IWFileTools.c in Sources */,
+				64F25F3E16D4E35B00EC3E78 /* IWUIMenuPage.c in Sources */,
+				64F25F3F16D4E35E00EC3E78 /* IWUIMenuItem.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -660,6 +684,10 @@
 				643D9EFA16C7A168005627AB /* IWMatrix4.c in Sources */,
 				64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */,
 				64F25F1716D386D900EC3E78 /* IWGameStatus.c in Sources */,
+				64F25F3B16D4DA2000EC3E78 /* IWUIMenuItem.c in Sources */,
+				64F25F3C16D4DA2400EC3E78 /* IWUIMenuPage.c in Sources */,
+				64F25F3D16D4DA2800EC3E78 /* IWUIMenuPresenter.c in Sources */,
+				64F25F4216D5126B00EC3E78 /* IWUIMenu.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
