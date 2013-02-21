@@ -84,7 +84,7 @@ void IWGameReset(void)
     gdFuel = IWFuelMakeDefaultStart();
     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
     // DEBUG
-    IWFuelRemoveFuel(&gdFuel, 0.95);
+    //IWFuelRemoveFuel(&gdFuel, 0.95);
     // END DEBUG
 }
 
@@ -108,6 +108,10 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+    
+    // Nifty trick to get the menu setup, i.e. flush the buffer updates
+    // (this should probably be a function in the future)
+    IWGMultiBufferSwitchBuffer(&gdPauseMenu.multiBuffer);
     
     if (!gdGrayScaleTransition.transitionHasFinished) {
         IWVector3TransitionUpdate(&gdGrayScaleTransition, timeSinceLastUpdate);
