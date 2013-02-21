@@ -15,6 +15,12 @@ typedef enum {
     IWGAME_DIFFICULTY_HARD
 } IWGAME_DIFFICULTY;
 
+typedef enum {
+    IWSCORECOUNTER_SCORE_TYPE_TIME,
+    IWSCORECOUNTER_SCORE_TYPE_CUBES,
+    IWSCORECOUNTER_SCORE_TYPE_DISTANCE
+} IWSCORECOUNTER_SCORE_TYPE;
+
 typedef struct {
     IWGAME_DIFFICULTY difficulty;
     float runningTimeTotal;
@@ -29,5 +35,7 @@ IWScoreCounterData IWScoreCounterMakeEmpty();
 
 float IWScoreCounterUpdateScore(IWScoreCounterData *scoreCounter);
 void IWScoreCounterPrintScore(IWScoreCounterData *scoreCounter);
+
+unsigned int IWScoreCounterGetScore(IWScoreCounterData *scoreCounter, IWSCORECOUNTER_SCORE_TYPE type);
 
 #endif

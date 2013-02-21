@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#import "theBr1dgeTest.h"
+#import "ArchRunnerAlphaTest.h"
 
 #import "IWMathUtils.h"
 #import "IWGFontMap.h"

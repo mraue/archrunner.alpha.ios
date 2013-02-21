@@ -558,7 +558,9 @@ void IWGRendererSetupGameAssets(void)
     
     glBindVertexArrayOES(0);
     
+    //
     // PAUSE Menu
+    //
     
     gdPauseMenu = IWUIMenuMake(IWUIMenuPresenterMake(2, 12, 1,
                                                     IWVector2Make(-0.4, 0.6), 1. / aspect,
@@ -582,6 +584,14 @@ void IWGRendererSetupGameAssets(void)
     
     IWUIMenuFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId, gdFontMapTextureData);
     
+    //
+    // Score presenter
+    //
+    
+    gdScorePresenterTest = IWScorePresenterMake(1.0, IWVector2Make(-0.8, 0.9), 1. / aspect,
+                                                0.22, IWVector4Make(0.2, 0.2, 0.2, 0.8), &gdFontMap);
+    IWScorePresenterFillVBO(&gdScorePresenterTest, positionSlot, colorSlot, textureOffsetSlot,
+                            gdTextureHandlerId, gdFontMapTextureData);
     //glUseProgram(gdMainShaderProgram.programID);
     
     //
@@ -723,6 +733,7 @@ void IWGRendererTearDownGameAssets(void)
     IWUIStateBarDeallocData(&gdFuel.stateBar);
     
     IWUIMenuPurgeData(&gdPauseMenu);
+    IWScorePresenterPurgeData(&gdScorePresenterTest);
 }
 
 void IWGRendererRenderCubes(void)
@@ -752,15 +763,6 @@ void IWGRendererRenderInGameUI(void)
     
     IWGMultiBufferBindCurrentDrawBuffer(&gdUITriangleDoubleBuffer);
     
-    // Set master shader switch
-    //glUniform1i(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SHADER_TYPE], 0);
-    
-    //glUseProgram(_program);
-    
-    //glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
-    //glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, _normalMatrix.m);
-    //glUniform4f(uniforms[UNIFORM_LIGHT_DIFFUSE_COLOR], 1.0, 0.1, 0.1, 1.0);
-    
     //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
     glDrawArrays(GL_TRIANGLES, 0, gdUINTriangleVertices);
     glBindVertexArrayOES(0);
@@ -788,48 +790,48 @@ void IWGRendererRender(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+    glUseProgram(gdMainShaderProgram.programID);
+    
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
+                gdSkyBox.sunColorLight.x, gdSkyBox.sunColorLight.y, gdSkyBox.sunColorLight.z,
+                gdSkyBox.sunColorLight.w);
+    
+    float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
+    tmp *= tmp;
+    glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
+                0.75, 0.75, 0.75,
+                IW_MIN(1.0, tmp));
+    
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
+                gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
+    glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
+                gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
+    
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    
+    IWGRendererRenderCubes();
+    
+    glDisable(GL_CULL_FACE);
+    
+    glUseProgram(gdSkyboxShaderProgram.programID);
+    
+    glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
+                       1, 0, &gdModelMatrix.m00);
+    glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
+                       1, 0, &gdViewMatrix.m00);
+    glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
+                       1, 0, &gdProjectionMatrix.m00);
+    
+    IWGSkyBoxRender(&gdSkyBox, false);
+    
+    glDisable(GL_DEPTH_TEST);
+    
     if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
         || gdCurrentGameStatus == IWGAME_STATUS_PAUSED
-        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER
+        || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
         
-        glUseProgram(gdMainShaderProgram.programID);
-        
-        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                    gdSkyBox.sunColorLight.x, gdSkyBox.sunColorLight.y, gdSkyBox.sunColorLight.z,
-                    gdSkyBox.sunColorLight.w);
-        
-        float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
-        tmp *= tmp;
-        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
-                    0.75, 0.75, 0.75,
-                    IW_MIN(1.0, tmp));
-        
-        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
-                    gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
-        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
-                    gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
-        
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
-
-        IWGRendererRenderCubes();
-
-        glDisable(GL_CULL_FACE);
-        
-        glUseProgram(gdSkyboxShaderProgram.programID);
-        
-        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
-                           1, 0, &gdModelMatrix.m00);
-        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
-                           1, 0, &gdViewMatrix.m00);
-        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
-                           1, 0, &gdProjectionMatrix.m00);
-        
-
-        IWGSkyBoxRender(&gdSkyBox, false);
-
-        glDisable(GL_DEPTH_TEST);
-
         glEnable(GL_BLEND);
 
         glUseProgram(gdTextShaderProgram.programID);
@@ -837,9 +839,12 @@ void IWGRendererRender(void)
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING)
             IWGRendererRenderInGameText();
         if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED
-            || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER)
+            || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU)
             IWUIMenuRender(&gdPauseMenu);
-
+        if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+            IWScorePresenterRender(&gdScorePresenterTest);
+        }
+        
         glUseProgram(gdUIShaderProgram.programID);
         
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING)
@@ -848,42 +853,6 @@ void IWGRendererRender(void)
         glDisable(GL_BLEND);
         
     } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
-        
-        glUseProgram(gdMainShaderProgram.programID);
-        
-        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                    gdSkyBox.sunColorLight.x, gdSkyBox.sunColorLight.y, gdSkyBox.sunColorLight.z,
-                    gdSkyBox.sunColorLight.w);
-        
-        float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
-        tmp *= tmp;
-        glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
-                    0.7, 0.7, 0.7,
-                    IW_MIN(1.0, tmp));
-        
-        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_POSITION],
-                    gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z);
-        glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
-                    gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
-        
-        IWGRendererRenderCubes();
-        
-        glDisable(GL_CULL_FACE);
-        
-        glUseProgram(gdSkyboxShaderProgram.programID);
-        
-        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
-                           1, 0, &gdModelMatrix.m00);
-        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
-                           1, 0, &gdViewMatrix.m00);
-        glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
-                           1, 0, &gdProjectionMatrix.m00);
-
-        IWGSkyBoxRender(&gdSkyBox, false);
-        
-        glDisable(GL_DEPTH_TEST);
         
         glEnable(GL_BLEND);
         

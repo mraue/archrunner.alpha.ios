@@ -25,6 +25,20 @@ IWScoreCounterData IWScoreCounterMakeEmpty()
     return scoreCounter;
 }
 
+unsigned int IWScoreCounterGetScore(IWScoreCounterData *scoreCounter, IWSCORECOUNTER_SCORE_TYPE type)
+{
+    if (type == IWSCORECOUNTER_SCORE_TYPE_TIME) {
+        return scoreCounter->runningTimeTotal * SCORE_TIME;
+    } else if (type == IWSCORECOUNTER_SCORE_TYPE_CUBES) {
+        return scoreCounter->nGridCubesConverted * SCORE_GRID_CUBE
+            + scoreCounter->nBridgeCubesCollected * SCORE_BRIDGE_CUBE;
+    } else if (type == IWSCORECOUNTER_SCORE_TYPE_DISTANCE) {
+        return (scoreCounter->zMax / SCORE_ZMAX_NORMALIZED) * (scoreCounter->zMax / SCORE_ZMAX_NORMALIZED) * SCORE_ZMAX;
+    } else {
+        return 0;
+    }
+}
+
 float IWScoreCounterUpdateScore(IWScoreCounterData *scoreCounter)
 {
     scoreCounter->score = (scoreCounter->nGridCubesConverted * SCORE_GRID_CUBE

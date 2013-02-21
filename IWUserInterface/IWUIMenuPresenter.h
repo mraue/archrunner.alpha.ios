@@ -35,14 +35,14 @@ struct _IWUIMenuPresenterData {
 typedef struct _IWUIMenuPresenterData IWUIMenuPresenterData;
 
 IWUIMenuPresenterData IWUIMenuPresenterMake(unsigned int nItemsMax,
-                                          unsigned int nColumnsItem,
-                                          unsigned int nColumnsOption,
-                                          IWPoint2D anchorPoint,
-                                          float aspect,
-                                          float fontHeight,
+                                            unsigned int nColumnsItem,
+                                            unsigned int nColumnsOption,
+                                            IWPoint2D anchorPoint,
+                                            float aspect,
+                                            float fontHeight,
                                             float lineHeight,
-                                          IWVector4 color,
-                                          IWGFontMapData *fontMap);
+                                            IWVector4 color,
+                                            IWGFontMapData *fontMap);
 void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter, GLfloat *bufferPtr);
 
 void IWIUMenuPresenterPresentMenu(IWUIMenuPresenterData *menuPresenter, IWUIMenuPageData *menuPage);

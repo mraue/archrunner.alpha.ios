@@ -37,6 +37,7 @@
 #include "IWGameStatus.h"
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenu.h"
+#include "IWScorePresenter.h"
 
 #pragma mark - Game Logic Data
 
@@ -87,6 +88,8 @@ IWControllerData gdControllerDataAccelerometer;
 
 IWUIMenuPresenterData gdMenuPresenterTest;
 IWUIMenuData gdMenuTest;
+
+IWScorePresenterData gdScorePresenterTest;
 
 #pragma mark - Asset and memory management
 

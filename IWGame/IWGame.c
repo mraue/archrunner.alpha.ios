@@ -83,7 +83,9 @@ void IWGameReset(void)
     gdGameStatus.nGridCubes = gdNCubes;
     gdFuel = IWFuelMakeDefaultStart();
     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
-    //IWFuelRemoveFuel(&gdFuel, 0.95);
+    // DEBUG
+    IWFuelRemoveFuel(&gdFuel, 0.95);
+    // END DEBUG
 }
 
 void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
@@ -93,6 +95,8 @@ void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
         IWGameUpdate(timeSinceLastUpdate, aspectRatio);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
         IWGameGameOverHandler(timeSinceLastUpdate, aspectRatio);
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
+        IWGameGameOverMenuHandler(timeSinceLastUpdate, aspectRatio);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
         IWGameStartMenuHandler(timeSinceLastUpdate, aspectRatio);
     }
@@ -105,6 +109,30 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
     IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
+    if (!gdGrayScaleTransition.transitionHasFinished) {
+        IWVector3TransitionUpdate(&gdGrayScaleTransition, timeSinceLastUpdate);
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"),
+                    gdGrayScaleTransition.currentVector.x,
+                    gdGrayScaleTransition.currentVector.y);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"),
+                    gdGrayScaleTransition.currentVector.x,
+                    gdGrayScaleTransition.currentVector.y);
+    }
+    
+    IWScorePresenterUpdate(&gdScorePresenterTest, &gdScoreCounter, timeSinceLastUpdate);
+    
+    if (gdScorePresenterTest.hasFinished && gdIsTouched) {
+        gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER_MENU;
+        gdIsTouched = false;
+    }
+
+    return;
+}
+
+void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
+{
     if (!gdGrayScaleTransition.transitionHasFinished) {
         IWVector3TransitionUpdate(&gdGrayScaleTransition, timeSinceLastUpdate);
         glUseProgram(gdSkyboxShaderProgram.programID);
@@ -506,6 +534,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
 
                     gdScoreCounter.nGridCubesConverted++;
                     gdGameStatus.nGridCubes -= 1;
+                    gdGameStatus.nBridgeCubes += 1;                    
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
                     
@@ -545,7 +574,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
                         gdCubeData[i].color = IWUI_COLOR_RED(1.0);
                         gdCubeData[i].isInteractive = true;
                         gdCubeData[i].type = IWCUBE_TYPE_OVERDRIVE;
-                        gdGameStatus.nBridgeCubes += 1;
                     } else {
                         //gdCubeData[i].color = IWUI_COLOR_BLUE(1.0);
                         gdCubeData[i].isInteractive = true;

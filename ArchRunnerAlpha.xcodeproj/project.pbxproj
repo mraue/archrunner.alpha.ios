@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6404C90516D623AC005900FA /* IWScorePresenter.c in Sources */ = {isa = PBXBuildFile; fileRef = 6404C90416D623AC005900FA /* IWScorePresenter.c */; };
 		641AC1C016C11F8200DDD2EB /* IWGCircle.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1BF16C11F8200DDD2EB /* IWGCircle.c */; };
 		641AC1C216C24F1300DDD2EB /* IWGFontMapEntry.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */; };
 		641AC1C616C2502100DDD2EB /* IWGFontMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1C516C2502100DDD2EB /* IWGFontMap.c */; };
@@ -30,7 +31,7 @@
 		6437583E16BBF2D600FD222E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E601695E9BF003C5415 /* UIKit.framework */; };
 		6437583F16BBF2D600FD222E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E621695E9BF003C5415 /* Foundation.framework */; };
 		6437584516BBF2D700FD222E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6437584316BBF2D700FD222E /* InfoPlist.strings */; };
-		6437584816BBF2D700FD222E /* theBr1dgeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6437584716BBF2D700FD222E /* theBr1dgeTest.m */; };
+		6437584816BBF2D700FD222E /* ArchRunnerAlphaTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6437584716BBF2D700FD222E /* ArchRunnerAlphaTest.m */; };
 		6437584D16BBF76E00FD222E /* IWIndexList.c in Sources */ = {isa = PBXBuildFile; fileRef = 6437583316B97FA600FD222E /* IWIndexList.c */; };
 		643D9EFA16C7A168005627AB /* IWMatrix4.c in Sources */ = {isa = PBXBuildFile; fileRef = 643D9EF916C7A168005627AB /* IWMatrix4.c */; };
 		646F592616A555B000704F45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F58FC16A555B000704F45 /* AppDelegate.m */; };
@@ -94,6 +95,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6404C90316D6239C005900FA /* IWScorePresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWScorePresenter.h; sourceTree = "<group>"; };
+		6404C90416D623AC005900FA /* IWScorePresenter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWScorePresenter.c; sourceTree = "<group>"; };
 		641AC1BE16C11F7500DDD2EB /* IWGCircle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGCircle.h; sourceTree = "<group>"; };
 		641AC1BF16C11F8200DDD2EB /* IWGCircle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGCircle.c; sourceTree = "<group>"; };
 		641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGFontMapEntry.c; sourceTree = "<group>"; };
@@ -122,13 +125,13 @@
 		6437583216B97CB400FD222E /* IWTimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWTimer.h; sourceTree = "<group>"; };
 		6437583316B97FA600FD222E /* IWIndexList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWIndexList.c; sourceTree = "<group>"; };
 		6437583516B97FAE00FD222E /* IWIndexList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWIndexList.h; sourceTree = "<group>"; };
-		6437583B16BBF2D600FD222E /* theBr1dgeTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = theBr1dgeTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6437583B16BBF2D600FD222E /* ArchRunnerAlphaTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArchRunnerAlphaTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6437583C16BBF2D600FD222E /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		6437584216BBF2D700FD222E /* theBr1dgeTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "theBr1dgeTest-Info.plist"; sourceTree = "<group>"; };
+		6437584216BBF2D700FD222E /* ArchRunnerAlphaTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ArchRunnerAlphaTest-Info.plist"; sourceTree = "<group>"; };
 		6437584416BBF2D700FD222E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		6437584616BBF2D700FD222E /* theBr1dgeTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = theBr1dgeTest.h; sourceTree = "<group>"; };
-		6437584716BBF2D700FD222E /* theBr1dgeTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = theBr1dgeTest.m; sourceTree = "<group>"; };
-		6437584916BBF2D700FD222E /* theBr1dgeTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "theBr1dgeTest-Prefix.pch"; sourceTree = "<group>"; };
+		6437584616BBF2D700FD222E /* ArchRunnerAlphaTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArchRunnerAlphaTest.h; sourceTree = "<group>"; };
+		6437584716BBF2D700FD222E /* ArchRunnerAlphaTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArchRunnerAlphaTest.m; sourceTree = "<group>"; };
+		6437584916BBF2D700FD222E /* ArchRunnerAlphaTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArchRunnerAlphaTest-Prefix.pch"; sourceTree = "<group>"; };
 		643D9EF816C7998F005627AB /* IWMatrix4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWMatrix4.h; sourceTree = "<group>"; };
 		643D9EF916C7A168005627AB /* IWMatrix4.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWMatrix4.c; sourceTree = "<group>"; };
 		646F58FB16A555B000704F45 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -152,8 +155,8 @@
 		646F591316A555B000704F45 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		646F591516A555B000704F45 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		646F591A16A555B000704F45 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		646F591B16A555B000704F45 /* theBr1dge-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "theBr1dge-Info.plist"; sourceTree = "<group>"; };
-		646F591C16A555B000704F45 /* theBr1dge-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "theBr1dge-Prefix.pch"; sourceTree = "<group>"; };
+		646F591B16A555B000704F45 /* ArchRunnerAlpha-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArchRunnerAlpha-Info.plist"; sourceTree = "<group>"; };
+		646F591C16A555B000704F45 /* ArchRunnerAlpha-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ArchRunnerAlpha-Prefix.pch"; sourceTree = "<group>"; };
 		646F591E16A555B000704F45 /* BasicLightShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = BasicLightShader.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		646F591F16A555B000704F45 /* BasicLightShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = BasicLightShader.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		646F592016A555B000704F45 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
@@ -170,7 +173,7 @@
 		64765C2C16B28491007E5C7A /* IWGBufferSubData.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGBufferSubData.c; sourceTree = "<group>"; };
 		64765C2E16B29D91007E5C7A /* IWGMultiBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGMultiBuffer.h; sourceTree = "<group>"; };
 		64765C2F16B29D9C007E5C7A /* IWGMultiBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGMultiBuffer.c; sourceTree = "<group>"; };
-		64822E5C1695E9BF003C5415 /* theBr1dge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = theBr1dge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64822E5C1695E9BF003C5415 /* ArchRunnerAlpha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArchRunnerAlpha.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64822E601695E9BF003C5415 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		64822E621695E9BF003C5415 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		64822E641695E9BF003C5415 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -307,8 +310,8 @@
 		6437584016BBF2D700FD222E /* theBr1dgeTest */ = {
 			isa = PBXGroup;
 			children = (
-				6437584616BBF2D700FD222E /* theBr1dgeTest.h */,
-				6437584716BBF2D700FD222E /* theBr1dgeTest.m */,
+				6437584616BBF2D700FD222E /* ArchRunnerAlphaTest.h */,
+				6437584716BBF2D700FD222E /* ArchRunnerAlphaTest.m */,
 				6437584116BBF2D700FD222E /* Supporting Files */,
 			);
 			path = theBr1dgeTest;
@@ -317,14 +320,14 @@
 		6437584116BBF2D700FD222E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				6437584216BBF2D700FD222E /* theBr1dgeTest-Info.plist */,
+				6437584216BBF2D700FD222E /* ArchRunnerAlphaTest-Info.plist */,
 				6437584316BBF2D700FD222E /* InfoPlist.strings */,
-				6437584916BBF2D700FD222E /* theBr1dgeTest-Prefix.pch */,
+				6437584916BBF2D700FD222E /* ArchRunnerAlphaTest-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		646F58F816A555B000704F45 /* theBr1dge */ = {
+		646F58F816A555B000704F45 /* ArchRunnerAlpha */ = {
 			isa = PBXGroup;
 			children = (
 				641E0D8316AAF8E00077785D /* IWUserInterface */,
@@ -338,7 +341,7 @@
 				641AC1CA16C254B600DDD2EB /* FontMaps */,
 				646F591016A555B000704F45 /* Misc */,
 			);
-			name = theBr1dge;
+			name = ArchRunnerAlpha;
 			sourceTree = "<group>";
 		};
 		646F58FA16A555B000704F45 /* iOS */ = {
@@ -372,6 +375,8 @@
 				6437583316B97FA600FD222E /* IWIndexList.c */,
 				64F4209316C50C1200121DE6 /* IWScoreCounter.h */,
 				64F4209416C50C1B00121DE6 /* IWScoreCounter.c */,
+				6404C90316D6239C005900FA /* IWScorePresenter.h */,
+				6404C90416D623AC005900FA /* IWScorePresenter.c */,
 				64F25F1516D386D100EC3E78 /* IWGameStatus.h */,
 				64F25F1616D386D800EC3E78 /* IWGameStatus.c */,
 			);
@@ -441,8 +446,8 @@
 				64F25F2016D3AD8100EC3E78 /* Icon.png */,
 				646F591416A555B000704F45 /* InfoPlist.strings */,
 				646F591A16A555B000704F45 /* main.m */,
-				646F591B16A555B000704F45 /* theBr1dge-Info.plist */,
-				646F591C16A555B000704F45 /* theBr1dge-Prefix.pch */,
+				646F591B16A555B000704F45 /* ArchRunnerAlpha-Info.plist */,
+				646F591C16A555B000704F45 /* ArchRunnerAlpha-Prefix.pch */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -473,7 +478,7 @@
 		64822E511695E9BF003C5415 = {
 			isa = PBXGroup;
 			children = (
-				646F58F816A555B000704F45 /* theBr1dge */,
+				646F58F816A555B000704F45 /* ArchRunnerAlpha */,
 				6437584016BBF2D700FD222E /* theBr1dgeTest */,
 				64822E5F1695E9BF003C5415 /* Frameworks */,
 				64822E5D1695E9BF003C5415 /* Products */,
@@ -483,8 +488,8 @@
 		64822E5D1695E9BF003C5415 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				64822E5C1695E9BF003C5415 /* theBr1dge.app */,
-				6437583B16BBF2D600FD222E /* theBr1dgeTest.octest */,
+				64822E5C1695E9BF003C5415 /* ArchRunnerAlpha.app */,
+				6437583B16BBF2D600FD222E /* ArchRunnerAlphaTest.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -508,9 +513,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6437583A16BBF2D600FD222E /* theBr1dgeTest */ = {
+		6437583A16BBF2D600FD222E /* ArchRunnerAlphaTest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6437584A16BBF2D700FD222E /* Build configuration list for PBXNativeTarget "theBr1dgeTest" */;
+			buildConfigurationList = 6437584A16BBF2D700FD222E /* Build configuration list for PBXNativeTarget "ArchRunnerAlphaTest" */;
 			buildPhases = (
 				6437583616BBF2D600FD222E /* Sources */,
 				6437583716BBF2D600FD222E /* Frameworks */,
@@ -521,14 +526,14 @@
 			);
 			dependencies = (
 			);
-			name = theBr1dgeTest;
+			name = ArchRunnerAlphaTest;
 			productName = theBr1dgeTest;
-			productReference = 6437583B16BBF2D600FD222E /* theBr1dgeTest.octest */;
+			productReference = 6437583B16BBF2D600FD222E /* ArchRunnerAlphaTest.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		64822E5B1695E9BF003C5415 /* theBr1dge */ = {
+		64822E5B1695E9BF003C5415 /* ArchRunnerAlpha */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 64822E8B1695E9BF003C5415 /* Build configuration list for PBXNativeTarget "theBr1dge" */;
+			buildConfigurationList = 64822E8B1695E9BF003C5415 /* Build configuration list for PBXNativeTarget "ArchRunnerAlpha" */;
 			buildPhases = (
 				64822E581695E9BF003C5415 /* Sources */,
 				64822E591695E9BF003C5415 /* Frameworks */,
@@ -538,9 +543,9 @@
 			);
 			dependencies = (
 			);
-			name = theBr1dge;
+			name = ArchRunnerAlpha;
 			productName = gameone;
-			productReference = 64822E5C1695E9BF003C5415 /* theBr1dge.app */;
+			productReference = 64822E5C1695E9BF003C5415 /* ArchRunnerAlpha.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -552,7 +557,7 @@
 				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Martin Raue";
 			};
-			buildConfigurationList = 64822E561695E9BF003C5415 /* Build configuration list for PBXProject "theBr1dge" */;
+			buildConfigurationList = 64822E561695E9BF003C5415 /* Build configuration list for PBXProject "ArchRunnerAlpha" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -564,8 +569,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				64822E5B1695E9BF003C5415 /* theBr1dge */,
-				6437583A16BBF2D600FD222E /* theBr1dgeTest */,
+				64822E5B1695E9BF003C5415 /* ArchRunnerAlpha */,
+				6437583A16BBF2D600FD222E /* ArchRunnerAlphaTest */,
 			);
 		};
 /* End PBXProject section */
@@ -638,7 +643,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6437584816BBF2D700FD222E /* theBr1dgeTest.m in Sources */,
+				6437584816BBF2D700FD222E /* ArchRunnerAlphaTest.m in Sources */,
 				6437584D16BBF76E00FD222E /* IWIndexList.c in Sources */,
 				641AC1CE16C257FA00DDD2EB /* IWGFontMapEntry.c in Sources */,
 				641AC1CF16C257FE00DDD2EB /* IWGFontMap.c in Sources */,
@@ -688,6 +693,7 @@
 				64F25F3C16D4DA2400EC3E78 /* IWUIMenuPage.c in Sources */,
 				64F25F3D16D4DA2800EC3E78 /* IWUIMenuPresenter.c in Sources */,
 				64F25F4216D5126B00EC3E78 /* IWUIMenu.c in Sources */,
+				6404C90516D623AC005900FA /* IWScorePresenter.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,9 +727,9 @@
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "theBr1dgeTest/theBr1dgeTest-Prefix.pch";
-				INFOPLIST_FILE = "theBr1dgeTest/theBr1dgeTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "theBr1dgeTest/ArchRunnerAlphaTest-Prefix.pch";
+				INFOPLIST_FILE = "theBr1dgeTest/ArchRunnerAlphaTest-Info.plist";
+				PRODUCT_NAME = ArchRunnerAlphaTest;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -736,9 +742,9 @@
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "theBr1dgeTest/theBr1dgeTest-Prefix.pch";
-				INFOPLIST_FILE = "theBr1dgeTest/theBr1dgeTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "theBr1dgeTest/ArchRunnerAlphaTest-Prefix.pch";
+				INFOPLIST_FILE = "theBr1dgeTest/ArchRunnerAlphaTest-Info.plist";
+				PRODUCT_NAME = ArchRunnerAlphaTest;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
@@ -799,10 +805,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Misc/theBr1dge-Prefix.pch";
-				INFOPLIST_FILE = "Misc/theBr1dge-Info.plist";
+				GCC_PREFIX_HEADER = "Misc/ArchRunnerAlpha-Prefix.pch";
+				INFOPLIST_FILE = "Misc/ArchRunnerAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				PRODUCT_NAME = theBr1dge;
+				PRODUCT_NAME = ArchRunnerAlpha;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -811,10 +817,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Misc/theBr1dge-Prefix.pch";
-				INFOPLIST_FILE = "Misc/theBr1dge-Info.plist";
+				GCC_PREFIX_HEADER = "Misc/ArchRunnerAlpha-Prefix.pch";
+				INFOPLIST_FILE = "Misc/ArchRunnerAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				PRODUCT_NAME = theBr1dge;
+				PRODUCT_NAME = ArchRunnerAlpha;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -822,7 +828,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6437584A16BBF2D700FD222E /* Build configuration list for PBXNativeTarget "theBr1dgeTest" */ = {
+		6437584A16BBF2D700FD222E /* Build configuration list for PBXNativeTarget "ArchRunnerAlphaTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6437584B16BBF2D700FD222E /* Debug */,
@@ -831,7 +837,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		64822E561695E9BF003C5415 /* Build configuration list for PBXProject "theBr1dge" */ = {
+		64822E561695E9BF003C5415 /* Build configuration list for PBXProject "ArchRunnerAlpha" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				64822E891695E9BF003C5415 /* Debug */,
@@ -840,7 +846,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		64822E8B1695E9BF003C5415 /* Build configuration list for PBXNativeTarget "theBr1dge" */ = {
+		64822E8B1695E9BF003C5415 /* Build configuration list for PBXNativeTarget "ArchRunnerAlpha" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				64822E8C1695E9BF003C5415 /* Debug */,
