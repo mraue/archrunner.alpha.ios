@@ -122,8 +122,6 @@ IWUIMenuData gdPauseMenu;
 float gdScreenWidth;
 float gdScreenHeight;
 
-//GLuint gdMainShaderProgram.programID;
-
 IWGShaderProgramData gdMainShaderProgram;
 IWGShaderProgramData gdTextShaderProgram;
 IWGShaderProgramData gdSkyboxShaderProgram;
@@ -142,8 +140,6 @@ GLuint gdUILineVertexBuffer;
 
 IWGTextFieldData gdScoreTextField;
 IWGTextFieldData gdGameStatusField;
-IWGTextFieldData gdGameOverTextField;
-IWGTextFieldData gdGameOverMenuTextField;
 
 IWGTextFieldData gdTitleTextField;
 IWGTextFieldData gdVersionTextField;

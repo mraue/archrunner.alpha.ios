@@ -111,7 +111,6 @@ void IWIUMenuPresenterPresentMenu(IWUIMenuPresenterData *menuPresenter, IWUIMenu
     unsigned int n = 1;
     for (unsigned int i = 0; i < menuPage->nItems; i++) {
         IWGTextFieldSetText(&menuPresenter->textFields[n], menuPage->items[i].title);
-        printf("DEBUG %u %u %s\n", n, i, menuPage->items[i].title);
         n++;
         if (menuPage->items[i].type == IWUIMENUITEM_ITEM_TYPE_OPTIONS) {
             unsigned int optionCounter = 0;

@@ -219,11 +219,6 @@ void IWGRendererSetupStartMenuAssets(void)
     
     gdSkyBox = IWGSkyBoxMakeDefault();
     IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
-    
-    //gdSunLightSource.Color = gdSkyBox.sunColorDay;
-    //gdSunLightSource.Color.w = 0.5;
-    //gdSunLightSource.Direction = gdSkyBox.sun.direction;
-    //IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
 
     //
     // Text
@@ -489,7 +484,7 @@ void IWGRendererSetupGameAssets(void)
     
     glGenTextures(1, &gdTextureHandlerId);
 
-    gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10 + 1 * 10 + 3 * 12) * 6 * 9 * sizeof(GLfloat));
+    gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10) * 6 * 9 * sizeof(GLfloat));
 
     gdScoreTextField = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
@@ -514,38 +509,10 @@ void IWGRendererSetupGameAssets(void)
                                          gdInGameTextTriangleBufferStartCPU
                                          + gdScoreTextField.triangleBufferData.size);
     
-    gdGameOverTextField = IWGTextFieldMake(IWVector2Make(-0.95, 0.95),
-                                           IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
-                                           1, 10,
-                                           1. / aspect,
-                                           "GAME OVER",
-                                           0.4, 0.0,
-                                           IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT,
-                                           IWVector4Make(0.2, 0.2, 0.2, 0.8),
-                                           &gdFontMap,
-                                           gdInGameTextTriangleBufferStartCPU
-                                           + gdGameStatusField.triangleBufferData.size
-                                           + gdScoreTextField.triangleBufferData.size);
-
-    gdGameOverMenuTextField = IWGTextFieldMake(IWVector2Make(-0.95, 0.0),
-                                               IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
-                                               3, 12,
-                                               1. / aspect,
-                                               "[RETRY]\n\n[START MENU]",
-                                               0.25, 0.04,
-                                               IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT,
-                                               IWVector4Make(0.2, 0.2, 0.2, 0.8),
-                                               &gdFontMap,
-                                               gdInGameTextTriangleBufferStartCPU
-                                               + gdGameStatusField.triangleBufferData.size
-                                               + gdGameOverTextField.triangleBufferData.size
-                                               + gdScoreTextField.triangleBufferData.size);
     
     unsigned int totalTextFieldsSize =
         gdScoreTextField.triangleBufferData.size
-        + gdGameStatusField.triangleBufferData.size
-        + gdGameOverTextField.triangleBufferData.size
-        + gdGameOverMenuTextField.triangleBufferData.size;
+        + gdGameStatusField.triangleBufferData.size;
     
     gdStartTextFieldColorTransition = IWVector4TransitionMake(IWVector4Make(0.2, 0.2, 0.2, 0.8),
                                                               IWVector4Make(0.2, 0.2, 0.2, 0.5),
@@ -561,7 +528,7 @@ void IWGRendererSetupGameAssets(void)
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
 
-        gdTextTriangleDoubleBuffer.nVertices[i] = (gdScoreTextField.triangleBufferData.size + gdGameStatusField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
+        gdTextTriangleDoubleBuffer.nVertices[i] = totalTextFieldsSize / gdScoreTextField.triangleBufferData.stride;
         
         IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
         

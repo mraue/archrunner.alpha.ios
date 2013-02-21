@@ -44,11 +44,8 @@ void IWGameSetup(void)
     //
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.1, false);
     gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
-    //gdNCubesPerAxis = 5;// [5]
-    //gdNCubes = gdNCubesPerAxis * gdNCubesPerAxis * gdNCubesPerAxis;
     //
     gdCubeTriangleBufferStartCPU = NULL;
-    //gdSkyTriangleBufferStartCPU = NULL;
     gdInGameTextTriangleBufferStartCPU = NULL;
     gdInGameUITriangleBufferStartCPU = NULL;
     gdInGameUILineBufferStartCPU = NULL;
@@ -146,58 +143,11 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
             return;
         }
     }
-    
-//    IWRectangle toStartMenuRect = IWRectangleMake(0.0, 0.2, 0.5, 0.35);
-//    IWRectangle retryRect = IWRectangleMake(0.0, 0.35, 0.5, 0.5);
-//    if (gdIsTouched
-//        && IWPointInRectangle(gdTouchPoint, toStartMenuRect)) {
-//        IWGRendererTearDownGameAssets();
-//        IWGRendererSetupStartMenuAssets();
-//        gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
-//        gdIsTouched = false;
-//        gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
-//        glUseProgram(gdSkyboxShaderProgram.programID);
-//        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
-//        glUseProgram(gdMainShaderProgram.programID);
-//        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.4);
-//        return;
-//    } else if (gdIsTouched
-//               && IWPointInRectangle(gdTouchPoint, retryRect)) {
-//        IWGRendererTearDownGameAssets();
-//        IWGRendererSetupGameAssets();
-//        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-//        gdIsTouched = false;
-//        glUseProgram(gdSkyboxShaderProgram.programID);
-//        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
-//        glUseProgram(gdMainShaderProgram.programID);
-//        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.4);
-//        return;
-//    }
-    
-//    if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
-//        IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
-//    }
-//    
-//    gdGameOverMenuTextField.color = gdStartTextFieldColorTransition.currentVector;
-//    IWGTextFieldSetText(&gdGameOverMenuTextField, gdGameOverMenuTextField.text);
-//    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
-//                          (gdScoreTextField.triangleBufferData.size
-//                           + gdGameStatusField.triangleBufferData.size
-//                           + gdGameOverTextField.triangleBufferData.size) * sizeof(GLfloat),
-//                          gdGameOverMenuTextField.triangleBufferData.size * sizeof(GLfloat),
-//                          gdGameOverMenuTextField.triangleBufferData.startCPU,
-//                          false);
     return;
 }
 
 void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
 {
-    // DEBUG
-//    if (gdIsTouched) {
-//        IWUIMenuPresenterCheckTouch(&gdMenuTest.presenter, gdTouchPoint);
-//        gdIsTouched = false;
-//    }
-    // END DEBUG
     
     IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
     if (IWTimerUpdate(&gdStateSwitchTimer, timeSinceLastUpdate)
@@ -298,31 +248,23 @@ void IWGameUpdate(float timeSinceLastUpdate,
     // Check if we are game over
     if (gdFuel.currentLevel == 0.0) {
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
+        //
         printf("GAME OVER\n");
         IWScoreCounterPrintScore(&gdScoreCounter);
-        //gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
-//        for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
-//            gdTextTriangleDoubleBuffer.nVertices[k] =
-//            (gdScoreTextField.triangleBufferData.size
-//             + gdGameStatusField.triangleBufferData.size
-//             + gdGameOverTextField.triangleBufferData.size
-//             + gdGameOverMenuTextField.triangleBufferData.size) / gdScoreTextField.triangleBufferData.stride;
-//        }
+        //
         gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
         //
         gdPauseMenu.presenter.anchorPoint.x = -0.65;
-        //free(gdPauseMenu.dataBufferStart);
-        //gdPauseMenu.dataBufferStart = malloc(gdPauseMenu.dataBufferSize * sizeof(GLfloat));
         IWUIMenuPresenterInitTextFields(&gdPauseMenu.presenter, gdPauseMenu.dataBufferStart);
         IWIUMenuPresenterPresentMenu(&gdPauseMenu.presenter, &gdPauseMenu.pages[1]);
-        IWGMultiBufferSubData(&gdPauseMenu.multiBuffer, 0, gdPauseMenu.dataBufferSize * sizeof(GLfloat), gdPauseMenu.dataBufferStart, true);
+        IWGMultiBufferSubData(&gdPauseMenu.multiBuffer, 0,
+                              gdPauseMenu.dataBufferSize * sizeof(GLfloat),
+                              gdPauseMenu.dataBufferStart,
+                              true);
         //
         IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
-        //glUseProgram(gdSkyboxShaderProgram.programID);
-        //glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 1.0, 0.4);
-        //glUseProgram(gdMainShaderProgram.programID);
-        //glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 1.0, 0.4);
+        //
         return;
     }
     
