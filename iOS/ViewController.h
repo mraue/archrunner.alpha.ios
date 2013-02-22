@@ -13,8 +13,11 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-@interface ViewController : GLKViewController <AVAudioPlayerDelegate>
+#import <GameKit/GameKit.h>
 
-@property (nonatomic, retain) AVAudioPlayer *player;
+@interface ViewController : GLKViewController <AVAudioPlayerDelegate,GKGameCenterControllerDelegate>
+
+@property (nonatomic, retain) AVAudioPlayer *audioPlayer;
 
 @end
+

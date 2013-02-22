@@ -39,7 +39,7 @@
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    [self.viewController.player pause];
+    [self.viewController.audioPlayer pause];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -56,7 +56,7 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    [self.viewController.player play];
+    [self.viewController.audioPlayer play];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

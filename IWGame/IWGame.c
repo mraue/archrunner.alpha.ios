@@ -83,6 +83,7 @@ void IWGameReset(void)
     gdGameStatus.nGridCubes = gdNCubes;
     gdFuel = IWFuelMakeDefaultStart();
     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
+    gdPushScoreToLeaderboard = false;
     // DEBUG
     //IWFuelRemoveFuel(&gdFuel, 0.95);
     // END DEBUG
@@ -296,6 +297,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
                               true);
         //
         IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
+        //
+        gdPushScoreToLeaderboard = true;
         //
         return;
     }

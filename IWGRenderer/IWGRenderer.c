@@ -559,7 +559,7 @@ void IWGRendererSetupGameAssets(void)
     glBindVertexArrayOES(0);
     
     //
-    // PAUSE Menu
+    // PAUSE/GAME OVER Menu
     //
     
     gdPauseMenu = IWUIMenuMake(IWUIMenuPresenterMake(2, 12, 1,
@@ -592,7 +592,6 @@ void IWGRendererSetupGameAssets(void)
                                                 0.22, IWVector4Make(0.2, 0.2, 0.2, 0.8), &gdFontMap);
     IWScorePresenterFillVBO(&gdScorePresenterTest, positionSlot, colorSlot, textureOffsetSlot,
                             gdTextureHandlerId, gdFontMapTextureData);
-    //glUseProgram(gdMainShaderProgram.programID);
     
     //
     // Head up display data
@@ -614,8 +613,6 @@ void IWGRendererSetupGameAssets(void)
                                                  IWUI_COLOR_WHITE(0.5),
                                                  (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
                                                  0.035, 1. / aspect);
-
-    //gdFuel.stateBar.direction = IWUI_DIRECTION_REVERSE;// need larger buffer! -> 4 x 6
 
     gdUINTriangleVertices = ((IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)) / 7

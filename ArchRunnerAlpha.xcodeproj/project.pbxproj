@@ -61,6 +61,7 @@
 		64822E691695E9BF003C5415 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822E681695E9BF003C5415 /* OpenGLES.framework */; };
 		64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EA8169DB8A8003C5415 /* CoreLocation.framework */; };
 		64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64822EAA169DB901003C5415 /* CoreMotion.framework */; };
+		649894D416D780DF003148D2 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649894D316D780DF003148D2 /* GameKit.framework */; };
 		64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A2F02716B67CCC00655F68 /* IWVectorTransition.c */; };
 		64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C0386216CB65AB00C4F491 /* IWGSkyBox.c */; };
 		64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386416CB8E9700C4F491 /* MasterShader2.vsh */; };
@@ -183,6 +184,7 @@
 		64822EAA169DB901003C5415 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		648E756916A6B7E8004DE1A4 /* IWVector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector2.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		648E756B16A7F5B1004DE1A4 /* IWGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGeometry.h; sourceTree = "<group>"; };
+		649894D316D780DF003148D2 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		64A2F02716B67CCC00655F68 /* IWVectorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWVectorTransition.c; sourceTree = "<group>"; };
 		64A2F02916B67CD800655F68 /* IWVectorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWVectorTransition.h; sourceTree = "<group>"; };
 		64C0386116CB65A000C4F491 /* IWGSkyBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGSkyBox.h; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				649894D416D780DF003148D2 /* GameKit.framework in Frameworks */,
 				64F25F1416D1500400EC3E78 /* AVFoundation.framework in Frameworks */,
 				64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */,
 				64822EA9169DB8A8003C5415 /* CoreLocation.framework in Frameworks */,
@@ -497,6 +500,7 @@
 		64822E5F1695E9BF003C5415 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				649894D316D780DF003148D2 /* GameKit.framework */,
 				64F25F1316D1500400EC3E78 /* AVFoundation.framework */,
 				64822EAA169DB901003C5415 /* CoreMotion.framework */,
 				64822EA8169DB8A8003C5415 /* CoreLocation.framework */,
@@ -816,11 +820,15 @@
 		64822E8D1695E9BF003C5415 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Misc/ArchRunnerAlpha-Prefix.pch";
 				INFOPLIST_FILE = "Misc/ArchRunnerAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = ArchRunnerAlpha;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

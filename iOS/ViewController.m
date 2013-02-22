@@ -33,37 +33,33 @@
 
     CMMotionManager *motionManager;
     CMAttitude *savedAttitude;
+    
+    GKLocalPlayer *localPlayer;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (nonatomic, retain) CMMotionManager *motionManager;
-
+@property (nonatomic, retain) GKLocalPlayer *localPlayer;
 
 - (void)processControllInput;
+- (void)authenticateLocalPlayer;
 
 @end
 
 @implementation ViewController
 
 @synthesize motionManager;
-@synthesize player;
+@synthesize audioPlayer;
+@synthesize localPlayer;
 
-- (void)dealloc
-{
-    IWGRendererTearDownGL();
-    
-    if ([EAGLContext currentContext] == self.context) {
-        [EAGLContext setCurrentContext:nil];
-    }
-    
-    [_context release];
-    if (motionManager.isDeviceMotionActive)
-        [motionManager stopDeviceMotionUpdates];
-    [super dealloc];
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskLandscapeLeft;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.localPlayer = nil;
     
     // Prevent screen diming and autolock
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
@@ -145,13 +141,13 @@
                                            error: nil];
     [fileURL release];
     
-    self.player = newPlayer;
+    self.audioPlayer = newPlayer;
     [newPlayer release];
     
-    [player prepareToPlay];
-    [player setDelegate: self];
-    [player setNumberOfLoops:-1];
-    [player play];
+    [audioPlayer prepareToPlay];
+    [audioPlayer setDelegate: self];
+    [audioPlayer setNumberOfLoops:-1];
+    [audioPlayer play];
 
     gdMainShaderProgram.vertexShaderFilename
         = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String];
@@ -179,6 +175,15 @@
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
 
     IWGRendererSetupGL([fontMapFilename UTF8String]);
+    
+    // Game center test
+    [self authenticateLocalPlayer];
+//    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
+//    if (gameCenterController != nil)
+//    {
+//        gameCenterController.gameCenterDelegate = self;
+//        [self presentViewController: gameCenterController animated: YES completion:nil];
+//    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -315,6 +320,20 @@
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     
     IWGameMainHandler(self.timeSinceLastUpdate, aspect);
+    
+    // Report score to game center leaderboard
+    if (self.localPlayer
+        && self.localPlayer.isAuthenticated
+        && gdPushScoreToLeaderboard) {
+        GKScore *scoreReporter = [[GKScore alloc] initWithCategory:@"ArchRunnerAlpha.TotalScore.Normal"];
+        scoreReporter.value = (unsigned int)gdScoreCounter.score;
+        scoreReporter.context = 0;
+        
+        [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) {
+            printf("Score reported!\n");
+        }];
+        gdPushScoreToLeaderboard = false;
+    }
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -353,5 +372,34 @@
     gdTouchPoint.x = _touchLocation.x / self.view.bounds.size.width;
     gdTouchPoint.y = 1.0 - _touchLocation.y / self.view.bounds.size.height;
 }
+
+#pragma mark - GameCenter delegates
+
+- (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)authenticateLocalPlayer
+{
+    GKLocalPlayer *localPlayerTmp = [GKLocalPlayer localPlayer];
+    localPlayerTmp.authenticateHandler = ^(UIViewController *viewController, NSError *error){
+        if (viewController != nil)
+        {
+            [self presentViewController:viewController animated:YES completion:nil];
+            //[self showAuthenticationDialogWhenReasonable: viewController];
+        }
+        else if (localPlayerTmp.isAuthenticated)
+        {
+            self.localPlayer = localPlayerTmp;
+            //[self authenticatedPlayer: localPlayer];
+        }
+        else
+        {
+            //[self disableGameCenter];
+        }
+    };
+}
+
 
 @end
