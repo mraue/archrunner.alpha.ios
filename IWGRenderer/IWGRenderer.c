@@ -858,6 +858,15 @@ void IWGRendererRender(void)
         IWGRendererRenderInGameText();
         
         glDisable(GL_BLEND);
+    }  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
+        
+//        glEnable(GL_BLEND);
+//        
+//        glUseProgram(gdTextShaderProgram.programID);
+//        
+//        IWGRendererRenderInGameText();
+//        
+//        glDisable(GL_BLEND);
     }
     
     return;

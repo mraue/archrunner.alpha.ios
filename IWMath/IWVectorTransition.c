@@ -40,7 +40,11 @@ IWVector4Transition IWVector4TransitionMake(IWVector4 startVector,
 bool IWVector4TransitionUpdate(IWVector4Transition *vector4Transition, float timeSinceLastUpdate)
 {
     vector4Transition->currentTransitionTime += timeSinceLastUpdate;
-    
+    return IWVector4TransitionSet(vector4Transition);
+}
+
+bool IWVector4TransitionSet(IWVector4Transition *vector4Transition)
+{
     if (vector4Transition->currentTransitionTime >= vector4Transition->transitionTime) {
         vector4Transition->currentVector = vector4Transition->endVector;
         vector4Transition->transitionHasFinished = true;
@@ -52,6 +56,7 @@ bool IWVector4TransitionUpdate(IWVector4Transition *vector4Transition, float tim
         vector4Transition->transitionHasFinished = false;
     }
     return vector4Transition->transitionHasFinished;
+
 }
 
 void IWVector4TransitionResetAndStart(IWVector4Transition *vector4Transition)

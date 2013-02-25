@@ -60,6 +60,13 @@ void IWGameSetup(void)
     //
     IWGameReset();
     //
+    gdScreenShotUIMode = 0;
+    gdScreenShotRotation = IWVector3Make(0.0, 0.0, 0.0);
+    //
+    gdScreenShotSliderX = IWUISliderMake(IWRectangleMake(0.15, 0.0, 0.85, 0.15));
+    gdScreenShotSliderY = IWUISliderMake(IWRectangleMake(0.0, 0.15, 0.15, 0.85));
+    gdScreenShotSliderZ = IWUISliderMake(IWRectangleMake(0.85, 0.15, 0.85, 1.0));
+    //
     return;
 }
 
@@ -100,6 +107,8 @@ void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
         IWGameGameOverMenuHandler(timeSinceLastUpdate, aspectRatio);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
         IWGameStartMenuHandler(timeSinceLastUpdate, aspectRatio);
+    }  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
+        IWGameScreenShotHandler(timeSinceLastUpdate, aspectRatio);
     }
     return;
 }
@@ -189,6 +198,17 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
         IWGRendererTearDownStartMenuAssets();
         IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+        gdIsTouched = false;
+        return;
+    }
+    
+    IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
+    if (gdIsTouched
+        && IWPointInRectangle(gdTouchPoint, screenShotButton)) {
+        //IWGRendererTearDownStartMenuAssets();
+        //IWGRendererSetupGameAssets();
+        gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
+        gdIsTouched = false;
         return;
     }
     
@@ -215,6 +235,106 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
     // REFACTOR: does not change, could only be calculated and intialized to uniforms once
     IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
     
+    IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
+                                               gdPlayerData.position.x + gdPlayerData.direction.x,
+                                               gdPlayerData.position.y + gdPlayerData.direction.y,
+                                               gdPlayerData.position.z + gdPlayerData.direction.z,
+                                               gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    
+    gdNormalMatrix = IWMatrix4GetMatrix3(modelMatrix);//GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
+    gdModelMatrix = modelMatrix;
+    gdProjectionMatrix = projectionMatrix;
+    gdViewMatrix = viewMatrix;
+}
+
+void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
+{
+    
+//    IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
+//    if (IWTimerUpdate(&gdStateSwitchTimer, timeSinceLastUpdate)
+//        && gdIsTouched
+//        && IWPointInRectangle(gdTouchPoint, startButton)) {
+//        IWGRendererTearDownStartMenuAssets();
+//        IWGRendererSetupGameAssets();
+//        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+//        return;
+//    }
+    
+    // Update view position
+    if (gdIsTouched) {
+        if (gdScreenShotUIMode == 0 ) {
+            if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.8, 0.0, 1.0, 0.25))) {
+                gdScreenShotUIMode = 1;
+                gdIsTouched = false;
+            } else if (gdTouchPoint.x < 0.25) {
+                gdPlayerData.position.x = -1.0 + 2.0 * gdTouchPoint.y;
+            } else if (gdTouchPoint.x < 0.5) {
+                gdPlayerData.position.y = -1.0 + 2.0 * gdTouchPoint.y;
+            } else if (gdTouchPoint.x < 0.75) {
+                gdPlayerData.position.z = -2.0 + 6.0 * gdTouchPoint.y;
+            } else if (gdTouchPoint.x < 1.0) {
+                gdSkyBox.transitionTime = (gdTouchPoint.y - 0.25) / 0.8 * 8.0 * 60.0;
+            }
+        } else if (gdScreenShotUIMode == 1 ) {
+            if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.8, 0.0, 1.0, 0.3))) {
+                gdScreenShotUIMode = 0;
+                gdIsTouched = false;
+            } else if (gdTouchPoint.x < 0.25) {
+                gdScreenShotRotation.x = -1.0 * M_PI + 2.0 * M_PI * gdTouchPoint.y;
+            } else if (gdTouchPoint.x < 0.5) {
+                gdScreenShotRotation.y = -1.0 * M_PI + 2.0 * M_PI * gdTouchPoint.y;
+            } else if (gdTouchPoint.x < 0.75) {
+                gdScreenShotRotation.z = -1.0 * M_PI + 2.0 * M_PI * gdTouchPoint.y;
+            } else if (gdTouchPoint.x < 1.0) {
+                gdSkyBox.transitionTime = (gdTouchPoint.y - 0.25) / 0.8 * 8.0 * 60.0;
+            }
+            
+            // Update direction
+            IWVector3 dirGLV = IWVector3Make(0.0, 0.0, 1.0);
+            IWVector3 upGLV = IWVector3Make(0.0, 1.0, 0.0);
+            
+            IWMatrix4 yRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.y,
+                                                                    upGLV.x, upGLV.y, upGLV.z);
+            
+            IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
+            
+            IWMatrix4 xRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.x,
+                                                                    normGLV.x, normGLV.y, normGLV.z);
+            
+            IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
+            
+            IWMatrix4 zRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.z,
+                                                                    dirGLV.x, dirGLV.y, dirGLV.z);
+            rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+            
+            gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
+            gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
+        }
+    }
+    
+    IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
+    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+    
+    if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
+        IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
+    }
+    gdStartTextField.color = gdStartTextFieldColorTransition.currentVector;
+    IWGTextFieldSetText(&gdStartTextField, gdStartTextField.text);
+    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+                          (gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size) * sizeof(GLfloat),
+                          gdStartTextField.triangleBufferData.size * sizeof(GLfloat),
+                          gdStartTextField.triangleBufferData.startCPU,
+                          false);
+    
+    IWGSkyBoxUpdate(&gdSkyBox, 0.0, &gdPlayerData, true);
+    
+    // Setup view matrices
+    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
+    
+    // Compute the model view matrix for the object rendered with ES2
+    // REFACTOR: does not change, could only be calculated and intialized to uniforms once
+    IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+        
     IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
                                                gdPlayerData.position.x + gdPlayerData.direction.x,
                                                gdPlayerData.position.y + gdPlayerData.direction.y,

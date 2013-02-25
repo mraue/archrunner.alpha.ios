@@ -143,15 +143,26 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
 {
     skyBox->transitionTime += timeSinceLastUpdate;
     
+//    if (updateColor) {
+//        if (!skyBox->skyColorTransition.transitionHasFinished)
+//            IWVector4TransitionUpdate(&skyBox->skyColorTransition, timeSinceLastUpdate);
+//        if (!skyBox->groundColorTransition.transitionHasFinished)
+//            IWVector4TransitionUpdate(&skyBox->groundColorTransition, timeSinceLastUpdate);
+//        if (!skyBox->sunColorTransition.transitionHasFinished)
+//            IWVector4TransitionUpdate(&skyBox->sunColorTransition, timeSinceLastUpdate);
+//        if (!skyBox->moonColorTransition.transitionHasFinished)
+//            IWVector4TransitionUpdate(&skyBox->moonColorTransition, timeSinceLastUpdate);
+//    }
+    
     if (updateColor) {
-        if (!skyBox->skyColorTransition.transitionHasFinished)
-            IWVector4TransitionUpdate(&skyBox->skyColorTransition, timeSinceLastUpdate);
-        if (!skyBox->groundColorTransition.transitionHasFinished)
-            IWVector4TransitionUpdate(&skyBox->groundColorTransition, timeSinceLastUpdate);
-        if (!skyBox->sunColorTransition.transitionHasFinished)
-            IWVector4TransitionUpdate(&skyBox->sunColorTransition, timeSinceLastUpdate);
-        if (!skyBox->moonColorTransition.transitionHasFinished)
-            IWVector4TransitionUpdate(&skyBox->moonColorTransition, timeSinceLastUpdate);
+        skyBox->skyColorTransition.currentTransitionTime = skyBox->transitionTime;
+        IWVector4TransitionSet(&skyBox->skyColorTransition);
+        skyBox->groundColorTransition.currentTransitionTime = skyBox->transitionTime;
+        IWVector4TransitionSet(&skyBox->groundColorTransition);
+        skyBox->sunColorTransition.currentTransitionTime = skyBox->transitionTime;
+        IWVector4TransitionSet(&skyBox->sunColorTransition);
+        skyBox->moonColorTransition.currentTransitionTime = skyBox->transitionTime;
+        IWVector4TransitionSet(&skyBox->moonColorTransition);
     }
     
     IWGMultiBufferBindCurrentDataUpdateBuffer(&skyBox->multiBuffer);
@@ -176,8 +187,11 @@ void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerD
     skyBox->sun.centerLocation.z = player->position.z + skyBox->sunPosition.z;
     skyBox->sun.radius = (1. + player->position.z / 30.0) * 5.0;
     
-    if (skyBox->sun.centerLocation.y > -10.0)
-        skyBox->sun.centerLocation.y -= 5. * timeSinceLastUpdate / (skyBox->colorTransitionTime * 0.9);
+//    if (skyBox->sun.centerLocation.y > -10.0)
+//        skyBox->sun.centerLocation.y -= 5. * timeSinceLastUpdate / (skyBox->colorTransitionTime * 0.9);
+    
+    float sunY = -1.0 - 5.0 * skyBox->transitionTime / (skyBox->colorTransitionTime * 0.9);
+    skyBox->sun.centerLocation.y = sunY < -10.0 ? -10.0 : sunY;
 
     if (updateColor)
         skyBox->sun.color = skyBox->sunColorTransition.currentVector;

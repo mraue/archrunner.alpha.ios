@@ -15,6 +15,7 @@ typedef enum {
     IWGAME_STATUS_GAME_OVER,
     IWGAME_STATUS_GAME_OVER_MENU,
     IWGAME_STATUS_START_MENU,
+    IWGAME_STATUS_SCREENSHOT,
     IWGAME_STATUS_LOADING
 } IWGAME_STATUS;
 
@@ -29,6 +30,8 @@ void IWGameTearDown(void);
 void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio);
 
 void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio);
+
+void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio);
 
 void IWGamePauseMenuHandler(float timeSinceLastUpdate, float aspectRatio);
 

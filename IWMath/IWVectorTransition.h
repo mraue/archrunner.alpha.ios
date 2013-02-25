@@ -32,6 +32,7 @@ IWVector4Transition IWVector4TransitionMake(IWVector4 startVector,
                                             bool transitionHasFinished,
                                             bool quadraticEaseIn);
 bool IWVector4TransitionUpdate(IWVector4Transition *vector4Transition, float timeSinceLastUpdate);
+bool IWVector4TransitionSet(IWVector4Transition *vector4Transition);
 void IWVector4TransitionResetAndStart(IWVector4Transition *vector4Transition);
 void IWVector4TransitionReverseAndStart(IWVector4Transition *vector4Transition);
 
