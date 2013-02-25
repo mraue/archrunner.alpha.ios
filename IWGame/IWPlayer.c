@@ -59,3 +59,20 @@ bool IWPlayerUpdateOverdrive(IWPlayerData *playerData, float timeSinceLastUpdate
         return false;
     }
 }
+
+void IWPlayerPrintData(IWPlayerData *playerData)
+{
+    printf("IWPlayerDataMakeSimple(IWVector3Make(%.3f, %.3f, %.3f),",
+           playerData->position.x,
+           playerData->position.y,
+           playerData->position.z);
+    printf("IWVector3Normalize(IWVector3Make(%.3f, %.3f, %.3f)),",
+           playerData->direction.x,
+           playerData->direction.y,
+           playerData->direction.z);
+    printf("IWVector3Normalize(IWVector3Make(%.3f, %.3f, %.3f)));\n",
+           playerData->up.x,
+           playerData->up.y,
+           playerData->up.z);
+    return;
+}

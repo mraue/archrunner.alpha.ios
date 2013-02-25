@@ -96,7 +96,7 @@ IWScorePresenterData gdScorePresenterTest;
 
 int gdScreenShotUIMode;
 IWVector3 gdScreenShotRotation;
-IWUISliderData gdScreenShotSliderX, gdScreenShotSliderY, gdScreenShotSliderZ;
+IWUISliderData gdScreenShotSliderX, gdScreenShotSliderY, gdScreenShotSliderZ, gdScreenShotSliderE;
 
 #pragma mark - Asset and memory management
 

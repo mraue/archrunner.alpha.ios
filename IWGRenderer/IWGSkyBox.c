@@ -44,7 +44,7 @@ IWGSkyBoxData IWGSkyBoxMakeDefault()
     skyBox.ground = IWCubeMake(0, IWCUBE_TYPE_STANDARD,
                                IWVector3Make(0.0, -10.0, 0.0),
                                skyBox.groundColorDay,
-                               IWVector3Make(60.0, 20.0, 60.0),
+                               IWVector3Make(55.0, 20.0, 55.0),
                                IWCUBE_FACES_BOWL,
                                IWCUBE_NORMALS_INWARD,
                                0.0, true, false, IWVector3TransitionMakeEmpty());

@@ -42,4 +42,6 @@ IWPlayerData IWPlayerDataMake(IWVector3 aPosition,
 void IWPlayerActivatOverdrive(IWPlayerData *playerData);
 bool IWPlayerUpdateOverdrive(IWPlayerData *playerData, float timeSinceLastUpdate);
 
+void IWPlayerPrintData(IWPlayerData *playerData);
+
 #endif

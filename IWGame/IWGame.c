@@ -65,7 +65,8 @@ void IWGameSetup(void)
     //
     gdScreenShotSliderX = IWUISliderMake(IWRectangleMake(0.15, 0.0, 0.85, 0.15));
     gdScreenShotSliderY = IWUISliderMake(IWRectangleMake(0.0, 0.15, 0.15, 0.85));
-    gdScreenShotSliderZ = IWUISliderMake(IWRectangleMake(0.85, 0.15, 0.85, 1.0));
+    gdScreenShotSliderZ = IWUISliderMake(IWRectangleMake(0.85, 0.15, 1.0, 0.85));
+    gdScreenShotSliderE = IWUISliderMake(IWRectangleMake(0.15, 0.85, 0.85, 1.0));
     //
     return;
 }
@@ -208,6 +209,14 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
         //IWGRendererTearDownStartMenuAssets();
         //IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.302, 19.290),IWVector3Normalize(IWVector3Make(0.113, 0.246, 0.963)),IWVector3Normalize(IWVector3Make(-0.508, 0.847, -0.157)));
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.295, 19.299),IWVector3Normalize(IWVector3Make(0.137, 0.374, 0.917)),IWVector3Normalize(IWVector3Make(-0.517, 0.817, -0.256)));
+        //gdSkyBox.transitionTime = 319.83;
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.110, 0.138, 19.135),IWVector3Normalize(IWVector3Make(0.090, 0.379, 0.921)),IWVector3Normalize(IWVector3Make(-0.522, 0.806, -0.281)));;
+        //gdSkyBox.transitionTime = 336.06;
+        
+        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
+        gdSkyBox.transitionTime = 336.06;
         gdIsTouched = false;
         return;
     }
@@ -262,54 +271,57 @@ void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
     
     // Update view position
     if (gdIsTouched) {
-        if (gdScreenShotUIMode == 0 ) {
-            if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.8, 0.0, 1.0, 0.25))) {
-                gdScreenShotUIMode = 1;
-                gdIsTouched = false;
-            } else if (gdTouchPoint.x < 0.25) {
-                gdPlayerData.position.x = -1.0 + 2.0 * gdTouchPoint.y;
-            } else if (gdTouchPoint.x < 0.5) {
-                gdPlayerData.position.y = -1.0 + 2.0 * gdTouchPoint.y;
-            } else if (gdTouchPoint.x < 0.75) {
-                gdPlayerData.position.z = -2.0 + 6.0 * gdTouchPoint.y;
-            } else if (gdTouchPoint.x < 1.0) {
-                gdSkyBox.transitionTime = (gdTouchPoint.y - 0.25) / 0.8 * 8.0 * 60.0;
+        
+        if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.4, 0.4, 0.6, 0.6))) {
+            IWPlayerPrintData(&gdPlayerData);
+            printf("gdSkyBox.transitionTime = %.2f;\n", gdSkyBox.transitionTime);
+            gdScreenShotUIMode = gdScreenShotUIMode ? 0 : 1;
+            gdIsTouched = false;
+        } else {
+            float positionScaleFactor = timeSinceLastUpdate * 100.0;
+            float directionScaleFactor = timeSinceLastUpdate * 100.0;
+            
+            gdSkyBox.transitionTime += IWUISliderUpdateWithTouch(&gdScreenShotSliderE, gdTouchPoint).x * positionScaleFactor * 100.0;
+            gdSkyBox.transitionTime = gdSkyBox.transitionTime < 0.0 ? 0.0 : gdSkyBox.transitionTime;
+            gdSkyBox.transitionTime = gdSkyBox.transitionTime > gdSkyBox.colorTransitionTime ? gdSkyBox.colorTransitionTime : gdSkyBox.transitionTime;
+            
+            if (gdScreenShotUIMode == 0 ) {
+                gdPlayerData.position.x += IWUISliderUpdateWithTouch(&gdScreenShotSliderX, gdTouchPoint).x * positionScaleFactor;
+                gdPlayerData.position.y += IWUISliderUpdateWithTouch(&gdScreenShotSliderY, gdTouchPoint).y * positionScaleFactor;
+                gdPlayerData.position.z += IWUISliderUpdateWithTouch(&gdScreenShotSliderZ, gdTouchPoint).y * positionScaleFactor;
+            } else if (gdScreenShotUIMode == 1 ) {
+                
+                gdScreenShotRotation.y += IWUISliderUpdateWithTouch(&gdScreenShotSliderX, gdTouchPoint).x * directionScaleFactor;
+                gdScreenShotRotation.x += IWUISliderUpdateWithTouch(&gdScreenShotSliderY, gdTouchPoint).y * directionScaleFactor;
+                gdScreenShotRotation.z += IWUISliderUpdateWithTouch(&gdScreenShotSliderZ, gdTouchPoint).y * directionScaleFactor;
+                
+                // Update direction
+                IWVector3 dirGLV = gdPlayerDataStart.direction;
+                IWVector3 upGLV = gdPlayerDataStart.up;
+                
+                IWMatrix4 yRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.y,
+                                                                        upGLV.x, upGLV.y, upGLV.z);
+                
+                IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
+                
+                IWMatrix4 xRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.x,
+                                                                        normGLV.x, normGLV.y, normGLV.z);
+                
+                IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
+                
+                IWMatrix4 zRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.z,
+                                                                        dirGLV.x, dirGLV.y, dirGLV.z);
+                rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
+                
+                gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
+                gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
             }
-        } else if (gdScreenShotUIMode == 1 ) {
-            if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.8, 0.0, 1.0, 0.3))) {
-                gdScreenShotUIMode = 0;
-                gdIsTouched = false;
-            } else if (gdTouchPoint.x < 0.25) {
-                gdScreenShotRotation.x = -1.0 * M_PI + 2.0 * M_PI * gdTouchPoint.y;
-            } else if (gdTouchPoint.x < 0.5) {
-                gdScreenShotRotation.y = -1.0 * M_PI + 2.0 * M_PI * gdTouchPoint.y;
-            } else if (gdTouchPoint.x < 0.75) {
-                gdScreenShotRotation.z = -1.0 * M_PI + 2.0 * M_PI * gdTouchPoint.y;
-            } else if (gdTouchPoint.x < 1.0) {
-                gdSkyBox.transitionTime = (gdTouchPoint.y - 0.25) / 0.8 * 8.0 * 60.0;
-            }
-            
-            // Update direction
-            IWVector3 dirGLV = IWVector3Make(0.0, 0.0, 1.0);
-            IWVector3 upGLV = IWVector3Make(0.0, 1.0, 0.0);
-            
-            IWMatrix4 yRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.y,
-                                                                    upGLV.x, upGLV.y, upGLV.z);
-            
-            IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
-            
-            IWMatrix4 xRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.x,
-                                                                    normGLV.x, normGLV.y, normGLV.z);
-            
-            IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
-            
-            IWMatrix4 zRotationUpdateMatrix = IWMatrix4MakeRotation(gdScreenShotRotation.z,
-                                                                    dirGLV.x, dirGLV.y, dirGLV.z);
-            rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
-            
-            gdPlayerData.direction = IWMatrix4MultiplyVector3(rotationUpdateMatrix, dirGLV);
-            gdPlayerData.up = IWMatrix4MultiplyVector3(rotationUpdateMatrix, upGLV);
         }
+    } else {
+        IWUISliderTouchHasEnded(&gdScreenShotSliderX);
+        IWUISliderTouchHasEnded(&gdScreenShotSliderY);
+        IWUISliderTouchHasEnded(&gdScreenShotSliderZ);
+        IWUISliderTouchHasEnded(&gdScreenShotSliderE);
     }
     
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);

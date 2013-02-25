@@ -148,7 +148,13 @@ void IWGRendererSetupStartMenuAssets(void)
     gdGPUBufferPositionIndexList = IWIndexListMake(n);
     
     IWVector4 cubeBaseColor = {0.5, 0.5, 0.5, 1.0};
-
+    
+    //srand(74803974122);// ok
+    //unsigned int nCubesBridge = 114;
+    //srand(111222333444);// default
+    //unsigned int nCubesBridge = 140;
+    unsigned int nCubesBridge = 0;
+    
     gdCubeData = IWCubeMakeCubes(nx, ny, nz, .04, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdNCubes = nx * ny * nz;
     
@@ -157,10 +163,13 @@ void IWGRendererSetupStartMenuAssets(void)
     
     GLfloat *memPtr = gdCubeTriangleBufferStartCPU;
     for (int nc=0; nc < n; nc++) {
-        // Spawn cube
+        // 
         gdCubeData[nc].type = IWCUBE_TYPE_STANDARD;
         gdCubeData[nc].isInteractive = false;
-
+        if (nc > n  - nCubesBridge) {//114
+            gdCubeData[nc].centerPosition = gdSecondaryPosition[nc - n + nCubesBridge];
+            gdCubeData[nc].color = IWUI_COLOR_RED(1.0);
+        }
         //
         gdCubeData[nc].triangleBufferData.bufferStartCPU = gdCubeTriangleBufferStartCPU;
         gdCubeData[nc].triangleBufferData.startCPU = memPtr;
@@ -390,6 +399,8 @@ void IWGRendererSetupGameAssets(void)
     
     IWVector4 cubeBaseColor = {0.4, 0.4, 1.0, 1.0};
 
+    IW_RAND_RANDOMIZE_TIMER
+    
     //gdCubeData = IWCubeMakeCubes(nx, ny, nz, .05, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdCubeData = IWCubeMakeCubes(nx, ny, nz, .04, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor, 1, 0.05);
     gdNCubes = nx * ny * nz;

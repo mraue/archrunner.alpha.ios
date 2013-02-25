@@ -136,8 +136,8 @@ IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPositi
     
     IWVector3 newPointOffset;
     
-    unsigned int iseed = (unsigned int)time(NULL);
-    srand(iseed);
+    //unsigned int iseed = (unsigned int)time(NULL);
+    //srand(iseed);
 
     b = 0.0;
     boffset = 0.0;
@@ -173,7 +173,7 @@ IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPositi
                 newPointOffset = IWVector3Make(r1, b * 3.0, r2);
                 break;
             case IWGEOMETRY_AXIS_Z:
-                newPointOffset = IWVector3Make(r1, r2, b * 3.0);
+                newPointOffset = IWVector3Make(r1, r2, b * 3.0);// [3.0]
                 break;
         }
         *points++ = IWVector3Add(startingPosition, newPointOffset);
