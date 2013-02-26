@@ -19,6 +19,8 @@
 #import "IWGame.h"
 #import "IWGRenderer.h"
 
+#import "AchievementController.h"
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 @interface ViewController () {
@@ -31,25 +33,37 @@
 
     BOOL orientationNeutralSetAccelerometer;
 
-    CMMotionManager *motionManager;
     CMAttitude *savedAttitude;
-    
-    GKLocalPlayer *localPlayer;
 }
+
 @property (strong, nonatomic) EAGLContext *context;
-@property (nonatomic, retain) CMMotionManager *motionManager;
-@property (nonatomic, retain) GKLocalPlayer *localPlayer;
+@property (retain, nonatomic) CMMotionManager *motionManager;
+@property (retain, nonatomic) GKLocalPlayer *localPlayer;
+@property (retain, nonatomic) AchievementController *achievementController;
 
 - (void)processControllInput;
 - (void)authenticateLocalPlayer;
+- (void)saveContext;
 
 @end
 
 @implementation ViewController
 
-@synthesize motionManager;
-@synthesize audioPlayer;
-@synthesize localPlayer;
+@synthesize motionManager=_motionManager;
+@synthesize audioPlayer=_audioPlayer;
+@synthesize localPlayer=_localPlayer;
+@synthesize achievementController=_achievementController;
+
+- (void)dealloc
+{
+    [_achievementController release];
+    [_localPlayer release];
+    [_motionManager release];
+    [savedAttitude release];
+    [_audioPlayer release];
+    [_managedObjectContext release];
+    [super dealloc];
+}
 
 - (NSUInteger)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskLandscapeLeft;
@@ -59,6 +73,13 @@
 {
     [super viewDidLoad];
     
+    self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];
+    // DEBUG
+    printf("self.achievementController = %f\n", [self.achievementController.achievementTracker.zTravelledTotal floatValue]);
+    self.achievementController.achievementTracker.zTravelledTotal = [NSNumber numberWithFloat:[self.achievementController.achievementTracker.zTravelledTotal floatValue] + 1.0];
+    [self.achievementController saveContext];
+    // END DEBUG
+
     self.localPlayer = nil;
     
     // Prevent screen diming and autolock
@@ -67,7 +88,7 @@
     // Are we running on a simulator
     gdRunningInSimulator = ([[[[UIDevice currentDevice] model] uppercaseString] rangeOfString:@"SIMULATOR"].location == NSNotFound) ? false : true;
     
-    // Default setting for 3GS
+    // Default setting for all devices
     self.preferredFramesPerSecond = 60;
     
     // Create open gl context
@@ -82,28 +103,28 @@
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
     // Initialize motion manager
-    motionManager = [[CMMotionManager alloc] init]; // motionManager is an instance variable
-    motionManager.accelerometerUpdateInterval = 0.01; // 100Hz
-    [motionManager startAccelerometerUpdates];
+    self.motionManager = [[CMMotionManager alloc] init]; // motionManager is an instance variable
+    self.motionManager.accelerometerUpdateInterval = 0.01; // 100Hz
+    [self.motionManager startAccelerometerUpdates];
 
-    if (motionManager.isDeviceMotionAvailable) {
+    if (self.motionManager.isDeviceMotionAvailable) {
         // IPhone 4++
-        self.preferredFramesPerSecond = 60;
+        //self.preferredFramesPerSecond = 60;
         
-        motionManager.deviceMotionUpdateInterval = 0.01;
+        self.motionManager.deviceMotionUpdateInterval = 0.01;
         
-        [motionManager startDeviceMotionUpdates];
+        [self.motionManager startDeviceMotionUpdates];
 
-        _filteredAcceleration.x = motionManager.deviceMotion.gravity.x;
-        _filteredAcceleration.y = motionManager.deviceMotion.gravity.y;
-        _filteredAcceleration.z = motionManager.deviceMotion.gravity.z;
+        _filteredAcceleration.x = self.motionManager.deviceMotion.gravity.x;
+        _filteredAcceleration.y = self.motionManager.deviceMotion.gravity.y;
+        _filteredAcceleration.z = self.motionManager.deviceMotion.gravity.z;
 
-        savedAttitude = [motionManager.deviceMotion.attitude retain];
+        savedAttitude = [self.motionManager.deviceMotion.attitude retain];
         _filteredAttitude = IWVector3Make(savedAttitude.roll * IW_RAD_TO_DEG,
                                           -1.0 * savedAttitude.pitch * IW_RAD_TO_DEG,
                                           -1.0 * savedAttitude.yaw * IW_RAD_TO_DEG);
     } else {
-        CMAccelerometerData *newestAccel = motionManager.accelerometerData;
+        CMAccelerometerData *newestAccel = self.motionManager.accelerometerData;
         
         _filteredAcceleration.x = newestAccel.acceleration.x;
         _filteredAcceleration.y = newestAccel.acceleration.y;
@@ -144,10 +165,10 @@
     self.audioPlayer = newPlayer;
     [newPlayer release];
     
-    [audioPlayer prepareToPlay];
-    [audioPlayer setDelegate: self];
-    [audioPlayer setNumberOfLoops:-1];
-    [audioPlayer play];
+    [self.audioPlayer prepareToPlay];
+    [self.audioPlayer setDelegate: self];
+    [self.audioPlayer setNumberOfLoops:-1];
+    [self.audioPlayer play];
 
     gdMainShaderProgram.vertexShaderFilename
         = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String];
@@ -208,10 +229,10 @@
 - (void)processControllInput
 {
     float alpha = 0.2;
-    if (motionManager.isDeviceMotionAvailable) {
-        IWVector3 gravity = IWVector3Make(motionManager.deviceMotion.gravity.x,
-                                          motionManager.deviceMotion.gravity.y,
-                                          motionManager.deviceMotion.gravity.z);
+    if (_motionManager.isDeviceMotionAvailable) {
+        IWVector3 gravity = IWVector3Make(_motionManager.deviceMotion.gravity.x,
+                                          _motionManager.deviceMotion.gravity.y,
+                                          _motionManager.deviceMotion.gravity.z);
         // This is somehwat of a hack to filter out the first few data sets
         // which seem to be corrupt/wrong
         if (gdTotalRunTime < 0.5) {
@@ -221,7 +242,7 @@
             _filteredAcceleration = IWVector3Lerp(_filteredAcceleration, gravity, alpha);
         }
     } else {
-        CMAccelerometerData *newestAccel = motionManager.accelerometerData;
+        CMAccelerometerData *newestAccel = _motionManager.accelerometerData;
         if (gdTotalRunTime < 0.5) {
             _filteredAcceleration = IWVector3Make(newestAccel.acceleration.x,
                                                   newestAccel.acceleration.y,
@@ -248,7 +269,7 @@
         orientationNeutralSetAccelerometer = YES;
         gdResetControllerPosition = false;
         [savedAttitude release];
-        savedAttitude = [motionManager.deviceMotion.attitude retain];
+        savedAttitude = [_motionManager.deviceMotion.attitude retain];
     }
     
     gdControllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
@@ -256,11 +277,11 @@
                                                                                _filteredAcceleration.z));
     
     
-    if (motionManager.isDeviceMotionAvailable) {
+    if (_motionManager.isDeviceMotionAvailable) {
         // Needs to be better determined under the assumption of 60 FPS
         alpha = 0.3;
         if (savedAttitude) {
-            CMAttitude *currentAttitude = [motionManager.deviceMotion.attitude retain];
+            CMAttitude *currentAttitude = [_motionManager.deviceMotion.attitude retain];
             [currentAttitude multiplyByInverseOfAttitude: savedAttitude];
             _filteredAttitude = IWVector3Lerp(_filteredAttitude,
                                              IWVector3Make(currentAttitude.roll * IW_RAD_TO_DEG,
@@ -272,7 +293,7 @@
             [currentAttitude release];
         } else {
             [savedAttitude release];
-            savedAttitude = [motionManager.deviceMotion.attitude retain];
+            savedAttitude = [_motionManager.deviceMotion.attitude retain];
         }
     } else {
         IWControllerUpdateRotationSpeed(&gdControllerDataAccelerometer, self.timeSinceLastUpdate);
@@ -401,5 +422,20 @@
     };
 }
 
+#pragma mark - Core data
+
+- (void)saveContext
+{
+    NSError *error = nil;
+    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    if (managedObjectContext != nil) {
+        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+            // Replace this implementation with code to handle the error appropriately.
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
+    }
+}
 
 @end

@@ -7,6 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+
+#import <CoreData/CoreData.h>
+
 #import <GLKit/GLKit.h>
 
 #import <CoreMotion/CoreMotion.h>
@@ -17,7 +20,9 @@
 
 @interface ViewController : GLKViewController <AVAudioPlayerDelegate,GKGameCenterControllerDelegate>
 
-@property (nonatomic, retain) AVAudioPlayer *audioPlayer;
+@property (retain, nonatomic) AVAudioPlayer *audioPlayer;
+
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
 

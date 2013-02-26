@@ -64,6 +64,11 @@
 		649894D416D780DF003148D2 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649894D316D780DF003148D2 /* GameKit.framework */; };
 		64A2F02816B67CCC00655F68 /* IWVectorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A2F02716B67CCC00655F68 /* IWVectorTransition.c */; };
 		64A658F216DB49DF003F92C4 /* IWUISlider.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A658F116DB49DF003F92C4 /* IWUISlider.c */; };
+		64A6593416DC9AFA003F92C4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A6593316DC9AFA003F92C4 /* CoreData.framework */; };
+		64A6593716DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64A6593516DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodeld */; };
+		64A6593D16DCA9BB003F92C4 /* Achievement.m in Sources */ = {isa = PBXBuildFile; fileRef = 64A6593C16DCA9BB003F92C4 /* Achievement.m */; };
+		64A6594016DCA9C6003F92C4 /* AchievementTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 64A6593F16DCA9C5003F92C4 /* AchievementTracker.m */; };
+		64A6594316DCCAFC003F92C4 /* AchievementController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64A6594216DCCAFC003F92C4 /* AchievementController.m */; };
 		64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C0386216CB65AB00C4F491 /* IWGSkyBox.c */; };
 		64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386416CB8E9700C4F491 /* MasterShader2.vsh */; };
 		64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */; };
@@ -189,6 +194,14 @@
 		64A2F02916B67CD800655F68 /* IWVectorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWVectorTransition.h; sourceTree = "<group>"; };
 		64A658F016DB49D6003F92C4 /* IWUISlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUISlider.h; path = IWUserInterface/IWUISlider.h; sourceTree = "<group>"; };
 		64A658F116DB49DF003F92C4 /* IWUISlider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWUISlider.c; sourceTree = "<group>"; };
+		64A6593316DC9AFA003F92C4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		64A6593616DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataObjectModel.xcdatamodel; sourceTree = "<group>"; };
+		64A6593B16DCA9BB003F92C4 /* Achievement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Achievement.h; sourceTree = "<group>"; };
+		64A6593C16DCA9BB003F92C4 /* Achievement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Achievement.m; sourceTree = "<group>"; };
+		64A6593E16DCA9C5003F92C4 /* AchievementTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchievementTracker.h; sourceTree = "<group>"; };
+		64A6593F16DCA9C5003F92C4 /* AchievementTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementTracker.m; sourceTree = "<group>"; };
+		64A6594116DCCAFC003F92C4 /* AchievementController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchievementController.h; sourceTree = "<group>"; };
+		64A6594216DCCAFC003F92C4 /* AchievementController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementController.m; sourceTree = "<group>"; };
 		64C0386116CB65A000C4F491 /* IWGSkyBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGSkyBox.h; sourceTree = "<group>"; };
 		64C0386216CB65AB00C4F491 /* IWGSkyBox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGSkyBox.c; sourceTree = "<group>"; };
 		64C0386416CB8E9700C4F491 /* MasterShader2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
@@ -243,6 +256,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64A6593416DC9AFA003F92C4 /* CoreData.framework in Frameworks */,
 				649894D416D780DF003148D2 /* GameKit.framework in Frameworks */,
 				64F25F1416D1500400EC3E78 /* AVFoundation.framework in Frameworks */,
 				64822EAB169DB901003C5415 /* CoreMotion.framework in Frameworks */,
@@ -356,6 +370,13 @@
 				646F58FC16A555B000704F45 /* AppDelegate.m */,
 				646F58FD16A555B000704F45 /* ViewController.h */,
 				646F58FE16A555B000704F45 /* ViewController.m */,
+				64A6593516DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodeld */,
+				64A6593E16DCA9C5003F92C4 /* AchievementTracker.h */,
+				64A6593F16DCA9C5003F92C4 /* AchievementTracker.m */,
+				64A6593B16DCA9BB003F92C4 /* Achievement.h */,
+				64A6593C16DCA9BB003F92C4 /* Achievement.m */,
+				64A6594116DCCAFC003F92C4 /* AchievementController.h */,
+				64A6594216DCCAFC003F92C4 /* AchievementController.m */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -500,6 +521,7 @@
 		64822E5F1695E9BF003C5415 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				64A6593316DC9AFA003F92C4 /* CoreData.framework */,
 				649894D316D780DF003148D2 /* GameKit.framework */,
 				64F25F1316D1500400EC3E78 /* AVFoundation.framework */,
 				64822EAA169DB901003C5415 /* CoreMotion.framework */,
@@ -698,6 +720,10 @@
 				64F25F4216D5126B00EC3E78 /* IWUIMenu.c in Sources */,
 				6404C90516D623AC005900FA /* IWScorePresenter.c in Sources */,
 				64A658F216DB49DF003F92C4 /* IWUISlider.c in Sources */,
+				64A6593716DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodeld in Sources */,
+				64A6593D16DCA9BB003F92C4 /* Achievement.m in Sources */,
+				64A6594016DCA9C6003F92C4 /* AchievementTracker.m in Sources */,
+				64A6594316DCCAFC003F92C4 /* AchievementController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -864,6 +890,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		64A6593516DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				64A6593616DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodel */,
+			);
+			currentVersion = 64A6593616DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodel */;
+			path = CoreDataObjectModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 64822E531695E9BF003C5415 /* Project object */;
 }

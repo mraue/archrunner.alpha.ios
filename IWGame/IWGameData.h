@@ -82,6 +82,7 @@ IWVector3Transition gdGrayScaleTransition;
 IWVector3Transition gdGrayScaleTransitionDefault;
 
 bool gdPushScoreToLeaderboard;
+bool gdUpdateAchievements;
 
 #pragma mark - User input
 

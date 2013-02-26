@@ -92,6 +92,7 @@ void IWGameReset(void)
     gdFuel = IWFuelMakeDefaultStart();
     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
     gdPushScoreToLeaderboard = false;
+    gdUpdateAchievements = true;
     // DEBUG
     //IWFuelRemoveFuel(&gdFuel, 0.95);
     // END DEBUG
@@ -215,8 +216,12 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
         //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.110, 0.138, 19.135),IWVector3Normalize(IWVector3Make(0.090, 0.379, 0.921)),IWVector3Normalize(IWVector3Make(-0.522, 0.806, -0.281)));;
         //gdSkyBox.transitionTime = 336.06;
         
-        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
-        gdSkyBox.transitionTime = 336.06;
+        // Icon
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
+        //gdSkyBox.transitionTime = 336.06;
+        // Achievement: Cube Collector (Pro)
+        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(-1.386, 0.000, -1.208),IWVector3Normalize(IWVector3Make(0.793, 0.000, 0.610)),IWVector3Normalize(IWVector3Make(0.000, 1.000, 0.000)));
+        gdSkyBox.transitionTime = 3.61;
         gdIsTouched = false;
         return;
     }

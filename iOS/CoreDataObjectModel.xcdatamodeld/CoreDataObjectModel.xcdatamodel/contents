@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2057" systemVersion="12C3006" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Achievement" representedClassName="Achievement" syncable="YES">
+        <attribute name="completed" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="completionDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="completionReported" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="gameCenterID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="percentageComplete" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="reportStatus" optional="YES" attributeType="Boolean" syncable="YES"/>
+    </entity>
+    <entity name="AchievementTracker" representedClassName="AchievementTracker" syncable="YES">
+        <attribute name="nBridgeCubesTotal" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="nGridCubesTotal" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="playTimeTotal" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="zTravelledTotal" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Achievement" positionX="160" positionY="192" width="128" height="135"/>
+        <element name="AchievementTracker" positionX="-164" positionY="198" width="128" height="105"/>
+    </elements>
+</model>

@@ -135,7 +135,7 @@ void IWGRendererSetupStartMenuAssets(void)
     glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
     
     int nx, ny, nz;
-    nx = ny = nz = 8;
+    nx = ny = nz = 8;// [8]
     
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
