@@ -72,12 +72,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];
+
     // DEBUG
-    printf("self.achievementController = %f\n", [self.achievementController.achievementTracker.zTravelledTotal floatValue]);
-    self.achievementController.achievementTracker.zTravelledTotal = [NSNumber numberWithFloat:[self.achievementController.achievementTracker.zTravelledTotal floatValue] + 1.0];
-    [self.achievementController saveContext];
+//    printf("self.achievementController = %f\n", [self.achievementController.achievementTracker.zTravelledTotal floatValue]);
+//    self.achievementController.achievementTracker.zTravelledTotal = [NSNumber numberWithFloat:[self.achievementController.achievementTracker.zTravelledTotal floatValue] + 1.0];
+//    for (Achievement* achievement in self.achievementController.achievements) {
+//        NSLog(@"%@", achievement.gameCenterID);
+//    }
+//    [self.achievementController saveContext];
     // END DEBUG
 
     self.localPlayer = nil;
@@ -198,6 +200,7 @@
     IWGRendererSetupGL([fontMapFilename UTF8String]);
     
     // Game center test
+    self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];
     [self authenticateLocalPlayer];
 //    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
 //    if (gameCenterController != nil)
@@ -355,6 +358,16 @@
         }];
         gdPushScoreToLeaderboard = false;
     }
+    // Report achievements
+    if (self.localPlayer
+        && self.localPlayer.isAuthenticated
+        && gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER
+        && gdUpdateAchievements) {
+        if (self.achievementController) {
+            [self.achievementController updateAchievementsWithScoreCounter:&gdScoreCounter];
+        }
+        gdUpdateAchievements = false;
+    }
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -413,6 +426,9 @@
         else if (localPlayerTmp.isAuthenticated)
         {
             self.localPlayer = localPlayerTmp;
+            // DEBUG
+            //[self.achievementController resetAchievements];
+            // DEBUG END
             //[self authenticatedPlayer: localPlayer];
         }
         else
