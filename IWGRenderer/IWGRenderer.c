@@ -38,6 +38,7 @@
 #include "IWUIMenuPage.h"
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenu.h"
+#include "IWUserInterfaceController.h"
 
 #include "IWGameData.h"
 
@@ -46,7 +47,7 @@
 void IWGRendererSetupGL(const char* fontMapFilename)
 {
     // Main lighting shader program
-    IWGShaderProgramInitFromFiles(&gdMainShaderProgram);
+    //IWGShaderProgramInitFromFiles(&gdMainShaderProgram);
     
     glUseProgram(gdMainShaderProgram.programID);
     
@@ -77,11 +78,11 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     IWGLightingInitializeUniformLocations(gdMainShaderProgram.programID);
     IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
     
-    IWGShaderProgramInitFromFiles(&gdTextShaderProgram);
+    //IWGShaderProgramInitFromFiles(&gdTextShaderProgram);
     
-    IWGShaderProgramInitFromFiles(&gdUIShaderProgram);
+    //IWGShaderProgramInitFromFiles(&gdUIShaderProgram);
     
-    IWGShaderProgramInitFromFiles(&gdSkyboxShaderProgram);
+    //IWGShaderProgramInitFromFiles(&gdSkyboxShaderProgram);
     
     glUseProgram(gdSkyboxShaderProgram.programID);
     
@@ -190,10 +191,15 @@ void IWGRendererSetupStartMenuAssets(void)
     unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
     
     // Get attribute locations
-    GLuint positionSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Vertex");
-    GLuint normalSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Normal");
-    GLuint colorSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Color");
-    GLuint textureOffsetSlot = glGetAttribLocation(gdMainShaderProgram.programID, "TextureOffset");
+//    GLuint positionSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Vertex");
+//    GLuint normalSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Normal");
+//    GLuint colorSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Color");
+//    GLuint textureOffsetSlot = glGetAttribLocation(gdMainShaderProgram.programID, "TextureOffset");
+    
+    GLuint positionSlot = gdMainShaderProgram.vertexSlot;
+    GLuint normalSlot = gdMainShaderProgram.normalSlot;
+    GLuint colorSlot = gdMainShaderProgram.colorSlot;
+    GLuint textureOffsetSlot = gdMainShaderProgram.textureOffsetSlot;
     
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
         gdTriangleDoubleBuffer.nVertices[k] = nVertices;
@@ -490,10 +496,12 @@ void IWGRendererSetupGameAssets(void)
     //
     // Text
     //
-    
     float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
     glGenTextures(1, &gdTextureHandlerId);
+    
+    gdUserInterfaceController = IWUserInterfaceControllerMake(aspect, IWUSERINTERFACE_ELEMENT_ALL, &gdFontMap);
+    IWUserInterfaceControllerSetupVBOs(&gdUserInterfaceController, &gdUIShaderProgram, &gdTextShaderProgram, gdTextureHandlerId, &gdFontMap);
 
     gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10) * 6 * 9 * sizeof(GLfloat));
 
@@ -740,6 +748,8 @@ void IWGRendererTearDownGameAssets(void)
     
     IWUIStateBarDeallocData(&gdFuel.stateBar);
     
+    IWUserInterfacePurgeData(&gdUserInterfaceController);
+    
     IWUIMenuPurgeData(&gdPauseMenu);
     IWScorePresenterPurgeData(&gdScorePresenterTest);
 }
@@ -844,8 +854,10 @@ void IWGRendererRender(void)
 
         glUseProgram(gdTextShaderProgram.programID);
 
-        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING)
-            IWGRendererRenderInGameText();
+        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
+            //IWGRendererRenderInGameText();
+            IWUserInterfaceControllerRender(&gdUserInterfaceController);
+        }
         if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED
             || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU)
             IWUIMenuRender(&gdPauseMenu);

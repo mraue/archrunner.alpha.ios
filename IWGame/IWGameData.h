@@ -39,6 +39,7 @@
 #include "IWUIMenu.h"
 #include "IWScorePresenter.h"
 #include "IWUISlider.h"
+#include "IWUserInterfaceController.h"
 
 #pragma mark - Game Logic Data
 
@@ -98,6 +99,8 @@ IWScorePresenterData gdScorePresenterTest;
 int gdScreenShotUIMode;
 IWVector3 gdScreenShotRotation;
 IWUISliderData gdScreenShotSliderX, gdScreenShotSliderY, gdScreenShotSliderZ, gdScreenShotSliderE;
+
+IWUserInterfaceControllerData gdUserInterfaceController;
 
 #pragma mark - Asset and memory management
 

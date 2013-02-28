@@ -204,27 +204,27 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
         return;
     }
     
-    IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
-    if (gdIsTouched
-        && IWPointInRectangle(gdTouchPoint, screenShotButton)) {
-        //IWGRendererTearDownStartMenuAssets();
-        //IWGRendererSetupGameAssets();
-        gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
-        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.302, 19.290),IWVector3Normalize(IWVector3Make(0.113, 0.246, 0.963)),IWVector3Normalize(IWVector3Make(-0.508, 0.847, -0.157)));
-        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.295, 19.299),IWVector3Normalize(IWVector3Make(0.137, 0.374, 0.917)),IWVector3Normalize(IWVector3Make(-0.517, 0.817, -0.256)));
-        //gdSkyBox.transitionTime = 319.83;
-        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.110, 0.138, 19.135),IWVector3Normalize(IWVector3Make(0.090, 0.379, 0.921)),IWVector3Normalize(IWVector3Make(-0.522, 0.806, -0.281)));;
-        //gdSkyBox.transitionTime = 336.06;
-        
-        // Icon
-        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
-        //gdSkyBox.transitionTime = 336.06;
-        // Achievement: Cube Collector (Pro)
-        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(-1.386, 0.000, -1.208),IWVector3Normalize(IWVector3Make(0.793, 0.000, 0.610)),IWVector3Normalize(IWVector3Make(0.000, 1.000, 0.000)));
-        gdSkyBox.transitionTime = 3.61;
-        gdIsTouched = false;
-        return;
-    }
+//    IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
+//    if (gdIsTouched
+//        && IWPointInRectangle(gdTouchPoint, screenShotButton)) {
+//        //IWGRendererTearDownStartMenuAssets();
+//        //IWGRendererSetupGameAssets();
+//        gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
+//        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.302, 19.290),IWVector3Normalize(IWVector3Make(0.113, 0.246, 0.963)),IWVector3Normalize(IWVector3Make(-0.508, 0.847, -0.157)));
+//        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.295, 19.299),IWVector3Normalize(IWVector3Make(0.137, 0.374, 0.917)),IWVector3Normalize(IWVector3Make(-0.517, 0.817, -0.256)));
+//        //gdSkyBox.transitionTime = 319.83;
+//        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.110, 0.138, 19.135),IWVector3Normalize(IWVector3Make(0.090, 0.379, 0.921)),IWVector3Normalize(IWVector3Make(-0.522, 0.806, -0.281)));;
+//        //gdSkyBox.transitionTime = 336.06;
+//        
+//        // Icon
+//        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
+//        //gdSkyBox.transitionTime = 336.06;
+//        // Achievement: Cube Collector (Pro)
+//        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(-1.386, 0.000, -1.208),IWVector3Normalize(IWVector3Make(0.793, 0.000, 0.610)),IWVector3Normalize(IWVector3Make(0.000, 1.000, 0.000)));
+//        gdSkyBox.transitionTime = 3.61;
+//        gdIsTouched = false;
+//        return;
+//    }
     
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
@@ -531,7 +531,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     IWGSkyBoxUpdate(&gdSkyBox, timeSinceLastUpdate, &gdPlayerData, true);
     
     // Udpate score and score display
-    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+//    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
     gdScoreCounter.runningTimeTotal += timeSinceLastUpdate;
 
@@ -544,23 +544,35 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (gdScoreCounter.scoreInt != oldScore) {
         char s[10];
         sprintf(s, "%u", gdScoreCounter.scoreInt);
-        IWGTextFieldSetText(&gdScoreTextField, s);
-        IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+//        IWGTextFieldSetText(&gdScoreTextField, s);
+//        IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+//                              0,
+//                              gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
+//                              gdScoreTextField.triangleBufferData.startCPU,
+//                              false);
+        IWGTextFieldSetText(&gdUserInterfaceController.scoreTextField, s);
+        IWGMultiBufferSubData(&gdUserInterfaceController.textMultiBuffer,
                               0,
-                              gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
-                              gdScoreTextField.triangleBufferData.startCPU,
-                              false);
+                              gdUserInterfaceController.scoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                              gdUserInterfaceController.scoreTextField.triangleBufferData.startCPU,
+                              true);
     }
     
     // Udpate status display
     char sTmp[30];
     sprintf(sTmp, "%u\n%u\n%u", gdGameStatus.nGridCubes, gdGameStatus.nBridgeCubes, gdGameStatus.nPoolCubes);
-    IWGTextFieldSetText(&gdGameStatusField, sTmp);
-    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
-                          gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
-                          gdGameStatusField.triangleBufferData.size * sizeof(GLfloat),
-                          gdGameStatusField.triangleBufferData.startCPU,
-                          false);
+//    IWGTextFieldSetText(&gdGameStatusField, sTmp);
+//    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
+//                          gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
+//                          gdGameStatusField.triangleBufferData.size * sizeof(GLfloat),
+//                          gdGameStatusField.triangleBufferData.startCPU,
+//                          false);
+    IWGTextFieldSetText(&gdUserInterfaceController.cubeStatusTextField, sTmp);
+    IWGMultiBufferSubData(&gdUserInterfaceController.textMultiBuffer,
+                          gdUserInterfaceController.scoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                          gdUserInterfaceController.cubeStatusTextField.triangleBufferData.size * sizeof(GLfloat),
+                          gdUserInterfaceController.cubeStatusTextField.triangleBufferData.startCPU,
+                          true);
     
     // Switch main draw buffer
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);

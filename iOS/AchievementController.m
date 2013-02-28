@@ -180,7 +180,7 @@
         float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 1000.0;
         if (progress > 1.0) {
             progress = 1.0;
-            achievement.completed = [NSNumber numberWithBool:YES];
+            achievement.completed = @YES;
             achievement.completionReported = @YES;
             achievement.completionDate = [NSDate date];
         }
@@ -202,7 +202,7 @@
         float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 5000.0;
         if (progress > 1.0) {
             progress = 1.0;
-            achievement.completed = [NSNumber numberWithBool:YES];
+            achievement.completed = @YES;
             achievement.completionReported = @YES;
             achievement.completionDate = [NSDate date];
         }
@@ -255,7 +255,7 @@
     [GKAchievement resetAchievementsWithCompletionHandler:^(NSError *error)
      {
          if (error != nil)
-             ;// handle the error.
+             NSLog(@"ERROR: Failed to reset achievements");// handle the error.
     }];
 }
 

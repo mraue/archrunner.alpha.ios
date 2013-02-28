@@ -14,12 +14,35 @@
 #include "IWFileTools.h"
 
 IWGShaderProgramData IWGShaderProgramMake(const char* vertexShaderDataString,
-                                          const char* fragmentShaderDataString)
+                                          const char* fragmentShaderDataString,
+                                          IWGSHADERPROGRAM_VARYING_SLOTS varyingSlots)
 {
     IWGShaderProgramData programData = {
-        "", "", vertexShaderDataString, fragmentShaderDataString, 0, 0, 0
+        "", "",
+        vertexShaderDataString, fragmentShaderDataString,
+        0, 0, 0,
+        -1, -1, -1, -1,
+        varyingSlots
     };
     
+    IWGShaderProgramSetupPrograms(&programData);
+    
+    return programData;
+}
+
+IWGShaderProgramData IWGShaderProgramMakeFromFiles(const char* vertexShaderFilename,
+                                                   const char* fragmentShaderFilename,
+                                                   IWGSHADERPROGRAM_VARYING_SLOTS varyingSlots)
+{
+    IWGShaderProgramData programData = {
+        vertexShaderFilename, fragmentShaderFilename,
+        "", "",
+        0, 0, 0,
+        -1, -1, -1, -1,
+        varyingSlots
+    };
+    
+    IWGShaderProgramInitFromFiles(&programData);
     IWGShaderProgramSetupPrograms(&programData);
     
     return programData;
@@ -29,7 +52,6 @@ void IWGShaderProgramInitFromFiles(IWGShaderProgramData *shaderProgram)
 {
     shaderProgram->vertexShaderDataString = IWFileToolsReadFileToString(shaderProgram->vertexShaderFilename);
     shaderProgram->fragmentShaderDataString = IWFileToolsReadFileToString(shaderProgram->fragmentShaderFilename);
-    IWGShaderProgramSetupPrograms(shaderProgram);
 }
 
 void IWGShaderProgramSetupPrograms(IWGShaderProgramData *shaderProgram)
@@ -66,6 +88,19 @@ void IWGShaderProgramSetupPrograms(IWGShaderProgramData *shaderProgram)
     shaderProgram->programID = prog;
     shaderProgram->vertexShaderID = vertexShader;
     shaderProgram->fragmentShaderID = fragmentShader;
+    
+    // Get attribute locations
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_VERTEX)
+        shaderProgram->vertexSlot = glGetAttribLocation(shaderProgram->programID, "Vertex");
+
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_COLOR)
+        shaderProgram->colorSlot = glGetAttribLocation(shaderProgram->programID, "Color");
+    
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_NORMAL)
+        shaderProgram->normalSlot = glGetAttribLocation(shaderProgram->programID, "Normal");
+    
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_TEXTURE_OFFSET)
+        shaderProgram->textureOffsetSlot = glGetAttribLocation(shaderProgram->programID, "TextureOffset");
     
     return;
 }

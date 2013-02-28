@@ -172,22 +172,22 @@
     [self.audioPlayer setNumberOfLoops:-1];
     [self.audioPlayer play];
 
-    gdMainShaderProgram.vertexShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String];
-    gdMainShaderProgram.fragmentShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"] UTF8String];
-    gdTextShaderProgram.vertexShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"TextShader" ofType:@"vsh"] UTF8String];
-    gdTextShaderProgram.fragmentShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"TextShader" ofType:@"fsh"] UTF8String];
-    gdSkyboxShaderProgram.vertexShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"SkyboxShader" ofType:@"vsh"] UTF8String];
-    gdSkyboxShaderProgram.fragmentShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"SkyboxShader" ofType:@"fsh"] UTF8String];
-    gdUIShaderProgram.vertexShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"vsh"] UTF8String];
-    gdUIShaderProgram.fragmentShaderFilename
-        = [[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"fsh"] UTF8String];
+    gdMainShaderProgram
+        = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String],
+                                        [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"] UTF8String],
+                                        IWGSHADERPROGRAM_VARYING_SLOTS_SCENE);
+    gdTextShaderProgram
+        = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"TextShader" ofType:@"vsh"] UTF8String],
+                                        [[[NSBundle mainBundle] pathForResource:@"TextShader" ofType:@"fsh"] UTF8String],
+                                        IWGSHADERPROGRAM_VARYING_SLOTS_TEXT);
+    gdSkyboxShaderProgram
+        = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"SkyboxShader" ofType:@"vsh"] UTF8String],
+                                        [[[NSBundle mainBundle] pathForResource:@"SkyboxShader" ofType:@"fsh"] UTF8String],
+                                        IWGSHADERPROGRAM_VARYING_SLOTS_UI);
+    gdUIShaderProgram
+        = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"vsh"] UTF8String],
+                                        [[[NSBundle mainBundle] pathForResource:@"UIShader" ofType:@"fsh"] UTF8String],
+                                        IWGSHADERPROGRAM_VARYING_SLOTS_UI);
     
     // Deal with font map textures
     NSString *fontMapBaseName = @"fontmap02";

@@ -32,6 +32,7 @@ IWFuel IWFuelMake(float currentLevel,
     
     return fuel;
 }
+
 IWFuel IWFuelMakeDefaultStart()
 {
     //IWRectangle rectangle = {{0.97, 0.25}, {0.99, 0.75}};

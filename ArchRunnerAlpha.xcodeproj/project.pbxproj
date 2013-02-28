@@ -69,6 +69,7 @@
 		64A6593D16DCA9BB003F92C4 /* Achievement.m in Sources */ = {isa = PBXBuildFile; fileRef = 64A6593C16DCA9BB003F92C4 /* Achievement.m */; };
 		64A6594016DCA9C6003F92C4 /* AchievementTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 64A6593F16DCA9C5003F92C4 /* AchievementTracker.m */; };
 		64A6594316DCCAFC003F92C4 /* AchievementController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64A6594216DCCAFC003F92C4 /* AchievementController.m */; };
+		64A6594616DF52F9003F92C4 /* IWUserInterfaceController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A6594516DF52F9003F92C4 /* IWUserInterfaceController.c */; };
 		64C0386316CB65AB00C4F491 /* IWGSkyBox.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C0386216CB65AB00C4F491 /* IWGSkyBox.c */; };
 		64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386416CB8E9700C4F491 /* MasterShader2.vsh */; };
 		64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */; };
@@ -202,6 +203,8 @@
 		64A6593F16DCA9C5003F92C4 /* AchievementTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementTracker.m; sourceTree = "<group>"; };
 		64A6594116DCCAFC003F92C4 /* AchievementController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchievementController.h; sourceTree = "<group>"; };
 		64A6594216DCCAFC003F92C4 /* AchievementController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchievementController.m; sourceTree = "<group>"; };
+		64A6594416DF52EC003F92C4 /* IWUserInterfaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUserInterfaceController.h; path = IWUserInterface/IWUserInterfaceController.h; sourceTree = "<group>"; };
+		64A6594516DF52F9003F92C4 /* IWUserInterfaceController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWUserInterfaceController.c; sourceTree = "<group>"; };
 		64C0386116CB65A000C4F491 /* IWGSkyBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGSkyBox.h; sourceTree = "<group>"; };
 		64C0386216CB65AB00C4F491 /* IWGSkyBox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGSkyBox.c; sourceTree = "<group>"; };
 		64C0386416CB8E9700C4F491 /* MasterShader2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
@@ -322,6 +325,8 @@
 				64F25F4116D5126A00EC3E78 /* IWUIMenu.c */,
 				64A658F016DB49D6003F92C4 /* IWUISlider.h */,
 				64A658F116DB49DF003F92C4 /* IWUISlider.c */,
+				64A6594416DF52EC003F92C4 /* IWUserInterfaceController.h */,
+				64A6594516DF52F9003F92C4 /* IWUserInterfaceController.c */,
 			);
 			name = IWUserInterface;
 			sourceTree = "<group>";
@@ -724,6 +729,7 @@
 				64A6593D16DCA9BB003F92C4 /* Achievement.m in Sources */,
 				64A6594016DCA9C6003F92C4 /* AchievementTracker.m in Sources */,
 				64A6594316DCCAFC003F92C4 /* AchievementController.m in Sources */,
+				64A6594616DF52F9003F92C4 /* IWUserInterfaceController.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
