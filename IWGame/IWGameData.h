@@ -152,8 +152,8 @@ GLuint gdUITriangleVertexBuffer;
 GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
 
-IWGTextFieldData gdScoreTextField;
-IWGTextFieldData gdGameStatusField;
+//IWGTextFieldData gdScoreTextField;
+//IWGTextFieldData gdGameStatusField;
 
 IWGTextFieldData gdTitleTextField;
 IWGTextFieldData gdVersionTextField;

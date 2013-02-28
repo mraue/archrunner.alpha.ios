@@ -46,12 +46,10 @@
 
 void IWGRendererSetupGL(const char* fontMapFilename)
 {
-    // Main lighting shader program
-    //IWGShaderProgramInitFromFiles(&gdMainShaderProgram);
+    // Get and save uniform locations.
     
     glUseProgram(gdMainShaderProgram.programID);
     
-    // Get and save uniform locations.
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
         = glGetUniformLocation(gdMainShaderProgram.programID, "ModelMatrix");
     basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
@@ -77,12 +75,6 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     IWGLightingInitializeUniformLocations(gdMainShaderProgram.programID);
     IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
-    
-    //IWGShaderProgramInitFromFiles(&gdTextShaderProgram);
-    
-    //IWGShaderProgramInitFromFiles(&gdUIShaderProgram);
-    
-    //IWGShaderProgramInitFromFiles(&gdSkyboxShaderProgram);
     
     glUseProgram(gdSkyboxShaderProgram.programID);
     
@@ -190,12 +182,6 @@ void IWGRendererSetupStartMenuAssets(void)
     
     unsigned int nVertices = (memPtr - gdCubeTriangleBufferStartCPU) / gdCubeData[0].triangleBufferData.stride;
     
-    // Get attribute locations
-//    GLuint positionSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Vertex");
-//    GLuint normalSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Normal");
-//    GLuint colorSlot = glGetAttribLocation(gdMainShaderProgram.programID, "Color");
-//    GLuint textureOffsetSlot = glGetAttribLocation(gdMainShaderProgram.programID, "TextureOffset");
-    
     GLuint positionSlot = gdMainShaderProgram.vertexSlot;
     GLuint normalSlot = gdMainShaderProgram.normalSlot;
     GLuint colorSlot = gdMainShaderProgram.colorSlot;
@@ -285,12 +271,7 @@ void IWGRendererSetupStartMenuAssets(void)
                                                               IWVector4Make(1.0, 1.0, 1.0, 1.0),
                                                               IWVector4Make(1.0, 1.0, 1.0, 1.0),
                                                               1.0, 0.0, false, false);
-    
-    //gdInGameTextTriangleBufferStartCPU = gdTitleTextField.triangleBufferData.bufferStartCPU;
-    
-    // DEBUG
-    // END DEBUG
-    
+
     unsigned int textSizeTotal = gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size + gdStartTextField.triangleBufferData.size + gdMenuPresenterTest.triangleBufferData.size;
     
     for (unsigned int  k =0; k < IWGMULTIBUFFER_MAX; k++) {
@@ -503,35 +484,6 @@ void IWGRendererSetupGameAssets(void)
     gdUserInterfaceController = IWUserInterfaceControllerMake(aspect, IWUSERINTERFACE_ELEMENT_ALL, &gdFontMap);
     IWUserInterfaceControllerSetupVBOs(&gdUserInterfaceController, &gdUIShaderProgram, &gdTextShaderProgram, gdTextureHandlerId, &gdFontMap);
 
-    gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10) * 6 * 9 * sizeof(GLfloat));
-
-    gdScoreTextField = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
-                                        IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
-                                        1, 10,
-                                        1. / aspect,
-                                        "",
-                                        0.4, -0.04,
-                                        IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
-                                        IWVector4Make(1.0, 1.0, 1.0, 0.7),
-                                        &gdFontMap,
-                                        gdInGameTextTriangleBufferStartCPU);
-    
-    gdGameStatusField = IWGTextFieldMake(IWVector2Make(0.93, 0.62),
-                                         IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
-                                         3, 10,
-                                         1. / aspect,
-                                         "",
-                                         0.1, -0.01,
-                                         IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
-                                         IWVector4Make(1.0, 1.0, 1.0, 0.5),
-                                         &gdFontMap,
-                                         gdInGameTextTriangleBufferStartCPU
-                                         + gdScoreTextField.triangleBufferData.size);
-    
-    
-    unsigned int totalTextFieldsSize =
-        gdScoreTextField.triangleBufferData.size
-        + gdGameStatusField.triangleBufferData.size;
     
     gdStartTextFieldColorTransition = IWVector4TransitionMake(IWVector4Make(0.2, 0.2, 0.2, 0.8),
                                                               IWVector4Make(0.2, 0.2, 0.2, 0.5),
@@ -543,39 +495,6 @@ void IWGRendererSetupGameAssets(void)
     positionSlot = glGetAttribLocation(gdTextShaderProgram.programID, "Vertex");
     colorSlot = glGetAttribLocation(gdTextShaderProgram.programID, "Color");
     textureOffsetSlot = glGetAttribLocation(gdTextShaderProgram.programID, "TextureOffset");
-    
-    // Fill buffers
-    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
-
-        gdTextTriangleDoubleBuffer.nVertices[i] = totalTextFieldsSize / gdScoreTextField.triangleBufferData.stride;
-        
-        IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
-        
-        glBindTexture(GL_TEXTURE_2D, gdTextureHandlerId);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
-        //glGenerateMipmap(GL_TEXTURE_2D);
-
-        glBufferData(GL_ARRAY_BUFFER,
-                     totalTextFieldsSize * sizeof(GLfloat),
-                     gdInGameTextTriangleBufferStartCPU,
-                     GL_DYNAMIC_DRAW);
-        
-        glEnableVertexAttribArray(positionSlot);
-        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(0));
-        glEnableVertexAttribArray(colorSlot);
-        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(textureOffsetSlot);
-        glVertexAttribPointer(textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
-    }
-    
-    glBindVertexArrayOES(0);
     
     //
     // PAUSE/GAME OVER Menu
@@ -781,7 +700,6 @@ void IWGRendererRenderInGameUI(void)
     
     IWGMultiBufferBindCurrentDrawBuffer(&gdUITriangleDoubleBuffer);
     
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, N_VERT2 / 2);
     glDrawArrays(GL_TRIANGLES, 0, gdUINTriangleVertices);
     glBindVertexArrayOES(0);
     
