@@ -763,16 +763,13 @@ void IWGameUpdate(float timeSinceLastUpdate,
             gdOverdriveColorTransition.currentTransitionTime = 0.0;
             gdOverdriveColorTransition.transitionHasFinished = false;
         }
-        //IWFuelUpdateColor(&gdFuel, gdOverdriveColorTransition.currentColor, IWFUEL_COLOR_CURRENT, false);
         gdUserInterfaceController.fuelStateBar.colors[0] = gdOverdriveColorTransition.currentColor;
     } else if (gdFuel.currentLevel / gdFuel.currentMaxLevel < 0.333) {
         if (!gdFuel.isWarning) {
-            //IWFuelUpdateColor(&gdFuel, gdFuel.warningColor, IWFUEL_COLOR_CURRENT, false);
             gdUserInterfaceController.fuelStateBar.colors[0] = gdFuel.warningColor;
             gdFuel.isWarning = true;
         }
     } else if (!gdPlayerData.overdrive) {
-        //IWFuelUpdateColor(&gdFuel, gdFuel.currentColor, IWFUEL_COLOR_CURRENT, false);
         gdUserInterfaceController.fuelStateBar.colors[0] = gdFuel.currentColor;
         gdFuel.isWarning = false;
     }
@@ -780,7 +777,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
     // Fuel vertex update
     IWFuelToStateBar(&gdFuel, &gdUserInterfaceController.fuelStateBar);
     IWUIStateBarToTriangles(&gdUserInterfaceController.fuelStateBar);
-    //IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.triangleBufferData.bufferStartCPU);
     
     IWGMultiBufferSubData(&gdUserInterfaceController.triangleMultiBuffer,
                           0,
@@ -788,23 +784,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
                           gdUserInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU,
                           true);
 
-    // Switch UI VBO object
-    //IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
-    
-    // Check button interaction
-//    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
-//        IWGRendererTearDownGameAssets();
-//        IWGRendererSetupGameAssets();
-//        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-//        return;
-//    }
-//    
-//    if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
-//        IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
-//        gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
-//        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
-//        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton2.triangleBuffer, false);
-//    }
     glBindVertexArrayOES(0);
     
     // Setup view matrices

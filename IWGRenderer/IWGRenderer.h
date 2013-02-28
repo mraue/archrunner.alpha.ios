@@ -56,7 +56,7 @@ void IWGRendererTearDownGameAssets(void);
 void IWGRendererRender(void);
 
 void IWGRendererRenderCubes(void);
-void IWGRendererRenderInGameUI(void);
+
 void IWGRendererRenderInGameText(void);
 
 void IWGRendererTearDownGL(void);

@@ -161,6 +161,8 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
     // Fill buffers
     
     // Text buffer
+    glUseProgram(textShaderProgram->programID);
+    
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
         userInterfaceController->textMultiBuffer.nVertices[i] = userInterfaceController->textDataBufferSize / 9;
@@ -192,6 +194,12 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
     }
     
     glBindVertexArrayOES(0);
+    
+    //
+    // UI Buffer
+    //
+    
+    glUseProgram(uiShaderProgram->programID);
     
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         userInterfaceController->triangleMultiBuffer.nVertices[i] = userInterfaceController->triangleDataBufferSize / 7;
@@ -279,5 +287,6 @@ void IWUserInterfacePurgeData(IWUserInterfaceControllerData *userInterfaceContro
     IWUIStateBarDeallocData(&userInterfaceController->fuelStateBar);
     free(userInterfaceController->textDataBufferStart);
     free(userInterfaceController->triangleDataBufferStart);
+    free(userInterfaceController->lineDataBufferStart);
     return;
 }
