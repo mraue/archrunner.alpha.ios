@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "IWUserInterface.h"
+#include "IWGeometry.h"
+#include "IWUIElement.h"
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRatio,
@@ -26,8 +30,10 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
 
     
     //gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10) * 6 * 9 * sizeof(GLfloat));
-    
+
+    //
     // Setup text buffer
+    //
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_SCORE)
         userInterfaceController.textDataBufferSize += 1 * 10 * 6 * 9;
@@ -68,96 +74,80 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                + bufferOffset);
     }
     
-//    //
-//    // Head up display data
-//    //
-//    
-//    // Some buttons
-//    gdRectangleButton = IWUIRectangleButtonMake(0.0, -0.001,
-//                                                IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
-//                                                0.18, 0.19,
-//                                                IWUI_COLOR_WHITE(0.5),
-//                                                IWUI_COLOR_WHITE(0.25),
-//                                                IWUI_COLOR_WHITE(0.5),
-//                                                (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT),
-//                                                0.035, 1. / aspect);
-//    gdRectangleButton2 = IWUIRectangleButtonMake(0.82, -0.001,
-//                                                 IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
-//                                                 0.18, 0.19,
-//                                                 IWUI_COLOR_PURPLE(0.3), IWUI_COLOR_WHITE(0.25),
-//                                                 IWUI_COLOR_WHITE(0.5),
-//                                                 (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_LEFT),
-//                                                 0.035, 1. / aspect);
-//    
-//    gdUINTriangleVertices = ((IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton)
-//                              + IWUIRectangleButtonTriangleBufferSize(&gdRectangleButton2)) / 7
-//                             + 6 * 3// 4 for reverse, 3 for normal
-//                             //+ 6 * 4// cube counter
-//                             );
-//    
-//    size_t mypos_size2 = gdUINTriangleVertices * 7 * sizeof(GLfloat);
-//    gdInGameUITriangleBufferStartCPU = malloc(mypos_size2);
-//    
-//    gdRectangleButton.triangleBuffer.bufferOffsetGPU = 0;
-//    size_t offset = IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton, gdInGameUITriangleBufferStartCPU);
-//    gdRectangleButton2.triangleBuffer.bufferOffsetGPU = offset;
-//    offset += IWUIRectangleButtonToTriangleBuffer(&gdRectangleButton2, gdInGameUITriangleBufferStartCPU + offset);
-//    
-////    gdFuel.stateBar.triangleBufferData.bufferStartCPU = gdInGameUITriangleBufferStartCPU + offset;
-////    gdFuel.stateBar.triangleBufferData.bufferOffsetGPU = offset;
-////    gdFuel.stateBar.triangleBufferData.size = IWFuelToTriangleBuffer(&gdFuel, gdInGameUITriangleBufferStartCPU + offset);
-////    offset += gdFuel.stateBar.triangleBufferData.size;
-//    
-//    glUseProgram(gdUIShaderProgram.programID);
-//    
-//    positionSlot = glGetAttribLocation(gdUIShaderProgram.programID, "Vertex");
-//    colorSlot = glGetAttribLocation(gdUIShaderProgram.programID, "Color");
-//    
-//    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
-//        IWGMultiBufferBind(&gdUITriangleDoubleBuffer, i);
-//        glBufferData(GL_ARRAY_BUFFER, mypos_size2, gdInGameUITriangleBufferStartCPU, GL_DYNAMIC_DRAW);
-//        
-//        glEnableVertexAttribArray(positionSlot);
-//        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
-//        glEnableVertexAttribArray(colorSlot);
-//        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
-//    }
-//    
-//    glBindVertexArrayOES(0);
-//    
-//    glBindVertexArrayOES(gdUILineVertexArray);
-//    
-//    gdUINLineVertices = (IWUIRectangleButtonLineBufferSize(&gdRectangleButton)
-//                         + IWUIRectangleButtonLineBufferSize(&gdRectangleButton2)
-//                         + 2 * 52 * 7) / 7;
-//    
-//    mypos_size2 = gdUINLineVertices * 7 * sizeof(GLfloat);
-//    gdInGameUILineBufferStartCPU = malloc(mypos_size2);
-//    
-//    gdRectangleButton.lineBuffer.bufferOffsetGPU = 0;
-//    offset = IWUIRectangleButtonToLineBuffer(&gdRectangleButton, gdInGameUILineBufferStartCPU);
-//    gdRectangleButton2.lineBuffer.bufferOffsetGPU = offset;
-//    offset += IWUIRectangleButtonToLineBuffer(&gdRectangleButton2, gdInGameUILineBufferStartCPU + offset);
-//    
-//    IWUIElementData uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.06,//0.05,//0.3,//0.03,
-//                                                            IWVector4Make(1.0, 1.0, 1.0, 0.3), aspect, 41,
-//                                                            gdInGameUILineBufferStartCPU + offset);
-//    offset += uiCentralCircle.lineBufferSize;
-//    
-//    IWUIElementData uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
-//                                                             IWVector4Make(1.0, 1.0, 1.0, 0.4), aspect, 11,
-//                                                             gdInGameUILineBufferStartCPU + offset);
-//    offset += uiCentralCircle2.lineBufferSize;
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, gdUILineVertexBuffer);
-//    glBufferData(GL_ARRAY_BUFFER, mypos_size2, gdInGameUILineBufferStartCPU, GL_DYNAMIC_DRAW);
-//    
-//    glEnableVertexAttribArray(positionSlot);
-//    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
-//    glEnableVertexAttribArray(colorSlot);
-//    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
-//    
-//    glBindVertexArrayOES(0);
+    //
+    // Setup triangle buffer
+    //
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR)
+        userInterfaceController.triangleDataBufferSize += 6 * 3 * 7;
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {
+        userInterfaceController.pauseButton = IWUIRectangleButtonMake(0.0, -0.001,
+                                                                      IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
+                                                                      0.18, 0.19,
+                                                                      IWUI_COLOR_WHITE(0.5),
+                                                                      IWUI_COLOR_WHITE(0.25),
+                                                                      IWUI_COLOR_WHITE(0.5),
+                                                                      (IWUIRECTANGLEBUTTON_CORNER_CUT_UPPER_RIGHT),
+                                                                      0.035, 1. / screenAspectRatio);
+        userInterfaceController.triangleDataBufferSize
+            += IWUIRectangleButtonTriangleBufferSize(&userInterfaceController.pauseButton);
+    }
+
+    userInterfaceController.triangleDataBufferStart = malloc(userInterfaceController.triangleDataBufferSize * sizeof(GLfloat));
+    bufferOffset = 0;
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR) {
+        float fuelBarStates[] = {1.0, 1.0, 1.0};
+        IWVector4 fuelBarColors[] = {IWUI_COLOR_WHITE(0.8), IWUI_COLOR_WHITE(0.4), IWUI_COLOR_WHITE(0.2)};
+        userInterfaceController.fuelStateBar = IWUIStateBarMake(3, fuelBarStates, fuelBarColors,
+                                                                IWRectangleMake(0.01, 0.95, 0.4, 0.99),
+                                                                IWUI_ORIENTATION_HORIZONTAL,
+                                                                IWUI_DIRECTION_NORMAL);
+        userInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU = userInterfaceController.triangleDataBufferStart;
+        IWUIStateBarToTriangles(&userInterfaceController.fuelStateBar);
+        userInterfaceController.fuelStateBar.triangleBufferData.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.fuelStateBar.triangleBufferData.size;
+    }
+
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {
+        IWUIRectangleButtonToTriangleBuffer(&userInterfaceController.pauseButton, userInterfaceController.triangleDataBufferStart + bufferOffset);
+        userInterfaceController.pauseButton.triangleBuffer.bufferOffsetGPU = bufferOffset;
+    }
+    
+    //
+    // Setup line buffer
+    //
+     if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON)
+         userInterfaceController.lineDataBufferSize += IWUIRectangleButtonLineBufferSize(&userInterfaceController.pauseButton);
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
+        userInterfaceController.lineDataBufferSize += 2 * 52 * 7;
+    }
+    
+    userInterfaceController.lineDataBufferStart = malloc(userInterfaceController.lineDataBufferSize * sizeof(GLfloat));
+    bufferOffset = 0;
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {
+        bufferOffset += IWUIRectangleButtonToLineBuffer(&userInterfaceController.pauseButton,
+                                                        userInterfaceController.lineDataBufferStart);
+    }
+
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
+        IWUIElementData uiCentralCircle = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.06,//0.05,//0.3,//0.03,
+                                                                IWVector4Make(1.0, 1.0, 1.0, 0.3), screenAspectRatio, 41,
+                                                                userInterfaceController.lineDataBufferStart
+                                                                + bufferOffset);
+        bufferOffset += uiCentralCircle.lineBufferSize;
+        
+        IWUIElementData uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
+                                                                 IWVector4Make(1.0, 1.0, 1.0, 0.4), screenAspectRatio, 11,
+                                                                 userInterfaceController.lineDataBufferStart
+                                                                 + bufferOffset);
+        bufferOffset += uiCentralCircle2.lineBufferSize;
+    }
+    
+    glBindVertexArrayOES(0);
     
     return userInterfaceController;
 }
@@ -203,6 +193,42 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
     
     glBindVertexArrayOES(0);
     
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        userInterfaceController->triangleMultiBuffer.nVertices[i] = userInterfaceController->triangleDataBufferSize / 7;
+        
+        IWGMultiBufferBind(&userInterfaceController->triangleMultiBuffer, i);
+        
+        glBufferData(GL_ARRAY_BUFFER,
+                     userInterfaceController->triangleDataBufferSize * sizeof(GLfloat),
+                     userInterfaceController->triangleDataBufferStart,
+                     GL_DYNAMIC_DRAW);
+
+        glEnableVertexAttribArray(uiShaderProgram->vertexSlot);
+        glVertexAttribPointer(uiShaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(uiShaderProgram->colorSlot);
+        glVertexAttribPointer(uiShaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+    }
+    
+    glBindVertexArrayOES(0);
+    
+    for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+        userInterfaceController->lineMultiBuffer.nVertices[i] = userInterfaceController->lineDataBufferSize / 7;
+        
+        IWGMultiBufferBind(&userInterfaceController->lineMultiBuffer, i);
+        
+        glBufferData(GL_ARRAY_BUFFER,
+                     userInterfaceController->lineDataBufferSize * sizeof(GLfloat),
+                     userInterfaceController->lineDataBufferStart,
+                     GL_DYNAMIC_DRAW);
+        
+        glEnableVertexAttribArray(uiShaderProgram->vertexSlot);
+        glVertexAttribPointer(uiShaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(uiShaderProgram->colorSlot);
+        glVertexAttribPointer(uiShaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
+    }
+    
+    glBindVertexArrayOES(0);
+    
     return;
 }
 
@@ -212,8 +238,12 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
     return;
 }
 
-void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController)
+void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,
+                                     GLuint textProgramId,
+                                     GLuint uiProgramId)
 {
+    glUseProgram(textProgramId);
+    
     IWGMultiBufferBindCurrentDrawBuffer(&userInterfaceController->textMultiBuffer);
     
     glDrawArrays(GL_TRIANGLES, 0, userInterfaceController->textMultiBuffer.nVertices[userInterfaceController->textMultiBuffer.currentDrawBuffer]);
@@ -221,6 +251,22 @@ void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfac
     glBindVertexArrayOES(0);
     
     IWGMultiBufferSwitchBuffer(&userInterfaceController->textMultiBuffer);
+    
+    glUseProgram(uiProgramId);
+    
+    IWGMultiBufferBindCurrentDrawBuffer(&userInterfaceController->triangleMultiBuffer);
+    
+    glDrawArrays(GL_TRIANGLES, 0, userInterfaceController->triangleMultiBuffer.nVertices[userInterfaceController->triangleMultiBuffer.currentDrawBuffer]);
+    
+    IWGMultiBufferSwitchBuffer(&userInterfaceController->triangleMultiBuffer);
+    
+    IWGMultiBufferBindCurrentDrawBuffer(&userInterfaceController->lineMultiBuffer);
+    
+    glDrawArrays(GL_LINES, 0, userInterfaceController->lineMultiBuffer.nVertices[userInterfaceController->lineMultiBuffer.currentDrawBuffer]);
+
+    glBindVertexArrayOES(0);
+    
+    IWGMultiBufferSwitchBuffer(&userInterfaceController->lineMultiBuffer);
 
     return;
 }
@@ -230,6 +276,8 @@ void IWUserInterfacePurgeData(IWUserInterfaceControllerData *userInterfaceContro
     IWGMultiBufferDealloc(&userInterfaceController->textMultiBuffer);
     IWGMultiBufferDealloc(&userInterfaceController->triangleMultiBuffer);
     IWGMultiBufferDealloc(&userInterfaceController->lineMultiBuffer);
+    IWUIStateBarDeallocData(&userInterfaceController->fuelStateBar);
     free(userInterfaceController->textDataBufferStart);
+    free(userInterfaceController->triangleDataBufferStart);
     return;
 }

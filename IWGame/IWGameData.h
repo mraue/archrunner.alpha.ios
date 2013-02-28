@@ -119,10 +119,10 @@ GLuint gdTextureHandlerId;
 bool gdIsTouched;
 IWPoint2D gdTouchPoint;
 
-IWUIRectangleButton gdRectangleButton;
-IWUIRectangleButton gdRectangleButton2;
+//IWUIRectangleButton gdRectangleButton;
+//IWUIRectangleButton gdRectangleButton2;
 
-unsigned int gdUINTriangleVertices;
+//unsigned int gdUINTriangleVertices;
 unsigned int gdUINLineVertices;
 
 bool gdResetControllerPosition;
@@ -145,15 +145,12 @@ IWGMultiBufferData gdTextTriangleDoubleBuffer;
 
 IWGMultiBufferData gdTriangleDoubleBuffer;
 
-IWGMultiBufferData gdUITriangleDoubleBuffer;
+//IWGMultiBufferData gdUITriangleDoubleBuffer;
 
 GLuint gdUITriangleVertexBuffer;
 
 GLuint gdUILineVertexArray;
 GLuint gdUILineVertexBuffer;
-
-//IWGTextFieldData gdScoreTextField;
-//IWGTextFieldData gdGameStatusField;
 
 IWGTextFieldData gdTitleTextField;
 IWGTextFieldData gdVersionTextField;

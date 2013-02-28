@@ -18,6 +18,7 @@
 #include "IWGeometry.h"
 
 #include "IWUserInterface.h"
+#include "IWUIStateBar.h"
 
 enum _IWFUEL_COLOR {
     IWFUEL_COLOR_CURRENT,
@@ -36,7 +37,6 @@ struct _IWFuel {
     IWVector4 currentMaxColor;
     IWVector4 maxColor;
     IWVector4 warningColor;
-    IWUIStateBar stateBar;
 };
 
 typedef struct _IWFuel IWFuel;
@@ -48,17 +48,13 @@ IWFuel IWFuelMake(float currentLevel,
                   IWVector4 currentColor,
                   IWVector4 currentMaxColor,
                   IWVector4 maxColor,
-                  IWVector4 warningColor,
-                  IWRectangle rectangle);
+                  IWVector4 warningColor);
 IWFuel IWFuelMakeDefaultStart();
 
 bool IWFuelAddFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelRemoveFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelExtendMaxLevel(IWFuel *fuel, float extraMaxLevel);
 
-bool IWFuelUpdateColor(IWFuel *fuel, IWVector4 newColor, IWFUEL_COLOR fuelColor,bool updateTriangles);
-
-size_t IWFuelToTriangleBuffer(IWFuel *fuel, GLfloat* p);
-size_t IWFuelToLineBuffer(IWFuel *fuel, GLfloat* p);
+void IWFuelToStateBar(IWFuel *fuel, IWUIStateBar* stateBar);
 
 #endif

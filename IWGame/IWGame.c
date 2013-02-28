@@ -118,7 +118,7 @@ void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
 void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
 {
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
-    IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
+    //IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
     IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
     // Nifty trick to get the menu setup, i.e. flush the buffer updates
@@ -442,7 +442,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     
     // Check if pause button has been pressed
     if ((gdCurrentGameStatus == IWGAME_STATUS_RUNNING)
-        && IWUIRectangleButtonCheckTouch(&gdRectangleButton, gdIsTouched, gdTouchPoint)) {
+        && IWUIRectangleButtonCheckTouch(&gdUserInterfaceController.pauseButton, gdIsTouched, gdTouchPoint)) {
         gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
         gdPauseTime = 0.0;
         IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
@@ -470,11 +470,12 @@ void IWGameUpdate(float timeSinceLastUpdate,
         }
     }
     
-    if (!gdRectangleButton.colorTransition.transitionHasFinished) {
-        IWColorTransitionUpdate(&gdRectangleButton.colorTransition, timeSinceLastUpdate);
-        gdRectangleButton.color = gdRectangleButton.colorTransition.currentColor;
-        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton);
-        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton.triangleBuffer, true);
+    if (!gdUserInterfaceController.pauseButton.colorTransition.transitionHasFinished) {
+        IWColorTransitionUpdate(&gdUserInterfaceController.pauseButton.colorTransition, timeSinceLastUpdate);
+        gdUserInterfaceController.pauseButton.color = gdUserInterfaceController.pauseButton.colorTransition.currentColor;
+        IWUIRectangleButtonUpdateColorInBuffer(&gdUserInterfaceController.pauseButton);
+        IWGMultiBufferSubDataForBufferObject(&gdUserInterfaceController.triangleMultiBuffer,
+                                             &gdUserInterfaceController.pauseButton.triangleBuffer, true);
     }
     
     if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
@@ -531,8 +532,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
     IWGSkyBoxUpdate(&gdSkyBox, timeSinceLastUpdate, &gdPlayerData, true);
     
     // Udpate score and score display
-//    IWGMultiBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
-    
     gdScoreCounter.runningTimeTotal += timeSinceLastUpdate;
 
     gdZMax = IW_MAX(gdZMax, gdPlayerData.position.z);
@@ -544,12 +543,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (gdScoreCounter.scoreInt != oldScore) {
         char s[10];
         sprintf(s, "%u", gdScoreCounter.scoreInt);
-//        IWGTextFieldSetText(&gdScoreTextField, s);
-//        IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
-//                              0,
-//                              gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
-//                              gdScoreTextField.triangleBufferData.startCPU,
-//                              false);
         IWGTextFieldSetText(&gdUserInterfaceController.scoreTextField, s);
         IWGMultiBufferSubData(&gdUserInterfaceController.textMultiBuffer,
                               0,
@@ -558,15 +551,9 @@ void IWGameUpdate(float timeSinceLastUpdate,
                               true);
     }
     
-    // Udpate status display
+    // Udpate cube status display
     char sTmp[30];
     sprintf(sTmp, "%u\n%u\n%u", gdGameStatus.nGridCubes, gdGameStatus.nBridgeCubes, gdGameStatus.nPoolCubes);
-//    IWGTextFieldSetText(&gdGameStatusField, sTmp);
-//    IWGMultiBufferSubData(&gdTextTriangleDoubleBuffer,
-//                          gdScoreTextField.triangleBufferData.size * sizeof(GLfloat),
-//                          gdGameStatusField.triangleBufferData.size * sizeof(GLfloat),
-//                          gdGameStatusField.triangleBufferData.startCPU,
-//                          false);
     IWGTextFieldSetText(&gdUserInterfaceController.cubeStatusTextField, sTmp);
     IWGMultiBufferSubData(&gdUserInterfaceController.textMultiBuffer,
                           gdUserInterfaceController.scoreTextField.triangleBufferData.size * sizeof(GLfloat),
@@ -698,7 +685,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     IWPlayerActivatOverdrive(&gdPlayerData);
                     IWPlayerUpdateOverdrive(&gdPlayerData, 0.0);
                     
-                    IWFuelUpdateColor(&gdFuel, IWUI_COLOR_GOLD(0.4), IWFUEL_COLOR_CURRENT, false);
+                    //IWFuelUpdateColor(&gdFuel, IWUI_COLOR_GOLD(0.4), IWFUEL_COLOR_CURRENT, false);
                     gdOverdriveColorTransition.currentColor = IWUI_COLOR_GOLD(0.4);
                     gdOverdriveColorTransition.currentTransitionTime = 0.0;
                     gdOverdriveColorTransition.transitionHasFinished = false;
@@ -767,9 +754,6 @@ void IWGameUpdate(float timeSinceLastUpdate,
         }
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // Switch UI VBO object
-    IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);    
     
     // Update fuel status bar
     if (gdPlayerData.overdrive) {
@@ -779,40 +763,48 @@ void IWGameUpdate(float timeSinceLastUpdate,
             gdOverdriveColorTransition.currentTransitionTime = 0.0;
             gdOverdriveColorTransition.transitionHasFinished = false;
         }
-        IWFuelUpdateColor(&gdFuel, gdOverdriveColorTransition.currentColor, IWFUEL_COLOR_CURRENT, false);
+        //IWFuelUpdateColor(&gdFuel, gdOverdriveColorTransition.currentColor, IWFUEL_COLOR_CURRENT, false);
+        gdUserInterfaceController.fuelStateBar.colors[0] = gdOverdriveColorTransition.currentColor;
     } else if (gdFuel.currentLevel / gdFuel.currentMaxLevel < 0.333) {
         if (!gdFuel.isWarning) {
-            IWFuelUpdateColor(&gdFuel, gdFuel.warningColor, IWFUEL_COLOR_CURRENT, false);
+            //IWFuelUpdateColor(&gdFuel, gdFuel.warningColor, IWFUEL_COLOR_CURRENT, false);
+            gdUserInterfaceController.fuelStateBar.colors[0] = gdFuel.warningColor;
             gdFuel.isWarning = true;
         }
     } else if (!gdPlayerData.overdrive) {
-        IWFuelUpdateColor(&gdFuel, gdFuel.currentColor, IWFUEL_COLOR_CURRENT, false);
+        //IWFuelUpdateColor(&gdFuel, gdFuel.currentColor, IWFUEL_COLOR_CURRENT, false);
+        gdUserInterfaceController.fuelStateBar.colors[0] = gdFuel.currentColor;
         gdFuel.isWarning = false;
     }
     
     // Fuel vertex update
-    IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.triangleBufferData.bufferStartCPU);
+    IWFuelToStateBar(&gdFuel, &gdUserInterfaceController.fuelStateBar);
+    IWUIStateBarToTriangles(&gdUserInterfaceController.fuelStateBar);
+    //IWFuelToTriangleBuffer(&gdFuel, gdFuel.stateBar.triangleBufferData.bufferStartCPU);
     
-    IWGMultiBufferSubData(&gdUITriangleDoubleBuffer,
-                           (gdFuel.stateBar.triangleBufferData.bufferStartCPU - gdRectangleButton.triangleBuffer.bufferStartCPU)  * sizeof(GLfloat),
-                           gdFuel.stateBar.triangleBufferData.size * sizeof(GLfloat),
-                           gdFuel.stateBar.triangleBufferData.bufferStartCPU,
-                           false);
+    IWGMultiBufferSubData(&gdUserInterfaceController.triangleMultiBuffer,
+                          0,
+                          gdUserInterfaceController.fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
+                          gdUserInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU,
+                          true);
+
+    // Switch UI VBO object
+    //IWGMultiBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
     
     // Check button interaction
-    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
-        IWGRendererTearDownGameAssets();
-        IWGRendererSetupGameAssets();
-        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-        return;
-    }
-    
-    if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
-        IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
-        gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
-        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
-        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton2.triangleBuffer, false);
-    }
+//    if (IWUIRectangleButtonCheckTouch(&gdRectangleButton2, gdIsTouched, gdTouchPoint)) {
+//        IWGRendererTearDownGameAssets();
+//        IWGRendererSetupGameAssets();
+//        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+//        return;
+//    }
+//    
+//    if (!gdRectangleButton2.colorTransition.transitionHasFinished) {
+//        IWColorTransitionUpdate(&gdRectangleButton2.colorTransition, timeSinceLastUpdate);
+//        gdRectangleButton2.color = gdRectangleButton2.colorTransition.currentColor;
+//        IWUIRectangleButtonUpdateColorInBuffer(&gdRectangleButton2);
+//        IWGMultiBufferSubDataForBufferObject(&gdUITriangleDoubleBuffer, &gdRectangleButton2.triangleBuffer, false);
+//    }
     glBindVertexArrayOES(0);
     
     // Setup view matrices

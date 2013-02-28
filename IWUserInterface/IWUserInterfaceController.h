@@ -21,6 +21,7 @@
 #include "IWGTextField.h"
 #include "IWGFontMap.h"
 #include "IWUIRectangleButton.h"
+#include "IWUIStateBar.h"
 
 typedef enum {
     IWUSERINTERFACE_ELEMENT_SCORE  = 1 <<  0,
@@ -48,6 +49,8 @@ typedef struct {
     IWGTextFieldData scoreTextField, cubeStatusTextField;
     //
     IWUIRectangleButton pauseButton;
+    //
+    IWUIStateBar fuelStateBar;
 } IWUserInterfaceControllerData;
 
 IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRatio,
@@ -63,7 +66,9 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
                                      float timeSinceLastUpdate);
 
-void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController);
+void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,
+                                     GLuint textProgramId,
+                                     GLuint uiProgramId);
 
 void IWUserInterfacePurgeData(IWUserInterfaceControllerData *userInterfaceController);
 

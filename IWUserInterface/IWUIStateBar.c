@@ -96,7 +96,7 @@ size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar)
         stateBar->colors = colorsSaved;
         stateBar->nStates -= 1;
     }
-    return (p - pstart);
+    return stateBar->triangleBufferData.size = (p - pstart);
 }
 
 void IWUIStateBarDeallocData(IWUIStateBar *stateBar)
