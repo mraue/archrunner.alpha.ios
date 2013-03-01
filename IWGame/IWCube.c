@@ -74,7 +74,7 @@ IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
                 IWVector3 centerPosition = IWVector3Make(x, y, z);
                 IWVector3 dimensions =  IWVector3Make(l, l, l);
                 *cubePtr = IWCubeMake(id, IWCUBE_TYPE_STANDARD, centerPosition, color, dimensions,
-                                      IWCUBE_FACES_ALL, IWCUBE_NORMALS_OUTWARDS, l * 2.5, true, true,
+                                      IWCUBE_FACES_ALL, IWCUBE_NORMALS_OUTWARDS, l * 2.3, true, true,
                                       IWVector3TransitionMakeEmpty());
                 for (unsigned int i = 0; i < nRandomizePositions; i++) {
                     cubePtr->centerPosition = IWVector3Add(cubePtr->centerPosition,

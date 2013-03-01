@@ -22,6 +22,8 @@
 #include "IWGFontMap.h"
 #include "IWUIRectangleButton.h"
 #include "IWUIStateBar.h"
+#include "IWScoreCounter.h"
+#include "IWGameStatus.h"
 
 typedef enum {
     IWUSERINTERFACE_ELEMENT_SCORE  = 1 <<  0,
@@ -64,6 +66,8 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
                                         GLvoid* fontMapTextureData);
 
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
+                                     const IWScoreCounterData *scoreCounter,
+                                     const IWGameStatusData *gameStatus,
                                      float timeSinceLastUpdate);
 
 void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,

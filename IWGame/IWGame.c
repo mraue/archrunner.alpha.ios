@@ -537,29 +537,11 @@ void IWGameUpdate(float timeSinceLastUpdate,
     gdZMax = IW_MAX(gdZMax, gdPlayerData.position.z);
     gdScoreCounter.zMax = gdZMax;
     
-    unsigned int oldScore = gdScoreCounter.scoreInt;
+//    unsigned int oldScore = gdScoreCounter.scoreInt;
     IWScoreCounterUpdateScore(&gdScoreCounter);
+  
     
-    if (gdScoreCounter.scoreInt != oldScore) {
-        char s[10];
-        sprintf(s, "%u", gdScoreCounter.scoreInt);
-        IWGTextFieldSetText(&gdUserInterfaceController.scoreTextField, s);
-        IWGMultiBufferSubData(&gdUserInterfaceController.textMultiBuffer,
-                              0,
-                              gdUserInterfaceController.scoreTextField.triangleBufferData.size * sizeof(GLfloat),
-                              gdUserInterfaceController.scoreTextField.triangleBufferData.startCPU,
-                              true);
-    }
-    
-    // Udpate cube status display
-    char sTmp[30];
-    sprintf(sTmp, "%u\n%u\n%u", gdGameStatus.nGridCubes, gdGameStatus.nBridgeCubes, gdGameStatus.nPoolCubes);
-    IWGTextFieldSetText(&gdUserInterfaceController.cubeStatusTextField, sTmp);
-    IWGMultiBufferSubData(&gdUserInterfaceController.textMultiBuffer,
-                          gdUserInterfaceController.scoreTextField.triangleBufferData.size * sizeof(GLfloat),
-                          gdUserInterfaceController.cubeStatusTextField.triangleBufferData.size * sizeof(GLfloat),
-                          gdUserInterfaceController.cubeStatusTextField.triangleBufferData.startCPU,
-                          true);
+    IWUserInterfaceControllerUpdate(&gdUserInterfaceController, &gdScoreCounter, &gdGameStatus, timeSinceLastUpdate);
     
     // Switch main draw buffer
     IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
@@ -787,7 +769,11 @@ void IWGameUpdate(float timeSinceLastUpdate,
     glBindVertexArrayOES(0);
     
     // Setup view matrices
-    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
+    float viewOpeningAngle = 70.0;
+    if (gdPlayerData.overdrive) {
+        //viewOpeningAngle = 75.0;
+    }
+    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(viewOpeningAngle * IW_DEG_TO_RAD, aspectRatio, 0.01, 100.0);
     
     // Compute the model view matrix for the object rendered with ES2
     // REFACTOR: does not change, could only be calculated and intialized to uniforms once

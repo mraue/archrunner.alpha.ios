@@ -840,13 +840,13 @@
 		64822E8C1695E9BF003C5415 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Martin Raue (AVK2ST8UR3)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Misc/ArchRunnerAlpha-Prefix.pch";
 				INFOPLIST_FILE = "Misc/ArchRunnerAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = ArchRunnerAlpha;
-				PROVISIONING_PROFILE = "EA75C55B-1650-4721-A286-DA47ADEEA567";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;

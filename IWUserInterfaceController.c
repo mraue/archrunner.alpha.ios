@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "IWUserInterface.h"
 #include "IWGeometry.h"
@@ -46,7 +47,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_SCORE) {
         userInterfaceController.scoreTextField
-            = IWGTextFieldMake(IWVector2Make(0.95, 1.0),
+            = IWGTextFieldMake(IWVector2Make(0.94, 1.0),
                                IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
                                1, 10,
                                1. / screenAspectRatio,
@@ -59,9 +60,11 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
         bufferOffset += userInterfaceController.scoreTextField.triangleBufferData.size;
     }
     
+    IWPoint2D cubeCounterAnchorPosition = IWVector2Make(0.91, 0.65);
+    float cubeCounterLineHeight = 0.09;
     if (visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER) {
         userInterfaceController.cubeStatusTextField
-            = IWGTextFieldMake(IWVector2Make(0.93, 0.62),
+            = IWGTextFieldMake(cubeCounterAnchorPosition,
                                IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
                                3, 10,
                                1. / screenAspectRatio,
@@ -77,7 +80,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     //
     // Setup triangle buffer
     //
-    
+
     if (visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR)
         userInterfaceController.triangleDataBufferSize += 6 * 3 * 7;
     
@@ -93,6 +96,9 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
         userInterfaceController.triangleDataBufferSize
             += IWUIRectangleButtonTriangleBufferSize(&userInterfaceController.pauseButton);
     }
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER)
+        userInterfaceController.triangleDataBufferSize += 6 * 3 * 7 * 2;
 
     userInterfaceController.triangleDataBufferStart = malloc(userInterfaceController.triangleDataBufferSize * sizeof(GLfloat));
     bufferOffset = 0;
@@ -104,7 +110,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                                                 IWRectangleMake(0.01, 0.95, 0.4, 0.99),
                                                                 IWUI_ORIENTATION_HORIZONTAL,
                                                                 IWUI_DIRECTION_NORMAL);
-        userInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU = userInterfaceController.triangleDataBufferStart;
+        userInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU = userInterfaceController.triangleDataBufferStart + bufferOffset;
         IWUIStateBarToTriangles(&userInterfaceController.fuelStateBar);
         userInterfaceController.fuelStateBar.triangleBufferData.bufferOffsetGPU = bufferOffset;
         bufferOffset += userInterfaceController.fuelStateBar.triangleBufferData.size;
@@ -113,6 +119,32 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {
         IWUIRectangleButtonToTriangleBuffer(&userInterfaceController.pauseButton, userInterfaceController.triangleDataBufferStart + bufferOffset);
         userInterfaceController.pauseButton.triangleBuffer.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.pauseButton.triangleBuffer.size;
+    }
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER) {
+        IWRectangle cubeCounterCubeSymbolRect =
+        IWRectangleMake(cubeCounterAnchorPosition.x + 0.02,
+                        cubeCounterAnchorPosition.y - cubeCounterLineHeight * 0.85 - 0.005,
+                        cubeCounterAnchorPosition.x + 0.02 + cubeCounterLineHeight * 0.5 *screenAspectRatio,
+                        cubeCounterAnchorPosition.y - cubeCounterLineHeight * 0.15 - 0.005);
+        
+        IWUIElementData cubeSymbol = IWUIElementMakeCubeSymbol(cubeCounterCubeSymbolRect,
+                                                               0.5,
+                                                               IWVector4Make(0.5, 0.5, 0.5, 0.8),
+                                                               IWVector4Make(0.3, 0.3, 0.3, 0.8),
+                                                               userInterfaceController.triangleDataBufferStart
+                                                               + bufferOffset);
+        bufferOffset += cubeSymbol.triangleBufferSize;
+        cubeCounterCubeSymbolRect.lowerLeft.y -= cubeCounterLineHeight;
+        cubeCounterCubeSymbolRect.upperRight.y -= cubeCounterLineHeight;
+        cubeSymbol = IWUIElementMakeCubeSymbol(cubeCounterCubeSymbolRect,
+                                               0.5,
+                                               IWUI_COLOR_RED(0.8),
+                                               IWUI_COLOR_DARK_RED(0.8),
+                                               userInterfaceController.triangleDataBufferStart
+                                               + bufferOffset);
+        bufferOffset += cubeSymbol.triangleBufferSize;
     }
     
     //
@@ -241,8 +273,33 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
 }
 
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
+                                     const IWScoreCounterData *scoreCounter,
+                                     const IWGameStatusData *gameStatus,
                                      float timeSinceLastUpdate)
 {
+    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_SCORE) {
+        // Update score counter
+        char s[10];
+        sprintf(s, "%u", scoreCounter->scoreInt);
+        IWGTextFieldSetText(&userInterfaceController->scoreTextField, s);
+        IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
+                              0,
+                              userInterfaceController->scoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                              userInterfaceController->scoreTextField.triangleBufferData.startCPU,
+                              true);
+    }
+    
+    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER) {
+        // Update cube status display
+        char sTmp[30];
+        sprintf(sTmp, "%u\n%u\n%u", gameStatus->nGridCubes, gameStatus->nBridgeCubes, gameStatus->nPoolCubes);
+        IWGTextFieldSetText(&userInterfaceController->cubeStatusTextField, sTmp);
+        IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
+                              userInterfaceController->scoreTextField.triangleBufferData.size * sizeof(GLfloat),
+                              userInterfaceController->cubeStatusTextField.triangleBufferData.size * sizeof(GLfloat),
+                              userInterfaceController->cubeStatusTextField.triangleBufferData.startCPU,
+                              true);
+    }
     return;
 }
 

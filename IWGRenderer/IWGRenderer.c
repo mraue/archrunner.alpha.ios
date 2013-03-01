@@ -94,7 +94,6 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     gdTriangleDoubleBuffer = IWGMultiBufferGen();
     gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
-    //gdUITriangleDoubleBuffer = IWGMultiBufferGen();
     
     // Could swith to multi buffer, ey!
     glGenVertexArraysOES(1, &gdUILineVertexArray);
@@ -347,14 +346,6 @@ void IWGRendererTearDownStartMenuAssets(void)
 void IWGRendererSetupGameAssets(void)
 {
     gdTriangleDoubleBuffer = IWGMultiBufferGen();
-    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
-    //gdUITriangleDoubleBuffer = IWGMultiBufferGen();
-    
-    // Could swith to multi buffer, ey!
-    //glGenVertexArraysOES(1, &gdUILineVertexArray);
-    //glBindVertexArrayOES(gdUILineVertexArray);
-    //glGenBuffers(1, &gdUILineVertexBuffer);
-    //glBindVertexArrayOES(0);
     
     IWGameReset();
     
@@ -557,7 +548,7 @@ void IWGRendererTearDownGameAssets(void)
     
     glDeleteTextures(1, &gdTextureHandlerId);
     
-    IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
+    //IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
     IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
     //IWGMultiBufferDealloc(&gdUITriangleDoubleBuffer);
     
@@ -684,15 +675,9 @@ void IWGRendererRender(void)
         IWGRendererRenderInGameText();
         
         glDisable(GL_BLEND);
+        
     }  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
         
-//        glEnable(GL_BLEND);
-//        
-//        glUseProgram(gdTextShaderProgram.programID);
-//        
-//        IWGRendererRenderInGameText();
-//        
-//        glDisable(GL_BLEND);
     }
     
     return;

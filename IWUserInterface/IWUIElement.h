@@ -33,5 +33,10 @@ IWUIElementData IWUIElementMakeEmpty();
 IWUIElementData IWUIElementMakeCircle(IWPoint2D centerPoint, float radiusX, IWVector4 color,
                                       float aspectRatio, unsigned int nDivisions, GLfloat* bufferPointer);
 
+IWUIElementData IWUIElementMakeCubeSymbol(IWRectangle rectangle,
+                                          float lidFraction,
+                                          IWVector4 lightColor,
+                                          IWVector4 darkColor,
+                                          GLfloat *bufferPointer);
 
 #endif

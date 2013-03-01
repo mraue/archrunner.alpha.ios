@@ -61,3 +61,68 @@ IWUIElementData IWUIElementMakeCircle(IWPoint2D centerPoint, float radiusX, IWVe
     circle.nLineVertices = circle.lineBufferSize / 7;
     return circle;
 }
+
+IWUIElementData IWUIElementMakeCubeSymbol(IWRectangle rectangle,
+                                          float lidFraction,
+                                          IWVector4 lightColor,
+                                          IWVector4 darkColor,
+                                          GLfloat *p)
+{
+    IWUIElementData uiElement = {
+        rectangle,
+        0, p, 0, 0, NULL, 0
+    };
+    float z = 0.0;
+    float ymin = rectangle.lowerLeft.y, ymax = rectangle.upperRight.y;
+    float ymid0 = ymin + (ymax - ymin) * (lidFraction / 2.0);
+    float ymid1 = ymin + (ymax - ymin) * (1.0 - lidFraction);
+    float ymid2 = ymin + (ymax - ymin) * (1.0 - lidFraction / 2.0);
+    float xmin = rectangle.lowerLeft.x, xmax = rectangle.upperRight.x;
+    float xmid = (xmin + xmax) / 2.0;
+    //
+    *p++ = xmin; *p++ = ymid2; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmin; *p++ = ymid0; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmid; *p++ = ymin; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    //
+    *p++ = xmin; *p++ = ymid2; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmid; *p++ = ymin; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmid; *p++ = ymid1; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    //
+    *p++ = xmid; *p++ = ymin; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmax; *p++ = ymid0; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmax; *p++ = ymid2; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    //
+    *p++ = xmid; *p++ = ymin; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmax; *p++ = ymid2; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    *p++ = xmid; *p++ = ymid1; *p++ = z;
+    *p++ = darkColor.x; *p++ = darkColor.y; *p++ = darkColor.z; *p++ = darkColor.w;
+    //
+    *p++ = xmin; *p++ = ymid2; *p++ = z;
+    *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
+    *p++ = xmid; *p++ = ymid1; *p++ = z;
+    *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
+    *p++ = xmax; *p++ = ymid2; *p++ = z;
+    *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
+    //
+    *p++ = xmin; *p++ = ymid2; *p++ = z;
+    *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
+    *p++ = xmax; *p++ = ymid2; *p++ = z;
+    *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
+    *p++ = xmid; *p++ = ymax; *p++ = z;
+    *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
+
+    
+    uiElement.triangleBufferSize = p - uiElement.triangleBufferStart;
+    return uiElement;
+}
