@@ -55,6 +55,6 @@ bool IWFuelAddFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelRemoveFuel(IWFuel *fuel, float extraFuel);
 bool IWFuelExtendMaxLevel(IWFuel *fuel, float extraMaxLevel);
 
-void IWFuelToStateBar(IWFuel *fuel, IWUIStateBar* stateBar);
+void IWFuelToStateBar(const IWFuel *fuel, IWUIStateBar* stateBar);
 
 #endif

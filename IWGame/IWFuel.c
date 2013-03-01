@@ -83,7 +83,7 @@ bool IWFuelExtendMaxLevel(IWFuel *fuel, float extraMaxLevel)
     }
 }
 
-void IWFuelToStateBar(IWFuel *fuel, IWUIStateBar* stateBar)
+void IWFuelToStateBar(const IWFuel *fuel, IWUIStateBar* stateBar)
 {
     if (stateBar->nStates == 3) {
         stateBar->states[0] = fuel->currentLevel / fuel->maxLevel;

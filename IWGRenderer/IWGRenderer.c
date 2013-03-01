@@ -473,7 +473,9 @@ void IWGRendererSetupGameAssets(void)
     
     glGenTextures(1, &gdTextureHandlerId);
     
-    gdUserInterfaceController = IWUserInterfaceControllerMake(aspect, IWUSERINTERFACE_ELEMENT_ALL, &gdFontMap);
+    gdUserInterfaceController = IWUserInterfaceControllerMake(aspect,
+                                                              IWUSERINTERFACE_ELEMENT_ALL,
+                                                              &gdFontMap);
     IWUserInterfaceControllerSetupVBOs(&gdUserInterfaceController, &gdUIShaderProgram, &gdTextShaderProgram,
                                        gdTextureHandlerId, gdFontMapTextureData);
 

@@ -478,6 +478,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                                              &gdUserInterfaceController.pauseButton.triangleBuffer, true);
     }
     
+    // Skip game logic if we are paused
     if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
         return;
     }
@@ -526,6 +527,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     //
     //
     
+    // Update total run time
     gdTotalRunTime += timeSinceLastUpdate;
     
     // Update sky
@@ -536,15 +538,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
 
     gdZMax = IW_MAX(gdZMax, gdPlayerData.position.z);
     gdScoreCounter.zMax = gdZMax;
-    
-//    unsigned int oldScore = gdScoreCounter.scoreInt;
+
     IWScoreCounterUpdateScore(&gdScoreCounter);
-  
-    
-    IWUserInterfaceControllerUpdate(&gdUserInterfaceController, &gdScoreCounter, &gdGameStatus, timeSinceLastUpdate);
-    
-    // Switch main draw buffer
-    IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
 
     // Update overdrive
     IWPlayerUpdateOverdrive(&gdPlayerData, timeSinceLastUpdate);
@@ -552,7 +547,19 @@ void IWGameUpdate(float timeSinceLastUpdate,
     // Update fuel
     if (gdTotalRunTime > 5.0 && !gdPlayerData.overdrive) {
         IWFuelRemoveFuel(&gdFuel, 0.05 / 0.6 * timeSinceLastUpdate);
+        gdFuel.isWarning = gdFuel.currentLevel / gdFuel.currentMaxLevel < gdFuel.warningLevel ? true : false;
     }
+    
+    // Update user interface
+    IWUserInterfaceControllerUpdate(&gdUserInterfaceController,
+                                    &gdScoreCounter,
+                                    &gdGameStatus,
+                                    &gdFuel,
+                                    &gdPlayerData,
+                                    timeSinceLastUpdate);
+
+    // Switch main draw buffer
+    IWGMultiBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     
     // Spawn pooled cubes
     if (gdPoolCubeIndexList.nEntries > 10
@@ -737,39 +744,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
-    // Update fuel status bar
-    if (gdPlayerData.overdrive) {
-        if (IWColorTransitionUpdate(&gdOverdriveColorTransition, timeSinceLastUpdate)) {
-            gdOverdriveColorTransition.endColor = gdOverdriveColorTransition.startColor;
-            gdOverdriveColorTransition.startColor = gdOverdriveColorTransition.currentColor;
-            gdOverdriveColorTransition.currentTransitionTime = 0.0;
-            gdOverdriveColorTransition.transitionHasFinished = false;
-        }
-        gdUserInterfaceController.fuelStateBar.colors[0] = gdOverdriveColorTransition.currentColor;
-    } else if (gdFuel.currentLevel / gdFuel.currentMaxLevel < 0.333) {
-        if (!gdFuel.isWarning) {
-            gdUserInterfaceController.fuelStateBar.colors[0] = gdFuel.warningColor;
-            gdFuel.isWarning = true;
-        }
-    } else if (!gdPlayerData.overdrive) {
-        gdUserInterfaceController.fuelStateBar.colors[0] = gdFuel.currentColor;
-        gdFuel.isWarning = false;
-    }
-    
-    // Fuel vertex update
-    IWFuelToStateBar(&gdFuel, &gdUserInterfaceController.fuelStateBar);
-    IWUIStateBarToTriangles(&gdUserInterfaceController.fuelStateBar);
-    
-    IWGMultiBufferSubData(&gdUserInterfaceController.triangleMultiBuffer,
-                          0,
-                          gdUserInterfaceController.fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
-                          gdUserInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU,
-                          true);
-
-    glBindVertexArrayOES(0);
-    
     // Setup view matrices
-    float viewOpeningAngle = 70.0;
+    float viewOpeningAngle = 70.0;// before 65.0
     if (gdPlayerData.overdrive) {
         //viewOpeningAngle = 75.0;
     }

@@ -24,6 +24,9 @@
 #include "IWUIStateBar.h"
 #include "IWScoreCounter.h"
 #include "IWGameStatus.h"
+#include "IWVectorTransition.h"
+#include "IWFuel.h"
+#include "IWPlayer.h"
 
 typedef enum {
     IWUSERINTERFACE_ELEMENT_SCORE  = 1 <<  0,
@@ -48,11 +51,13 @@ typedef struct {
     GLfloat* lineDataBufferStart;
     IWGMultiBufferData lineMultiBuffer;
     //
-    IWGTextFieldData scoreTextField, cubeStatusTextField;
+    IWGTextFieldData scoreTextField, cubeStatusTextField1, cubeStatusTextField2;
     //
     IWUIRectangleButton pauseButton;
     //
     IWUIStateBar fuelStateBar;
+    //
+    IWVector4Transition poolCubesColorTransition, fuelColorTransitionOverdrive, fuelColorTransitionWarning;
 } IWUserInterfaceControllerData;
 
 IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRatio,
@@ -68,6 +73,8 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
                                      const IWScoreCounterData *scoreCounter,
                                      const IWGameStatusData *gameStatus,
+                                     const IWFuel *fuel,
+                                     const IWPlayerData *player,
                                      float timeSinceLastUpdate);
 
 void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,

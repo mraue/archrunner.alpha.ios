@@ -63,10 +63,10 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     IWPoint2D cubeCounterAnchorPosition = IWVector2Make(0.91, 0.65);
     float cubeCounterLineHeight = 0.09;
     if (visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER) {
-        userInterfaceController.cubeStatusTextField
+        userInterfaceController.cubeStatusTextField1
             = IWGTextFieldMake(cubeCounterAnchorPosition,
                                IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
-                               3, 10,
+                               2, 10,
                                1. / screenAspectRatio,
                                "",
                                0.1, -0.01,
@@ -75,6 +75,24 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                fontMap,
                                userInterfaceController.textDataBufferStart
                                + bufferOffset);
+        userInterfaceController.cubeStatusTextField2
+        = IWGTextFieldMake(IWVector2Make(cubeCounterAnchorPosition.x,
+                                         cubeCounterAnchorPosition.y - 2.0 * cubeCounterLineHeight),
+                           IWGEOMETRY_ANCHOR_POSITION_UPPER_RIGHT,
+                           1, 10,
+                           1. / screenAspectRatio,
+                           "",
+                           0.1, -0.01,
+                           IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
+                           IWVector4Make(1.0, 1.0, 1.0, 0.0),
+                           fontMap,
+                           userInterfaceController.textDataBufferStart
+                           + bufferOffset);
+        userInterfaceController.poolCubesColorTransition
+            = IWVector4TransitionMake(IWUI_COLOR_WHITE(0.3),
+                                      IWUI_COLOR_WHITE(0.7),
+                                      IWUI_COLOR_WHITE(0.3),
+                                      0.5, 0.0, false, false);
     }
     
     //
@@ -114,6 +132,16 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
         IWUIStateBarToTriangles(&userInterfaceController.fuelStateBar);
         userInterfaceController.fuelStateBar.triangleBufferData.bufferOffsetGPU = bufferOffset;
         bufferOffset += userInterfaceController.fuelStateBar.triangleBufferData.size;
+        userInterfaceController.fuelColorTransitionOverdrive
+            = IWVector4TransitionMake(IWUI_COLOR_WHITE(0.5),
+                                      IWUI_COLOR_WHITE(0.8),
+                                      IWUI_COLOR_WHITE(0.5),
+                                      0.33, 0.0, false, false);
+        userInterfaceController.fuelColorTransitionWarning
+            = IWVector4TransitionMake(IWUI_COLOR_RED(0.2),
+                                      IWUI_COLOR_RED(0.8),
+                                      IWUI_COLOR_RED(0.2),
+                                      0.33, 0.0, false, false);
     }
 
     if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {
@@ -275,6 +303,8 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
                                      const IWScoreCounterData *scoreCounter,
                                      const IWGameStatusData *gameStatus,
+                                     const IWFuel *fuel,
+                                     const IWPlayerData *player,
                                      float timeSinceLastUpdate)
 {
     if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_SCORE) {
@@ -292,14 +322,61 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
     if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER) {
         // Update cube status display
         char sTmp[30];
-        sprintf(sTmp, "%u\n%u\n%u", gameStatus->nGridCubes, gameStatus->nBridgeCubes, gameStatus->nPoolCubes);
-        IWGTextFieldSetText(&userInterfaceController->cubeStatusTextField, sTmp);
+        sprintf(sTmp, "%u\n%u", gameStatus->nGridCubes, gameStatus->nBridgeCubes);
+        IWGTextFieldSetText(&userInterfaceController->cubeStatusTextField1, sTmp);
         IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
                               userInterfaceController->scoreTextField.triangleBufferData.size * sizeof(GLfloat),
-                              userInterfaceController->cubeStatusTextField.triangleBufferData.size * sizeof(GLfloat),
-                              userInterfaceController->cubeStatusTextField.triangleBufferData.startCPU,
+                              userInterfaceController->cubeStatusTextField1.triangleBufferData.size * sizeof(GLfloat),
+                              userInterfaceController->cubeStatusTextField1.triangleBufferData.startCPU,
+                              true);
+        unsigned int nPoolCubes = gameStatus->nPoolCubes;
+        sprintf(sTmp, "%u", nPoolCubes);
+        if (nPoolCubes < 10) {
+            userInterfaceController->cubeStatusTextField2.color.w = 0.5 * (float)nPoolCubes / 10.0;
+        } else {
+            if(IWVector4TransitionUpdate(&userInterfaceController->poolCubesColorTransition, timeSinceLastUpdate)) {
+                IWVector4TransitionReverseAndStart(&userInterfaceController->poolCubesColorTransition);
+            }
+            userInterfaceController->cubeStatusTextField2.color
+                = userInterfaceController->poolCubesColorTransition.currentVector;
+        }
+        IWGTextFieldSetText(&userInterfaceController->cubeStatusTextField2, sTmp);
+        IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
+                              (userInterfaceController->scoreTextField.triangleBufferData.size
+                               + userInterfaceController->cubeStatusTextField1.triangleBufferData.size) * sizeof(GLfloat),
+                              userInterfaceController->cubeStatusTextField2.triangleBufferData.size * sizeof(GLfloat),
+                              userInterfaceController->cubeStatusTextField2.triangleBufferData.startCPU,
                               true);
     }
+    
+    // Update fuel status bar
+    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR) {
+        if (player->overdrive) {
+            if(IWVector4TransitionUpdate(&userInterfaceController->fuelColorTransitionOverdrive, timeSinceLastUpdate))
+                IWVector4TransitionReverseAndStart(&userInterfaceController->fuelColorTransitionOverdrive);
+            userInterfaceController->fuelStateBar.colors[0]
+                = userInterfaceController->fuelColorTransitionOverdrive.currentVector;
+        } else if (fuel->isWarning) {
+            if(IWVector4TransitionUpdate(&userInterfaceController->fuelColorTransitionWarning, timeSinceLastUpdate))
+                IWVector4TransitionReverseAndStart(&userInterfaceController->fuelColorTransitionWarning);
+            userInterfaceController->fuelStateBar.colors[0]
+                = userInterfaceController->fuelColorTransitionWarning.currentVector;
+        } else  {
+            userInterfaceController->fuelStateBar.colors[0] = fuel->currentColor;
+        }
+        
+        // Fuel vertex update
+        IWFuelToStateBar(fuel, &userInterfaceController->fuelStateBar);
+        IWUIStateBarToTriangles(&userInterfaceController->fuelStateBar);
+        
+        IWGMultiBufferSubData(&userInterfaceController->triangleMultiBuffer,
+                              0,
+                              userInterfaceController->fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
+                              userInterfaceController->fuelStateBar.triangleBufferData.bufferStartCPU,
+                              true);
+    }
+
+    glBindVertexArrayOES(0);
     return;
 }
 
