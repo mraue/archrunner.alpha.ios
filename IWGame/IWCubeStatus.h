@@ -1,18 +1,18 @@
 //
-//  IWGameStatus.h
+//  IWCubeStatus.h
 //  theBr1dge
 //
 //  Created by Martin Raue on 2/19/13.
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#ifndef theBr1dge_IWGameStatus_h
-#define theBr1dge_IWGameStatus_h
+#ifndef theBr1dge_IWCubeStatus_h
+#define theBr1dge_IWCubeStatus_h
 
 typedef struct {
     unsigned int nGridCubes, nBridgeCubes, nPoolCubes;
-} IWGameStatusData;
+} IWCubeStatusData;
 
-IWGameStatusData IWGameStatusMakeEmpty();
+IWCubeStatusData IWCubeStatusMakeEmpty();
 
 #endif

@@ -13,7 +13,7 @@
 @interface Achievement : NSManagedObject
 
 @property (nonatomic, retain) NSString * gameCenterID;
-@property (nonatomic, retain) NSNumber * percentageComplete;
+@property (nonatomic, retain) NSNumber * percentComplete;
 @property (nonatomic, retain) NSNumber * completionReported;
 @property (nonatomic, retain) NSNumber * reportStatus;
 @property (nonatomic, retain) NSDate * completionDate;

@@ -16,14 +16,14 @@
 
 #include "IWMath.h"
 
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 #include "IWGShaderProgram.h"
 #include "IWGTextField.h"
 #include "IWGFontMap.h"
 #include "IWUIRectangleButton.h"
 #include "IWUIStateBar.h"
 #include "IWScoreCounter.h"
-#include "IWGameStatus.h"
+#include "IWCubeStatus.h"
 #include "IWVectorTransition.h"
 #include "IWFuel.h"
 #include "IWPlayer.h"
@@ -43,13 +43,13 @@ typedef struct {
     //
     size_t triangleDataBufferSize;
     GLfloat* triangleDataBufferStart;
-    IWGMultiBufferData triangleMultiBuffer;
+    IWGRingBufferData triangleMultiBuffer;
     size_t textDataBufferSize;
     GLfloat* textDataBufferStart;
-    IWGMultiBufferData textMultiBuffer;
+    IWGRingBufferData textMultiBuffer;
     size_t lineDataBufferSize;
     GLfloat* lineDataBufferStart;
-    IWGMultiBufferData lineMultiBuffer;
+    IWGRingBufferData lineMultiBuffer;
     //
     IWGTextFieldData scoreTextField, cubeStatusTextField1, cubeStatusTextField2;
     //
@@ -72,7 +72,7 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
 
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
                                      const IWScoreCounterData *scoreCounter,
-                                     const IWGameStatusData *gameStatus,
+                                     const IWCubeStatusData *cubeStatus,
                                      const IWFuel *fuel,
                                      const IWPlayerData *player,
                                      float timeSinceLastUpdate);

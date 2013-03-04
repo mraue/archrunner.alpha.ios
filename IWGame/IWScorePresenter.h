@@ -20,7 +20,7 @@
 #include "IWGTextField.h"
 #include "IWGFontMap.h"
 
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 
 typedef struct {
     float timePerRow;
@@ -31,7 +31,7 @@ typedef struct {
     IWGTextFieldData scoreTextField;
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
-    IWGMultiBufferData multiBuffer;
+    IWGRingBufferData multiBuffer;
 } IWScorePresenterData;
 
 IWScorePresenterData IWScorePresenterMake(float timePerRow,

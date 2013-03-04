@@ -21,9 +21,9 @@
 #include "IWPlayer.h"
 #include "IWUIRectangleButton.h"
 #include "IWCube.h"
-#include "IWColorTransition.h"
+//#include "IWColorTransition.h"
 #include "IWFuel.h"
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 #include "IWGBufferSubData.h"
 #include "IWTimer.h"
 #include "IWIndexList.h"
@@ -32,9 +32,9 @@
 #include "IWScoreCounter.h"
 #include "IWGTextField.h"
 #include "IWController.h"
-#include "IWGSkyBox.h"
+#include "IWGSkyBoxController.h"
 #include "IWGShaderProgram.h"
-#include "IWGameStatus.h"
+#include "IWCubeStatus.h"
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenu.h"
 #include "IWScorePresenter.h"
@@ -54,7 +54,7 @@ IWPlayerData gdPlayerDataSave;
 IWFuel gdFuel;
 
 IWScoreCounterData gdScoreCounter;
-IWGameStatusData gdGameStatus;
+IWCubeStatusData gdCubeStatus;
 
 IWCubeData* gdCubeData;
 unsigned int gdNCubes;
@@ -73,11 +73,11 @@ IWVector3 *gdSecondaryPosition;
 
 float gdZMax;
 
-IWGSkyBoxData gdSkyBox;
+IWGSkyBoxControllerData gdSkyBoxController;
 
 IWTimerData gdStateSwitchTimer;
 
-IWColorTransition gdOverdriveColorTransition;
+//IWColorTransition gdOverdriveColorTransition;
 
 IWVector3Transition gdGrayScaleTransition;
 IWVector3Transition gdGrayScaleTransitionDefault;
@@ -109,8 +109,8 @@ void *gdFontMapTextureData;
 
 GLfloat *gdCubeTriangleBufferStartCPU;
 GLfloat *gdInGameTextTriangleBufferStartCPU;
-GLfloat *gdInGameUITriangleBufferStartCPU;
-GLfloat *gdInGameUILineBufferStartCPU;
+//GLfloat *gdInGameUITriangleBufferStartCPU;
+//GLfloat *gdInGameUILineBufferStartCPU;
 
 GLuint gdTextureHandlerId;
 
@@ -118,12 +118,6 @@ GLuint gdTextureHandlerId;
 
 bool gdIsTouched;
 IWPoint2D gdTouchPoint;
-
-//IWUIRectangleButton gdRectangleButton;
-//IWUIRectangleButton gdRectangleButton2;
-
-//unsigned int gdUINTriangleVertices;
-unsigned int gdUINLineVertices;
 
 bool gdResetControllerPosition;
 
@@ -141,16 +135,14 @@ IWGShaderProgramData gdTextShaderProgram;
 IWGShaderProgramData gdSkyboxShaderProgram;
 IWGShaderProgramData gdUIShaderProgram;
 
-IWGMultiBufferData gdTextTriangleDoubleBuffer;
+IWGRingBufferData gdTextTriangleDoubleBuffer;
 
-IWGMultiBufferData gdTriangleDoubleBuffer;
-
-//IWGMultiBufferData gdUITriangleDoubleBuffer;
+IWGRingBufferData gdTriangleDoubleBuffer;
 
 GLuint gdUITriangleVertexBuffer;
 
-GLuint gdUILineVertexArray;
-GLuint gdUILineVertexBuffer;
+//GLuint gdUILineVertexArray;
+//GLuint gdUILineVertexBuffer;
 
 IWGTextFieldData gdTitleTextField;
 IWGTextFieldData gdVersionTextField;

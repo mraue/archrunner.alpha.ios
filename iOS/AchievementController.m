@@ -170,26 +170,27 @@
 - (void)updateAchievements
 {
     Achievement* achievement = nil;
-    NSMutableArray *achievementForReport = [[NSMutableArray alloc] initWithCapacity:[self.achievements count]];
+    NSMutableArray *achievementsToReport = [[NSMutableArray alloc] initWithCapacity:[self.achievements count]];
+    NSMutableArray *completetedAchievements = [[NSMutableArray alloc] initWithCapacity:[self.achievements count]];
+    
     //@"ArchRunnerAlpha.Achievement.CubeCollector"
     achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.CubeCollector"];
     
     if (achievement == nil) {
         NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.CubeCollector");
     } else if (![achievement.completed boolValue]) {
-        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 1000.0;
-        if (progress > 1.0) {
-            progress = 1.0;
+        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 1000.0 * 100.0;
+        if (progress > 100.0) {
+            progress = 100.0;
             achievement.completed = @YES;
-            achievement.completionReported = @YES;
-            achievement.completionDate = [NSDate date];
+            [completetedAchievements addObject:achievement];
         }
-        achievement.percentageComplete = [NSNumber numberWithFloat:progress];
+        achievement.percentComplete = [NSNumber numberWithFloat:progress];
 
         GKAchievement *achievementGC = [[GKAchievement alloc] initWithIdentifier:achievement.gameCenterID];
-        achievementGC.percentComplete = [achievement.percentageComplete floatValue] * 100.0;
+        achievementGC.percentComplete = [achievement.percentComplete floatValue];
         achievementGC.showsCompletionBanner = YES;
-        [achievementForReport addObject:achievementGC];
+        [achievementsToReport addObject:achievementGC];
     } else {
 
     }
@@ -199,31 +200,37 @@
     if (achievement == nil) {
         NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.CubeCollector");
     } else if (![achievement.completed boolValue]) {
-        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 5000.0;
-        if (progress > 1.0) {
-            progress = 1.0;
+        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 5000.0 * 100.0;
+        if (progress > 100.0) {
+            progress = 100.0;
             achievement.completed = @YES;
-            achievement.completionReported = @YES;
-            achievement.completionDate = [NSDate date];
+            [completetedAchievements addObject:achievement];
         }
-        achievement.percentageComplete = [NSNumber numberWithFloat:progress];
+        achievement.percentComplete = [NSNumber numberWithFloat:progress];
         GKAchievement *achievementGC = [[GKAchievement alloc] initWithIdentifier:achievement.gameCenterID];
-        achievementGC.percentComplete = [achievement.percentageComplete floatValue] * 100.0;
+        achievementGC.percentComplete = [achievement.percentComplete floatValue];
         achievementGC.showsCompletionBanner = YES;
-        [achievementForReport addObject:achievementGC];
+        [achievementsToReport addObject:achievementGC];
     }
     
-    if ([achievementForReport count]) {
-        [GKAchievement reportAchievements: achievementForReport withCompletionHandler:^(NSError *error)
+    if ([achievementsToReport count]) {
+        [GKAchievement reportAchievements: achievementsToReport withCompletionHandler:^(NSError *error)
          {
              if (error != nil)
              {
                  NSLog(@"Error in reporting achievements: %@", error);
+             } else {
+                 for (Achievement* achievement in completetedAchievements) {
+                     achievement.completionReported = @YES;
+                     achievement.completionDate = [NSDate date];
+                 }
              }
-             [achievementForReport release];
+             [achievementsToReport release];
+             [completetedAchievements release];
          }];
     } else {
-        [achievementForReport release];
+        [achievementsToReport release];
+        [completetedAchievements release];
     }
 }
 
@@ -247,15 +254,16 @@
 - (void) resetAchievements
 {
     for (Achievement* entry in self.achievements) {
-        entry.percentageComplete = @0.0;
+        entry.percentComplete = @0.0;
         entry.completed = @NO;
         entry.completionReported = @NO;
     }
     // Clear all progress saved on Game Center.
     [GKAchievement resetAchievementsWithCompletionHandler:^(NSError *error)
      {
-         if (error != nil)
+         if (error != nil) {
              NSLog(@"ERROR: Failed to reset achievements");// handle the error.
+         }
     }];
 }
 

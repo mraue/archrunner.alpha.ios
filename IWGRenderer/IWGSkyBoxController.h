@@ -1,13 +1,13 @@
 //
-//  IWGSkyBox.h
+//  IWGSkyBoxController.h
 //  theBr1dge
 //
 //  Created by Martin Raue on 2/13/13.
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#ifndef theBr1dge_IWGSkyBox_h
-#define theBr1dge_IWGSkyBox_h
+#ifndef theBr1dge_IWGSkyBoxController_h
+#define theBr1dge_IWGSkyBoxController_h
 
 #include <stdbool.h>
 
@@ -22,7 +22,7 @@
 
 #include "IWPlayer.h"
 
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 
 typedef struct {
     IWCubeData sky;
@@ -42,17 +42,17 @@ typedef struct {
     IWVector4Transition moonColorTransition;
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
-    IWGMultiBufferData multiBuffer;
-} IWGSkyBoxData;
+    IWGRingBufferData multiBuffer;
+} IWGSkyBoxControllerData;
 
-IWGSkyBoxData IWGSkyBoxMakeDefault();
+IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault();
 
-void IWGSkyBoxFillVBO(IWGSkyBoxData *skyBox, GLuint positionSlot,GLuint colorSlot, GLuint normalSlot);
+void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController, GLuint positionSlot,GLuint colorSlot, GLuint normalSlot);
 
-void IWGSkyBoxUpdate(IWGSkyBoxData *skyBox, float timeSinceLastUpdate, IWPlayerData *player, bool updateColor);
+void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController, float timeSinceLastUpdate, IWPlayerData *player, bool updateColor);
 
-void IWGSkyBoxRender(IWGSkyBoxData *skyBox, bool setGLStates);
+void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController, bool setGLStates);
 
-void IWGSkyBoxPurgeData(IWGSkyBoxData *skyBox);
+void IWGSkyBoxControllerPurgeData(IWGSkyBoxControllerData *skyBoxController);
 
 #endif

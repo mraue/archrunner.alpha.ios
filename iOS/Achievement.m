@@ -12,7 +12,7 @@
 @implementation Achievement
 
 @dynamic gameCenterID;
-@dynamic percentageComplete;
+@dynamic percentComplete;
 @dynamic completionReported;
 @dynamic reportStatus;
 @dynamic completionDate;
@@ -21,11 +21,11 @@
 - (void) awakeFromInsert {
     // Set default values
     self.gameCenterID = @"";
-    self.percentageComplete = [NSNumber numberWithFloat:0.0];
-    self.completionReported = [NSNumber numberWithBool:NO];
-    self.reportStatus = [NSNumber numberWithBool:NO];
+    self.percentComplete = @0.0;
+    self.completionReported = @NO;
+    self.reportStatus = @NO;
     self.completionDate = [NSDate date];
-    self.completed = [NSNumber numberWithBool:NO];
+    self.completed = @NO;
 }
 
 @end

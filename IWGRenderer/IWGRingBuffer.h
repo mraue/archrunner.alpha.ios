@@ -1,13 +1,13 @@
 //
-//  IWGMultiBuffer.h
+//  IWGRingBuffer.h
 //  theBr1dge
 //
 //  Created by Martin Raue on 1/25/13.
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#ifndef theBr1dge_IWGMultiBuffer_h
-#define theBr1dge_IWGMultiBuffer_h
+#ifndef theBr1dge_IWGRingBuffer_h
+#define theBr1dge_IWGRingBuffer_h
 
 #include <stdbool.h>
 
@@ -27,27 +27,27 @@ typedef struct {
     GLuint vertexArray[IWGMULTIBUFFER_MAX];
     GLuint vertexBuffer[IWGMULTIBUFFER_MAX];
     IWGBufferSubData *bufferSubData[IWGMULTIBUFFER_MAX];
-} IWGMultiBufferData;
+} IWGRingBufferData;
 
-IWGMultiBufferData IWGMultiBufferGen(void);
+IWGRingBufferData IWGRingBufferGen(void);
 
-void IWGMultiBufferBind(IWGMultiBufferData *multiBufferData, unsigned int buffer);
+void IWGRingBufferBind(IWGRingBufferData *multiBufferData, unsigned int buffer);
 
-void IWGMultiBufferBindCurrentDrawBuffer(IWGMultiBufferData *multiBufferData);
-void IWGMultiBufferBindCurrentDataUpdateBuffer(IWGMultiBufferData *multiBufferData);
+void IWGRingBufferBindCurrentDrawBuffer(IWGRingBufferData *multiBufferData);
+void IWGRingBufferBindCurrentDataUpdateBuffer(IWGRingBufferData *multiBufferData);
 
 // Also bind new data update buffer
-void IWGMultiBufferSwitchBuffer(IWGMultiBufferData *multiBufferData);
-void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,
+void IWGRingBufferSwitchBuffer(IWGRingBufferData *multiBufferData);
+void IWGRingBufferSubData(IWGRingBufferData *multiBufferData,
                            GLintptr offset, GLsizeiptr size, const GLvoid *data,
                            bool bindBuffer);
 
-void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
+void IWGRingBufferSubDataForBufferObject(IWGRingBufferData *multiBuffer,
                                           IWGPrimitiveBufferData *primitiveBuffer,
                                           bool bindBuffer);
 
-void IWGMultiBufferPurgeBufferSubData(IWGMultiBufferData *multiBufferData);
-void IWGMultiBufferResetNVertices(IWGMultiBufferData *multiBufferData);
-void IWGMultiBufferDealloc(IWGMultiBufferData *multiBufferData);
+void IWGRingBufferPurgeBufferSubData(IWGRingBufferData *multiBufferData);
+void IWGRingBufferResetNVertices(IWGRingBufferData *multiBufferData);
+void IWGRingBufferDealloc(IWGRingBufferData *multiBufferData);
 
 #endif

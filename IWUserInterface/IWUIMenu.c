@@ -21,7 +21,7 @@ IWUIMenuData IWUIMenuMake(IWUIMenuPresenterData presenter, unsigned int nPages)
     menu.dataBufferStart = malloc(menu.dataBufferSize * sizeof(GLfloat));
     menu.nPages = nPages;
     
-    menu.multiBuffer = IWGMultiBufferGen();
+    menu.multiBuffer = IWGRingBufferGen();
     
     if (nPages) {
         menu.pages = malloc(nPages * sizeof(IWUIMenuPageData));
@@ -42,7 +42,7 @@ void IWUIMenuFillVBO(IWUIMenuData *menu, GLuint positionSlot,GLuint colorSlot, G
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
-        IWGMultiBufferBind(&menu->multiBuffer, i);
+        IWGRingBufferBind(&menu->multiBuffer, i);
         
         menu->multiBuffer.nVertices[i] = menu->dataBufferSize / 9;
         
@@ -51,7 +51,7 @@ void IWUIMenuFillVBO(IWUIMenuData *menu, GLuint positionSlot,GLuint colorSlot, G
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, fontMapTextureData);
         //glGenerateMipmap(GL_TEXTURE_2D);
@@ -78,13 +78,13 @@ void IWUIMenuUpdate(IWUIMenuData *menu, float timeSinceLastUpdate)
 
 void IWUIMenuRender(IWUIMenuData *menu)
 {
-    IWGMultiBufferBindCurrentDrawBuffer(&menu->multiBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&menu->multiBuffer);
     
     glDrawArrays(GL_TRIANGLES, 0, menu->multiBuffer.nVertices[menu->multiBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
     
-    IWGMultiBufferSwitchBuffer(&menu->multiBuffer);
+    IWGRingBufferSwitchBuffer(&menu->multiBuffer);
     
     return;
 }
@@ -95,7 +95,7 @@ void IWUIMenuPurgeData(IWUIMenuData *menu)
         IWUIMenuPagePurgeData(&menu->pages[i]);
     }
     IWUIMenuPresenterPurgeData(&menu->presenter);
-    IWGMultiBufferDealloc(&menu->multiBuffer);
+    IWGRingBufferDealloc(&menu->multiBuffer);
     free(menu->dataBufferStart);
     return;
 }

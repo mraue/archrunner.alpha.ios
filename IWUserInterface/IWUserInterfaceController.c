@@ -24,13 +24,11 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
 {
     IWUserInterfaceControllerData userInterfaceController = {
         visibleElements,
-        0, NULL, IWGMultiBufferGen(),
-        0, NULL, IWGMultiBufferGen(),
-        0, NULL, IWGMultiBufferGen()
+        0, NULL, IWGRingBufferGen(),
+        0, NULL, IWGRingBufferGen(),
+        0, NULL, IWGRingBufferGen()
     };
 
-    
-    //gdInGameTextTriangleBufferStartCPU = malloc((1 * 10 + 3 * 10) * 6 * 9 * sizeof(GLfloat));
 
     //
     // Setup text buffer
@@ -227,7 +225,7 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
         
         userInterfaceController->textMultiBuffer.nVertices[i] = userInterfaceController->textDataBufferSize / 9;
         
-        IWGMultiBufferBind(&userInterfaceController->textMultiBuffer, i);
+        IWGRingBufferBind(&userInterfaceController->textMultiBuffer, i);
         
         glBindTexture(GL_TEXTURE_2D, textureHandlerId);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -264,7 +262,7 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         userInterfaceController->triangleMultiBuffer.nVertices[i] = userInterfaceController->triangleDataBufferSize / 7;
         
-        IWGMultiBufferBind(&userInterfaceController->triangleMultiBuffer, i);
+        IWGRingBufferBind(&userInterfaceController->triangleMultiBuffer, i);
         
         glBufferData(GL_ARRAY_BUFFER,
                      userInterfaceController->triangleDataBufferSize * sizeof(GLfloat),
@@ -282,7 +280,7 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         userInterfaceController->lineMultiBuffer.nVertices[i] = userInterfaceController->lineDataBufferSize / 7;
         
-        IWGMultiBufferBind(&userInterfaceController->lineMultiBuffer, i);
+        IWGRingBufferBind(&userInterfaceController->lineMultiBuffer, i);
         
         glBufferData(GL_ARRAY_BUFFER,
                      userInterfaceController->lineDataBufferSize * sizeof(GLfloat),
@@ -302,7 +300,7 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
 
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
                                      const IWScoreCounterData *scoreCounter,
-                                     const IWGameStatusData *gameStatus,
+                                     const IWCubeStatusData *cubeStatus,
                                      const IWFuel *fuel,
                                      const IWPlayerData *player,
                                      float timeSinceLastUpdate)
@@ -312,7 +310,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
         char s[10];
         sprintf(s, "%u", scoreCounter->scoreInt);
         IWGTextFieldSetText(&userInterfaceController->scoreTextField, s);
-        IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
+        IWGRingBufferSubData(&userInterfaceController->textMultiBuffer,
                               0,
                               userInterfaceController->scoreTextField.triangleBufferData.size * sizeof(GLfloat),
                               userInterfaceController->scoreTextField.triangleBufferData.startCPU,
@@ -322,14 +320,14 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
     if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER) {
         // Update cube status display
         char sTmp[30];
-        sprintf(sTmp, "%u\n%u", gameStatus->nGridCubes, gameStatus->nBridgeCubes);
+        sprintf(sTmp, "%u\n%u", cubeStatus->nGridCubes, cubeStatus->nBridgeCubes);
         IWGTextFieldSetText(&userInterfaceController->cubeStatusTextField1, sTmp);
-        IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
+        IWGRingBufferSubData(&userInterfaceController->textMultiBuffer,
                               userInterfaceController->scoreTextField.triangleBufferData.size * sizeof(GLfloat),
                               userInterfaceController->cubeStatusTextField1.triangleBufferData.size * sizeof(GLfloat),
                               userInterfaceController->cubeStatusTextField1.triangleBufferData.startCPU,
                               true);
-        unsigned int nPoolCubes = gameStatus->nPoolCubes;
+        unsigned int nPoolCubes = cubeStatus->nPoolCubes;
         sprintf(sTmp, "%u", nPoolCubes);
         if (nPoolCubes < 10) {
             userInterfaceController->cubeStatusTextField2.color.w = 0.5 * (float)nPoolCubes / 10.0;
@@ -341,7 +339,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                 = userInterfaceController->poolCubesColorTransition.currentVector;
         }
         IWGTextFieldSetText(&userInterfaceController->cubeStatusTextField2, sTmp);
-        IWGMultiBufferSubData(&userInterfaceController->textMultiBuffer,
+        IWGRingBufferSubData(&userInterfaceController->textMultiBuffer,
                               (userInterfaceController->scoreTextField.triangleBufferData.size
                                + userInterfaceController->cubeStatusTextField1.triangleBufferData.size) * sizeof(GLfloat),
                               userInterfaceController->cubeStatusTextField2.triangleBufferData.size * sizeof(GLfloat),
@@ -369,7 +367,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
         IWFuelToStateBar(fuel, &userInterfaceController->fuelStateBar);
         IWUIStateBarToTriangles(&userInterfaceController->fuelStateBar);
         
-        IWGMultiBufferSubData(&userInterfaceController->triangleMultiBuffer,
+        IWGRingBufferSubData(&userInterfaceController->triangleMultiBuffer,
                               0,
                               userInterfaceController->fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
                               userInterfaceController->fuelStateBar.triangleBufferData.bufferStartCPU,
@@ -386,38 +384,38 @@ void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfac
 {
     glUseProgram(textProgramId);
     
-    IWGMultiBufferBindCurrentDrawBuffer(&userInterfaceController->textMultiBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&userInterfaceController->textMultiBuffer);
     
     glDrawArrays(GL_TRIANGLES, 0, userInterfaceController->textMultiBuffer.nVertices[userInterfaceController->textMultiBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
     
-    IWGMultiBufferSwitchBuffer(&userInterfaceController->textMultiBuffer);
+    IWGRingBufferSwitchBuffer(&userInterfaceController->textMultiBuffer);
     
     glUseProgram(uiProgramId);
     
-    IWGMultiBufferBindCurrentDrawBuffer(&userInterfaceController->triangleMultiBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&userInterfaceController->triangleMultiBuffer);
     
     glDrawArrays(GL_TRIANGLES, 0, userInterfaceController->triangleMultiBuffer.nVertices[userInterfaceController->triangleMultiBuffer.currentDrawBuffer]);
     
-    IWGMultiBufferSwitchBuffer(&userInterfaceController->triangleMultiBuffer);
+    IWGRingBufferSwitchBuffer(&userInterfaceController->triangleMultiBuffer);
     
-    IWGMultiBufferBindCurrentDrawBuffer(&userInterfaceController->lineMultiBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&userInterfaceController->lineMultiBuffer);
     
     glDrawArrays(GL_LINES, 0, userInterfaceController->lineMultiBuffer.nVertices[userInterfaceController->lineMultiBuffer.currentDrawBuffer]);
 
     glBindVertexArrayOES(0);
     
-    IWGMultiBufferSwitchBuffer(&userInterfaceController->lineMultiBuffer);
+    IWGRingBufferSwitchBuffer(&userInterfaceController->lineMultiBuffer);
 
     return;
 }
 
 void IWUserInterfacePurgeData(IWUserInterfaceControllerData *userInterfaceController)
 {
-    IWGMultiBufferDealloc(&userInterfaceController->textMultiBuffer);
-    IWGMultiBufferDealloc(&userInterfaceController->triangleMultiBuffer);
-    IWGMultiBufferDealloc(&userInterfaceController->lineMultiBuffer);
+    IWGRingBufferDealloc(&userInterfaceController->textMultiBuffer);
+    IWGRingBufferDealloc(&userInterfaceController->triangleMultiBuffer);
+    IWGRingBufferDealloc(&userInterfaceController->lineMultiBuffer);
     IWUIStateBarDeallocData(&userInterfaceController->fuelStateBar);
     free(userInterfaceController->textDataBufferStart);
     free(userInterfaceController->triangleDataBufferStart);

@@ -24,7 +24,7 @@ IWScorePresenterData IWScorePresenterMake(float timePerRow,
     scorePresenter.timePerRow = timePerRow;
     scorePresenter.currentTime = 0.0;
     scorePresenter.hasFinished = false;
-    scorePresenter.multiBuffer = IWGMultiBufferGen();
+    scorePresenter.multiBuffer = IWGRingBufferGen();
     scorePresenter.dataBufferSize = (1 * 8 + 6 * 8 + 6 * 8) * 6 * 9;
     scorePresenter.dataBufferStart = malloc(scorePresenter.dataBufferSize * sizeof(GLfloat));
     scorePresenter.titleTextField = IWGTextFieldMake(anchorPoint, IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
@@ -98,7 +98,7 @@ void IWScorePresenterUpdate(IWScorePresenterData *scorePresenter,
     }
     
     
-    IWGMultiBufferSubData(&scorePresenter->multiBuffer, 0,
+    IWGRingBufferSubData(&scorePresenter->multiBuffer, 0,
                           scorePresenter->dataBufferSize * sizeof(GLfloat),
                           scorePresenter->dataBufferStart, true);
     return;
@@ -114,7 +114,7 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
-        IWGMultiBufferBind(&scorePresenter->multiBuffer, i);
+        IWGRingBufferBind(&scorePresenter->multiBuffer, i);
         
         scorePresenter->multiBuffer.nVertices[i] = scorePresenter->dataBufferSize / 9;
         
@@ -123,7 +123,7 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, fontMapTextureData);
         //glGenerateMipmap(GL_TEXTURE_2D);
@@ -145,20 +145,20 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
 
 void IWScorePresenterRender(IWScorePresenterData *scorePresenter)
 {
-    IWGMultiBufferBindCurrentDrawBuffer(&scorePresenter->multiBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&scorePresenter->multiBuffer);
     
     glDrawArrays(GL_TRIANGLES, 0, scorePresenter->multiBuffer.nVertices[scorePresenter->multiBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
     
-    IWGMultiBufferSwitchBuffer(&scorePresenter->multiBuffer);
+    IWGRingBufferSwitchBuffer(&scorePresenter->multiBuffer);
     
     return;
 }
 
 void IWScorePresenterPurgeData(IWScorePresenterData *scorePresenter)
 {
-    IWGMultiBufferDealloc(&scorePresenter->multiBuffer);
+    IWGRingBufferDealloc(&scorePresenter->multiBuffer);
     free(scorePresenter->dataBufferStart);
     return;
 }

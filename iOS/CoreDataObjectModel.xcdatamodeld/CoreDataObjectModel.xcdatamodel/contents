@@ -5,7 +5,7 @@
         <attribute name="completionDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="completionReported" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="gameCenterID" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="percentageComplete" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="percentComplete" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="reportStatus" optional="YES" attributeType="Boolean" syncable="YES"/>
     </entity>
     <entity name="AchievementTracker" representedClassName="AchievementTracker" syncable="YES">

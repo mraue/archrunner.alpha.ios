@@ -1,17 +1,17 @@
 //
-//  IWGameStatus.c
+//  IWCubeStatus.c
 //  theBr1dge
 //
 //  Created by Martin Raue on 2/19/13.
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#include "IWGameStatus.h"
+#include "IWCubeStatus.h"
 
 #include <stdio.h>
 
-IWGameStatusData IWGameStatusMakeEmpty()
+IWCubeStatusData IWCubeStatusMakeEmpty()
 {
-    IWGameStatusData gameStatus = { 0, 0, 0 };
+    IWCubeStatusData gameStatus = { 0, 0, 0 };
     return gameStatus;
 }

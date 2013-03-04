@@ -1,19 +1,19 @@
 //
-//  IWGMultiBuffer.c
+//  IWGRingBuffer.c
 //  theBr1dge
 //
 //  Created by Martin Raue on 1/25/13.
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-IWGMultiBufferData IWGMultiBufferGen(void)
+IWGRingBufferData IWGRingBufferGen(void)
 {
-    IWGMultiBufferData multiBufferData;
+    IWGRingBufferData multiBufferData;
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         glGenVertexArraysOES(1, &multiBufferData.vertexArray[i]);
         glGenBuffers(1, &multiBufferData.vertexBuffer[i]);
@@ -25,31 +25,31 @@ IWGMultiBufferData IWGMultiBufferGen(void)
     return multiBufferData;
 }
 
-void IWGMultiBufferBind(IWGMultiBufferData *multiBufferData, unsigned int buffer)
+void IWGRingBufferBind(IWGRingBufferData *multiBufferData, unsigned int buffer)
 {
     glBindVertexArrayOES(multiBufferData->vertexArray[buffer]);
     glBindBuffer(GL_ARRAY_BUFFER, multiBufferData->vertexBuffer[buffer]);
     return;
 }
 
-void IWGMultiBufferBindCurrentDrawBuffer(IWGMultiBufferData *multiBufferData)
+void IWGRingBufferBindCurrentDrawBuffer(IWGRingBufferData *multiBufferData)
 {
-    IWGMultiBufferBind(multiBufferData, multiBufferData->currentDrawBuffer);
+    IWGRingBufferBind(multiBufferData, multiBufferData->currentDrawBuffer);
     return;
 }
 
-void IWGMultiBufferBindCurrentDataUpdateBuffer(IWGMultiBufferData *multiBufferData)
+void IWGRingBufferBindCurrentDataUpdateBuffer(IWGRingBufferData *multiBufferData)
 {
-    IWGMultiBufferBind(multiBufferData, multiBufferData->currentDataUpdateBuffer);
+    IWGRingBufferBind(multiBufferData, multiBufferData->currentDataUpdateBuffer);
     return;
 }
 
-void IWGMultiBufferSwitchBuffer(IWGMultiBufferData *multiBufferData)
+void IWGRingBufferSwitchBuffer(IWGRingBufferData *multiBufferData)
 {
     unsigned int previousBuffer = multiBufferData->currentDataUpdateBuffer;
     unsigned int currentBuffer = multiBufferData->currentDataUpdateBuffer = (previousBuffer + 1) % IWGMULTIBUFFER_MAX;
     
-    IWGMultiBufferBindCurrentDataUpdateBuffer(multiBufferData);
+    IWGRingBufferBindCurrentDataUpdateBuffer(multiBufferData);
     
     IWGBufferSubData *subData = NULL;
     while ((subData = multiBufferData->bufferSubData[currentBuffer])) {
@@ -66,12 +66,12 @@ void IWGMultiBufferSwitchBuffer(IWGMultiBufferData *multiBufferData)
     multiBufferData->currentDrawBuffer = (currentBuffer + IWGMULTIBUFFER_MAX / 2) % IWGMULTIBUFFER_MAX;
 }
 
-void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,
+void IWGRingBufferSubData(IWGRingBufferData *multiBufferData,
                            GLintptr offset, GLsizeiptr size, const GLvoid *data,
                            bool bindBuffer)
 {
     if (bindBuffer)
-        IWGMultiBufferBindCurrentDataUpdateBuffer(multiBufferData);
+        IWGRingBufferBindCurrentDataUpdateBuffer(multiBufferData);
     
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         if (i == multiBufferData->currentDataUpdateBuffer) {
@@ -87,11 +87,11 @@ void IWGMultiBufferSubData(IWGMultiBufferData *multiBufferData,
     }
 }
 
-void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
+void IWGRingBufferSubDataForBufferObject(IWGRingBufferData *multiBuffer,
                                           IWGPrimitiveBufferData *primitiveBuffer,
                                           bool bindBuffer)
 {
-    IWGMultiBufferSubData(multiBuffer,
+    IWGRingBufferSubData(multiBuffer,
                           primitiveBuffer->bufferOffsetGPU  * sizeof(GLfloat),
                           primitiveBuffer->size * sizeof(GLfloat),
                           primitiveBuffer->bufferStartCPU,
@@ -99,7 +99,7 @@ void IWGMultiBufferSubDataForBufferObject(IWGMultiBufferData *multiBuffer,
     return;
 }
 
-void IWGMultiBufferPurgeBufferSubData(IWGMultiBufferData *multiBufferData)
+void IWGRingBufferPurgeBufferSubData(IWGRingBufferData *multiBufferData)
 {
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         IWGBufferSubData *bufferSubDataNext = NULL;
@@ -113,17 +113,17 @@ void IWGMultiBufferPurgeBufferSubData(IWGMultiBufferData *multiBufferData)
     }
 }
 
-void IWGMultiBufferResetNVertices(IWGMultiBufferData *multiBufferData)
+void IWGRingBufferResetNVertices(IWGRingBufferData *multiBufferData)
 {
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         multiBufferData->nVertices[i] = 0;
     }
 }
 
-void IWGMultiBufferDealloc(IWGMultiBufferData *multiBufferData)
+void IWGRingBufferDealloc(IWGRingBufferData *multiBufferData)
 {
-    IWGMultiBufferPurgeBufferSubData(multiBufferData);
-    IWGMultiBufferResetNVertices(multiBufferData);
+    IWGRingBufferPurgeBufferSubData(multiBufferData);
+    IWGRingBufferResetNVertices(multiBufferData);
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         glDeleteBuffers(1, &multiBufferData->vertexBuffer[i]);
         glDeleteVertexArraysOES(1, &multiBufferData->vertexArray[i]);

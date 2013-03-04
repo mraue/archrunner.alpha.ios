@@ -18,7 +18,7 @@
 
 #include "IWVectorTransition.h"
 
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenuPage.h"
@@ -29,7 +29,7 @@ typedef struct {
     unsigned int nPages;
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
-    IWGMultiBufferData multiBuffer;
+    IWGRingBufferData multiBuffer;
 } IWUIMenuData;
 
 IWUIMenuData IWUIMenuMake(IWUIMenuPresenterData presenter, unsigned int nPages);

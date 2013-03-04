@@ -15,7 +15,7 @@
 
 #include "IWUserInterface.h"
 
-#include "IWColorTransition.h"
+//#include "IWColorTransition.h"
 #include "IWFileTools.h"
 #include "IWCube.h"
 #include "IWFuel.h"
@@ -24,7 +24,7 @@
 #include "IWGLighting.h"
 
 #include "IWGBufferSubData.h"
-#include "IWGMultiBuffer.h"
+#include "IWGRingBuffer.h"
 
 #include "IWGFontMap.h"
 #include "IWGFontMapEntry.h"
@@ -32,7 +32,7 @@
 
 #include "IWScoreCounter.h"
 
-#include "IWGSkyBox.h"
+#include "IWGSkyBoxController.h"
 
 #include "IWUIMenuItem.h"
 #include "IWUIMenuPage.h"
@@ -92,14 +92,14 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
-    gdTriangleDoubleBuffer = IWGMultiBufferGen();
-    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdTriangleDoubleBuffer = IWGRingBufferGen();
+    gdTextTriangleDoubleBuffer = IWGRingBufferGen();
     
     // Could swith to multi buffer, ey!
-    glGenVertexArraysOES(1, &gdUILineVertexArray);
-    glBindVertexArrayOES(gdUILineVertexArray);
-    glGenBuffers(1, &gdUILineVertexBuffer);
-    glBindVertexArrayOES(0);
+    //glGenVertexArraysOES(1, &gdUILineVertexArray);
+    //glBindVertexArrayOES(gdUILineVertexArray);
+    //glGenBuffers(1, &gdUILineVertexBuffer);
+    //glBindVertexArrayOES(0);
     
     // Open GL base settings
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -114,8 +114,8 @@ void IWGRendererSetupGL(const char* fontMapFilename)
 
 void IWGRendererSetupStartMenuAssets(void)
 {
-    gdTriangleDoubleBuffer = IWGMultiBufferGen();
-    gdTextTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdTriangleDoubleBuffer = IWGRingBufferGen();
+    gdTextTriangleDoubleBuffer = IWGRingBufferGen();
     
     gdPlayerData = gdPlayerDataStart = IWPlayerDataMakeSimple(IWVector3Make(-0.8, 0.0, -1.),
                                                               IWVector3Normalize(IWVector3Make(0.4, 0.0, 1.0)),
@@ -192,7 +192,7 @@ void IWGRendererSetupStartMenuAssets(void)
     
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
-        IWGMultiBufferBind(&gdTriangleDoubleBuffer, i);
+        IWGRingBufferBind(&gdTriangleDoubleBuffer, i);
         
         glBufferData(GL_ARRAY_BUFFER, mypos_size, gdCubeTriangleBufferStartCPU, GL_DYNAMIC_DRAW);
         
@@ -217,8 +217,8 @@ void IWGRendererSetupStartMenuAssets(void)
     normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
     colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
     
-    gdSkyBox = IWGSkyBoxMakeDefault();
-    IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
+    gdSkyBoxController = IWGSkyBoxControllerMakeDefault();
+    IWGSkyBoxControllerFillVBO(&gdSkyBoxController, positionSlot, colorSlot, normalSlot);
 
     //
     // Text
@@ -287,7 +287,7 @@ void IWGRendererSetupStartMenuAssets(void)
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
-        IWGMultiBufferBind(&gdTextTriangleDoubleBuffer, i);
+        IWGRingBufferBind(&gdTextTriangleDoubleBuffer, i);
         
         glBindTexture(GL_TEXTURE_2D, textureHandlerId);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -325,10 +325,10 @@ void IWGRendererTearDownStartMenuAssets(void)
     free(gdCubeTriangleBufferStartCPU);
     gdCubeTriangleBufferStartCPU = NULL;
 
-    IWGSkyBoxPurgeData(&gdSkyBox);
+    IWGSkyBoxControllerPurgeData(&gdSkyBoxController);
     
-    IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
+    IWGRingBufferDealloc(&gdTextTriangleDoubleBuffer);
+    IWGRingBufferDealloc(&gdTriangleDoubleBuffer);
     
     glDeleteTextures(1, &gdTextureHandlerId);
     
@@ -345,7 +345,7 @@ void IWGRendererTearDownStartMenuAssets(void)
 
 void IWGRendererSetupGameAssets(void)
 {
-    gdTriangleDoubleBuffer = IWGMultiBufferGen();
+    gdTriangleDoubleBuffer = IWGRingBufferGen();
     
     IWGameReset();
     
@@ -353,13 +353,13 @@ void IWGRendererSetupGameAssets(void)
     //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
     glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
     
-    IWColorTransition overdriveColorTransition = {
-        IWUI_COLOR_WHITE(0.4),
-        IWUI_COLOR_WHITE(1.0),
-        IWUI_COLOR_WHITE(0.4),
-        0.4, 0.0, true, true
-    };
-    gdOverdriveColorTransition = overdriveColorTransition;
+//    IWColorTransition overdriveColorTransition = {
+//        IWUI_COLOR_WHITE(0.4),
+//        IWUI_COLOR_WHITE(1.0),
+//        IWUI_COLOR_WHITE(0.4),
+//        0.4, 0.0, true, true
+//    };
+//    gdOverdriveColorTransition = overdriveColorTransition;
     
     int nx, ny, nz;
     nx = ny = nz = gdNCubesPerAxis;
@@ -435,7 +435,7 @@ void IWGRendererSetupGameAssets(void)
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
 
-        IWGMultiBufferBind(&gdTriangleDoubleBuffer, i);
+        IWGRingBufferBind(&gdTriangleDoubleBuffer, i);
 
         glBufferData(GL_ARRAY_BUFFER, mypos_size, gdCubeTriangleBufferStartCPU, GL_DYNAMIC_DRAW);
         
@@ -461,12 +461,13 @@ void IWGRendererSetupGameAssets(void)
     normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
     colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
 
-    gdSkyBox = IWGSkyBoxMakeDefault();
-    IWGSkyBoxFillVBO(&gdSkyBox, positionSlot, colorSlot, normalSlot);
+    gdSkyBoxController = IWGSkyBoxControllerMakeDefault();
+    IWGSkyBoxControllerFillVBO(&gdSkyBoxController, positionSlot, colorSlot, normalSlot);
     
     //
     // User interface
     //
+    
     float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
     glUseProgram(gdTextShaderProgram.programID);
@@ -540,24 +541,22 @@ void IWGRendererTearDownGameAssets(void)
     free(gdInGameTextTriangleBufferStartCPU);
     gdInGameTextTriangleBufferStartCPU = NULL;
     
-    free(gdInGameUILineBufferStartCPU);
-    gdInGameUILineBufferStartCPU = NULL;
+//    free(gdInGameUILineBufferStartCPU);
+//    gdInGameUILineBufferStartCPU = NULL;
     
-    free(gdInGameUITriangleBufferStartCPU);
-    gdInGameUITriangleBufferStartCPU = NULL;
+//    free(gdInGameUITriangleBufferStartCPU);
+//    gdInGameUITriangleBufferStartCPU = NULL;
     
-    IWGSkyBoxPurgeData(&gdSkyBox);
+    IWGSkyBoxControllerPurgeData(&gdSkyBoxController);
     
     glDeleteTextures(1, &gdTextureHandlerId);
     
-    //IWGMultiBufferDealloc(&gdTextTriangleDoubleBuffer);
-    IWGMultiBufferDealloc(&gdTriangleDoubleBuffer);
-    //IWGMultiBufferDealloc(&gdUITriangleDoubleBuffer);
+    //IWGRingBufferDealloc(&gdTextTriangleDoubleBuffer);
+    IWGRingBufferDealloc(&gdTriangleDoubleBuffer);
+    //IWGRingBufferDealloc(&gdUITriangleDoubleBuffer);
     
-    glDeleteBuffers(1, &gdUILineVertexBuffer);
-    glDeleteVertexArraysOES(1, &gdUILineVertexArray);
-    
-    gdUINLineVertices = 0;
+//    glDeleteBuffers(1, &gdUILineVertexBuffer);
+//    glDeleteVertexArraysOES(1, &gdUILineVertexArray);
     
     free(gdInGameTextTriangleBufferStartCPU);
     gdInGameTextTriangleBufferStartCPU = NULL;
@@ -579,7 +578,7 @@ void IWGRendererRenderCubes(void)
 {
     // Render cubes
     
-    IWGMultiBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
     
     glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
                        1, 0, &gdModelMatrix.m00);
@@ -600,7 +599,7 @@ void IWGRendererRenderInGameText(void)
 {
     // Draw in game text
     
-    IWGMultiBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
+    IWGRingBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
     
     glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
@@ -614,10 +613,10 @@ void IWGRendererRender(void)
     glUseProgram(gdMainShaderProgram.programID);
     
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                gdSkyBox.sunColorLight.x, gdSkyBox.sunColorLight.y, gdSkyBox.sunColorLight.z,
-                gdSkyBox.sunColorLight.w);
+                gdSkyBoxController.sunColorLight.x, gdSkyBoxController.sunColorLight.y, gdSkyBoxController.sunColorLight.z,
+                gdSkyBoxController.sunColorLight.w);
     
-    float tmp = gdSkyBox.transitionTime / (gdSkyBox.colorTransitionTime * 1.2);
+    float tmp = gdSkyBoxController.transitionTime / (gdSkyBoxController.colorTransitionTime * 1.2);
     tmp *= tmp;
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_COLOR],
                 0.75, 0.75, 0.75,
@@ -644,7 +643,7 @@ void IWGRendererRender(void)
     glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
                        1, 0, &gdProjectionMatrix.m00);
     
-    IWGSkyBoxRender(&gdSkyBox, false);
+    IWGSkyBoxControllerRender(&gdSkyBoxController, false);
     
     glDisable(GL_DEPTH_TEST);
     
