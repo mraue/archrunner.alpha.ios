@@ -40,6 +40,7 @@
 #include "IWScorePresenter.h"
 #include "IWUISlider.h"
 #include "IWUserInterfaceController.h"
+#include "IWTutorialController.h"
 
 #pragma mark - Game Logic Data
 
@@ -84,6 +85,8 @@ IWVector3Transition gdGrayScaleTransitionDefault;
 
 bool gdPushScoreToLeaderboard;
 bool gdUpdateAchievements;
+
+IWTutorialControllerData *gdTutorialController;
 
 #pragma mark - User input
 
@@ -139,7 +142,7 @@ IWGRingBufferData gdTextTriangleDoubleBuffer;
 
 IWGRingBufferData gdTriangleDoubleBuffer;
 
-GLuint gdUITriangleVertexBuffer;
+//GLuint gdUITriangleVertexBuffer;
 
 //GLuint gdUILineVertexArray;
 //GLuint gdUILineVertexBuffer;

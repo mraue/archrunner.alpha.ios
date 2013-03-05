@@ -32,10 +32,15 @@ typedef struct {
     IWGRingBufferData multiBuffer;
 } IWUIMenuData;
 
-IWUIMenuData IWUIMenuMake(IWUIMenuPresenterData presenter, unsigned int nPages);
+IWUIMenuData IWUIMenuMake(IWUIMenuPresenterData presenter,
+                          unsigned int nPages);
 
-void IWUIMenuFillVBO(IWUIMenuData *menu, GLuint positionSlot,GLuint colorSlot, GLuint textureOffsetSlot,
-                     GLuint textureHandlerId, GLvoid* fontMapTextureData);
+void IWUIMenuFillVBO(IWUIMenuData *menu,
+                     GLuint positionSlot,
+                     GLuint colorSlot,
+                     GLuint textureOffsetSlot,
+                     GLuint textureHandlerId,
+                     GLvoid* fontMapTextureData);
 
 void IWUIMenuUpdate(IWUIMenuData *menu, float timeSinceLastUpdate);
 

@@ -23,6 +23,7 @@
 #include "IWPlayer.h"
 
 #include "IWGRingBuffer.h"
+#include "IWGShaderProgram.h"
 
 typedef struct {
     IWCubeData sky;
@@ -47,11 +48,15 @@ typedef struct {
 
 IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault();
 
-void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController, GLuint positionSlot,GLuint colorSlot, GLuint normalSlot);
+void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController,
+                                const IWGShaderProgramData *shaderProgram);
 
-void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController, float timeSinceLastUpdate, IWPlayerData *player, bool updateColor);
+void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController,
+                               float timeSinceLastUpdate,
+                               const IWPlayerData *player,
+                               bool updateColor);
 
-void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController, bool setGLStates);
+void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController);
 
 void IWGSkyBoxControllerPurgeData(IWGSkyBoxControllerData *skyBoxController);
 

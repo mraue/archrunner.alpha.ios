@@ -53,6 +53,8 @@ void IWGRendererTearDownStartMenuAssets(void);
 void IWGRendererSetupGameAssets(void);
 void IWGRendererTearDownGameAssets(void);
 
+void IWGRendererUpdateUniforms(void);
+
 void IWGRendererRender(void);
 
 void IWGRendererRenderCubes(void);

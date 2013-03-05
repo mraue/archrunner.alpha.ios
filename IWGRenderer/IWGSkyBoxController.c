@@ -117,8 +117,11 @@ IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault()
     return skyBoxController;
 }
 
-void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController, GLuint positionSlot,GLuint colorSlot, GLuint normalSlot)
+void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController,
+                                const IWGShaderProgramData *shaderProgram)
 {
+    glUseProgram(shaderProgram->programID);
+    
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
         IWGRingBufferBind(&skyBoxController->multiBuffer, i);
@@ -128,18 +131,21 @@ void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController, GLuin
         glBufferData(GL_ARRAY_BUFFER, skyBoxController->dataBufferSize * sizeof(GLfloat),
                      skyBoxController->dataBufferStart, GL_STREAM_DRAW);
         
-        glEnableVertexAttribArray(positionSlot);
-        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-        glEnableVertexAttribArray(colorSlot);
-        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-        //glEnableVertexAttribArray(normalSlot);
-        //glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(shaderProgram->vertexSlot);
+        glVertexAttribPointer(shaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+        glEnableVertexAttribArray(shaderProgram->colorSlot);
+        glVertexAttribPointer(shaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
     }
+    
     glBindVertexArrayOES(0);
+    
     return;
 }
 
-void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController, float timeSinceLastUpdate, IWPlayerData *player, bool updateColor)
+void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController,
+                               float timeSinceLastUpdate,
+                               const IWPlayerData *player,
+                               bool updateColor)
 {
     skyBoxController->transitionTime += timeSinceLastUpdate;
     
@@ -222,11 +228,12 @@ void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController, float 
     return;
 }
 
-void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController, bool setGLStates)
+void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController)
 {
     IWGRingBufferBindCurrentDrawBuffer(&skyBoxController->multiBuffer);
     
-    glDrawArrays(GL_TRIANGLES, 0, skyBoxController->multiBuffer.nVertices[skyBoxController->multiBuffer.currentDrawBuffer]);
+    glDrawArrays(GL_TRIANGLES, 0,
+                 skyBoxController->multiBuffer.nVertices[skyBoxController->multiBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
     

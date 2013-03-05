@@ -41,6 +41,7 @@ void IWGameSetup(void)
     IW_RAND_RANDOMIZE_TIMER
     //
     gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+    //gdCurrentGameStatus = IWGAME_STATUS_TUTORIAL;
     //
     gdRandomRemoveCubeTimer = IWTimerDataMake(0.0, 1.1, false);
     gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
@@ -111,6 +112,8 @@ void IWGameMainHandler(float timeSinceLastUpdate, float aspectRatio)
         IWGameStartMenuHandler(timeSinceLastUpdate, aspectRatio);
     }  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
         IWGameScreenShotHandler(timeSinceLastUpdate, aspectRatio);
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_TUTORIAL) {
+        IWGameTutorialHandler(timeSinceLastUpdate, aspectRatio);
     }
     return;
 }
@@ -363,6 +366,45 @@ void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
     gdProjectionMatrix = projectionMatrix;
     gdViewMatrix = viewMatrix;
 }
+
+
+void IWGameTutorialHandler(float timeSinceLastUpdate, float aspectRatio)
+{
+    IWTutorialControllerUpdate(gdTutorialController,
+                               &gdScoreCounter, &gdCubeStatus, &gdFuel, &gdPlayerData,
+                               gdTouchPoint, &gdIsTouched,
+                               &gdControllerDataAccelerometer,
+                               timeSinceLastUpdate);
+
+    IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0 * IW_DEG_TO_RAD, aspectRatio, 0.01, 100.0);
+    
+    // Update grayscale
+    glUseProgram(gdSkyboxShaderProgram.programID);
+    glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"),
+                gdTutorialController->grayScaleTransition.currentVector.x,
+                gdTutorialController->grayScaleTransition.currentVector.y);
+    glUseProgram(gdMainShaderProgram.programID);
+    glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"),
+                gdTutorialController->grayScaleTransition.currentVector.x,
+                gdTutorialController->grayScaleTransition.currentVector.y);
+    
+    // Compute the model view matrix for the object rendered with ES2
+    // REFACTOR: does not change, could only be calculated and intialized to uniforms once
+    IWMatrix4 modelMatrix = IWMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
+    
+    IWMatrix4 viewMatrix = IWMatrix4MakeLookAt(gdPlayerData.position.x, gdPlayerData.position.y, gdPlayerData.position.z,
+                                               gdPlayerData.position.x + gdPlayerData.direction.x,
+                                               gdPlayerData.position.y + gdPlayerData.direction.y,
+                                               gdPlayerData.position.z + gdPlayerData.direction.z,
+                                               gdPlayerData.up.x, gdPlayerData.up.y, gdPlayerData.up.z);
+    
+    gdNormalMatrix = IWMatrix4GetMatrix3(modelMatrix);//GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
+    gdModelMatrix = modelMatrix;
+    gdProjectionMatrix = projectionMatrix;
+    gdViewMatrix = viewMatrix;
+    return;
+}
+
 
 void IWGameRemoveCubeFromBuffer(IWCubeData *cube, IWGRingBufferData *buffer)
 {

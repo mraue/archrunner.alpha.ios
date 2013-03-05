@@ -92,8 +92,16 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
+    glGenTextures(1, &gdTextureHandlerId);
+    
     gdTriangleDoubleBuffer = IWGRingBufferGen();
     gdTextTriangleDoubleBuffer = IWGRingBufferGen();
+    
+    // Tutorial controller
+    gdTutorialController = IWTutorialControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+    IWTutorialControllerSetupVBOs(gdTutorialController,
+                                  &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdUIShaderProgram, &gdTextShaderProgram,
+                                  gdTextureHandlerId, gdFontMapTextureData);
     
     // Could swith to multi buffer, ey!
     //glGenVertexArraysOES(1, &gdUILineVertexArray);
@@ -108,7 +116,9 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     glLineWidth(1.2);
     
     IWGRendererSetupStartMenuAssets();
-
+    // DEBUG
+    gdCurrentGameStatus = IWGAME_STATUS_TUTORIAL;
+    // END DEBUG
     return;
 }
 
@@ -211,14 +221,15 @@ void IWGRendererSetupStartMenuAssets(void)
     // Sky box
     //
     
-    glUseProgram(gdSkyboxShaderProgram.programID);
-    
-    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
-    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
-    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
+//    glUseProgram(gdSkyboxShaderProgram.programID);
+//    
+//    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
+//    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
+//    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
     
     gdSkyBoxController = IWGSkyBoxControllerMakeDefault();
-    IWGSkyBoxControllerFillVBO(&gdSkyBoxController, positionSlot, colorSlot, normalSlot);
+    IWGSkyBoxControllerFillVBO(&gdSkyBoxController,
+                               &gdSkyboxShaderProgram);
 
     //
     // Text
@@ -226,9 +237,9 @@ void IWGRendererSetupStartMenuAssets(void)
     
     float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
-    GLuint textureHandlerId;
-    glGenTextures(1, &textureHandlerId);
-    gdTextureHandlerId = textureHandlerId;
+//    GLuint textureHandlerId;
+//    glGenTextures(1, &gdTextureHandlerId);
+//    gdTextureHandlerId = textureHandlerId;
 
     gdInGameTextTriangleBufferStartCPU = malloc(((2 * 10 + 1 * 9 + 1 * 10) * 6 * 9) * sizeof(GLfloat));
     
@@ -289,7 +300,7 @@ void IWGRendererSetupStartMenuAssets(void)
         
         IWGRingBufferBind(&gdTextTriangleDoubleBuffer, i);
         
-        glBindTexture(GL_TEXTURE_2D, textureHandlerId);
+        glBindTexture(GL_TEXTURE_2D, gdTextureHandlerId);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -455,14 +466,15 @@ void IWGRendererSetupGameAssets(void)
     // Sky box
     //
     
-    glUseProgram(gdSkyboxShaderProgram.programID);
-    
-    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
-    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
-    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
+//    glUseProgram(gdSkyboxShaderProgram.programID);
+//    
+//    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
+//    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
+//    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
 
     gdSkyBoxController = IWGSkyBoxControllerMakeDefault();
-    IWGSkyBoxControllerFillVBO(&gdSkyBoxController, positionSlot, colorSlot, normalSlot);
+    IWGSkyBoxControllerFillVBO(&gdSkyBoxController,
+                               &gdSkyboxShaderProgram);
     
     //
     // User interface
@@ -471,8 +483,6 @@ void IWGRendererSetupGameAssets(void)
     float aspect = fabsf(gdScreenWidth / gdScreenHeight);
     
     glUseProgram(gdTextShaderProgram.programID);
-    
-    glGenTextures(1, &gdTextureHandlerId);
     
     gdUserInterfaceController = IWUserInterfaceControllerMake(aspect,
                                                               IWUSERINTERFACE_ELEMENT_ALL,
@@ -580,15 +590,6 @@ void IWGRendererRenderCubes(void)
     
     IWGRingBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
     
-    glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
-                       1, 0, &gdModelMatrix.m00);
-    glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
-                       1, 0, &gdViewMatrix.m00);
-    glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
-                       1, 0, &gdProjectionMatrix.m00);
-    glUniformMatrix3fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX],
-                       1, 0, &gdNormalMatrix.m00);
-    
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
     glBindVertexArrayOES(0);
@@ -606,14 +607,14 @@ void IWGRendererRenderInGameText(void)
     glBindVertexArrayOES(0);
 }
 
-void IWGRendererRender(void)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void IWGRendererUpdateUniforms(void) {
     
     glUseProgram(gdMainShaderProgram.programID);
     
     glUniform4f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_SUN_COLOR],
-                gdSkyBoxController.sunColorLight.x, gdSkyBoxController.sunColorLight.y, gdSkyBoxController.sunColorLight.z,
+                gdSkyBoxController.sunColorLight.x,
+                gdSkyBoxController.sunColorLight.y,
+                gdSkyBoxController.sunColorLight.z,
                 gdSkyBoxController.sunColorLight.w);
     
     float tmp = gdSkyBoxController.transitionTime / (gdSkyBoxController.colorTransitionTime * 1.2);
@@ -627,12 +628,14 @@ void IWGRendererRender(void)
     glUniform3f(IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_PLAYERLIGHT_DIRECTION],
                 gdPlayerData.direction.x, gdPlayerData.direction.y, gdPlayerData.direction.z);
     
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
-    
-    IWGRendererRenderCubes();
-    
-    glDisable(GL_CULL_FACE);
+    glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX],
+                       1, 0, &gdModelMatrix.m00);
+    glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX],
+                       1, 0, &gdViewMatrix.m00);
+    glUniformMatrix4fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
+                       1, 0, &gdProjectionMatrix.m00);
+    glUniformMatrix3fv(basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX],
+                       1, 0, &gdNormalMatrix.m00);
     
     glUseProgram(gdSkyboxShaderProgram.programID);
     
@@ -643,7 +646,40 @@ void IWGRendererRender(void)
     glUniformMatrix4fv(skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX],
                        1, 0, &gdProjectionMatrix.m00);
     
-    IWGSkyBoxControllerRender(&gdSkyBoxController, false);
+    return;
+}
+
+void IWGRendererRender(void)
+{
+    IWGRendererUpdateUniforms();
+    
+    if (gdCurrentGameStatus == IWGAME_STATUS_TUTORIAL) {
+        if (gdTutorialController) {
+            IWTutorialControllerRender(gdTutorialController,
+                                       &gdMainShaderProgram,
+                                       &gdSkyboxShaderProgram,
+                                       &gdUIShaderProgram,
+                                       &gdTextShaderProgram);
+        } else {
+            printf("ERROR: IWGRendererRender gdTutorialController == NULL\n");
+        }
+        return;
+    }
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glUseProgram(gdMainShaderProgram.programID);
+    
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    
+    IWGRendererRenderCubes();
+    
+    glUseProgram(gdSkyboxShaderProgram.programID);
+    
+    glDisable(GL_CULL_FACE);
+    
+    IWGSkyBoxControllerRender(&gdSkyBoxController);
     
     glDisable(GL_DEPTH_TEST);
     
@@ -657,7 +693,9 @@ void IWGRendererRender(void)
         glUseProgram(gdTextShaderProgram.programID);
 
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
-            IWUserInterfaceControllerRender(&gdUserInterfaceController, gdTextShaderProgram.programID, gdUIShaderProgram.programID);
+            IWUserInterfaceControllerRender(&gdUserInterfaceController,
+                                            gdTextShaderProgram.programID,
+                                            gdUIShaderProgram.programID);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED
                    || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
             IWUIMenuRender(&gdPauseMenu);

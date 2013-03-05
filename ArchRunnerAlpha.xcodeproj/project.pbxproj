@@ -41,9 +41,6 @@
 		646F592916A555B000704F45 /* IWController.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590216A555B000704F45 /* IWController.c */; };
 		646F592A16A555B000704F45 /* IWPlayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590416A555B000704F45 /* IWPlayer.c */; };
 		646F592C16A555B000704F45 /* IWGLighting.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590916A555B000704F45 /* IWGLighting.c */; };
-		646F592D16A555B000704F45 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 646F591116A555B000704F45 /* Default-568h@2x.png */; };
-		646F592E16A555B000704F45 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 646F591216A555B000704F45 /* Default.png */; };
-		646F592F16A555B000704F45 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 646F591316A555B000704F45 /* Default@2x.png */; };
 		646F593016A555B000704F45 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 646F591416A555B000704F45 /* InfoPlist.strings */; };
 		646F593316A555B000704F45 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 646F591A16A555B000704F45 /* main.m */; };
 		646F593916A5572E00704F45 /* BasicLightShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 646F591E16A555B000704F45 /* BasicLightShader.fsh */; };
@@ -75,6 +72,10 @@
 		64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */; };
 		64E11D3716E4C0D50016FA34 /* IWUserInterfaceController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */; };
 		64E11D3916E4C0E20016FA34 /* IWUISlider.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3816E4C0E20016FA34 /* IWUISlider.c */; };
+		64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3B16E4C6EB0016FA34 /* IWCubeController.c */; };
+		64E11D3E16E5E2770016FA34 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 64E11D3D16E5E2770016FA34 /* Default.png */; };
+		64E11D4016E5E27D0016FA34 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 64E11D3F16E5E27D0016FA34 /* Default@2x.png */; };
+		64E11D4216E5E2840016FA34 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 64E11D4116E5E2840016FA34 /* Default-568h@2x.png */; };
 		64F25EFE16CF752600EC3E78 /* MainShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25EFA16CF74F300EC3E78 /* MainShader.vsh */; };
 		64F25EFF16CF752B00EC3E78 /* MainShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25EFC16CF750A00EC3E78 /* MainShader.fsh */; };
 		64F25F0416CF78EB00EC3E78 /* TextShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64F25F0016CF78BE00EC3E78 /* TextShader.vsh */; };
@@ -163,9 +164,6 @@
 		646F590D16A555B000704F45 /* IWMathTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWMathTypes.h; sourceTree = "<group>"; };
 		646F590E16A555B000704F45 /* IWVector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector3.h; sourceTree = "<group>"; };
 		646F590F16A555B000704F45 /* IWMathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWMathUtils.h; sourceTree = "<group>"; };
-		646F591116A555B000704F45 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		646F591216A555B000704F45 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		646F591316A555B000704F45 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		646F591516A555B000704F45 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		646F591A16A555B000704F45 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		646F591B16A555B000704F45 /* ArchRunnerAlpha-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ArchRunnerAlpha-Info.plist"; sourceTree = "<group>"; };
@@ -215,6 +213,11 @@
 		64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUserInterfaceController.c; path = IWUserInterface/IWUserInterfaceController.c; sourceTree = "<group>"; };
 		64E11D3816E4C0E20016FA34 /* IWUISlider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUISlider.c; path = IWUserInterface/IWUISlider.c; sourceTree = "<group>"; };
+		64E11D3A16E4C6E00016FA34 /* IWCubeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCubeController.h; sourceTree = "<group>"; };
+		64E11D3B16E4C6EB0016FA34 /* IWCubeController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWCubeController.c; sourceTree = "<group>"; };
+		64E11D3D16E5E2770016FA34 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ../Default.png; sourceTree = "<group>"; };
+		64E11D3F16E5E27D0016FA34 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../Default@2x.png"; sourceTree = "<group>"; };
+		64E11D4116E5E2840016FA34 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		64F25EFA16CF74F300EC3E78 /* MainShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MainShader.vsh; sourceTree = "<group>"; };
 		64F25EFC16CF750A00EC3E78 /* MainShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MainShader.fsh; sourceTree = "<group>"; };
 		64F25F0016CF78BE00EC3E78 /* TextShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = TextShader.vsh; sourceTree = "<group>"; };
@@ -400,6 +403,8 @@
 				641E0D7916A844710077785D /* IWGame.c */,
 				641E0D8716AD69680077785D /* IWCube.h */,
 				641E0D8816AD69720077785D /* IWCube.c */,
+				64E11D3A16E4C6E00016FA34 /* IWCubeController.h */,
+				64E11D3B16E4C6EB0016FA34 /* IWCubeController.c */,
 				646F590316A555B000704F45 /* IWController.h */,
 				646F590216A555B000704F45 /* IWController.c */,
 				646F590516A555B000704F45 /* IWPlayer.h */,
@@ -475,10 +480,10 @@
 		646F591016A555B000704F45 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				64E11D4116E5E2840016FA34 /* Default-568h@2x.png */,
+				64E11D3F16E5E27D0016FA34 /* Default@2x.png */,
+				64E11D3D16E5E2770016FA34 /* Default.png */,
 				64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */,
-				646F591116A555B000704F45 /* Default-568h@2x.png */,
-				646F591216A555B000704F45 /* Default.png */,
-				646F591316A555B000704F45 /* Default@2x.png */,
 				64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */,
 				64F25F2416D3AD9600EC3E78 /* Icon-72.png */,
 				64F25F2216D3AD8500EC3E78 /* Icon@x2.png */,
@@ -631,9 +636,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				64F25F1016D14F3A00EC3E78 /* 01Vladivostok.mp3 in Resources */,
-				646F592D16A555B000704F45 /* Default-568h@2x.png in Resources */,
-				646F592E16A555B000704F45 /* Default.png in Resources */,
-				646F592F16A555B000704F45 /* Default@2x.png in Resources */,
 				646F593016A555B000704F45 /* InfoPlist.strings in Resources */,
 				646F593916A5572E00704F45 /* BasicLightShader.fsh in Resources */,
 				646F593A16A5573100704F45 /* BasicLightShader.vsh in Resources */,
@@ -658,6 +660,9 @@
 				64F25F2B16D3BA9B00EC3E78 /* fontmap01.png in Resources */,
 				64F25F2C16D3BA9B00EC3E78 /* fontmap02.png in Resources */,
 				64F25F2D16D3BA9B00EC3E78 /* fontmap02.txt in Resources */,
+				64E11D3E16E5E2770016FA34 /* Default.png in Resources */,
+				64E11D4016E5E27D0016FA34 /* Default@2x.png in Resources */,
+				64E11D4216E5E2840016FA34 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -742,6 +747,7 @@
 				6406402216E4C02F0019CAC3 /* IWTutorialStage.c in Sources */,
 				64E11D3716E4C0D50016FA34 /* IWUserInterfaceController.c in Sources */,
 				64E11D3916E4C0E20016FA34 /* IWUISlider.c in Sources */,
+				64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
