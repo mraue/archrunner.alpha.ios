@@ -33,7 +33,7 @@ typedef struct {
     //
     float tutorialRadius;
     //
-    IWTutorialStageData stages[7];
+    IWTutorialStageData stages[8];
     unsigned int currentStage;
     unsigned int nStages;
     bool hasFinished;

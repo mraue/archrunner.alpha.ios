@@ -31,7 +31,8 @@ typedef struct {
     bool removeFuel;
     bool convertGridToBridge;
     bool activateOverdrive;
-    IWPlayerData player;    
+    IWPlayerData player;
+    float radius;
     IWTUTORIALSTAGE_STATUS status;
 } IWTutorialStageData;
 
@@ -45,6 +46,10 @@ IWTutorialStageData IWTutorialStageMake(char* title,
                                         bool removeFuel,
                                         bool convertGridToBridge,
                                         bool activateOverdrive,
-                                        IWPlayerData player);
+                                        IWPlayerData player,
+                                        float radius);
+
+IWTutorialStageData IWTutorialStageMakeNonActionStage(char* title,
+                                                      char* text);
 
 #endif

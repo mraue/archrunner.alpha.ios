@@ -251,7 +251,7 @@
     return achievement;
 }
 
-- (void) resetAchievements
+- (void)resetAchievements
 {
     for (Achievement* entry in self.achievements) {
         entry.percentComplete = @0.0;

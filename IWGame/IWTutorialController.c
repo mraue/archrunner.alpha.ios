@@ -20,7 +20,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     
     tutorialController->tutorialRadius = 2.0;
     tutorialController->currentStage = 0;
-    tutorialController->nStages = 7;
+    tutorialController->nStages = 8;
     tutorialController->hasFinished = false;
     
     tutorialController->transitionInteractionBlockTimer = IWTimerDataMake(0.0, 1.0, false);
@@ -40,7 +40,8 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         5, false, false, false, false, false,
                                                         IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                                                IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
+                                                                               IWVector3Make(0.0, 1.0, 0.0)),
+                                                        1.5);
     tutorialController->stages[1] = IWTutorialStageMake("Fuel",
                                                         "You are constantly using up\nfuel. The fuel status is\ndisplayed in the upper left.\n \nTo refill, approach a cube.",
                                                         true,
@@ -49,28 +50,17 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         5, true, false, true, false, false,
                                                         IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                                                IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
+                                                                               IWVector3Make(0.0, 1.0, 0.0)),
+                                                        1.5);
     
-    tutorialController->stages[2] = IWTutorialStageMake("Cubes",
-                                                        "Cubes come in two flavors:\n 1. Grey cubes\n 2. Red cubes\n \nApproach cubes to trigger\ndifferent actions.",
-                                                        false,
-                                                        IWUSERINTERFACE_ELEMENT_ENERGY_BAR
-                                                        | IWUSERINTERFACE_ELEMENT_HUD,
-                                                        5, true, false, true, false, false,
-                                                        IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
-                                                                               IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
+    tutorialController->stages[2]
+        = IWTutorialStageMakeNonActionStage("Cubes",
+                                            "Cubes come in two flavors:\n 1. Grey cubes\n 2. Red cubes\n \nApproach cubes to trigger\ndifferent actions.");
     
+    tutorialController->stages[3]
+        = IWTutorialStageMakeNonActionStage("Grey/Grid",
+                                            "Grey cubes are called grid\ncubes. On approach grid\ncubes provide fuel and\nconvert into red cubes,\ncalled bridge cubes.");
     
-    tutorialController->stages[3] = IWTutorialStageMake("Grey/Grid",
-                                                        "Grey cubes are called grid\ncubes. On approach grid\ncubes provide fuel and\nconvert into red cubes,\ncalled bridge cubes.",
-                                                        false,
-                                                        IWUSERINTERFACE_ELEMENT_ENERGY_BAR
-                                                        | IWUSERINTERFACE_ELEMENT_HUD,
-                                                        5, true, false, true, false, false,
-                                                        IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
-                                                                               IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
     
     tutorialController->stages[4] = IWTutorialStageMake("Red/Bridge",
                                                         "Red cubes provide a\ntemporary speed boost.\n \nThey are arranged in a\nlong line to enable you\nto cross large distances.",
@@ -81,30 +71,19 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         5, true, false, true, true, true,
                                                         IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                                                IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
+                                                                               IWVector3Make(0.0, 1.0, 0.0)),
+                                                        2.0);
+    tutorialController->stages[5]
+        = IWTutorialStageMakeNonActionStage("Disappearance",
+                                            "Grid cubes disappear with\ntime, so better be quick\nwith converting them.\nBridge cubes are stable.\nCollect bridge cubes\nto gain new grid cubes.\n...");
     
-    tutorialController->stages[5] = IWTutorialStageMake("Disappearance",
-                                                        "Grid cubes disappear with\ntime, so better be quick\nwith converting them.\nBridge cubes are stable and\nprovide new grid cubes when\napproached/collected.",
-                                                        false,
-                                                        IWUSERINTERFACE_ELEMENT_ENERGY_BAR
-                                                        | IWUSERINTERFACE_ELEMENT_HUD
-                                                        | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
-                                                        5, true, false, true, true, true,
-                                                        IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
-                                                                               IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
+    tutorialController->stages[6]
+        = IWTutorialStageMakeNonActionStage("Spawning",
+                                            "If you reach the end of a\nbridge cube line and you\nhave collected enough bridge\ncubes a new set of grid cubes\nwill spawn.");
     
-    
-    tutorialController->stages[6] = IWTutorialStageMake("Spawning",
-                                                        "If enough bridge cubes have\nbeen collected, a new set\nof grid cubes will automat-\nically spawn, when you reach\nthe end of a bridge cube\nline.",
-                                                        false,
-                                                        IWUSERINTERFACE_ELEMENT_ENERGY_BAR
-                                                        | IWUSERINTERFACE_ELEMENT_HUD
-                                                        | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
-                                                        5, true, false, true, true, true,
-                                                        IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
-                                                                               IWVector3Make(0.0, 0.0, 1.0),
-                                                                               IWVector3Make(0.0, 1.0, 0.0)));
+    tutorialController->stages[7]
+        = IWTutorialStageMakeNonActionStage("Score",
+                                            "You gain score points by:\n1. surviving for a certain\n   time\n2. converting/collecting\n   cubes\n3. traveling towards the sun");
     
     tutorialController->grayScaleTransitionBase =
     IWVector3TransitionMake(IWVector3Make(1.0, 0.2, 0.0),
@@ -120,7 +99,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     tutorialController->skipTutorialButtonRectangle = IWRectangleMake(0.0, 0.7, 0.2, 1.0);
     
     // Allocate memory for text buffer
-    tutorialController->textDataBufferSize = (1 * 6 + 1 * 7 + 1 * 15 + 6 * 30) * 6 * 9;
+    tutorialController->textDataBufferSize = (1 * 6 + 1 * 12 + 1 * 15 + 6 * 30) * 6 * 9;
     tutorialController->textDataBufferStart = malloc(tutorialController->textDataBufferSize * sizeof(GLfloat));
     
     tutorialController->textMultiBuffer = IWGRingBufferGen();
@@ -147,7 +126,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     tutorialController->startNextButton
     = IWGTextFieldMake(IWVector2Make(-1.0 + textBorderOffset * screenAspectRatio, -1.0 + textBorderOffset),
                        IWGEOMETRY_ANCHOR_POSITION_LOWER_LEFT,
-                       1, 7,
+                       1, 12,
                        1. / screenAspectRatio,
                        "[START]",
                        0.18, 0.0,
@@ -159,7 +138,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     bufferOffset += tutorialController->startNextButton.triangleBufferData.size;
     
     tutorialController->stageTitle
-    = IWGTextFieldMake(IWVector2Make(-1.0 + textBorderOffset * screenAspectRatio, 1.0 - textBorderOffset),
+    = IWGTextFieldMake(IWVector2Make(-1.0 + textBorderOffset * screenAspectRatio + 0.03, 1.0 - textBorderOffset),
                        IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
                        1, 15,
                        1. / screenAspectRatio,
@@ -173,7 +152,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     bufferOffset += tutorialController->stageTitle.triangleBufferData.size;
     
     tutorialController->stageText
-    = IWGTextFieldMake(IWVector2Make(-1.0 + textBorderOffset * screenAspectRatio,
+    = IWGTextFieldMake(IWVector2Make(-1.0 + textBorderOffset * screenAspectRatio + 0.03,
                                      1.0 - textBorderOffset - 0.26 - 0.1),
                        IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
                        6, 30,
@@ -357,6 +336,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                                                   tutorialController->mainShaderProgram);
                         *cubeStatus = IWCubeStatusMakeEmpty();
                         cubeStatus->nGridCubes = tutorialController->cubeController.nCubes;
+                        tutorialController->tutorialRadius = currentStage->radius;
                     }
                     //
                     IWGTextFieldSetText(&tutorialController->stageText, currentStage->text);
@@ -376,8 +356,23 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
 
                 } else {
                     tutorialController->hasFinished = true;
-                    tutorialController->grayScaleTransition = tutorialController->grayScaleTransitionBase;
-                    IWVector3TransitionReverseAndStart(&tutorialController->grayScaleTransition);
+                    
+                    if (currentStage->status == IWTUTORIALSTAGE_STATUS_RUNNING) {
+                        tutorialController->grayScaleTransition = tutorialController->grayScaleTransitionBase;
+                        IWVector3TransitionReverseAndStart(&tutorialController->grayScaleTransition);
+                    }
+                    
+                    IWGTextFieldSetText(&tutorialController->stageText, "");
+                    IWGTextFieldSetText(&tutorialController->stageTitle, "End of Tutorial");
+                    tutorialController->startNextButton.color = tutorialController->textColorText;
+                    IWGTextFieldSetText(&tutorialController->startNextButton, "[START GAME]");
+                    IWGTextFieldSetText(&tutorialController->skipTutorialButton, "");
+                    
+                    IWGRingBufferSubData(&tutorialController->textMultiBuffer, 0,
+                                         tutorialController->textDataBufferSize * sizeof(GLfloat),
+                                         tutorialController->textDataBufferStart,
+                                         true);
+                    
                 }
                 *isTouched = false;
                 IWTimerResetAndStart(&tutorialController->transitionInteractionBlockTimer);
@@ -390,29 +385,32 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
         IWVector3TransitionUpdate(&tutorialController->grayScaleTransition, timeSinceLastUpdate);
     }
     
-    // Check if player is inside the tutorial zone
-    if (IWVector3Length(player->position) > tutorialController->tutorialRadius) {
-        IWCubeControllerPurgeData(&tutorialController->cubeController);
-        unsigned int nCubesPerAxis = currentStage->nCubesPerAxis;
-        tutorialController->cubeController =
-        IWCubeControllerMake(nCubesPerAxis, nCubesPerAxis, nCubesPerAxis,
-                             .04, .12, IWVector3Make(0.0, 0.0, 0.0),
-                             IWVector4Make(0.5, 0.5, 0.5, 1.0),
-                             0, 0.05,
-                             currentStage->cubesInteractive,
-                             currentStage->removeCubes,
-                             1.0, 0);
-        IWCubeControllerSetupVBOs(&tutorialController->cubeController,
-                                  tutorialController->mainShaderProgram);
-        *cubeStatus = IWCubeStatusMakeEmpty();
-        cubeStatus->nGridCubes = tutorialController->cubeController.nCubes;
-        *player = currentStage->player;
-        tutorialController->grayScaleTransition = tutorialController->grayScaleTransitionBase;
-    }
-    
     // If we are running, process game logic
     if (currentStage->status == IWTUTORIALSTAGE_STATUS_RUNNING
         && !tutorialController->hasFinished) {
+        
+        // Check if player is inside the tutorial zone
+        if (IWVector3Length(player->position) > tutorialController->tutorialRadius
+            || (currentStage->removeFuel && fuel->currentLevel == 0.0)) {
+            IWCubeControllerPurgeData(&tutorialController->cubeController);
+            unsigned int nCubesPerAxis = currentStage->nCubesPerAxis;
+            tutorialController->cubeController =
+            IWCubeControllerMake(nCubesPerAxis, nCubesPerAxis, nCubesPerAxis,
+                                 .04, .12, IWVector3Make(0.0, 0.0, 0.0),
+                                 IWVector4Make(0.5, 0.5, 0.5, 1.0),
+                                 0, 0.05,
+                                 currentStage->cubesInteractive,
+                                 currentStage->removeCubes,
+                                 1.0, 0);
+            IWCubeControllerSetupVBOs(&tutorialController->cubeController,
+                                      tutorialController->mainShaderProgram);
+            *cubeStatus = IWCubeStatusMakeEmpty();
+            cubeStatus->nGridCubes = tutorialController->cubeController.nCubes;
+            *player = currentStage->player;
+            tutorialController->grayScaleTransition = tutorialController->grayScaleTransitionBase;
+            IWFuelAddFuel(fuel, fuel->currentMaxLevel);
+        }
+        
         // Update player position
         float speed = player->speed;
         player->position = IWVector3Add(player->position,
@@ -458,6 +456,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
             IWFuelRemoveFuel(fuel, 0.05 / 0.6 * timeSinceLastUpdate);
             fuel->isWarning = fuel->currentLevel / fuel->currentMaxLevel < fuel->warningLevel ? true : false;
         }
+        
         // Collision detection
         for (int i = 0; i < tutorialController->cubeController.nCubes; i++) {
             if (tutorialController->cubeController.cubeData[i].isInteractive) {
@@ -617,18 +616,17 @@ void IWTutorialControllerRender(IWTutorialControllerData *tutorialController,
                                         uiShaderProgram->programID);
     }
     
-    if (!tutorialController->hasFinished) {
-        glUseProgram(textShaderProgram->programID);
-        
-        IWGRingBufferBindCurrentDrawBuffer(&tutorialController->textMultiBuffer);
-        
-        glDrawArrays(GL_TRIANGLES, 0,
-                     tutorialController->textMultiBuffer.nVertices[tutorialController->textMultiBuffer.currentDrawBuffer]);
-        
-        glBindVertexArrayOES(0);
-        
-        IWGRingBufferSwitchBuffer(&tutorialController->textMultiBuffer);
-    }
+    glUseProgram(textShaderProgram->programID);
+    
+    IWGRingBufferBindCurrentDrawBuffer(&tutorialController->textMultiBuffer);
+    
+    glDrawArrays(GL_TRIANGLES, 0,
+                 tutorialController->textMultiBuffer.nVertices[tutorialController->textMultiBuffer.currentDrawBuffer]);
+    
+    glBindVertexArrayOES(0);
+    
+    IWGRingBufferSwitchBuffer(&tutorialController->textMultiBuffer);
+
     
     glDisable(GL_BLEND);
 }

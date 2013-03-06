@@ -510,8 +510,7 @@ void IWGRendererSetupGameAssets(void)
                                                     IWVector2Make(-0.4, 0.6), 1. / aspect,
                                                     0.22, 1.2,
                                                     IWVector4Make(0.2, 0.2, 0.2, 0.8),
-                                                    &gdFontMap),
-                              2);
+                                                    &gdFontMap), 2);
     gdPauseMenu.pages[0].title = "PAUSED";
     gdPauseMenu.pages[0].isActive = true;
     //IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_EMPTY, "", "", 0, NULL, 0);

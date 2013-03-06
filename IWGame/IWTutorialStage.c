@@ -21,7 +21,8 @@ IWTutorialStageData IWTutorialStageMake(char* title,
                                         bool removeFuel,
                                         bool convertGridToBridge,
                                         bool activateOverdrive,
-                                        IWPlayerData player)
+                                        IWPlayerData player,
+                                        float radius)
 {
     IWTutorialStageData tutorialStage = {
         title,
@@ -35,7 +36,18 @@ IWTutorialStageData IWTutorialStageMake(char* title,
         convertGridToBridge,
         activateOverdrive,
         player,
+        radius,
         IWTUTORIALSTAGE_STATUS_TEXT
     };
     return tutorialStage;
+}
+
+IWTutorialStageData IWTutorialStageMakeNonActionStage(char* title,
+                                                      char* text)
+{
+    return IWTutorialStageMake(title, text, false, 0, 0, false, false, false, false, false,
+                               IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
+                                                      IWVector3Make(0.0, 0.0, 1.0),
+                                                      IWVector3Make(0.0, 1.0, 0.0)),
+                               100.0);
 }
