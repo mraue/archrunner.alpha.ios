@@ -62,10 +62,15 @@ typedef struct {
     IWGRingBufferData triangleRingBuffer;
 } IWCubeControllerData;
 
-IWCubeControllerData IWCubeControllerMake(unsigned int nCubesPerAxis,
+IWCubeControllerData IWCubeControllerMake(int nx, int ny, int nz,
+                                          float l, float d,
+                                          IWVector3 center,
+                                          IWVector4 color,
+                                          unsigned int nRandomizePositions,
+                                          float randomDistance,
+                                          bool cubesInteractive,
                                           bool removeCubes,
                                           float removalTime,
-                                          bool randomizePosition,
                                           unsigned int nBridgeCubes);
 
 void IWCubeControllerSetupVBOs(IWCubeControllerData *cubeController,
@@ -73,7 +78,7 @@ void IWCubeControllerSetupVBOs(IWCubeControllerData *cubeController,
 
 void IWCubeControllerUpdate(IWCubeControllerData *cubeController,
                             const IWScoreCounterData *scoreCounter,
-                            const IWCubeStatusData *cubeStatus,
+                            IWCubeStatusData *cubeStatus,
                             const IWFuel *fuel,
                             const IWPlayerData *player,
                             float timeSinceLastUpdate);
@@ -82,5 +87,7 @@ void IWCubeControllerRender(IWCubeControllerData *cubeController,
                             GLuint programId);
 
 void IWCubeControllerPurgeData(IWCubeControllerData *cubeController);
+
+void IWCubeControllerRemoveCube(IWCubeControllerData *cubeController, IWCubeData *cube);
 
 #endif

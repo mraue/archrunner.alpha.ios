@@ -21,24 +21,30 @@ typedef enum {
 } IWTUTORIALSTAGE_STATUS;
 
 typedef struct {
+    char* title;
+    char* text;
+    bool hasActionStage;
     IWUSERINTERFACE_ELEMENT userInterfaceElements;
     unsigned int nCubesPerAxis;
+    bool cubesInteractive;
     bool removeCubes;
     bool removeFuel;
     bool convertGridToBridge;
-    char* title;
-    char* text;
+    bool activateOverdrive;
     IWPlayerData player;    
     IWTUTORIALSTAGE_STATUS status;
 } IWTutorialStageData;
 
-IWTutorialStageData IWTutorialStageMake(IWUSERINTERFACE_ELEMENT userInterfaceElements,
+IWTutorialStageData IWTutorialStageMake(char* title,
+                                        char* text,
+                                        bool hasActionStage,
+                                        IWUSERINTERFACE_ELEMENT userInterfaceElements,
                                         unsigned int nCubesPerAxis,
+                                        bool cubesInteractive,
                                         bool removeCubes,
                                         bool removeFuel,
                                         bool convertGridToBridge,
-                                        char* title,
-                                        char* text,
+                                        bool activateOverdrive,
                                         IWPlayerData player);
 
 #endif

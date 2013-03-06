@@ -370,11 +370,20 @@ void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
 
 void IWGameTutorialHandler(float timeSinceLastUpdate, float aspectRatio)
 {
+    gdTotalRunTime += timeSinceLastUpdate;
+
     IWTutorialControllerUpdate(gdTutorialController,
                                &gdScoreCounter, &gdCubeStatus, &gdFuel, &gdPlayerData,
                                gdTouchPoint, &gdIsTouched,
                                &gdControllerDataAccelerometer,
                                timeSinceLastUpdate);
+    
+    if (!gdTutorialController->hasFinished
+        && gdTutorialController->stages[gdTutorialController->currentStage].status == IWTUTORIALSTAGE_STATUS_TEXT) {
+        gdResetControllerPosition = true;
+    } else {
+        gdResetControllerPosition = false;
+    }
 
     IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0 * IW_DEG_TO_RAD, aspectRatio, 0.01, 100.0);
     

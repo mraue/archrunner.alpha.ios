@@ -11,23 +11,29 @@
 #include <stdio.h>
 
 
-IWTutorialStageData IWTutorialStageMake(IWUSERINTERFACE_ELEMENT userInterfaceElements,
+IWTutorialStageData IWTutorialStageMake(char* title,
+                                        char* text,
+                                        bool hasActionStage,
+                                        IWUSERINTERFACE_ELEMENT userInterfaceElements,
                                         unsigned int nCubesPerAxis,
+                                        bool cubesInteractive,
                                         bool removeCubes,
                                         bool removeFuel,
                                         bool convertGridToBridge,
-                                        char* title,
-                                        char* text,
+                                        bool activateOverdrive,
                                         IWPlayerData player)
 {
     IWTutorialStageData tutorialStage = {
+        title,
+        text,
+        hasActionStage,
         userInterfaceElements,
         nCubesPerAxis,
+        cubesInteractive,
         removeCubes,
         removeFuel,
         convertGridToBridge,
-        title,
-        text,
+        activateOverdrive,
         player,
         IWTUTORIALSTAGE_STATUS_TEXT
     };

@@ -13,18 +13,23 @@
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-IWCubeControllerData IWCubeControllerMake(unsigned int nCubesPerAxis,
+IWCubeControllerData IWCubeControllerMake(int nx, int ny, int nz,
+                                          float l, float d,
+                                          IWVector3 center,
+                                          IWVector4 color,
+                                          unsigned int nRandomizePositions,
+                                          float randomDistance,
+                                          bool cubesInteractive,
                                           bool removeCubes,
                                           float removalTime,
-                                          bool randomizePosition,
                                           unsigned int nBridgeCubes)
 {
     IWCubeControllerData cubeController;
     
-    int nx, ny, nz;
-    nx = ny = nz = nCubesPerAxis;// [8]
-    
     cubeController.nCubes = nx * ny * nz;
+    
+    cubeController.randomRemoveCubeTimer = IWTimerDataMake(0.0, removalTime, false);
+    cubeController.removeCubes = removeCubes;
     
     // Allocate memory buffer
     cubeController.triangleDataBufferSize = cubeController.nCubes * 6 * 6 * 10;
@@ -37,8 +42,6 @@ IWCubeControllerData IWCubeControllerMake(unsigned int nCubesPerAxis,
     cubeController.poolCubeIndexList.nEntries = 0;
     cubeController.gpuBufferPositionIndexList = IWIndexListMake(cubeController.nCubes);
     
-    IWVector4 cubeBaseColor = {0.5, 0.5, 0.5, 1.0};
-    
     if (nBridgeCubes > cubeController.nCubes) {
         printf("ERROR: nBridgeCubes > cubeController.nCubes -> converting all cubes to bridge cubes\n");
         nBridgeCubes = cubeController.nCubes;
@@ -50,8 +53,7 @@ IWCubeControllerData IWCubeControllerMake(unsigned int nCubesPerAxis,
     //unsigned int nCubesBridge = 140;
     //unsigned int nCubesBridge = 0;
     
-    cubeController.cubeData = IWCubeMakeCubes(nx, ny, nz, .04, .12, IWVector3Make(0.0, 0.0, 0.0), cubeBaseColor,
-                                              randomizePosition ? 1 : 0, 0.05);
+    cubeController.cubeData = IWCubeMakeCubes(nx, ny, nz, l, d, center, color, nRandomizePositions, randomDistance);
     
     cubeController.secondaryPositions = IWCubeMakeCubeCurve(cubeController.nCubes,
                                                             IWVector3Make(0.0, 0.0, 0.0),
@@ -63,7 +65,7 @@ IWCubeControllerData IWCubeControllerMake(unsigned int nCubesPerAxis,
     for (int nc=0; nc < cubeController.nCubes; nc++) {
         //
         cubeController.cubeData[nc].type = IWCUBE_TYPE_STANDARD;
-        cubeController.cubeData[nc].isInteractive = false;
+        cubeController.cubeData[nc].isInteractive = cubesInteractive;
         if (nc > cubeController.nCubes  - nBridgeCubes) {//114
             cubeController.cubeData[nc].centerPosition
                 = cubeController.secondaryPositions[cubeController.secondaryPositionCounter];
@@ -81,8 +83,6 @@ IWCubeControllerData IWCubeControllerMake(unsigned int nCubesPerAxis,
         //
         memPtr += IWCubeToTriangles(&cubeController.cubeData[nc]);
         // Setup primitive data buffer chain
-        //gdStandardCubeIndexList.map[nc] = nc;
-        //gdStandardCubeIndexList.reverseMap[nc] = nc;
         IWIndexListAppendObjectId(&cubeController.standardCubeIndexList, nc);
         IWIndexListAppendObjectId(&cubeController.gpuBufferPositionIndexList, nc);
     }
@@ -121,14 +121,64 @@ void IWCubeControllerSetupVBOs(IWCubeControllerData *cubeController,
     glBindVertexArrayOES(0);
 }
 
+void IWCubeControllerRemoveCube(IWCubeControllerData *cubeController,
+                                IWCubeData *cube)
+{
+    int bufferId = IWIndexListGetIndexForObjectId(&cubeController->gpuBufferPositionIndexList, cube->id);
+    if (bufferId < 0) {
+        printf("ERROR: Could not find cube with id %u in GPU buffer list\n", cube->id);
+        return;
+    }
+    
+    int newBufferId = IWIndexListReplaceWithLast(&cubeController->gpuBufferPositionIndexList, bufferId);
+    
+    cube->isInteractive = false;
+    cube->type = IWCUBE_TYPE_POOL;
+    
+    //currentBufferID = cube->triangleBufferData.bufferIDGPU;
+    if (bufferId != cubeController->gpuBufferPositionIndexList.nEntries) {
+        int newCubeID = IWIndexListGetObjectIdForIndex(&cubeController->gpuBufferPositionIndexList, bufferId);
+        if (newCubeID < 0) {
+            printf("ERROR could not get object id from cubeController->GPUBufferPositionIndexList for buffer %i", bufferId);
+            return;
+        }
+        
+        if (newBufferId != bufferId) {
+            cubeController->cubeData[newCubeID].triangleBufferData.bufferIDGPU = bufferId;
+            
+            IWGRingBufferSubData(&cubeController->triangleRingBuffer,
+                                 cube->triangleBufferData.size * bufferId * sizeof(GLfloat),
+                                 cube->triangleBufferData.size * sizeof(GLfloat),
+                                 cubeController->cubeData[newCubeID].triangleBufferData.startCPU,
+                                 true);
+        }
+    }
+    cubeController->triangleRingBuffer.nVertices[cubeController->triangleRingBuffer.currentDataUpdateBuffer]
+        -= cube->triangleBufferData.size / cube->triangleBufferData.stride;
+    
+    return;
+}
+
 void IWCubeControllerUpdate(IWCubeControllerData *cubeController,
                             const IWScoreCounterData *scoreCounter,
-                            const IWCubeStatusData *cubeStatus,
+                            IWCubeStatusData *cubeStatus,
                             const IWFuel *fuel,
                             const IWPlayerData *player,
                             float timeSinceLastUpdate)
 {
-    
+    // Auto remove standard cubes
+    if (cubeController->removeCubes
+        && IWTimerUpdate(&cubeController->randomRemoveCubeTimer, timeSinceLastUpdate)) {
+        
+        IWTimerResetAndStart(&cubeController->randomRemoveCubeTimer);
+        
+        // Remove cube
+        unsigned int i = IWIndexListRemoveRandom(&cubeController->standardCubeIndexList);
+        //printf("DEBUG: Removing cube %u\n", i);
+        IWCubeControllerRemoveCube(cubeController, &cubeController->cubeData[i]);
+        
+        cubeStatus->nGridCubes -= 1;
+    }
 }
 
 void IWCubeControllerRender(IWCubeControllerData *cubeController,
