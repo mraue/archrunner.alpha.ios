@@ -37,7 +37,7 @@
 #include "IWUIMenuItem.h"
 #include "IWUIMenuPage.h"
 #include "IWUIMenuPresenter.h"
-#include "IWUIMenu.h"
+#include "IWUIMenuController.h"
 #include "IWUserInterfaceController.h"
 
 #include "IWGameData.h"
@@ -103,11 +103,11 @@ void IWGRendererSetupGL(const char* fontMapFilename)
                                   &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdUIShaderProgram, &gdTextShaderProgram,
                                   gdTextureHandlerId, gdFontMapTextureData);
     
-    // Could swith to multi buffer, ey!
-    //glGenVertexArraysOES(1, &gdUILineVertexArray);
-    //glBindVertexArrayOES(gdUILineVertexArray);
-    //glGenBuffers(1, &gdUILineVertexBuffer);
-    //glBindVertexArrayOES(0);
+    // Start menu controller
+    gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+    IWStartMenuControllerSetupVBOs(gdStartMenuController,
+                                   &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
+                                   gdTextureHandlerId, gdFontMapTextureData);
     
     // Open GL base settings
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -117,7 +117,7 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     IWGRendererSetupStartMenuAssets();
     // DEBUG
-    gdCurrentGameStatus = IWGAME_STATUS_TUTORIAL;
+    //gdCurrentGameStatus = IWGAME_STATUS_TUTORIAL;
     // END DEBUG
     return;
 }
@@ -506,7 +506,7 @@ void IWGRendererSetupGameAssets(void)
     // PAUSE/GAME OVER Menu
     //
     
-    gdPauseMenu = IWUIMenuMake(IWUIMenuPresenterMake(2, 12, 1,
+    gdPauseMenu = IWUIMenuControllerMake(IWUIMenuPresenterMake(2, 12, 1,
                                                     IWVector2Make(-0.4, 0.6), 1. / aspect,
                                                     0.22, 1.2,
                                                     IWVector4Make(0.2, 0.2, 0.2, 0.8),
@@ -525,7 +525,7 @@ void IWGRendererSetupGameAssets(void)
     IWUIMenuPresenterInitTextFields(&gdPauseMenu.presenter, gdPauseMenu.dataBufferStart);
     IWIUMenuPresenterPresentMenu(&gdPauseMenu.presenter, &gdPauseMenu.pages[0]);
     
-    IWUIMenuFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId, gdFontMapTextureData);
+    IWUIMenuControllerFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId, gdFontMapTextureData);
     
     //
     // Score presenter
@@ -579,7 +579,7 @@ void IWGRendererTearDownGameAssets(void)
     
     IWUserInterfacePurgeData(&gdUserInterfaceController);
     
-    IWUIMenuPurgeData(&gdPauseMenu);
+    IWUIMenuControllerPurgeData(&gdPauseMenu);
     IWScorePresenterPurgeData(&gdScorePresenterTest);
 }
 
@@ -663,6 +663,16 @@ void IWGRendererRender(void)
             printf("ERROR: IWGRendererRender gdTutorialController == NULL\n");
         }
         return;
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+        if (gdStartMenuController) {
+            IWStartMenuControllerRender(gdStartMenuController,
+                                        &gdMainShaderProgram,
+                                        &gdSkyboxShaderProgram,
+                                        &gdTextShaderProgram);
+        } else {
+            printf("ERROR: IWGRendererRender gdStartMenuController == NULL\n");
+        }
+        return;
     }
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -697,7 +707,7 @@ void IWGRendererRender(void)
                                             gdUIShaderProgram.programID);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED
                    || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
-            IWUIMenuRender(&gdPauseMenu);
+            IWUIMenuControllerRender(&gdPauseMenu);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
             IWScorePresenterRender(&gdScorePresenterTest);
         }

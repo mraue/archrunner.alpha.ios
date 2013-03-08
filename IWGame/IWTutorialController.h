@@ -33,7 +33,7 @@ typedef struct {
     //
     float tutorialRadius;
     //
-    IWTutorialStageData stages[8];
+    IWTutorialStageData stages[9];
     unsigned int currentStage;
     unsigned int nStages;
     bool hasFinished;
@@ -63,6 +63,8 @@ typedef struct {
 
 IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRatio,
                                                           IWGFontMapData *fontMap);
+
+void IWTutorialControllerReset(IWTutorialControllerData *tutorialController);
 
 void IWTutorialControllerSetupVBOs(IWTutorialControllerData *tutorialController,
                                    const IWGShaderProgramData *mainShaderProgram,

@@ -36,11 +36,12 @@
 #include "IWGShaderProgram.h"
 #include "IWCubeStatus.h"
 #include "IWUIMenuPresenter.h"
-#include "IWUIMenu.h"
+#include "IWUIMenuController.h"
 #include "IWScorePresenter.h"
 #include "IWUISlider.h"
 #include "IWUserInterfaceController.h"
 #include "IWTutorialController.h"
+#include "IWStartMenuController.h"
 
 #pragma mark - Game Logic Data
 
@@ -87,6 +88,7 @@ bool gdPushScoreToLeaderboard;
 bool gdUpdateAchievements;
 
 IWTutorialControllerData *gdTutorialController;
+IWStartMenuControllerData *gdStartMenuController;
 
 #pragma mark - User input
 
@@ -95,7 +97,7 @@ IWControllerData gdControllerDataAccelerometer;
 #pragma mark - Debug / Testing
 
 IWUIMenuPresenterData gdMenuPresenterTest;
-IWUIMenuData gdMenuTest;
+IWUIMenuControllerData gdMenuController;
 
 IWScorePresenterData gdScorePresenterTest;
 
@@ -126,7 +128,7 @@ bool gdResetControllerPosition;
 
 bool gdRunningInSimulator;
 
-IWUIMenuData gdPauseMenu;
+IWUIMenuControllerData gdPauseMenu;
 
 #pragma mark - Open GL Buffer
 

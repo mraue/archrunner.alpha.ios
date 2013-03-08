@@ -6,16 +6,16 @@
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
-#include "IWUIMenu.h"
+#include "IWUIMenuController.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-IWUIMenuData IWUIMenuMake(IWUIMenuPresenterData presenter, unsigned int nPages)
+IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter, unsigned int nPages)
 {
-    IWUIMenuData menu;
+    IWUIMenuControllerData menu;
     menu.presenter = presenter;
     menu.dataBufferSize = menu.presenter.triangleBufferData.size;
     menu.dataBufferStart = malloc(menu.dataBufferSize * sizeof(GLfloat));
@@ -31,14 +31,15 @@ IWUIMenuData IWUIMenuMake(IWUIMenuPresenterData presenter, unsigned int nPages)
     } else {
         menu.pages = NULL;
     }
-
+    
     return menu;
 }
 
-void IWUIMenuFillVBO(IWUIMenuData *menu, GLuint positionSlot,GLuint colorSlot, GLuint textureOffsetSlot,
-                     GLuint textureHandlerId, GLvoid* fontMapTextureData)
+void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menu,
+                               GLuint positionSlot,GLuint colorSlot, GLuint textureOffsetSlot,
+                               GLuint textureHandlerId, GLvoid* fontMapTextureData)
 {
-
+    
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         
@@ -71,12 +72,12 @@ void IWUIMenuFillVBO(IWUIMenuData *menu, GLuint positionSlot,GLuint colorSlot, G
     return;
 }
 
-void IWUIMenuUpdate(IWUIMenuData *menu, float timeSinceLastUpdate)
+void IWUIMenuControllerUpdate(IWUIMenuControllerData *menu, float timeSinceLastUpdate)
 {
     return;
 }
 
-void IWUIMenuRender(IWUIMenuData *menu)
+void IWUIMenuControllerRender(IWUIMenuControllerData *menu)
 {
     IWGRingBufferBindCurrentDrawBuffer(&menu->multiBuffer);
     
@@ -89,7 +90,7 @@ void IWUIMenuRender(IWUIMenuData *menu)
     return;
 }
 
-void IWUIMenuPurgeData(IWUIMenuData *menu)
+void IWUIMenuControllerPurgeData(IWUIMenuControllerData *menu)
 {
     for (unsigned int i = 0; i < menu->nPages; i++) {
         IWUIMenuPagePurgeData(&menu->pages[i]);

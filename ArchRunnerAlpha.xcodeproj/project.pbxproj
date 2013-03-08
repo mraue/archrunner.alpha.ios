@@ -10,6 +10,7 @@
 		6404C90516D623AC005900FA /* IWScorePresenter.c in Sources */ = {isa = PBXBuildFile; fileRef = 6404C90416D623AC005900FA /* IWScorePresenter.c */; };
 		6406401C16E49A010019CAC3 /* IWTutorialController.c in Sources */ = {isa = PBXBuildFile; fileRef = 6406401B16E49A010019CAC3 /* IWTutorialController.c */; };
 		6406402216E4C02F0019CAC3 /* IWTutorialStage.c in Sources */ = {isa = PBXBuildFile; fileRef = 6406402116E4C02E0019CAC3 /* IWTutorialStage.c */; };
+		64086BB216EA2141000B1E76 /* IWStartMenuController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64086BB016EA186B000B1E76 /* IWStartMenuController.c */; };
 		641AC1C016C11F8200DDD2EB /* IWGCircle.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1BF16C11F8200DDD2EB /* IWGCircle.c */; };
 		641AC1C216C24F1300DDD2EB /* IWGFontMapEntry.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */; };
 		641AC1C616C2502100DDD2EB /* IWGFontMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1C516C2502100DDD2EB /* IWGFontMap.c */; };
@@ -99,7 +100,7 @@
 		64F25F3D16D4DA2800EC3E78 /* IWUIMenuPresenter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3916D3CF4300EC3E78 /* IWUIMenuPresenter.c */; };
 		64F25F3E16D4E35B00EC3E78 /* IWUIMenuPage.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */; };
 		64F25F3F16D4E35E00EC3E78 /* IWUIMenuItem.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F3316D3CEE900EC3E78 /* IWUIMenuItem.c */; };
-		64F25F4216D5126B00EC3E78 /* IWUIMenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F4116D5126A00EC3E78 /* IWUIMenu.c */; };
+		64F25F4216D5126B00EC3E78 /* IWUIMenuController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F25F4116D5126A00EC3E78 /* IWUIMenuController.c */; };
 		64F4209216C4E2EA00121DE6 /* IWGTextField.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4209116C4E2E900121DE6 /* IWGTextField.c */; };
 		64F4209516C50C1B00121DE6 /* IWScoreCounter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F4209416C50C1B00121DE6 /* IWScoreCounter.c */; };
 /* End PBXBuildFile section */
@@ -111,6 +112,8 @@
 		6406401D16E49A0D0019CAC3 /* IWTutorialController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWTutorialController.h; sourceTree = "<group>"; };
 		6406401E16E4BFFD0019CAC3 /* IWTutorialStage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWTutorialStage.h; sourceTree = "<group>"; };
 		6406402116E4C02E0019CAC3 /* IWTutorialStage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWTutorialStage.c; sourceTree = "<group>"; };
+		64086BAF16EA1861000B1E76 /* IWStartMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWStartMenuController.h; sourceTree = "<group>"; };
+		64086BB016EA186B000B1E76 /* IWStartMenuController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWStartMenuController.c; sourceTree = "<group>"; };
 		641AC1BE16C11F7500DDD2EB /* IWGCircle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGCircle.h; sourceTree = "<group>"; };
 		641AC1BF16C11F8200DDD2EB /* IWGCircle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGCircle.c; sourceTree = "<group>"; };
 		641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGFontMapEntry.c; sourceTree = "<group>"; };
@@ -245,8 +248,8 @@
 		64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenuPage.c; path = IWUserInterface/IWUIMenuPage.c; sourceTree = "<group>"; };
 		64F25F3816D3CF2D00EC3E78 /* IWUIMenuPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenuPresenter.h; path = IWUserInterface/IWUIMenuPresenter.h; sourceTree = "<group>"; };
 		64F25F3916D3CF4300EC3E78 /* IWUIMenuPresenter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenuPresenter.c; path = IWUserInterface/IWUIMenuPresenter.c; sourceTree = "<group>"; };
-		64F25F4016D5125700EC3E78 /* IWUIMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenu.h; path = IWUserInterface/IWUIMenu.h; sourceTree = "<group>"; };
-		64F25F4116D5126A00EC3E78 /* IWUIMenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenu.c; path = IWUserInterface/IWUIMenu.c; sourceTree = "<group>"; };
+		64F25F4016D5125700EC3E78 /* IWUIMenuController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenuController.h; path = IWUserInterface/IWUIMenuController.h; sourceTree = "<group>"; };
+		64F25F4116D5126A00EC3E78 /* IWUIMenuController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIMenuController.c; path = IWUserInterface/IWUIMenuController.c; sourceTree = "<group>"; };
 		64F4209016C4E2E100121DE6 /* IWGTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGTextField.h; sourceTree = "<group>"; };
 		64F4209116C4E2E900121DE6 /* IWGTextField.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGTextField.c; sourceTree = "<group>"; };
 		64F4209316C50C1200121DE6 /* IWScoreCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWScoreCounter.h; sourceTree = "<group>"; };
@@ -330,8 +333,8 @@
 				64F25F3616D3CF1900EC3E78 /* IWUIMenuPage.c */,
 				64F25F3816D3CF2D00EC3E78 /* IWUIMenuPresenter.h */,
 				64F25F3916D3CF4300EC3E78 /* IWUIMenuPresenter.c */,
-				64F25F4016D5125700EC3E78 /* IWUIMenu.h */,
-				64F25F4116D5126A00EC3E78 /* IWUIMenu.c */,
+				64F25F4016D5125700EC3E78 /* IWUIMenuController.h */,
+				64F25F4116D5126A00EC3E78 /* IWUIMenuController.c */,
 				64A658F016DB49D6003F92C4 /* IWUISlider.h */,
 				64E11D3816E4C0E20016FA34 /* IWUISlider.c */,
 				64A6594416DF52EC003F92C4 /* IWUserInterfaceController.h */,
@@ -423,6 +426,8 @@
 				64F25F1616D386D800EC3E78 /* IWCubeStatus.c */,
 				6406401D16E49A0D0019CAC3 /* IWTutorialController.h */,
 				6406401B16E49A010019CAC3 /* IWTutorialController.c */,
+				64086BAF16EA1861000B1E76 /* IWStartMenuController.h */,
+				64086BB016EA186B000B1E76 /* IWStartMenuController.c */,
 				6406401E16E4BFFD0019CAC3 /* IWTutorialStage.h */,
 				6406402116E4C02E0019CAC3 /* IWTutorialStage.c */,
 			);
@@ -737,7 +742,7 @@
 				64F25F3B16D4DA2000EC3E78 /* IWUIMenuItem.c in Sources */,
 				64F25F3C16D4DA2400EC3E78 /* IWUIMenuPage.c in Sources */,
 				64F25F3D16D4DA2800EC3E78 /* IWUIMenuPresenter.c in Sources */,
-				64F25F4216D5126B00EC3E78 /* IWUIMenu.c in Sources */,
+				64F25F4216D5126B00EC3E78 /* IWUIMenuController.c in Sources */,
 				6404C90516D623AC005900FA /* IWScorePresenter.c in Sources */,
 				64A6593716DCA3DF003F92C4 /* CoreDataObjectModel.xcdatamodeld in Sources */,
 				64A6593D16DCA9BB003F92C4 /* Achievement.m in Sources */,
@@ -748,6 +753,7 @@
 				64E11D3716E4C0D50016FA34 /* IWUserInterfaceController.c in Sources */,
 				64E11D3916E4C0E20016FA34 /* IWUISlider.c in Sources */,
 				64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */,
+				64086BB216EA2141000B1E76 /* IWStartMenuController.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

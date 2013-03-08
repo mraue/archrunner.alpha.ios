@@ -20,7 +20,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     
     tutorialController->tutorialRadius = 2.0;
     tutorialController->currentStage = 0;
-    tutorialController->nStages = 8;
+    tutorialController->nStages = 9;
     tutorialController->hasFinished = false;
     
     tutorialController->transitionInteractionBlockTimer = IWTimerDataMake(0.0, 1.0, false);
@@ -34,7 +34,11 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     tutorialController->fontMapTextureData = NULL;
     
     tutorialController->stages[0] = IWTutorialStageMake("Movement",
-                                                        "You advance automatically.\n \nTo change direction tilt\nyour device forward/backward\nand to the left/right.",
+                                                        "You advance automatically.\n"
+                                                        " \n"
+                                                        "To change direction tilt\n"
+                                                        "your device forward/backward\n"
+                                                        "and to the left/right.",
                                                         true,
                                                         IWUSERINTERFACE_ELEMENT_HUD,
                                                         5, false, false, false, false, false,
@@ -43,7 +47,11 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                                                IWVector3Make(0.0, 1.0, 0.0)),
                                                         1.5);
     tutorialController->stages[1] = IWTutorialStageMake("Fuel",
-                                                        "You are constantly using up\nfuel. The fuel status is\ndisplayed in the upper left.\n \nTo refill, approach a cube.",
+                                                        "You are constantly using up\n"
+                                                        "fuel. The fuel status is\n"
+                                                        "displayed in the upper left.\n"
+                                                        " \n"
+                                                        "To refill, approach a cube.",
                                                         true,
                                                         IWUSERINTERFACE_ELEMENT_ENERGY_BAR
                                                         | IWUSERINTERFACE_ELEMENT_HUD,
@@ -55,15 +63,28 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     
     tutorialController->stages[2]
         = IWTutorialStageMakeNonActionStage("Cubes",
-                                            "Cubes come in two flavors:\n 1. Grey cubes\n 2. Red cubes\n \nApproach cubes to trigger\ndifferent actions.");
+                                            "Cubes come in two flavors:\n"
+                                            " 1. Grey cubes\n"
+                                            " 2. Red cubes\n"
+                                            " \nApproach cubes to trigger\n"
+                                            "different actions.");
     
     tutorialController->stages[3]
         = IWTutorialStageMakeNonActionStage("Grey/Grid",
-                                            "Grey cubes are called grid\ncubes. On approach grid\ncubes provide fuel and\nconvert into red cubes,\ncalled bridge cubes.");
+                                            "Grey cubes are called grid\n"
+                                            "cubes. On approach grid\n"
+                                            "cubes provide fuel and\n"
+                                            "convert into red cubes,\n"
+                                            "called bridge cubes.");
     
     
     tutorialController->stages[4] = IWTutorialStageMake("Red/Bridge",
-                                                        "Red cubes provide a\ntemporary speed boost.\n \nThey are arranged in a\nlong line to enable you\nto cross large distances.",
+                                                        "Red cubes provide a\n"
+                                                        "temporary speed boost.\n"
+                                                        " \n"
+                                                        "They are arranged in a\n"
+                                                        "long line to enable you\n"
+                                                        "to cross large distances.",
                                                         true,
                                                         IWUSERINTERFACE_ELEMENT_ENERGY_BAR
                                                         | IWUSERINTERFACE_ELEMENT_HUD
@@ -74,16 +95,47 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                                                IWVector3Make(0.0, 1.0, 0.0)),
                                                         2.0);
     tutorialController->stages[5]
-        = IWTutorialStageMakeNonActionStage("Disappearance",
-                                            "Grid cubes disappear with\ntime, so better be quick\nwith converting them.\nBridge cubes are stable.\nCollect bridge cubes\nto gain new grid cubes.\n...");
+    = IWTutorialStageMake("Disappearance",
+                          "Grid cubes disappear with\n"
+                          "time, so better be quick\n"
+                          "with converting them.\n"
+                          "Bridge cubes are stable.\n"
+                          "Collect bridge cubes\nto gain new grid cubes.\n...",
+                          true,
+                          IWUSERINTERFACE_ELEMENT_ENERGY_BAR
+                          | IWUSERINTERFACE_ELEMENT_HUD
+                          | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
+                          4, true, true, true, true, true,
+                          IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
+                                                 IWVector3Make(0.0, 0.0, 1.0),
+                                                 IWVector3Make(0.0, 1.0, 0.0)),
+                          2.0);
     
     tutorialController->stages[6]
         = IWTutorialStageMakeNonActionStage("Spawning",
-                                            "If you reach the end of a\nbridge cube line and you\nhave collected enough bridge\ncubes a new set of grid cubes\nwill spawn.");
+                                            "If you reach the end of a\n"
+                                            "bridge cube line and you\n"
+                                            "have collected enough bridge\n"
+                                            "cubes a new set of grid cubes\n"
+                                            "will spawn.");
     
     tutorialController->stages[7]
         = IWTutorialStageMakeNonActionStage("Score",
-                                            "You gain score points by:\n1. surviving for a certain\n   time\n2. converting/collecting\n   cubes\n3. traveling towards the sun");
+                                            "You gain score points by:\n"
+                                            "1. surviving for a certain\n"
+                                            "   time\n"
+                                            "2. converting/collecting\n"
+                                            "   cubes\n"
+                                            "3. traveling towards the sun");
+    
+    tutorialController->stages[8]
+    = IWTutorialStageMakeNonActionStage("Hints",
+                                        "You can pause the game by\n"
+                                        "pressing the button in the\n"
+                                        "lower left corner.\n"
+                                        "While the game is paused\n"
+                                        "the controller position is\n"
+                                        "reseted.");
     
     tutorialController->grayScaleTransitionBase =
     IWVector3TransitionMake(IWVector3Make(1.0, 0.2, 0.0),
@@ -184,6 +236,63 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                                                 fontMap);
     
     return tutorialController;
+}
+
+void IWTutorialControllerReset(IWTutorialControllerData *tutorialController)
+{
+    tutorialController->grayScaleTransitionBase =
+    IWVector3TransitionMake(IWVector3Make(1.0, 0.2, 0.0),
+                            IWVector3Make(0.0, 0.2, 0.0),
+                            IWVector3Make(1.0, 0.2, 0.0),
+                            1.0, 0.0, false, false);
+    tutorialController->grayScaleTransition = tutorialController->grayScaleTransitionBase;
+    
+    tutorialController->grayScaleTransition.transitionHasFinished = true;
+    
+    IWTutorialStageData *currentStage = &tutorialController->stages[0];
+    
+    // User interface
+    IWUserInterfacePurgeData(&tutorialController->userInterfaceController);
+    tutorialController->userInterfaceController =
+    IWUserInterfaceControllerMake(tutorialController->screenAspectRatio,
+                                  currentStage->userInterfaceElements,
+                                  tutorialController->fontMap);
+    IWUserInterfaceControllerSetupVBOs(&tutorialController->userInterfaceController,
+                                       tutorialController->uiShaderProgram,
+                                       tutorialController->textShaderProgram,
+                                       tutorialController->textureHandlerId,
+                                       tutorialController->fontMapTextureData);
+    
+    // Cubes
+    if (currentStage->hasActionStage) {
+        IWCubeControllerPurgeData(&tutorialController->cubeController);
+        unsigned int nCubesPerAxis = currentStage->nCubesPerAxis;
+        tutorialController->cubeController =
+        IWCubeControllerMake(nCubesPerAxis, nCubesPerAxis, nCubesPerAxis,
+                             .04, .12, IWVector3Make(0.0, 0.0, 0.0),
+                             IWVector4Make(0.5, 0.5, 0.5, 1.0),
+                             0, 0.05,
+                             currentStage->cubesInteractive,
+                             currentStage->removeCubes,
+                             1.0, 0);
+        IWCubeControllerSetupVBOs(&tutorialController->cubeController,
+                                  tutorialController->mainShaderProgram);
+    }
+    //
+    IWGTextFieldSetText(&tutorialController->stageText, currentStage->text);
+    IWGTextFieldSetText(&tutorialController->stageTitle, currentStage->title);
+    tutorialController->startNextButton.color = tutorialController->textColorText;
+    IWGTextFieldSetText(&tutorialController->startNextButton,
+                        currentStage->hasActionStage ? "[START]" : "[NEXT]");
+    tutorialController->skipTutorialButton.color = tutorialController->textColorText;
+    IWGTextFieldSetText(&tutorialController->skipTutorialButton, tutorialController->skipTutorialButton.text);
+    
+    IWGRingBufferSubData(&tutorialController->textMultiBuffer, 0,
+                         tutorialController->textDataBufferSize * sizeof(GLfloat),
+                         tutorialController->textDataBufferStart,
+                         true);
+
+    return;    
 }
 
 void IWTutorialControllerSetupVBOs(IWTutorialControllerData *tutorialController,
@@ -337,6 +446,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                         *cubeStatus = IWCubeStatusMakeEmpty();
                         cubeStatus->nGridCubes = tutorialController->cubeController.nCubes;
                         tutorialController->tutorialRadius = currentStage->radius;
+                        IWFuelAddFuel(fuel, fuel->currentMaxLevel);
                     }
                     //
                     IWGTextFieldSetText(&tutorialController->stageText, currentStage->text);
