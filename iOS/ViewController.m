@@ -315,6 +315,10 @@
             gdControllerDataAccelerometer.rotationSpeed.z =
                 gdControllerDataAccelerometer.rotationSpeed.z * alpha + (1.0 - alpha) * 1.0;
         }
+        if (gdControllerDataAccelerometer.rotationSpeed.z > 1.0)
+            gdControllerDataAccelerometer.rotationSpeed.z = 1.0;
+        if (gdControllerDataAccelerometer.rotationSpeed.z < -1.0)
+            gdControllerDataAccelerometer.rotationSpeed.z = -1.0;
     } else {
         gdControllerDataAccelerometer.rotationSpeed.z = 0.0;
     }
@@ -385,6 +389,9 @@
     _isTouched = YES;
     // Update game data
     gdIsTouched = true;
+    //float x = self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft ? _touchLocation.x : _touchLocation.y;
+    //float y = self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft ? _touchLocation.y : _touchLocation.x;
+    //printf("DEBUG BEGAN: %.1f %.1f %.1f %.1f\n", _touchLocation.x, _touchLocation.y, self.view.bounds.size.width, self.view.bounds.size.height);
     gdTouchPoint.x = _touchLocation.x / self.view.bounds.size.width;
     gdTouchPoint.y = 1.0 - _touchLocation.y / self.view.bounds.size.height;
 }
@@ -405,6 +412,7 @@
     _isTouched = YES;
     // Update game data
     gdIsTouched = true;
+    //printf("DEBUG MOVED: %.1f %.1f %.1f %.1f\n", _touchLocation.x, _touchLocation.y, self.view.bounds.size.width, self.view.bounds.size.height);
     gdTouchPoint.x = _touchLocation.x / self.view.bounds.size.width;
     gdTouchPoint.y = 1.0 - _touchLocation.y / self.view.bounds.size.height;
 }

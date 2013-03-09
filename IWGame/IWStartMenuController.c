@@ -235,6 +235,7 @@ void IWStartMenuControllerPurgeData(IWStartMenuControllerData *startMenuControll
     IWCubeControllerPurgeData(&startMenuController->cubeController);
     IWGSkyBoxControllerPurgeData(&startMenuController->skyBoxController);
     IWUIMenuControllerPurgeData(&startMenuController->menuController);
+    IWGRingBufferDealloc(&startMenuController->textMultiBuffer);
     free(startMenuController->textDataBufferStart);
     startMenuController->textDataBufferStart = NULL;
 }

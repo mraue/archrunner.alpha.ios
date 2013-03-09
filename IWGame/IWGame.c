@@ -417,6 +417,23 @@ void IWGameTutorialHandler(float timeSinceLastUpdate, float aspectRatio)
                                &gdControllerDataAccelerometer,
                                timeSinceLastUpdate);
     
+    if (gdTutorialController->quit) {
+        IWTutorialControllerPurgeData(gdTutorialController);
+        gdTutorialController = NULL;
+        // Setup start menu
+        gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+        IWStartMenuControllerSetupVBOs(gdStartMenuController,
+                                       &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
+                                       gdTextureHandlerId, gdFontMapTextureData);
+        gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+        // Update grayscale
+        glUseProgram(gdSkyboxShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.2);
+        glUseProgram(gdMainShaderProgram.programID);
+        glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.2);
+        return;
+    }
+    
     if (!gdTutorialController->hasFinished
         && gdTutorialController->stages[gdTutorialController->currentStage].status == IWTUTORIALSTAGE_STATUS_TEXT) {
         gdResetControllerPosition = true;

@@ -22,6 +22,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     tutorialController->currentStage = 0;
     tutorialController->nStages = 9;
     tutorialController->hasFinished = false;
+    tutorialController->quit = false;
     
     tutorialController->transitionInteractionBlockTimer = IWTimerDataMake(0.0, 1.0, false);
     tutorialController->screenAspectRatio = screenAspectRatio;
@@ -149,7 +150,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     
     // Make button rectangles
     tutorialController->startNextButtonRectangle = IWRectangleMake(0.0, 0.0, 0.2, 0.3);
-    tutorialController->skipTutorialButtonRectangle = IWRectangleMake(0.0, 0.7, 0.2, 1.0);
+    tutorialController->skipTutorialButtonRectangle = IWRectangleMake(0.7, 0.0, 1.0, 0.3);
     
     // Allocate memory for text buffer
     tutorialController->textDataBufferSize = (1 * 6 + 1 * 12 + 1 * 15 + 6 * 30) * 6 * 9;
@@ -168,7 +169,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                        IWGEOMETRY_ANCHOR_POSITION_LOWER_RIGHT,
                        1, 6,
                        1. / screenAspectRatio,
-                       "[SKIP]",
+                       "[QUIT]",
                        0.18, 0.0,
                        IWGTEXT_HORIZONTAL_ALIGNMENT_RIGHT,
                        tutorialController->textColorText,
@@ -377,7 +378,8 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
     
     if (tutorialController->transitionInteractionBlockTimer.hasFinished
         && *isTouched
-        && !tutorialController->hasFinished) {
+        && !tutorialController->hasFinished
+        && !tutorialController->quit) {
         
         if (IWPointInRectangle(touchPoint, tutorialController->startNextButtonRectangle)) {
             if (currentStage->status == IWTUTORIALSTAGE_STATUS_TEXT
@@ -488,6 +490,9 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                 *isTouched = false;
                 IWTimerResetAndStart(&tutorialController->transitionInteractionBlockTimer);
             }
+        } else if (IWPointInRectangle(touchPoint, tutorialController->skipTutorialButtonRectangle)) {
+            tutorialController->hasFinished = true;
+            tutorialController->quit = true;
         }
     }
     
@@ -749,4 +754,5 @@ void IWTutorialControllerPurgeData(IWTutorialControllerData *tutorialController)
     IWUserInterfacePurgeData(&tutorialController->userInterfaceController);
     free(tutorialController->textDataBufferStart);
     tutorialController->textDataBufferStart = NULL;
+    IWGRingBufferDealloc(&tutorialController->textMultiBuffer);
 }

@@ -36,7 +36,7 @@ typedef struct {
     IWTutorialStageData stages[9];
     unsigned int currentStage;
     unsigned int nStages;
-    bool hasFinished;
+    bool hasFinished, quit;
     //
     IWVector3Transition grayScaleTransition, grayScaleTransitionBase;
     //
