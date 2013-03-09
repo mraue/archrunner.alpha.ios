@@ -35,10 +35,11 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     
     tutorialController->stages[0] = IWTutorialStageMake("Movement",
                                                         "You advance automatically.\n"
-                                                        " \n"
                                                         "To change direction tilt\n"
                                                         "your device forward/backward\n"
-                                                        "and to the left/right.",
+                                                        "and to the left/right. You\n"
+                                                        "can roll by touching the\n"
+                                                        "screen on the left/right.",
                                                         true,
                                                         IWUSERINTERFACE_ELEMENT_HUD,
                                                         5, false, false, false, false, false,
@@ -105,7 +106,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                           IWUSERINTERFACE_ELEMENT_ENERGY_BAR
                           | IWUSERINTERFACE_ELEMENT_HUD
                           | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
-                          4, true, true, true, true, true,
+                          3, true, true, true, true, true,
                           IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                  IWVector3Make(0.0, 0.0, 1.0),
                                                  IWVector3Make(0.0, 1.0, 0.0)),

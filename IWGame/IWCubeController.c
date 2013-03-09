@@ -168,6 +168,7 @@ void IWCubeControllerUpdate(IWCubeControllerData *cubeController,
 {
     // Auto remove standard cubes
     if (cubeController->removeCubes
+        && cubeController->standardCubeIndexList.nEntries > 0
         && IWTimerUpdate(&cubeController->randomRemoveCubeTimer, timeSinceLastUpdate)) {
         
         IWTimerResetAndStart(&cubeController->randomRemoveCubeTimer);
