@@ -169,7 +169,12 @@ void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
         gdIsTouched = false;
         if (touchN == 0) {
             IWGRendererTearDownGameAssets();
-            IWGRendererSetupStartMenuAssets();
+            // Start menu controller
+            gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+            IWStartMenuControllerSetupVBOs(gdStartMenuController,
+                                           &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
+                                           gdTextureHandlerId, gdFontMapTextureData);
+//            IWGRendererSetupStartMenuAssets();
             gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
             gdIsTouched = false;
             gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
@@ -193,10 +198,40 @@ void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
     return;
 }
 
-void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
+void IWGameStartMenuHandler(float timeSinceLastUpdate,
+                            float aspectRatio)
 {
     
     IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, gdIsTouched, timeSinceLastUpdate);
+    
+    if (gdIsTouched
+        && gdStartMenuController->menuController.isInteractive) {
+        if (gdStartMenuController->menuController.currentPage == 1) {
+            switch (IWUIMenuPresenterGetTouch(&gdStartMenuController->menuController.presenter, gdTouchPoint)) {
+                case 0:
+                    IWStartMenuControllerPurgeData(gdStartMenuController);
+                    gdStartMenuController = NULL;
+                    IWGRendererSetupGameAssets();
+                    gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+                    gdIsTouched = false;
+                    return;
+                case 1:
+                    IWStartMenuControllerPurgeData(gdStartMenuController);
+                    gdStartMenuController = NULL;
+                    // Tutorial controller
+                    gdTutorialController = IWTutorialControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+                    IWTutorialControllerSetupVBOs(gdTutorialController,
+                                                  &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdUIShaderProgram, &gdTextShaderProgram,
+                                                  gdTextureHandlerId, gdFontMapTextureData);
+                    gdCurrentGameStatus = IWGAME_STATUS_TUTORIAL;
+                    gdIsTouched = false;
+                    return;
+            }
+        } else if (gdStartMenuController->menuController.currentPage == 0) {
+            IWUIMenuControllerPresentMenuPage(&gdStartMenuController->menuController, 1);
+            gdIsTouched = false;
+        }
+    }
     
 //    IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
 //    if (IWTimerUpdate(&gdStateSwitchTimer, timeSinceLastUpdate)
@@ -246,6 +281,8 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate, float aspectRatio)
 //                          false);
 //    
 //    IWGSkyBoxControllerUpdate(&gdSkyBoxController, timeSinceLastUpdate, &gdPlayerData, true);
+    
+    gdPlayerData = gdStartMenuController->player;
     
     // Setup view matrices
     IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
@@ -387,6 +424,16 @@ void IWGameTutorialHandler(float timeSinceLastUpdate, float aspectRatio)
         gdResetControllerPosition = false;
     }
 
+    if (gdTutorialController->hasFinished
+        && gdIsTouched) {
+        IWTutorialControllerPurgeData(gdTutorialController);
+        gdTutorialController = NULL;
+        IWGRendererSetupGameAssets();
+        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+        gdIsTouched = false;
+        return;
+    }
+    
     IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0 * IW_DEG_TO_RAD, aspectRatio, 0.01, 100.0);
     
     // Update grayscale
@@ -507,7 +554,12 @@ void IWGameUpdate(float timeSinceLastUpdate,
             gdIsTouched = false;
             if (touchN == 0) {
                 IWGRendererTearDownGameAssets();
-                IWGRendererSetupStartMenuAssets();
+                //IWGRendererSetupStartMenuAssets();
+                // Start menu controller
+                gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+                IWStartMenuControllerSetupVBOs(gdStartMenuController,
+                                               &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
+                                               gdTextureHandlerId, gdFontMapTextureData);
                 gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
                 gdIsTouched = false;
                 gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);

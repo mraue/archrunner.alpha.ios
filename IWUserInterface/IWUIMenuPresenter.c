@@ -39,7 +39,8 @@ IWUIMenuPresenterData IWUIMenuPresenterMake(unsigned int nItemsMax,
     return menuPresenter;
 }
 
-void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter, GLfloat *bufferPtr)
+void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter,
+                                     GLfloat *bufferPtr)
 {
     free(menuPresenter->textFields); menuPresenter->textFields = NULL;
     free(menuPresenter->buttonRects); menuPresenter->buttonRects = NULL;
@@ -95,6 +96,29 @@ void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter, GLflo
                                                    dimensions,
                                                    IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT);
     }
+    
+    return;
+}
+
+void IWUIMenuPresenterUpdateRowColor(IWUIMenuPresenterData *menuPresenter,
+                                     unsigned int row,
+                                     IWVector4 color)
+{
+    if (menuPresenter->textFields == NULL
+        || menuPresenter->buttonRects == NULL) {
+        printf("ERROR: IWUIMenuPresenterUpdateRowColor - Use IWUIMenuPresenterInitTextFields first\n");
+        return;
+    }
+    
+    if (row > menuPresenter->nItemsMax - 1) {
+        printf("ERROR: IWUIMenuPresenterUpdateRowColor - Row %u out of range\n", row);
+        return;
+    }
+
+    menuPresenter->textFields[2 * row].color = color;
+    IWGTextFieldSetText(&menuPresenter->textFields[2 * row], menuPresenter->textFields[2 * row].text);
+    menuPresenter->textFields[2 * row + 1].color = color;
+    IWGTextFieldSetText(&menuPresenter->textFields[2 * row + 1], menuPresenter->textFields[2 * row + 1].text);
     
     return;
 }

@@ -23,30 +23,54 @@
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenuPage.h"
 
+typedef enum {
+    IWUIMENUCONTROLLER_STATUS_INTERACTIVE,
+    IWUIMENUCONTROLLER_STATUS_FADE_IN,
+    IWUIMENUCONTROLLER_STATUS_FADE_OUT,
+    IWUIMENUCONTROLLER_STATUS_FADE_OUT_TO_NEW_MENU
+} IWUIMENUCONTROLLER_STATUS;
+
 typedef struct {
     IWUIMenuPresenterData presenter;
     IWUIMenuPageData *pages;
     unsigned int nPages;
+    unsigned int currentPage;
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
     IWGRingBufferData multiBuffer;
+    bool fadeIn, fadeOut;
+    float fadeInTime, fadeOutTime;
+    IWVector4Transition textColorTransition;
+    bool isInteractive;
+    IWUIMENUCONTROLLER_STATUS status;
+    unsigned int nextPage;
 } IWUIMenuControllerData;
 
 IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
-                                              unsigned int nPages);
+                                              unsigned int nPages,
+                                              bool fadeIn,
+                                              bool fadeOut);
 
-void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menu,
+void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
                                GLuint positionSlot,
                                GLuint colorSlot,
                                GLuint textureOffsetSlot,
                                GLuint textureHandlerId,
                                GLvoid* fontMapTextureData);
 
-void IWUIMenuControllerUpdate(IWUIMenuControllerData *menu,
+void IWUIMenuControllerUpdate(IWUIMenuControllerData *menuController,
+                              bool isTouched,
+                              IWPoint2D touchPoint,
                               float timeSinceLastUpdate);
 
-void IWUIMenuControllerRender(IWUIMenuControllerData *menu);
+void IWUIMenuControllerPresentMenuPage(IWUIMenuControllerData *menuController,
+                                       unsigned int menuPage);
 
-void IWUIMenuControllerPurgeData(IWUIMenuControllerData *menu);
+void IWUIMenuControllerUpdateTextColor(IWUIMenuControllerData *menuController,
+                                       IWVector4 color);
+
+void IWUIMenuControllerRender(IWUIMenuControllerData *menuController);
+
+void IWUIMenuControllerPurgeData(IWUIMenuControllerData *menuController);
 
 #endif

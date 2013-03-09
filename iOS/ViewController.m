@@ -170,8 +170,10 @@
     [self.audioPlayer prepareToPlay];
     [self.audioPlayer setDelegate: self];
     [self.audioPlayer setNumberOfLoops:-1];
-    [self.audioPlayer play];
-
+    // DEBUG
+    //[self.audioPlayer play];
+    // END DEBUG
+    
     gdMainShaderProgram
         = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String],
                                         [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"] UTF8String],

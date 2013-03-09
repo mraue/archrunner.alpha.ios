@@ -43,7 +43,12 @@ IWUIMenuPresenterData IWUIMenuPresenterMake(unsigned int nItemsMax,
                                             float lineHeight,
                                             IWVector4 color,
                                             IWGFontMapData *fontMap);
+
 void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter, GLfloat *bufferPtr);
+
+void IWUIMenuPresenterUpdateRowColor(IWUIMenuPresenterData *menuPresenter,
+                                     unsigned int row,
+                                     IWVector4 color);
 
 void IWIUMenuPresenterPresentMenu(IWUIMenuPresenterData *menuPresenter, IWUIMenuPageData *menuPage);
 

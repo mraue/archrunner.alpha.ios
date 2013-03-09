@@ -17,6 +17,9 @@
 #include "IWGShaderProgram.h"
 #include "IWGLighting.h"
 
+#include "IWPlayer.h"
+#include "IWGSkyBoxController.h"
+
 #pragma mark - Definitions
 
 enum _IWGRENDERER_BASIC_UNIFORM_ID_INDEX {
@@ -47,13 +50,14 @@ GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
 void IWGRendererSetupGL(const char* fontMapFilename);
 
-void IWGRendererSetupStartMenuAssets(void);
-void IWGRendererTearDownStartMenuAssets(void);
+//void IWGRendererSetupStartMenuAssets(void);
+//void IWGRendererTearDownStartMenuAssets(void);
 
 void IWGRendererSetupGameAssets(void);
 void IWGRendererTearDownGameAssets(void);
 
-void IWGRendererUpdateUniforms(void);
+void IWGRendererUpdateUniforms(IWPlayerData* player,
+                               IWGSkyBoxControllerData* skyBoxController);
 
 void IWGRendererRender(void);
 
