@@ -29,8 +29,8 @@
 #include "IWPlayer.h"
 
 typedef enum {
-    IWUSERINTERFACE_ELEMENT_SCORE  = 1 <<  0,
-    IWUSERINTERFACE_ELEMENT_ENERGY_BAR  = 1 <<  1,
+    IWUSERINTERFACE_ELEMENT_SCORE = 1 <<  0,
+    IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR = 1 <<  1,
     IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON = 1 <<  2,
     IWUSERINTERFACE_ELEMENT_CUBE_COUNTER = 1 <<  3,
     IWUSERINTERFACE_ELEMENT_HUD = 1 <<  4,
@@ -51,7 +51,7 @@ typedef struct {
     GLfloat* lineDataBufferStart;
     IWGRingBufferData lineMultiBuffer;
     //
-    IWGTextFieldData scoreTextField, cubeStatusTextField1, cubeStatusTextField2;
+    IWGTextFieldData scoreTextField, cubeStatusTextField1, cubeStatusTextField2, fuelStatusTextField;
     //
     IWUIRectangleButton pauseButton;
     //

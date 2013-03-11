@@ -23,11 +23,12 @@
 
 - (void)updateAchievementsWithScoreCounter:(IWScoreCounterData*)scoreCounter;
 
-- (void) resetAchievements;
+- (void)resetAchievements;
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) AchievementTracker *achievementTracker;
 @property (strong, nonatomic) NSMutableArray *achievements;
 @property (retain, nonatomic) NSMutableArray *achievementIds;
+@property unsigned int lastScoreTotal;
 
 @end

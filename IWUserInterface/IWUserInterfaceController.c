@@ -40,6 +40,9 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     if (visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER)
         userInterfaceController.textDataBufferSize += 3 * 10 * 6 * 9;
     
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR)
+        userInterfaceController.textDataBufferSize += 1 * 15 * 6 * 9;
+
     userInterfaceController.textDataBufferStart = malloc(userInterfaceController.textDataBufferSize * sizeof(GLfloat));
     GLuint bufferOffset = 0;
     
@@ -73,6 +76,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                fontMap,
                                userInterfaceController.textDataBufferStart
                                + bufferOffset);
+        bufferOffset += userInterfaceController.cubeStatusTextField1.triangleBufferData.size;
         userInterfaceController.cubeStatusTextField2
         = IWGTextFieldMake(IWVector2Make(cubeCounterAnchorPosition.x,
                                          cubeCounterAnchorPosition.y - 2.0 * cubeCounterLineHeight),
@@ -91,13 +95,31 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                       IWUI_COLOR_WHITE(0.7),
                                       IWUI_COLOR_WHITE(0.3),
                                       0.5, 0.0, false, false);
+        bufferOffset += userInterfaceController.cubeStatusTextField2.triangleBufferData.size;
     }
     
+    
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR) {
+        userInterfaceController.fuelStatusTextField
+        = IWGTextFieldMake(IWVector2Make(-0.98, 0.95 * 2.0 - 1. - 0.01),
+                           IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
+                           1, 15,
+                           1. / screenAspectRatio,
+                           "",
+                           0.12, 0.0,
+                           IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT,
+                           IWVector4Make(1.0, 1.0, 1.0, 0.7),
+                           fontMap,
+                           userInterfaceController.textDataBufferStart
+                           + bufferOffset);
+        userInterfaceController.fuelStatusTextField.triangleBufferData.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.fuelStatusTextField.triangleBufferData.size;
+    }
     //
     // Setup triangle buffer
     //
 
-    if (visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR)
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR)
         userInterfaceController.triangleDataBufferSize += 6 * 3 * 7;
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {
@@ -119,7 +141,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     userInterfaceController.triangleDataBufferStart = malloc(userInterfaceController.triangleDataBufferSize * sizeof(GLfloat));
     bufferOffset = 0;
     
-    if (visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR) {
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR) {
         float fuelBarStates[] = {1.0, 1.0, 1.0};
         IWVector4 fuelBarColors[] = {IWUI_COLOR_WHITE(0.8), IWUI_COLOR_WHITE(0.4), IWUI_COLOR_WHITE(0.2)};
         userInterfaceController.fuelStateBar = IWUIStateBarMake(3, fuelBarStates, fuelBarColors,
@@ -348,19 +370,35 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
     }
     
     // Update fuel status bar
-    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_ENERGY_BAR) {
+    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR) {
+        
         if (player->overdrive) {
+            
             if(IWVector4TransitionUpdate(&userInterfaceController->fuelColorTransitionOverdrive, timeSinceLastUpdate))
                 IWVector4TransitionReverseAndStart(&userInterfaceController->fuelColorTransitionOverdrive);
+            
             userInterfaceController->fuelStateBar.colors[0]
-                = userInterfaceController->fuelColorTransitionOverdrive.currentVector;
+            = userInterfaceController->fuelColorTransitionOverdrive.currentVector;
+            
+            userInterfaceController->fuelStatusTextField.color
+            = userInterfaceController->fuelColorTransitionOverdrive.currentVector;
+            IWGTextFieldSetText(&userInterfaceController->fuelStatusTextField, "OVERDRIVE");
+            
         } else if (fuel->isWarning) {
+            
             if(IWVector4TransitionUpdate(&userInterfaceController->fuelColorTransitionWarning, timeSinceLastUpdate))
                 IWVector4TransitionReverseAndStart(&userInterfaceController->fuelColorTransitionWarning);
             userInterfaceController->fuelStateBar.colors[0]
-                = userInterfaceController->fuelColorTransitionWarning.currentVector;
+            = userInterfaceController->fuelColorTransitionWarning.currentVector;
+            
+            userInterfaceController->fuelStatusTextField.color
+            = userInterfaceController->fuelColorTransitionWarning.currentVector;
+            
+            IWGTextFieldSetText(&userInterfaceController->fuelStatusTextField, "FUEL WARNING");
+            
         } else  {
             userInterfaceController->fuelStateBar.colors[0] = fuel->currentColor;
+            IWGTextFieldSetText(&userInterfaceController->fuelStatusTextField, "");
         }
         
         // Fuel vertex update
@@ -368,10 +406,17 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
         IWUIStateBarToTriangles(&userInterfaceController->fuelStateBar);
         
         IWGRingBufferSubData(&userInterfaceController->triangleMultiBuffer,
-                              0,
-                              userInterfaceController->fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
-                              userInterfaceController->fuelStateBar.triangleBufferData.bufferStartCPU,
-                              true);
+                             0,
+                             userInterfaceController->fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
+                             userInterfaceController->fuelStateBar.triangleBufferData.bufferStartCPU,
+                             true);
+        
+        // Fuel text update
+        IWGRingBufferSubData(&userInterfaceController->textMultiBuffer,
+                             (userInterfaceController->fuelStatusTextField.triangleBufferData.bufferOffsetGPU) * sizeof(GLfloat),
+                             userInterfaceController->fuelStatusTextField.triangleBufferData.size * sizeof(GLfloat),
+                             userInterfaceController->fuelStatusTextField.triangleBufferData.startCPU,
+                             true);
     }
 
     glBindVertexArrayOES(0);

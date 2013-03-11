@@ -55,7 +55,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         " \n"
                                                         "To refill, approach a cube.",
                                                         true,
-                                                        IWUSERINTERFACE_ELEMENT_ENERGY_BAR
+                                                        IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
                                                         | IWUSERINTERFACE_ELEMENT_HUD,
                                                         5, true, false, true, false, false,
                                                         IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
@@ -88,7 +88,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         "long line to enable you\n"
                                                         "to cross large distances.",
                                                         true,
-                                                        IWUSERINTERFACE_ELEMENT_ENERGY_BAR
+                                                        IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
                                                         | IWUSERINTERFACE_ELEMENT_HUD
                                                         | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
                                                         5, true, false, true, true, true,
@@ -104,7 +104,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                           "Bridge cubes are stable.\n"
                           "Collect bridge cubes\nto gain new grid cubes.\n...",
                           true,
-                          IWUSERINTERFACE_ELEMENT_ENERGY_BAR
+                          IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
                           | IWUSERINTERFACE_ELEMENT_HUD
                           | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
                           3, true, true, true, true, true,

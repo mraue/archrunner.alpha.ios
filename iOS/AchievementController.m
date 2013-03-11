@@ -24,6 +24,7 @@
 @synthesize achievementTracker=_achievementTracker;
 @synthesize achievements=_achievements;
 @synthesize achievementIds=_achievementIds;
+@synthesize lastScoreTotal=_lastScoreTotal;
 
 - (void)dealloc
 {
@@ -42,6 +43,9 @@
         self.achievementIds = [NSMutableArray arrayWithObjects:
                                @"ArchRunnerAlpha.Achievement.CubeCollector",
                                @"ArchRunnerAlpha.Achievement.CubeCollectorPro",
+                               @"ArchRunnerAlpha.Achievement.Club10k",
+                               @"ArchRunnerAlpha.Achievement.Club12k",
+                               @"ArchRunnerAlpha.Achievement.Club14k",
                                nil];
     }
     return self;
@@ -126,6 +130,7 @@
 
 - (void)addMissingAchievementsWithArray:(NSMutableArray*)array
 {
+    // Silent update for new achievements, works only for adding new ones
     for (NSString *element in self.achievementIds) {
         if ([array indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
             if ([((Achievement*)(obj)).gameCenterID isEqualToString:element]) {
@@ -161,6 +166,8 @@
     self.achievementTracker.zTravelledTotal =
         [NSNumber numberWithFloat:[self.achievementTracker.zTravelledTotal floatValue]
          + scoreCounter->zMax];
+    
+    self.lastScoreTotal = scoreCounter->score;
     
     [self updateAchievements];
     
@@ -213,6 +220,52 @@
         [achievementsToReport addObject:achievementGC];
     }
     
+    // @"ArchRunnerAlpha.Achievement.Club10k"
+    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club10k"];
+    if (achievement == nil) {
+        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club10k");
+    } else if (![achievement.completed boolValue]
+               && self.lastScoreTotal >= 10000) {
+        achievement.completed = @YES;
+        [completetedAchievements addObject:achievement];
+        achievement.percentComplete = [NSNumber numberWithFloat:100.0];
+        GKAchievement *achievementGC = [[GKAchievement alloc] initWithIdentifier:achievement.gameCenterID];
+        achievementGC.percentComplete = [achievement.percentComplete floatValue];
+        achievementGC.showsCompletionBanner = YES;
+        [achievementsToReport addObject:achievementGC];
+    }
+    
+    // @"ArchRunnerAlpha.Achievement.Club12k"
+    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club12k"];
+    if (achievement == nil) {
+        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club12k");
+    } else if (![achievement.completed boolValue]
+               && self.lastScoreTotal >= 12000) {
+        achievement.completed = @YES;
+        [completetedAchievements addObject:achievement];
+        achievement.percentComplete = [NSNumber numberWithFloat:100.0];
+        GKAchievement *achievementGC = [[GKAchievement alloc] initWithIdentifier:achievement.gameCenterID];
+        achievementGC.percentComplete = [achievement.percentComplete floatValue];
+        achievementGC.showsCompletionBanner = YES;
+        [achievementsToReport addObject:achievementGC];
+    }
+    
+    // @"ArchRunnerAlpha.Achievement.Club14k"
+    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club14k"];
+    if (achievement == nil) {
+        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club14k");
+    } else if (![achievement.completed boolValue]
+               && self.lastScoreTotal >= 14000) {
+        achievement.completed = @YES;
+        [completetedAchievements addObject:achievement];
+        achievement.percentComplete = [NSNumber numberWithFloat:100.0];
+        GKAchievement *achievementGC = [[GKAchievement alloc] initWithIdentifier:achievement.gameCenterID];
+        achievementGC.percentComplete = [achievement.percentComplete floatValue];
+        achievementGC.showsCompletionBanner = YES;
+        [achievementsToReport addObject:achievementGC];
+    }
+
+    // Report achievements
     if ([achievementsToReport count]) {
         [GKAchievement reportAchievements: achievementsToReport withCompletionHandler:^(NSError *error)
          {
