@@ -13,7 +13,7 @@
     #import <Foundation/Foundation.h>
 #endif
 
-#define VERSION "0.0.3"
+#define VERSION "0.0.4"
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
-#define VERSION_SUBMINOR 3
+#define VERSION_SUBMINOR 4

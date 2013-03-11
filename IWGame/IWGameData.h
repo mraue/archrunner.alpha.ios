@@ -21,7 +21,6 @@
 #include "IWPlayer.h"
 #include "IWUIRectangleButton.h"
 #include "IWCube.h"
-//#include "IWColorTransition.h"
 #include "IWFuel.h"
 #include "IWGRingBuffer.h"
 #include "IWGBufferSubData.h"
@@ -79,8 +78,6 @@ IWGSkyBoxControllerData gdSkyBoxController;
 
 IWTimerData gdStateSwitchTimer;
 
-//IWColorTransition gdOverdriveColorTransition;
-
 IWVector3Transition gdGrayScaleTransition;
 IWVector3Transition gdGrayScaleTransitionDefault;
 
@@ -114,8 +111,6 @@ void *gdFontMapTextureData;
 
 GLfloat *gdCubeTriangleBufferStartCPU;
 GLfloat *gdInGameTextTriangleBufferStartCPU;
-//GLfloat *gdInGameUITriangleBufferStartCPU;
-//GLfloat *gdInGameUILineBufferStartCPU;
 
 GLuint gdTextureHandlerId;
 
@@ -143,11 +138,6 @@ IWGShaderProgramData gdUIShaderProgram;
 IWGRingBufferData gdTextTriangleDoubleBuffer;
 
 IWGRingBufferData gdTriangleDoubleBuffer;
-
-//GLuint gdUITriangleVertexBuffer;
-
-//GLuint gdUILineVertexArray;
-//GLuint gdUILineVertexBuffer;
 
 IWGTextFieldData gdTitleTextField;
 IWGTextFieldData gdVersionTextField;
