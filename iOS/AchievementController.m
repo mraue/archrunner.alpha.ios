@@ -15,6 +15,7 @@
 - (void)createAchievements;
 - (void)addMissingAchievementsWithArray:(NSMutableArray*)array;
 - (void)updateAchievements;
+- (void)reportAchievements:(NSMutableArray*)achievementsToReport;
 - (Achievement*)getAchievementForGameCenterId:(NSString*)gameCenterId;
 
 @end
@@ -46,6 +47,7 @@
                                @"ArchRunnerAlpha.Achievement.Club10k",
                                @"ArchRunnerAlpha.Achievement.Club12k",
                                @"ArchRunnerAlpha.Achievement.Club14k",
+                               @"ArchRunnerAlpha.Achievement.WatchingTheSunset",
                                nil];
     }
     return self;
@@ -264,7 +266,29 @@
         achievementGC.showsCompletionBanner = YES;
         [achievementsToReport addObject:achievementGC];
     }
+    
+    [self reportAchievements:achievementsToReport];
+}
 
+- (void)reportCompletionOfAchievementWithId:(NSString*)Id
+{
+    Achievement* a = [self getAchievementForGameCenterId:Id];
+    if (a) {
+        if(![a.completed boolValue]) {
+            a.percentComplete = @100.0;
+            a.completed = @YES;
+            GKAchievement *achievementGC = [[GKAchievement alloc] initWithIdentifier:Id];
+            achievementGC.percentComplete = 100.0;
+            achievementGC.showsCompletionBanner = YES;
+            [self reportAchievements:[[NSMutableArray arrayWithObject:achievementGC] retain]];
+        }
+    } else {
+        NSLog(@"ERROR reportCompletionOfAchievementWithId: Achievement not found %@", Id);
+    }
+}
+
+- (void)reportAchievements:(NSMutableArray*)achievementsToReport
+{
     // Report achievements
     if ([achievementsToReport count]) {
         [GKAchievement reportAchievements: achievementsToReport withCompletionHandler:^(NSError *error)
@@ -273,17 +297,24 @@
              {
                  NSLog(@"Error in reporting achievements: %@", error);
              } else {
-                 for (Achievement* achievement in completetedAchievements) {
-                     achievement.completionReported = @YES;
-                     achievement.completionDate = [NSDate date];
+                 for (GKAchievement* achievementGC in achievementsToReport) {
+                     if (achievementGC.percentComplete >= 100.0) {
+                         Achievement* a = [self getAchievementForGameCenterId:achievementGC.identifier];
+                         if (a) {
+                             a.completionReported = @YES;
+                             a.completionDate = [NSDate date];
+                             a.percentComplete = @100.0;
+                         } else {
+                             NSLog(@"ERROR reportAchievements: Could not find achievement %@",
+                                   achievementGC.identifier);
+                         }
+                     }
                  }
              }
              [achievementsToReport release];
-             [completetedAchievements release];
          }];
     } else {
         [achievementsToReport release];
-        [completetedAchievements release];
     }
 }
 

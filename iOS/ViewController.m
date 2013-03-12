@@ -40,7 +40,7 @@
 @property (retain, nonatomic) CMMotionManager *motionManager;
 @property (retain, nonatomic) GKLocalPlayer *localPlayer;
 @property (retain, nonatomic) AchievementController *achievementController;
-@property (retain, nonatomic) FISoundEngine *fitchSoundEngine;
+@property (retain, nonatomic) FISoundEngine *finchSoundEngine;
 
 - (void)processControllInput;
 - (void)authenticateLocalPlayer;
@@ -54,7 +54,7 @@
 @synthesize audioPlayer=_audioPlayer;
 @synthesize localPlayer=_localPlayer;
 @synthesize achievementController=_achievementController;
-@synthesize fitchSoundEngine=_fitchSoundEngine;
+@synthesize finchSoundEngine=_finchSoundEngine;
 
 - (void)dealloc
 {
@@ -63,6 +63,7 @@
     [_motionManager release];
     [savedAttitude release];
     [_audioPlayer release];
+    [_finchSoundEngine release];
     [_managedObjectContext release];
     [super dealloc];
 }
@@ -148,13 +149,8 @@
     IWGameSetup();
     
     [EAGLContext setCurrentContext:self.context];
-
-//    NSString *vertShaderPathname, *fragShaderPathname,*vertShaderPathname2, *fragShaderPathname2;
-//    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"vsh"];
-//    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"MasterShader2" ofType:@"fsh"];
-//    vertShaderPathname2 = [[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"];
-//    fragShaderPathname2 = [[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"];
     
+    // Background music
     NSString *soundFilePath =
     [[NSBundle mainBundle] pathForResource: @"01Vladivostok"
                                     ofType: @"mp3"];
@@ -176,8 +172,11 @@
     //[self.audioPlayer play];
     // END DEBUG
     
-    self.fitchSoundEngine = [FISoundEngine sharedEngine];
+    // In game sound effects via Fitch
+    self.finchSoundEngine = [FISoundEngine sharedEngine];
     
+    
+    // Open GL ES shader program
     gdMainShaderProgram
         = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String],
                                         [[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"fsh"] UTF8String],
@@ -205,15 +204,19 @@
 
     IWGRendererSetupGL([fontMapFilename UTF8String]);
     
-    // Game center test
+    // Game center 
     self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];
     [self authenticateLocalPlayer];
+    gdAchievementReportedWatchingTheSunset = false;
 //    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
 //    if (gameCenterController != nil)
 //    {
 //        gameCenterController.gameCenterDelegate = self;
 //        [self presentViewController: gameCenterController animated: YES completion:nil];
 //    }
+    // DEBUG
+    //[self.achievementController resetAchievements];
+    // END DEBUG
 }
 
 - (void)didReceiveMemoryWarning
@@ -370,13 +373,22 @@
     }
     // Report achievements
     if (self.localPlayer
-        && self.localPlayer.isAuthenticated
-        && gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER
-        && gdUpdateAchievements) {
-        if (self.achievementController) {
-            [self.achievementController updateAchievementsWithScoreCounter:&gdScoreCounter];
+        && self.localPlayer.isAuthenticated) {
+        if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER
+            && gdUpdateAchievements) {
+            if (self.achievementController) {
+                [self.achievementController updateAchievementsWithScoreCounter:&gdScoreCounter];
+            }
+            gdUpdateAchievements = false;
+        } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU
+                   && !gdAchievementReportedWatchingTheSunset
+                   && gdStartMenuController
+                   && gdStartMenuController->currentTransitionTime > gdStartMenuController->skyBoxController.colorTransitionTime) {
+            if (self.achievementController) {
+                [self.achievementController reportCompletionOfAchievementWithId:@"ArchRunnerAlpha.Achievement.WatchingTheSunset"];
+                gdAchievementReportedWatchingTheSunset = true;
+            }
         }
-        gdUpdateAchievements = false;
     }
 }
 

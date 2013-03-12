@@ -23,6 +23,8 @@
 
 - (void)updateAchievementsWithScoreCounter:(IWScoreCounterData*)scoreCounter;
 
+- (void)reportCompletionOfAchievementWithId:(NSString*)Id;
+
 - (void)resetAchievements;
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;

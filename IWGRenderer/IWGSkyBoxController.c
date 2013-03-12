@@ -21,7 +21,7 @@ IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault()
 {
     IWGSkyBoxControllerData skyBoxController;
     
-    skyBoxController.colorTransitionTime = 8.0 * 60.0;
+    skyBoxController.colorTransitionTime = 0.2 * 60.0;// [8.0]
     skyBoxController.transitionTime = 0.0;
     
     skyBoxController.skyColorDay = IWVector4Make(0.6, 0.6, 0.6, 1.0);

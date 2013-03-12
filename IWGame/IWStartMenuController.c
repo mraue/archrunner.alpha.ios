@@ -18,6 +18,8 @@ IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRa
 {
     IWStartMenuControllerData *startMenuController = malloc(sizeof(IWStartMenuControllerData));
     
+    startMenuController->currentTransitionTime = 0.0;
+    
     startMenuController->transitionInteractionBlockTimer = IWTimerDataMake(0.0, 1.0, false);
     startMenuController->screenAspectRatio = screenAspectRatio;
     startMenuController->fontMap = fontMap;
@@ -176,6 +178,8 @@ void IWStartMenuControllerUpdate(IWStartMenuControllerData *startMenuController,
                                  bool *isTouched,
                                  float timeSinceLastUpdate)
 {
+    startMenuController->currentTransitionTime += timeSinceLastUpdate;
+    
     // Update menu
     IWUIMenuControllerUpdate(&startMenuController->menuController,
                              isTouched,

@@ -25,6 +25,7 @@
 #include "IWGTextField.h"
 
 typedef struct {
+    float currentTransitionTime;
     //
     IWVector4 textColorText;
     IWTimerData transitionInteractionBlockTimer;

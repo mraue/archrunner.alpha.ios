@@ -82,7 +82,7 @@ IWVector3Transition gdGrayScaleTransition;
 IWVector3Transition gdGrayScaleTransitionDefault;
 
 bool gdPushScoreToLeaderboard;
-bool gdUpdateAchievements;
+bool gdUpdateAchievements, gdAchievementReportedWatchingTheSunset;
 
 IWTutorialControllerData *gdTutorialController;
 IWStartMenuControllerData *gdStartMenuController;
