@@ -18,6 +18,8 @@
 
 #import <GameKit/GameKit.h>
 
+#import "FISoundEngine.h"
+
 @interface ViewController : GLKViewController <AVAudioPlayerDelegate,GKGameCenterControllerDelegate>
 
 @property (retain, nonatomic) AVAudioPlayer *audioPlayer;

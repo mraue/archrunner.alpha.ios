@@ -40,6 +40,7 @@
 @property (retain, nonatomic) CMMotionManager *motionManager;
 @property (retain, nonatomic) GKLocalPlayer *localPlayer;
 @property (retain, nonatomic) AchievementController *achievementController;
+@property (retain, nonatomic) FISoundEngine *fitchSoundEngine;
 
 - (void)processControllInput;
 - (void)authenticateLocalPlayer;
@@ -53,6 +54,7 @@
 @synthesize audioPlayer=_audioPlayer;
 @synthesize localPlayer=_localPlayer;
 @synthesize achievementController=_achievementController;
+@synthesize fitchSoundEngine=_fitchSoundEngine;
 
 - (void)dealloc
 {
@@ -173,6 +175,8 @@
     // DEBUG
     //[self.audioPlayer play];
     // END DEBUG
+    
+    self.fitchSoundEngine = [FISoundEngine sharedEngine];
     
     gdMainShaderProgram
         = IWGShaderProgramMakeFromFiles([[[NSBundle mainBundle] pathForResource:@"MainShader" ofType:@"vsh"] UTF8String],
