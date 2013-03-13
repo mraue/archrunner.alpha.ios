@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Martin Raue. All rights reserved.
 //
 
+#import "FISound.h"
+
 #import "ViewController.h"
 #import "IWController.h"
 #import "IWPlayer.h"
@@ -20,6 +22,7 @@
 #import "IWGRenderer.h"
 
 #import "AchievementController.h"
+#import "IWSoundHandler.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -41,6 +44,7 @@
 @property (retain, nonatomic) GKLocalPlayer *localPlayer;
 @property (retain, nonatomic) AchievementController *achievementController;
 @property (retain, nonatomic) FISoundEngine *finchSoundEngine;
+@property (retain, nonatomic) NSMutableDictionary *soundFXDictionary;
 
 - (void)processControllInput;
 - (void)authenticateLocalPlayer;
@@ -55,6 +59,7 @@
 @synthesize localPlayer=_localPlayer;
 @synthesize achievementController=_achievementController;
 @synthesize finchSoundEngine=_finchSoundEngine;
+@synthesize soundFXDictionary=_soundFXDictionary;
 
 - (void)dealloc
 {
@@ -65,6 +70,7 @@
     [_audioPlayer release];
     [_finchSoundEngine release];
     [_managedObjectContext release];
+    [_soundFXDictionary release];
     [super dealloc];
 }
 
@@ -141,15 +147,45 @@
     gdScreenHeight = self.view.bounds.size.height;
     gdScreenWidth = self.view.bounds.size.width;
     
-    printf("View dimensions: %.1f %.1f\n",
-           self.view.bounds.size.width, self.view.bounds.size.height);
-    printf("Screen dimensions: %.1f %.1f\n",
-           [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
+//    printf("View dimensions: %.1f %.1f\n",
+//           self.view.bounds.size.width, self.view.bounds.size.height);
+//    printf("Screen dimensions: %.1f %.1f\n",
+//           [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
     
     IWGameSetup();
     
     [EAGLContext setCurrentContext:self.context];
     
+    // In game sound effects via Fitch
+    self.finchSoundEngine = [FISoundEngine sharedEngine];
+    self.soundFXDictionary = [NSMutableDictionary dictionary];
+    gdSoundHandler = IWSoundHandlerMake(10);
+    
+    NSDictionary *soundFXMap
+    = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:
+                                           @"soundfx_ping_01.wav",
+                                           @"soundfx_grey_cube_02.wav",
+                                           @"soundfx_grey_cube_01.wav",
+                                           @"soundfx_cubes_spawn_01.caf",
+                                           nil]
+                                  forKeys:[NSArray arrayWithObjects:
+                                           [NSNumber numberWithInt:IWSOUNDHANDLER_SOUNDS_MENU_SELECTED],
+                                           [NSNumber numberWithInt:IWSOUNDHANDLER_SOUNDS_GREY_CUBE_TOUCHED],
+                                           [NSNumber numberWithInt:IWSOUNDHANDLER_SOUNDS_RED_CUBE_TOUCHED],
+                                           [NSNumber numberWithInt:IWSOUNDHANDLER_SOUNDS_CUBES_SPAWNING],
+                                           nil]];
+    
+    [soundFXMap enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSError *error = nil;
+        FISound *sound = [self.finchSoundEngine soundNamed:obj maxPolyphony:4 error:&error];
+        if (!sound) {
+            NSLog(@"Failed to load sound: %@", error);
+        } else {
+            sound.gain = 0.9;
+            [self.soundFXDictionary setObject:sound forKey:key];
+        }
+    }];
+
     // Background music
     NSString *soundFilePath =
     [[NSBundle mainBundle] pathForResource: @"01Vladivostok"
@@ -168,13 +204,7 @@
     [self.audioPlayer prepareToPlay];
     [self.audioPlayer setDelegate: self];
     [self.audioPlayer setNumberOfLoops:-1];
-    // DEBUG
-    //[self.audioPlayer play];
-    // END DEBUG
-    
-    // In game sound effects via Fitch
-    self.finchSoundEngine = [FISoundEngine sharedEngine];
-    
+    [self.audioPlayer play];
     
     // Open GL ES shader program
     gdMainShaderProgram
@@ -352,6 +382,8 @@
 
 - (void)update
 {
+    IWSoundHandlerEmtpyAndReset(gdSoundHandler);
+    
     [self processControllInput];
     
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
@@ -371,6 +403,15 @@
         }];
         gdPushScoreToLeaderboard = false;
     }
+    
+    // Process sound
+    for (int i = 0; i < gdSoundHandler->nSounds; i++) {
+        FISound *sound = [self.soundFXDictionary objectForKey:[NSNumber numberWithInt:gdSoundHandler->sounds[i]]];
+        if (sound) {
+            [sound play];
+        }
+    }
+    
     // Report achievements
     if (self.localPlayer
         && self.localPlayer.isAuthenticated) {

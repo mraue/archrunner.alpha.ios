@@ -24,7 +24,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     tutorialController->hasFinished = false;
     tutorialController->quit = false;
     
-    tutorialController->transitionInteractionBlockTimer = IWTimerDataMake(0.0, 1.0, false);
+    tutorialController->transitionInteractionBlockTimer = IWTimerDataMake(0.0, 0.5, false);
     tutorialController->screenAspectRatio = screenAspectRatio;
     tutorialController->fontMap = fontMap;
     
@@ -370,6 +370,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                                 IWPoint2D touchPoint,
                                 bool *isTouched,
                                 IWControllerData *controller,
+                                IWSoundHandlerData *soundHandler,
                                 float timeSinceLastUpdate)
 {
     IWTutorialStageData *currentStage = &tutorialController->stages[tutorialController->currentStage];
@@ -403,6 +404,8 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                 
                 *isTouched = false;
                 IWTimerResetAndStart(&tutorialController->transitionInteractionBlockTimer);
+                
+                IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                 
             } else if ((currentStage->status == IWTUTORIALSTAGE_STATUS_TEXT
                         && !currentStage->hasActionStage)
@@ -466,6 +469,8 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                                          true);
                     
                     *player = currentStage->player;
+                    
+                    IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
 
                 } else {
                     tutorialController->hasFinished = true;
@@ -486,6 +491,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                                          tutorialController->textDataBufferStart,
                                          true);
                     
+                    IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                 }
                 *isTouched = false;
                 IWTimerResetAndStart(&tutorialController->transitionInteractionBlockTimer);
@@ -493,6 +499,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
         } else if (IWPointInRectangle(touchPoint, tutorialController->skipTutorialButtonRectangle)) {
             tutorialController->hasFinished = true;
             tutorialController->quit = true;
+            IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
         }
     }
     
@@ -608,6 +615,8 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                         cubeStatus->nGridCubes -= 1;
                         cubeStatus->nBridgeCubes += 1;
                         
+                        IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_GREY_CUBE_TOUCHED);
+                        
                     } else if (!currentStage->convertGridToBridge
                                || tutorialController->cubeController.cubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
                         
@@ -627,6 +636,10 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                         
                         cubeStatus->nBridgeCubes -= 1;
                         cubeStatus->nPoolCubes += 1;
+                        if (currentStage->activateOverdrive)
+                            IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_RED_CUBE_TOUCHED);
+                        else
+                            IWSoundHandlerAddSound(soundHandler, IWSOUNDHANDLER_SOUNDS_GREY_CUBE_TOUCHED);
                     }
                 }
             } else if (!tutorialController->cubeController.cubeData[i].positionTransition.transitionHasFinished) {

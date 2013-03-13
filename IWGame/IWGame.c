@@ -27,14 +27,11 @@
 #include "IWGameData.h"
 
 #include "IWUserInterface.h"
-
 #include "IWFuel.h"
-
 #include "IWScoreCounter.h"
-
 #include "IWGSkyBoxController.h"
-
 #include "IWGRenderer.h"
+#include "IWSoundHandler.h"
 
 void IWGameSetup(void)
 {
@@ -177,6 +174,7 @@ void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
 //            IWGRendererSetupStartMenuAssets();
             gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
             gdIsTouched = false;
+            IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
             gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
             glUseProgram(gdSkyboxShaderProgram.programID);
             glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
@@ -188,6 +186,7 @@ void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
             IWGRendererSetupGameAssets();
             gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
             gdIsTouched = false;
+            IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
             glUseProgram(gdSkyboxShaderProgram.programID);
             glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
             glUseProgram(gdMainShaderProgram.programID);
@@ -205,7 +204,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
     IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, gdIsTouched, timeSinceLastUpdate);
     
     if (gdIsTouched
-        && gdStartMenuController->menuController.isInteractive) {
+        && gdStartMenuController->menuController.isInteractive) {       
         if (gdStartMenuController->menuController.currentPage == 1) {
             switch (IWUIMenuPresenterGetTouch(&gdStartMenuController->menuController.presenter, gdTouchPoint)) {
                 case 0:
@@ -214,6 +213,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                     IWGRendererSetupGameAssets();
                     gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
                     gdIsTouched = false;
+                    IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                     return;
                 case 1:
                     IWStartMenuControllerPurgeData(gdStartMenuController);
@@ -225,11 +225,13 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                                                   gdTextureHandlerId, gdFontMapTextureData);
                     gdCurrentGameStatus = IWGAME_STATUS_TUTORIAL;
                     gdIsTouched = false;
+                    IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                     return;
             }
         } else if (gdStartMenuController->menuController.currentPage == 0) {
             IWUIMenuControllerPresentMenuPage(&gdStartMenuController->menuController, 1);
             gdIsTouched = false;
+            IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
         }
     }
     
@@ -415,6 +417,7 @@ void IWGameTutorialHandler(float timeSinceLastUpdate, float aspectRatio)
                                &gdScoreCounter, &gdCubeStatus, &gdFuel, &gdPlayerData,
                                gdTouchPoint, &gdIsTouched,
                                &gdControllerDataAccelerometer,
+                               gdSoundHandler,
                                timeSinceLastUpdate);
     
     if (gdTutorialController->quit) {
@@ -579,6 +582,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                                                gdTextureHandlerId, gdFontMapTextureData);
                 gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
                 gdIsTouched = false;
+                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                 gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
                 glUseProgram(gdSkyboxShaderProgram.programID);
                 glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
@@ -587,7 +591,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
                 return;
             } else if (touchN == 1) {
                 gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-                gdGrayScaleTransition = gdGrayScaleTransitionDefault; 
+                gdGrayScaleTransition = gdGrayScaleTransitionDefault;
+                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
             }
         }
     }
@@ -734,6 +739,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
         gdCubeStatus.nGridCubes += gdPoolCubeIndexList.nEntries;
         gdCubeStatus.nPoolCubes = 0;
         gdPoolCubeIndexList.nEntries = 0;
+        
+         IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_CUBES_SPAWNING);
     }
     
     // Auto remove standard cubes
@@ -788,7 +795,9 @@ void IWGameUpdate(float timeSinceLastUpdate,
 
                     gdScoreCounter.nGridCubesConverted++;
                     gdCubeStatus.nGridCubes -= 1;
-                    gdCubeStatus.nBridgeCubes += 1;                    
+                    gdCubeStatus.nBridgeCubes += 1;
+                    
+                    IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_GREY_CUBE_TOUCHED);
 
                 } else if (gdCubeData[i].type == IWCUBE_TYPE_OVERDRIVE) {
                     
@@ -810,6 +819,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
                     
                     gdCubeStatus.nBridgeCubes -= 1;
                     gdCubeStatus.nPoolCubes += 1;
+                    
+                    IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_RED_CUBE_TOUCHED);
                 }
             }
         } else if (!gdCubeData[i].positionTransition.transitionHasFinished) {

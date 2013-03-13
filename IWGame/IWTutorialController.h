@@ -28,6 +28,7 @@
 #include "IWPlayer.h"
 #include "IWGFontMap.h"
 #include "IWController.h"
+#include "IWSoundHandler.h"
 
 typedef struct {
     //
@@ -82,6 +83,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                                 IWPoint2D touchPoint,
                                 bool *isTouched,
                                 IWControllerData *controller,
+                                IWSoundHandlerData *soundHandler,
                                 float timeSinceLastUpdate);
 
 void IWTutorialControllerRender(IWTutorialControllerData *tutorialController,

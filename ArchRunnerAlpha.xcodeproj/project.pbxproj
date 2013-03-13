@@ -24,6 +24,16 @@
 		64086BCB16EF1F91000B1E76 /* FISoundSourceTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 64086BC916EF1F91000B1E76 /* FISoundSourceTests.h */; };
 		64086BCD16EF20E0000B1E76 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64086BCC16EF20E0000B1E76 /* AudioToolbox.framework */; };
 		64086BCF16EF20E7000B1E76 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64086BCE16EF20E7000B1E76 /* OpenAL.framework */; };
+		64086BD616EF3AA2000B1E76 /* soundfx_ping_01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BD516EF3AA2000B1E76 /* soundfx_ping_01.wav */; };
+		64086BD816EF61AC000B1E76 /* soundfx_grey_cube_01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BD716EF61AC000B1E76 /* soundfx_grey_cube_01.wav */; };
+		64086BDB16EF6201000B1E76 /* IWSoundHandler.c in Sources */ = {isa = PBXBuildFile; fileRef = 64086BDA16EF6201000B1E76 /* IWSoundHandler.c */; };
+		64086BDD16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BDC16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav */; };
+		64086BDF16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BDE16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav */; };
+		64086BE516EF8012000B1E76 /* soundfx_cubes_spawn_01.caf in Resources */ = {isa = PBXBuildFile; fileRef = 64086BE416EF8011000B1E76 /* soundfx_cubes_spawn_01.caf */; };
+		64086BE916F079FD000B1E76 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BE816F079FC000B1E76 /* Default-Landscape~ipad.png */; };
+		64086BEB16F07A84000B1E76 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BEA16F07A84000B1E76 /* Default-Portrait~ipad.png */; };
+		64086BED16F07BC3000B1E76 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BEC16F07BC2000B1E76 /* Default-Landscape@2x~ipad.png */; };
+		64086BEF16F07C0C000B1E76 /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BEE16F07C0C000B1E76 /* Default-Portrait@2x~ipad.png */; };
 		641AC1C016C11F8200DDD2EB /* IWGCircle.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1BF16C11F8200DDD2EB /* IWGCircle.c */; };
 		641AC1C216C24F1300DDD2EB /* IWGFontMapEntry.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */; };
 		641AC1C616C2502100DDD2EB /* IWGFontMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 641AC1C516C2502100DDD2EB /* IWGFontMap.c */; };
@@ -142,6 +152,17 @@
 		64086BC916EF1F91000B1E76 /* FISoundSourceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundSourceTests.h; path = ../Finch/Finch/FISoundSourceTests.h; sourceTree = "<group>"; };
 		64086BCC16EF20E0000B1E76 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		64086BCE16EF20E7000B1E76 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		64086BD516EF3AA2000B1E76 /* soundfx_ping_01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_ping_01.wav; sourceTree = "<group>"; };
+		64086BD716EF61AC000B1E76 /* soundfx_grey_cube_01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_grey_cube_01.wav; sourceTree = "<group>"; };
+		64086BD916EF61E9000B1E76 /* IWSoundHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWSoundHandler.h; sourceTree = "<group>"; };
+		64086BDA16EF6201000B1E76 /* IWSoundHandler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWSoundHandler.c; sourceTree = "<group>"; };
+		64086BDC16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_grey_cube_02.wav; sourceTree = "<group>"; };
+		64086BDE16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_cubes_spawn_01.wav; sourceTree = "<group>"; };
+		64086BE416EF8011000B1E76 /* soundfx_cubes_spawn_01.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = soundfx_cubes_spawn_01.caf; sourceTree = "<group>"; };
+		64086BE816F079FC000B1E76 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
+		64086BEA16F07A84000B1E76 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait~ipad.png"; path = "../Default-Portrait~ipad.png"; sourceTree = "<group>"; };
+		64086BEC16F07BC2000B1E76 /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape@2x~ipad.png"; path = "../Default-Landscape@2x~ipad.png"; sourceTree = "<group>"; };
+		64086BEE16F07C0C000B1E76 /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait@2x~ipad.png"; path = "../Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
 		641AC1BE16C11F7500DDD2EB /* IWGCircle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGCircle.h; sourceTree = "<group>"; };
 		641AC1BF16C11F8200DDD2EB /* IWGCircle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGCircle.c; sourceTree = "<group>"; };
 		641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGFontMapEntry.c; sourceTree = "<group>"; };
@@ -488,6 +509,8 @@
 				64086BB016EA186B000B1E76 /* IWStartMenuController.c */,
 				6406401E16E4BFFD0019CAC3 /* IWTutorialStage.h */,
 				6406402116E4C02E0019CAC3 /* IWTutorialStage.c */,
+				64086BD916EF61E9000B1E76 /* IWSoundHandler.h */,
+				64086BDA16EF6201000B1E76 /* IWSoundHandler.c */,
 			);
 			path = IWGame;
 			sourceTree = "<group>";
@@ -543,10 +566,19 @@
 		646F591016A555B000704F45 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */,
+				64086BD516EF3AA2000B1E76 /* soundfx_ping_01.wav */,
+				64086BD716EF61AC000B1E76 /* soundfx_grey_cube_01.wav */,
+				64086BDC16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav */,
+				64086BDE16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav */,
+				64086BE416EF8011000B1E76 /* soundfx_cubes_spawn_01.caf */,
 				64E11D4116E5E2840016FA34 /* Default-568h@2x.png */,
 				64E11D3F16E5E27D0016FA34 /* Default@2x.png */,
 				64E11D3D16E5E2770016FA34 /* Default.png */,
-				64F25F0F16D14F2800EC3E78 /* 01Vladivostok.mp3 */,
+				64086BEE16F07C0C000B1E76 /* Default-Portrait@2x~ipad.png */,
+				64086BEC16F07BC2000B1E76 /* Default-Landscape@2x~ipad.png */,
+				64086BEA16F07A84000B1E76 /* Default-Portrait~ipad.png */,
+				64086BE816F079FC000B1E76 /* Default-Landscape~ipad.png */,
 				64F25F2616D3AD9900EC3E78 /* Icon-72@x2.png */,
 				64F25F2416D3AD9600EC3E78 /* Icon-72.png */,
 				64F25F2216D3AD8500EC3E78 /* Icon@x2.png */,
@@ -740,6 +772,15 @@
 				64E11D3E16E5E2770016FA34 /* Default.png in Resources */,
 				64E11D4016E5E27D0016FA34 /* Default@2x.png in Resources */,
 				64E11D4216E5E2840016FA34 /* Default-568h@2x.png in Resources */,
+				64086BD616EF3AA2000B1E76 /* soundfx_ping_01.wav in Resources */,
+				64086BD816EF61AC000B1E76 /* soundfx_grey_cube_01.wav in Resources */,
+				64086BDD16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav in Resources */,
+				64086BDF16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav in Resources */,
+				64086BE516EF8012000B1E76 /* soundfx_cubes_spawn_01.caf in Resources */,
+				64086BE916F079FD000B1E76 /* Default-Landscape~ipad.png in Resources */,
+				64086BEB16F07A84000B1E76 /* Default-Portrait~ipad.png in Resources */,
+				64086BED16F07BC3000B1E76 /* Default-Landscape@2x~ipad.png in Resources */,
+				64086BEF16F07C0C000B1E76 /* Default-Portrait@2x~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -826,6 +867,7 @@
 				64E11D3916E4C0E20016FA34 /* IWUISlider.c in Sources */,
 				64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */,
 				64086BB216EA2141000B1E76 /* IWStartMenuController.c in Sources */,
+				64086BDB16EF6201000B1E76 /* IWSoundHandler.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

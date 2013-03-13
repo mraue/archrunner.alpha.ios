@@ -41,6 +41,7 @@
 #include "IWUserInterfaceController.h"
 #include "IWTutorialController.h"
 #include "IWStartMenuController.h"
+#include "IWSoundHandler.h"
 
 #pragma mark - Game Logic Data
 
@@ -103,6 +104,8 @@ IWVector3 gdScreenShotRotation;
 IWUISliderData gdScreenShotSliderX, gdScreenShotSliderY, gdScreenShotSliderZ, gdScreenShotSliderE;
 
 IWUserInterfaceControllerData gdUserInterfaceController;
+
+IWSoundHandlerData *gdSoundHandler;
 
 #pragma mark - Asset and memory management
 
