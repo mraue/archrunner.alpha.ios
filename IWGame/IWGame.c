@@ -228,61 +228,64 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                     IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                     return;
             }
-        } else if (gdStartMenuController->menuController.currentPage == 0) {
+        } else if (gdStartMenuController->menuController.currentPage == 0
+                   && IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.5, 0.1, 1.0, 0.9))) {
             IWUIMenuControllerPresentMenuPage(&gdStartMenuController->menuController, 1);
             gdIsTouched = false;
             IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
         }
     }
     
-//    IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
-//    if (IWTimerUpdate(&gdStateSwitchTimer, timeSinceLastUpdate)
-//        && gdIsTouched
-//        && IWPointInRectangle(gdTouchPoint, startButton)) {
-//        IWGRendererTearDownStartMenuAssets();
-//        IWGRendererSetupGameAssets();
-//        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-//        gdIsTouched = false;
-//        return;
-//    }
-//    
-////    IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
-////    if (gdIsTouched
-////        && IWPointInRectangle(gdTouchPoint, screenShotButton)) {
-////        //IWGRendererTearDownStartMenuAssets();
-////        //IWGRendererSetupGameAssets();
-////        gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
-////        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.302, 19.290),IWVector3Normalize(IWVector3Make(0.113, 0.246, 0.963)),IWVector3Normalize(IWVector3Make(-0.508, 0.847, -0.157)));
-////        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.295, 19.299),IWVector3Normalize(IWVector3Make(0.137, 0.374, 0.917)),IWVector3Normalize(IWVector3Make(-0.517, 0.817, -0.256)));
-////        //gdSkyBox.transitionTime = 319.83;
-////        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.110, 0.138, 19.135),IWVector3Normalize(IWVector3Make(0.090, 0.379, 0.921)),IWVector3Normalize(IWVector3Make(-0.522, 0.806, -0.281)));;
-////        //gdSkyBox.transitionTime = 336.06;
-////        
-////        // Icon
-////        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
-////        //gdSkyBox.transitionTime = 336.06;
-////        // Achievement: Cube Collector (Pro)
-////        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(-1.386, 0.000, -1.208),IWVector3Normalize(IWVector3Make(0.793, 0.000, 0.610)),IWVector3Normalize(IWVector3Make(0.000, 1.000, 0.000)));
-////        gdSkyBox.transitionTime = 3.61;
-////        gdIsTouched = false;
-////        return;
-////    }
-//    
-//    IWGRingBufferSwitchBuffer(&gdTriangleDoubleBuffer);
-//    IWGRingBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
-//    
-//    if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
-//        IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
-//    }
-//    gdStartTextField.color = gdStartTextFieldColorTransition.currentVector;
-//    IWGTextFieldSetText(&gdStartTextField, gdStartTextField.text);
-//    IWGRingBufferSubData(&gdTextTriangleDoubleBuffer,
-//                          (gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size) * sizeof(GLfloat),
-//                          gdStartTextField.triangleBufferData.size * sizeof(GLfloat),
-//                          gdStartTextField.triangleBufferData.startCPU,
-//                          false);
-//    
-//    IWGSkyBoxControllerUpdate(&gdSkyBoxController, timeSinceLastUpdate, &gdPlayerData, true);
+
+    IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
+    if (gdIsTouched
+        && IWPointInRectangle(gdTouchPoint, screenShotButton)
+        && 1) {
+        //IWGRendererTearDownStartMenuAssets();
+        //IWGRendererSetupGameAssets();
+        gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
+        
+        unsigned int cubesPerAxis = 8, nCubesBridge = 0;
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.302, 19.290),IWVector3Normalize(IWVector3Make(0.113, 0.246, 0.963)),IWVector3Normalize(IWVector3Make(-0.508, 0.847, -0.157)));
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.332, 0.295, 19.299),IWVector3Normalize(IWVector3Make(0.137, 0.374, 0.917)),IWVector3Normalize(IWVector3Make(-0.517, 0.817, -0.256)));
+        //gdSkyBox.transitionTime = 319.83;
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.110, 0.138, 19.135),IWVector3Normalize(IWVector3Make(0.090, 0.379, 0.921)),IWVector3Normalize(IWVector3Make(-0.522, 0.806, -0.281)));;
+        //gdSkyBox.transitionTime = 336.06;
+        
+        // Icon
+        gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(0.014, 0.357, 21.207),IWVector3Normalize(IWVector3Make(0.013, 0.339, 0.941)),IWVector3Normalize(IWVector3Make(-0.510, 0.811, -0.286)));
+        gdStartMenuController->skyBoxController.transitionTime = 336.06;
+        gdStartMenuController->player = gdPlayerData;
+        srand(111222333444);// default
+        nCubesBridge = 140;
+        cubesPerAxis = 8;
+        // Achievement: Cube Collector (Pro)
+        // Start menu controller
+        //gdPlayerDataStart = gdPlayerData = IWPlayerDataMakeSimple(IWVector3Make(-1.386, 0.000, -1.208),IWVector3Normalize(IWVector3Make(0.793, 0.000, 0.610)),IWVector3Normalize(IWVector3Make(0.000, 1.000, 0.000)));
+        //gdStartMenuController->skyBoxController.transitionTime = 3.61;
+        //cubesPerAxis = 8;
+        
+        IWCubeControllerPurgeData(&gdStartMenuController->cubeController);
+        gdStartMenuController->cubeController = IWCubeControllerMake(cubesPerAxis, cubesPerAxis, cubesPerAxis,
+                                                                   .04, .12, IWVector3Make(0.0, 0.0, 0.0),
+                                                                   IWVector4Make(0.5, 0.5, 0.5, 1.0),
+                                                                   1, 0.05,
+                                                                   false,
+                                                                   false, 1.0, nCubesBridge);
+        IWCubeControllerSetupVBOs(&gdStartMenuController->cubeController,
+                                  gdStartMenuController->mainShaderProgram);
+        gdIsTouched = false;
+        IWUIMenuControllerPresentMenuPage(&gdStartMenuController->menuController, 2);
+        IWGTextFieldSetText(&gdStartMenuController->titleTextField, "");
+        IWGTextFieldSetText(&gdStartMenuController->versionTextField, "");
+        IWGRingBufferSubData(&gdStartMenuController->textMultiBuffer,
+                             0,
+                             gdStartMenuController->textDataBufferSize * sizeof(GLfloat),
+                             gdStartMenuController->textDataBufferStart,
+                             true);
+        return;
+    }
+
     
     gdPlayerData = gdStartMenuController->player;
     
@@ -307,32 +310,23 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
 
 void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
 {
-    
-//    IWRectangle startButton = IWRectangleMake(0.5, 0.2, 1.0, 0.8);
-//    if (IWTimerUpdate(&gdStateSwitchTimer, timeSinceLastUpdate)
-//        && gdIsTouched
-//        && IWPointInRectangle(gdTouchPoint, startButton)) {
-//        IWGRendererTearDownStartMenuAssets();
-//        IWGRendererSetupGameAssets();
-//        gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-//        return;
-//    }
+    IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, false, timeSinceLastUpdate);
     
     // Update view position
     if (gdIsTouched) {
         
         if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.4, 0.4, 0.6, 0.6))) {
             IWPlayerPrintData(&gdPlayerData);
-            printf("gdSkyBox.transitionTime = %.2f;\n", gdSkyBoxController.transitionTime);
+            printf("gdSkyBox.transitionTime = %.2f;\n", gdStartMenuController->skyBoxController.transitionTime);
             gdScreenShotUIMode = gdScreenShotUIMode ? 0 : 1;
             gdIsTouched = false;
         } else {
             float positionScaleFactor = timeSinceLastUpdate * 100.0;
             float directionScaleFactor = timeSinceLastUpdate * 100.0;
             
-            gdSkyBoxController.transitionTime += IWUISliderUpdateWithTouch(&gdScreenShotSliderE, gdTouchPoint).x * positionScaleFactor * 100.0;
-            gdSkyBoxController.transitionTime = gdSkyBoxController.transitionTime < 0.0 ? 0.0 : gdSkyBoxController.transitionTime;
-            gdSkyBoxController.transitionTime = gdSkyBoxController.transitionTime > gdSkyBoxController.colorTransitionTime ? gdSkyBoxController.colorTransitionTime : gdSkyBoxController.transitionTime;
+            gdStartMenuController->skyBoxController.transitionTime += IWUISliderUpdateWithTouch(&gdScreenShotSliderE, gdTouchPoint).x * positionScaleFactor * 100.0;
+            gdStartMenuController->skyBoxController.transitionTime = gdStartMenuController->skyBoxController.transitionTime < 0.0 ? 0.0 : gdStartMenuController->skyBoxController.transitionTime;
+            gdStartMenuController->skyBoxController.transitionTime = gdStartMenuController->skyBoxController.transitionTime > gdStartMenuController->skyBoxController.colorTransitionTime ? gdStartMenuController->skyBoxController.colorTransitionTime : gdStartMenuController->skyBoxController.transitionTime;
             
             if (gdScreenShotUIMode == 0 ) {
                 gdPlayerData.position.x += IWUISliderUpdateWithTouch(&gdScreenShotSliderX, gdTouchPoint).x * positionScaleFactor;
@@ -372,22 +366,8 @@ void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
         IWUISliderTouchHasEnded(&gdScreenShotSliderZ);
         IWUISliderTouchHasEnded(&gdScreenShotSliderE);
     }
-    
-    IWGRingBufferSwitchBuffer(&gdTriangleDoubleBuffer);
-    IWGRingBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
-    
-    if (IWVector4TransitionUpdate(&gdStartTextFieldColorTransition, timeSinceLastUpdate)) {
-        IWVector4TransitionReverseAndStart(&gdStartTextFieldColorTransition);
-    }
-    gdStartTextField.color = gdStartTextFieldColorTransition.currentVector;
-    IWGTextFieldSetText(&gdStartTextField, gdStartTextField.text);
-    IWGRingBufferSubData(&gdTextTriangleDoubleBuffer,
-                          (gdTitleTextField.triangleBufferData.size + gdVersionTextField.triangleBufferData.size) * sizeof(GLfloat),
-                          gdStartTextField.triangleBufferData.size * sizeof(GLfloat),
-                          gdStartTextField.triangleBufferData.startCPU,
-                          false);
-    
-    IWGSkyBoxControllerUpdate(&gdSkyBoxController, 0.0, &gdPlayerData, true);
+
+    gdStartMenuController->player = gdPlayerData;
     
     // Setup view matrices
     IWMatrix4 projectionMatrix = IWMatrix4MakePerspective(65.0f * IW_DEG_TO_RAD, aspectRatio, 0.01f, 100.0f);
@@ -567,6 +547,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
         gdPauseTime = 0.0;
         IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
         gdGrayScaleTransition.transitionTime = 0.5;
+        IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
         //IWVector3TransitionResetAndStart(&gdGrayScaleTransition);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
         if (gdIsTouched) {

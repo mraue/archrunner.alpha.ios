@@ -409,7 +409,8 @@ void IWGRendererUpdateUniforms(IWPlayerData* player,
 
 void IWGRendererRender(void)
 {
-    if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+    if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU
+        || gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
        IWGRendererUpdateUniforms(&gdStartMenuController->player, &gdStartMenuController->skyBoxController);
     } else if (gdCurrentGameStatus == IWGAME_STATUS_TUTORIAL) {
         IWGRendererUpdateUniforms(&gdPlayerData, &gdTutorialController->skyBoxController);
@@ -429,7 +430,8 @@ void IWGRendererRender(void)
             printf("ERROR: IWGRendererRender gdTutorialController == NULL\n");
         }
         return;
-    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU
+               || gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
         if (gdStartMenuController) {
             IWStartMenuControllerRender(gdStartMenuController,
                                         &gdMainShaderProgram,
