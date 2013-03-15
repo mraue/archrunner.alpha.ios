@@ -28,8 +28,6 @@
 		64086BD816EF61AC000B1E76 /* soundfx_grey_cube_01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BD716EF61AC000B1E76 /* soundfx_grey_cube_01.wav */; };
 		64086BDB16EF6201000B1E76 /* IWSoundHandler.c in Sources */ = {isa = PBXBuildFile; fileRef = 64086BDA16EF6201000B1E76 /* IWSoundHandler.c */; };
 		64086BDD16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BDC16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav */; };
-		64086BDF16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086BDE16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav */; };
-		64086BE516EF8012000B1E76 /* soundfx_cubes_spawn_01.caf in Resources */ = {isa = PBXBuildFile; fileRef = 64086BE416EF8011000B1E76 /* soundfx_cubes_spawn_01.caf */; };
 		64086BE916F079FD000B1E76 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BE816F079FC000B1E76 /* Default-Landscape~ipad.png */; };
 		64086BEB16F07A84000B1E76 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BEA16F07A84000B1E76 /* Default-Portrait~ipad.png */; };
 		64086BED16F07BC3000B1E76 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 64086BEC16F07BC2000B1E76 /* Default-Landscape@2x~ipad.png */; };
@@ -94,6 +92,7 @@
 		64C0386316CB65AB00C4F491 /* IWGSkyBoxController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C0386216CB65AB00C4F491 /* IWGSkyBoxController.c */; };
 		64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386416CB8E9700C4F491 /* MasterShader2.vsh */; };
 		64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */; };
+		64D1C6F616F32A2C00A895BF /* soundfx_cubes_spawn_02.caf in Resources */ = {isa = PBXBuildFile; fileRef = 64D1C6F516F32A2C00A895BF /* soundfx_cubes_spawn_02.caf */; };
 		64E11D3716E4C0D50016FA34 /* IWUserInterfaceController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */; };
 		64E11D3916E4C0E20016FA34 /* IWUISlider.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3816E4C0E20016FA34 /* IWUISlider.c */; };
 		64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3B16E4C6EB0016FA34 /* IWCubeController.c */; };
@@ -137,19 +136,19 @@
 		6406402116E4C02E0019CAC3 /* IWTutorialStage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWTutorialStage.c; sourceTree = "<group>"; };
 		64086BAF16EA1861000B1E76 /* IWStartMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWStartMenuController.h; sourceTree = "<group>"; };
 		64086BB016EA186B000B1E76 /* IWStartMenuController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWStartMenuController.c; sourceTree = "<group>"; };
-		64086BB316EF1CF8000B1E76 /* libFinch.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libFinch.a; path = "../Finch/build/Release-iphoneos/libFinch.a"; sourceTree = "<group>"; };
-		64086BB616EF1EF2000B1E76 /* FISound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISound.h; path = ../Finch/Finch/FISound.h; sourceTree = "<group>"; };
-		64086BB716EF1EF2000B1E76 /* FISoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundEngine.h; path = ../Finch/Finch/FISoundEngine.h; sourceTree = "<group>"; };
-		64086BB816EF1F4E000B1E76 /* FIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FIError.h; path = ../Finch/Finch/FIError.h; sourceTree = "<group>"; };
-		64086BB916EF1F4E000B1E76 /* FITestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FITestCase.h; path = ../Finch/Finch/FITestCase.h; sourceTree = "<group>"; };
-		64086BBA16EF1F4E000B1E76 /* FISoundDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundDevice.h; path = ../Finch/Finch/FISoundDevice.h; sourceTree = "<group>"; };
-		64086BBB16EF1F4E000B1E76 /* FISoundContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundContext.h; path = ../Finch/Finch/FISoundContext.h; sourceTree = "<group>"; };
-		64086BBC16EF1F4E000B1E76 /* FISampleFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISampleFormat.h; path = ../Finch/Finch/FISampleFormat.h; sourceTree = "<group>"; };
-		64086BBD16EF1F4E000B1E76 /* FISampleBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISampleBuffer.h; path = ../Finch/Finch/FISampleBuffer.h; sourceTree = "<group>"; };
-		64086BBE16EF1F4E000B1E76 /* FISampleDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISampleDecoder.h; path = ../Finch/Finch/FISampleDecoder.h; sourceTree = "<group>"; };
-		64086BBF16EF1F4E000B1E76 /* FISoundSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundSource.h; path = ../Finch/Finch/FISoundSource.h; sourceTree = "<group>"; };
-		64086BC816EF1F91000B1E76 /* FISoundSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundSource.h; path = ../Finch/Finch/FISoundSource.h; sourceTree = "<group>"; };
-		64086BC916EF1F91000B1E76 /* FISoundSourceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; name = FISoundSourceTests.h; path = ../Finch/Finch/FISoundSourceTests.h; sourceTree = "<group>"; };
+		64086BB316EF1CF8000B1E76 /* libFinch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFinch.a; path = "../Finch/build/Release-iphoneos/libFinch.a"; sourceTree = "<group>"; };
+		64086BB616EF1EF2000B1E76 /* FISound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISound.h; path = ../Finch/Finch/FISound.h; sourceTree = "<group>"; };
+		64086BB716EF1EF2000B1E76 /* FISoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISoundEngine.h; path = ../Finch/Finch/FISoundEngine.h; sourceTree = "<group>"; };
+		64086BB816EF1F4E000B1E76 /* FIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FIError.h; path = ../Finch/Finch/FIError.h; sourceTree = "<group>"; };
+		64086BB916EF1F4E000B1E76 /* FITestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FITestCase.h; path = ../Finch/Finch/FITestCase.h; sourceTree = "<group>"; };
+		64086BBA16EF1F4E000B1E76 /* FISoundDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISoundDevice.h; path = ../Finch/Finch/FISoundDevice.h; sourceTree = "<group>"; };
+		64086BBB16EF1F4E000B1E76 /* FISoundContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISoundContext.h; path = ../Finch/Finch/FISoundContext.h; sourceTree = "<group>"; };
+		64086BBC16EF1F4E000B1E76 /* FISampleFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISampleFormat.h; path = ../Finch/Finch/FISampleFormat.h; sourceTree = "<group>"; };
+		64086BBD16EF1F4E000B1E76 /* FISampleBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISampleBuffer.h; path = ../Finch/Finch/FISampleBuffer.h; sourceTree = "<group>"; };
+		64086BBE16EF1F4E000B1E76 /* FISampleDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISampleDecoder.h; path = ../Finch/Finch/FISampleDecoder.h; sourceTree = "<group>"; };
+		64086BBF16EF1F4E000B1E76 /* FISoundSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISoundSource.h; path = ../Finch/Finch/FISoundSource.h; sourceTree = "<group>"; };
+		64086BC816EF1F91000B1E76 /* FISoundSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISoundSource.h; path = ../Finch/Finch/FISoundSource.h; sourceTree = "<group>"; };
+		64086BC916EF1F91000B1E76 /* FISoundSourceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FISoundSourceTests.h; path = ../Finch/Finch/FISoundSourceTests.h; sourceTree = "<group>"; };
 		64086BCC16EF20E0000B1E76 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		64086BCE16EF20E7000B1E76 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		64086BD516EF3AA2000B1E76 /* soundfx_ping_01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_ping_01.wav; sourceTree = "<group>"; };
@@ -157,8 +156,6 @@
 		64086BD916EF61E9000B1E76 /* IWSoundHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWSoundHandler.h; sourceTree = "<group>"; };
 		64086BDA16EF6201000B1E76 /* IWSoundHandler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWSoundHandler.c; sourceTree = "<group>"; };
 		64086BDC16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_grey_cube_02.wav; sourceTree = "<group>"; };
-		64086BDE16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundfx_cubes_spawn_01.wav; sourceTree = "<group>"; };
-		64086BE416EF8011000B1E76 /* soundfx_cubes_spawn_01.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = soundfx_cubes_spawn_01.caf; sourceTree = "<group>"; };
 		64086BE816F079FC000B1E76 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		64086BEA16F07A84000B1E76 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait~ipad.png"; path = "../Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		64086BEC16F07BC2000B1E76 /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape@2x~ipad.png"; path = "../Default-Landscape@2x~ipad.png"; sourceTree = "<group>"; };
@@ -263,6 +260,7 @@
 		64C0386216CB65AB00C4F491 /* IWGSkyBoxController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGSkyBoxController.c; sourceTree = "<group>"; };
 		64C0386416CB8E9700C4F491 /* MasterShader2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.vsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader2.fsh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		64D1C6F516F32A2C00A895BF /* soundfx_cubes_spawn_02.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = soundfx_cubes_spawn_02.caf; path = ../../../archrunner/alpha/soundfx/cubes/soundfx_cubes_spawn_02.caf; sourceTree = "<group>"; };
 		64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUserInterfaceController.c; path = IWUserInterface/IWUserInterfaceController.c; sourceTree = "<group>"; };
 		64E11D3816E4C0E20016FA34 /* IWUISlider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUISlider.c; path = IWUserInterface/IWUISlider.c; sourceTree = "<group>"; };
 		64E11D3A16E4C6E00016FA34 /* IWCubeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCubeController.h; sourceTree = "<group>"; };
@@ -570,8 +568,7 @@
 				64086BD516EF3AA2000B1E76 /* soundfx_ping_01.wav */,
 				64086BD716EF61AC000B1E76 /* soundfx_grey_cube_01.wav */,
 				64086BDC16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav */,
-				64086BDE16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav */,
-				64086BE416EF8011000B1E76 /* soundfx_cubes_spawn_01.caf */,
+				64D1C6F516F32A2C00A895BF /* soundfx_cubes_spawn_02.caf */,
 				64E11D4116E5E2840016FA34 /* Default-568h@2x.png */,
 				64E11D3F16E5E27D0016FA34 /* Default@2x.png */,
 				64E11D3D16E5E2770016FA34 /* Default.png */,
@@ -775,12 +772,11 @@
 				64086BD616EF3AA2000B1E76 /* soundfx_ping_01.wav in Resources */,
 				64086BD816EF61AC000B1E76 /* soundfx_grey_cube_01.wav in Resources */,
 				64086BDD16EF6F8E000B1E76 /* soundfx_grey_cube_02.wav in Resources */,
-				64086BDF16EF728F000B1E76 /* soundfx_cubes_spawn_01.wav in Resources */,
-				64086BE516EF8012000B1E76 /* soundfx_cubes_spawn_01.caf in Resources */,
 				64086BE916F079FD000B1E76 /* Default-Landscape~ipad.png in Resources */,
 				64086BEB16F07A84000B1E76 /* Default-Portrait~ipad.png in Resources */,
 				64086BED16F07BC3000B1E76 /* Default-Landscape@2x~ipad.png in Resources */,
 				64086BEF16F07C0C000B1E76 /* Default-Portrait@2x~ipad.png in Resources */,
+				64D1C6F616F32A2C00A895BF /* soundfx_cubes_spawn_02.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

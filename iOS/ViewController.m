@@ -166,7 +166,7 @@
                                            @"soundfx_ping_01.wav",
                                            @"soundfx_grey_cube_02.wav",
                                            @"soundfx_grey_cube_01.wav",
-                                           @"soundfx_cubes_spawn_01.caf",
+                                           @"soundfx_cubes_spawn_02.caf",
                                            nil]
                                   forKeys:[NSArray arrayWithObjects:
                                            [NSNumber numberWithInt:IWSOUNDHANDLER_SOUNDS_MENU_SELECTED],
@@ -181,11 +181,17 @@
         if (!sound) {
             NSLog(@"Failed to load sound: %@", error);
         } else {
-            sound.gain = 0.9;
+            //sound.gain = 0.9;
             [self.soundFXDictionary setObject:sound forKey:key];
         }
     }];
 
+    
+    FISound *sound = [self.soundFXDictionary objectForKey:[NSNumber numberWithInt:IWSOUNDHANDLER_SOUNDS_MENU_SELECTED]];
+    if (sound) {
+        sound.gain = 0.7;
+    }
+    
     // Background music
     NSString *soundFilePath =
     [[NSBundle mainBundle] pathForResource: @"01Vladivostok"

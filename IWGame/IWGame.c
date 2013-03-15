@@ -722,7 +722,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                                                    IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0));
             IWVector3 spawnPosition = IWVector3Add(newCenter, randomOffset);
 
-            float transitionTime = 2.0;
+            float transitionTime = 3.0;
             
             gdCubeData[i].positionTransition = IWVector3TransitionMake(spawnPosition,
                                                                        newPositions[j],//IWVector3Add(newCenter, randomOffset2),
