@@ -317,7 +317,7 @@ void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
         
         if (IWPointInRectangle(gdTouchPoint, IWRectangleMake(0.4, 0.4, 0.6, 0.6))) {
             IWPlayerPrintData(&gdPlayerData);
-            printf("gdSkyBox.transitionTime = %.2f;\n", gdStartMenuController->skyBoxController.transitionTime);
+            printf(" gdStartMenuController->skyBoxController.transitionTime = %.2f;\n", gdStartMenuController->skyBoxController.transitionTime);
             gdScreenShotUIMode = gdScreenShotUIMode ? 0 : 1;
             gdIsTouched = false;
         } else {
