@@ -19,7 +19,9 @@ IWControllerData IWControllerDataMakeDefault()
         {1.8, 1.4, 1.8},// pitchAngleMin
         {4.4, 4.2, 4.2},// pitchAngleMax
         {0.0, 0.0, 0.0},// rotationSpeed
-        IWMatrix4MakeTranslation(0.0, 0.0, 0.0)
+        IWMatrix4MakeTranslation(0.0, 0.0, 0.0),
+        {80.0 / 180.0 * M_PI, 80.0 / 180.0 * M_PI, 80.0 / 180.0 * M_PI * 0.8},// rotationSpeedMax
+        {0.0, 0.0, 0.0},// DEBUG
     };
     return controllerData;
 }
@@ -113,11 +115,13 @@ void IWControllerUpdateRotationSpeed(IWControllerData* cd, float deltaT) {
     attitude = IWVector3MultiplyScalar(attitude, 180. / M_PI);
     cd->debug = attitude;
 
-    IWControllerAttitudeToRotationSpeed(cd, attitude);
+    IWControllerAttitudeToRotationSpeed(cd, attitude, false);
     return;
 }
 
-void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVector3 attitude)
+void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData,
+                                         IWVector3 attitude,
+                                         bool updateZ)
 {
     IWVector3 diffSigns = IWVector3Divide(attitude, IWVector3ApplyFunctionF(attitude, (float (*)(float))(fabsf)));
     
@@ -133,8 +137,10 @@ void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVec
         rotationSpeed.x = 0.0;
     if (isnan(rotationSpeed.y))
         rotationSpeed.y = 0.0;
-    if (isnan(rotationSpeed.z))
+    if (updateZ && isnan(rotationSpeed.z))
         rotationSpeed.z = 0.0;
+    if (!updateZ)
+        rotationSpeed.z = controllerData->rotationSpeed.z;
     controllerData->rotationSpeed = rotationSpeed;
     return;
 }

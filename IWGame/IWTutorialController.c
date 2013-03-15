@@ -540,26 +540,27 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                                         IWVector3MultiplyScalar(IWVector3Normalize(player->direction),
                                                                 timeSinceLastUpdate * speed));
         
-        float rotationSpeedMax = 80.0 / 180.0 * M_PI * timeSinceLastUpdate;
+        
+        IWVector3 rotationSpeedMax = IWVector3MultiplyScalar(controller->rotationSpeedMax, timeSinceLastUpdate);
         
         // Update direction
         IWVector3 dirGLV = IWVector3Make(player->direction.x, player->direction.y, player->direction.z);
         IWVector3 upGLV = IWVector3Make(player->up.x, player->up.y, player->up.z);
         
         IWMatrix4 yRotationUpdateMatrix =
-        IWMatrix4MakeRotation(controller->rotationSpeed.y * rotationSpeedMax,
+        IWMatrix4MakeRotation(controller->rotationSpeed.y * rotationSpeedMax.y,
                               upGLV.x, upGLV.y, upGLV.z);
         
         IWVector3 normGLV = IWVector3CrossProduct(dirGLV, upGLV);
         
         IWMatrix4 xRotationUpdateMatrix =
-        IWMatrix4MakeRotation(controller->rotationSpeed.x * rotationSpeedMax,
+        IWMatrix4MakeRotation(controller->rotationSpeed.x * rotationSpeedMax.x,
                               normGLV.x, normGLV.y, normGLV.z);
         
         IWMatrix4 rotationUpdateMatrix = IWMatrix4Multiply(xRotationUpdateMatrix, yRotationUpdateMatrix);
         
         IWMatrix4 zRotationUpdateMatrix =
-        IWMatrix4MakeRotation(controller->rotationSpeed.z * rotationSpeedMax,
+        IWMatrix4MakeRotation(controller->rotationSpeed.z * rotationSpeedMax.z,
                               dirGLV.x, dirGLV.y, dirGLV.z);
         rotationUpdateMatrix = IWMatrix4Multiply(rotationUpdateMatrix, zRotationUpdateMatrix);
         

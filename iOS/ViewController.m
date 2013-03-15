@@ -337,7 +337,8 @@
                                                             -1.0 * currentAttitude.yaw * IW_RAD_TO_DEG),
                                               alpha);
             IWControllerAttitudeToRotationSpeed(&gdControllerDataAccelerometer,
-                                                _filteredAttitude);
+                                                _filteredAttitude,
+                                                false);
             [currentAttitude release];
         } else {
             [savedAttitude release];
@@ -350,7 +351,7 @@
     IWRectangle rollLeft = IWRectangleMake(0.0, 0.3, 0.3, 0.7);
     IWRectangle rollRight = IWRectangleMake(0.7, 0.3, 1.0, 0.7);
     if (gdIsTouched) {
-        alpha = 0.5;
+        alpha = 0.9;
         if (IWPointInRectangle(gdTouchPoint, rollLeft)) {
             gdControllerDataAccelerometer.rotationSpeed.z =
                 gdControllerDataAccelerometer.rotationSpeed.z * alpha + (1.0 - alpha) * -1.0;

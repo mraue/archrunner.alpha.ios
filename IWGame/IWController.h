@@ -18,6 +18,7 @@ typedef struct {
     IWVector3 pitchAngleMax;
     IWVector3 rotationSpeed;
     IWMatrix4 referenceRotationMatrix;
+    IWVector3 rotationSpeedMax;
     IWVector3 debug;
 } IWControllerData;
 
@@ -27,8 +28,11 @@ void IWControllerDataUpdateReferenceDirection(IWControllerData *controllerData,
                                               IWVector3 newReferenceDirection,
                                               IWVector3 referenceFrame);
 
-void IWControllerUpdateRotationSpeed(IWControllerData* cd, float deltaT);
-void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData, IWVector3 attitude);
+void IWControllerUpdateRotationSpeed(IWControllerData* cd,
+                                     float deltaT);
+void IWControllerAttitudeToRotationSpeed(IWControllerData *controllerData,
+                                         IWVector3 attitude,
+                                         bool updateZ);
 
 IWVector3 IWControllerGetYUpForDirection(IWVector3 direction);
 
