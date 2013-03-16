@@ -188,7 +188,7 @@
     if (achievement == nil) {
         NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.CubeCollector");
     } else if (![achievement.completed boolValue]) {
-        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 1000.0 * 100.0;
+        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 500.0 * 100.0;
         if (progress > 100.0) {
             progress = 100.0;
             achievement.completed = @YES;
@@ -209,7 +209,7 @@
     if (achievement == nil) {
         NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.CubeCollector");
     } else if (![achievement.completed boolValue]) {
-        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 5000.0 * 100.0;
+        float progress = [self.achievementTracker.nGridCubesTotal floatValue] / 2500.0 * 100.0;
         if (progress > 100.0) {
             progress = 100.0;
             achievement.completed = @YES;
