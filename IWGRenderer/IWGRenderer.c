@@ -289,9 +289,9 @@ void IWGRendererSetupGameAssets(void)
     // Score presenter
     //
     
-    gdScorePresenterTest = IWScorePresenterMake(1.0, IWVector2Make(-0.8, 0.9), 1. / aspect,
+    gdScorePresenter = IWScorePresenterMake(1.0, IWVector2Make(-0.8, 0.9), 1. / aspect,
                                                 0.22, IWVector4Make(0.2, 0.2, 0.2, 0.8), &gdFontMap);
-    IWScorePresenterFillVBO(&gdScorePresenterTest, positionSlot, colorSlot, textureOffsetSlot,
+    IWScorePresenterFillVBO(&gdScorePresenter, positionSlot, colorSlot, textureOffsetSlot,
                             gdTextureHandlerId, gdFontMapTextureData);
     
     return;
@@ -338,7 +338,7 @@ void IWGRendererTearDownGameAssets(void)
     IWUserInterfacePurgeData(&gdUserInterfaceController);
     
     IWUIMenuControllerPurgeData(&gdPauseMenu);
-    IWScorePresenterPurgeData(&gdScorePresenterTest);
+    IWScorePresenterPurgeData(&gdScorePresenter);
 }
 
 void IWGRendererRenderCubes(void)
@@ -489,7 +489,7 @@ void IWGRendererRender(void)
                    || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
             IWUIMenuControllerRender(&gdPauseMenu);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
-            IWScorePresenterRender(&gdScorePresenterTest);
+            IWScorePresenterRender(&gdScorePresenter);
         }
 #endif
         glDisable(GL_BLEND);

@@ -407,7 +407,19 @@
     if (self.localPlayer
         && self.localPlayer.isAuthenticated
         && gdPushScoreToLeaderboard) {
-        GKScore *scoreReporter = [[GKScore alloc] initWithCategory:@"ArchRunnerAlpha.TotalScore.Normal"];
+        NSString *leaderBoardId;
+        switch (gdGameModus) {
+            case IWGAME_MODUS_LONG:
+                leaderBoardId = @"ArchRunnerAlpha.TotalScore.Long";
+                break;
+            case IWGAME_MODUS_SHORT:
+                leaderBoardId = @"ArchRunnerAlpha.TotalScore.Short";
+                break;
+            default:
+                leaderBoardId = @"ArchRunnerAlpha.TotalScore.Normal";
+                break;
+        }
+        GKScore *scoreReporter = [[GKScore alloc] initWithCategory:leaderBoardId];
         scoreReporter.value = (unsigned int)gdScoreCounter.score;
         scoreReporter.context = 0;
         

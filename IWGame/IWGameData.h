@@ -73,7 +73,7 @@ IWIndexListData gdGPUBufferPositionIndexList;
 unsigned int gdSecondaryPositionCounter;
 IWVector3 *gdSecondaryPosition;
 
-float gdZMax;
+//float gdZMax;
 
 IWGSkyBoxControllerData gdSkyBoxController;
 
@@ -88,16 +88,15 @@ bool gdUpdateAchievements, gdAchievementReportedWatchingTheSunset;
 IWTutorialControllerData *gdTutorialController;
 IWStartMenuControllerData *gdStartMenuController;
 
+IWGAME_MODUS gdGameModus;
+
 #pragma mark - User input
 
 IWControllerData gdControllerDataAccelerometer;
 
 #pragma mark - Debug / Testing
 
-IWUIMenuPresenterData gdMenuPresenterTest;
-IWUIMenuControllerData gdMenuController;
-
-IWScorePresenterData gdScorePresenterTest;
+//IWUIMenuPresenterData gdMenuPresenterTest;
 
 int gdScreenShotUIMode;
 IWVector3 gdScreenShotRotation;
@@ -127,6 +126,8 @@ bool gdResetControllerPosition;
 bool gdRunningInSimulator;
 
 IWUIMenuControllerData gdPauseMenu;
+IWUIMenuControllerData gdMenuController;
+IWScorePresenterData gdScorePresenter;
 
 #pragma mark - Open GL Buffer
 

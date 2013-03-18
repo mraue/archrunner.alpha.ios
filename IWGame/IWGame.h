@@ -20,6 +20,13 @@ typedef enum {
     IWGAME_STATUS_TUTORIAL
 } IWGAME_STATUS;
 
+typedef enum {
+    IWGAME_MODUS_SHORT,
+    IWGAME_MODUS_NORMAL,
+    IWGAME_MODUS_LONG,
+    IWGAME_MODUS_N
+} IWGAME_MODUS;
+
 void IWGameSetup(void);
 
 void IWGameReset(void);

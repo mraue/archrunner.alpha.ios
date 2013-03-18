@@ -67,6 +67,7 @@ void IWGameSetup(void)
     gdScreenShotSliderE = IWUISliderMake(IWRectangleMake(0.15, 0.85, 0.85, 1.0));
     //
     gdNCubesPerAxis = 5;// [5]
+    gdGameModus = IWGAME_MODUS_NORMAL;
     //
     return;
 }
@@ -84,7 +85,7 @@ void IWGameReset(void)
     gdNCubes = gdNCubesPerAxis * gdNCubesPerAxis * gdNCubesPerAxis;
     
     gdTotalRunTime = 0.0;
-    gdZMax = 0.0;
+    //gdZMax = 0.0;
     gdScoreCounter = IWScoreCounterMakeEmpty();
     gdCubeStatus = IWCubeStatusMakeEmpty();
     gdCubeStatus.nGridCubes = gdNCubes;
@@ -138,9 +139,9 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
                     gdGrayScaleTransition.currentVector.y);
     }
     
-    IWScorePresenterUpdate(&gdScorePresenterTest, &gdScoreCounter, timeSinceLastUpdate);
+    IWScorePresenterUpdate(&gdScorePresenter, &gdScoreCounter, timeSinceLastUpdate);
     
-    if (gdScorePresenterTest.hasFinished && gdIsTouched) {
+    if (gdScorePresenter.hasFinished && gdIsTouched) {
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER_MENU;
         gdIsTouched = false;
     }
@@ -217,12 +218,15 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                 switch (touchN) {
                     case 0:
                         gdNCubesPerAxis = 4;
+                        gdGameModus = IWGAME_MODUS_SHORT;
                         break;
                     case 1:
                         gdNCubesPerAxis = 5;
+                        gdGameModus = IWGAME_MODUS_NORMAL;
                         break;
                     case 2:
                         gdNCubesPerAxis = 6;
+                        gdGameModus = IWGAME_MODUS_LONG;
                         break;
                 }
                 IWStartMenuControllerPurgeData(gdStartMenuController);
@@ -675,8 +679,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
     // Udpate score and score display
     gdScoreCounter.runningTimeTotal += timeSinceLastUpdate;
 
-    gdZMax = IW_MAX(gdZMax, gdPlayerData.position.z);
-    gdScoreCounter.zMax = gdZMax;
+    gdScoreCounter.zMax = IW_MAX(gdScoreCounter.zMax, gdPlayerData.position.z);
 
     IWScoreCounterUpdateScore(&gdScoreCounter);
 
