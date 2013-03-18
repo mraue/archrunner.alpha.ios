@@ -66,6 +66,8 @@ void IWGameSetup(void)
     gdScreenShotSliderZ = IWUISliderMake(IWRectangleMake(0.85, 0.15, 1.0, 0.85));
     gdScreenShotSliderE = IWUISliderMake(IWRectangleMake(0.15, 0.85, 0.85, 1.0));
     //
+    gdNCubesPerAxis = 5;// [5]
+    //
     return;
 }
 
@@ -79,7 +81,6 @@ void IWGameReset(void)
                                                               playerDirection,
                                                               playerUp);
     
-    gdNCubesPerAxis = 5;// [5]
     gdNCubes = gdNCubesPerAxis * gdNCubesPerAxis * gdNCubesPerAxis;
     
     gdTotalRunTime = 0.0;
@@ -204,14 +205,42 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
     IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, gdIsTouched, timeSinceLastUpdate);
     
     if (gdIsTouched
-        && gdStartMenuController->menuController.isInteractive) {       
-        if (gdStartMenuController->menuController.currentPage == 1) {
+        && gdStartMenuController->menuController.isInteractive) {
+        if (gdStartMenuController->menuController.currentPage == 3) {
+            int touchN = IWUIMenuPresenterGetTouch(&gdStartMenuController->menuController.presenter, gdTouchPoint);
+            if (touchN == 3) {
+                IWUIMenuControllerPresentMenuPage(&gdStartMenuController->menuController, 1);
+                gdIsTouched = false;
+                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
+                return;
+            } else if (touchN > -1) {
+                switch (touchN) {
+                    case 0:
+                        gdNCubesPerAxis = 4;
+                        break;
+                    case 1:
+                        gdNCubesPerAxis = 5;
+                        break;
+                    case 2:
+                        gdNCubesPerAxis = 6;
+                        break;
+                }
+                IWStartMenuControllerPurgeData(gdStartMenuController);
+                gdStartMenuController = NULL;
+                IWGRendererSetupGameAssets();
+                gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+                gdIsTouched = false;
+                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
+                return;
+            }
+        } else if (gdStartMenuController->menuController.currentPage == 1) {
             switch (IWUIMenuPresenterGetTouch(&gdStartMenuController->menuController.presenter, gdTouchPoint)) {
                 case 0:
-                    IWStartMenuControllerPurgeData(gdStartMenuController);
-                    gdStartMenuController = NULL;
-                    IWGRendererSetupGameAssets();
-                    gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+//                    IWStartMenuControllerPurgeData(gdStartMenuController);
+//                    gdStartMenuController = NULL;
+//                    IWGRendererSetupGameAssets();
+//                    gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+                    IWUIMenuControllerPresentMenuPage(&gdStartMenuController->menuController, 3);
                     gdIsTouched = false;
                     IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                     return;
@@ -240,7 +269,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
     IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
     if (gdIsTouched
         && IWPointInRectangle(gdTouchPoint, screenShotButton)
-        && 1) {
+        && 0) {
         //IWGRendererTearDownStartMenuAssets();
         //IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
@@ -703,7 +732,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                                                    IW_RAND_SIGN * IW_RAND_UNIFORM(2.0, 4.0));
             IWVector3 spawnPosition = IWVector3Add(newCenter, randomOffset);
 
-            float transitionTime = 3.0;
+            float transitionTime = 2.0;
             
             gdCubeData[i].positionTransition = IWVector3TransitionMake(spawnPosition,
                                                                        newPositions[j],//IWVector3Add(newCenter, randomOffset2),

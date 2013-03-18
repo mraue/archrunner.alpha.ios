@@ -71,11 +71,11 @@ IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRa
     // Menu
     
     startMenuController->menuController
-    = IWUIMenuControllerMake(IWUIMenuPresenterMake(3, 12, 1,
+    = IWUIMenuControllerMake(IWUIMenuPresenterMake(4, 12, 1,
                                                    IWVector2Make(0.3, 0.35), 1. / screenAspectRatio,
                                                    0.16, 1.2,
                                                    IWVector4Make(1.0, 1.0, 1.0, 0.8),
-                                                   fontMap), 3, true, true);
+                                                   fontMap), 4, true, true);
 
     startMenuController->menuController.pages[0].title = "";
     startMenuController->menuController.pages[0].isActive = true;
@@ -89,9 +89,21 @@ IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRa
     startMenuController->menuController.pages[1].isActive = false;
     IWUIMenuPageAddItem(&startMenuController->menuController.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[NEW GAME]", "", 0, NULL, 1);
     IWUIMenuPageAddItem(&startMenuController->menuController.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[TUTORIAL]", "", 0, NULL, 2);
+    //
     startMenuController->menuController.pages[2].title = "";
     startMenuController->menuController.pages[2].isActive = false;
-    
+    //
+    startMenuController->menuController.pages[3].title = "";
+    startMenuController->menuController.pages[3].isActive = false;
+    IWUIMenuPageAddItem(&startMenuController->menuController.pages[3], IWUIMENUITEM_ITEM_TYPE_ACTION,
+                        " [SHORT]", "", 0, NULL, 1);
+    IWUIMenuPageAddItem(&startMenuController->menuController.pages[3], IWUIMENUITEM_ITEM_TYPE_ACTION,
+                        " [NORMAL]", "", 0, NULL, 2);
+    IWUIMenuPageAddItem(&startMenuController->menuController.pages[3], IWUIMENUITEM_ITEM_TYPE_ACTION,
+                        " [LONG]", "", 0, NULL, 3);
+    IWUIMenuPageAddItem(&startMenuController->menuController.pages[3], IWUIMENUITEM_ITEM_TYPE_ACTION,
+                        " <BACK", "", 0, NULL, 3);
+
     IWUIMenuPresenterInitTextFields(&startMenuController->menuController.presenter, startMenuController->menuController.dataBufferStart);
     IWIUMenuPresenterPresentMenu(&startMenuController->menuController.presenter, &startMenuController->menuController.pages[0]);
     
