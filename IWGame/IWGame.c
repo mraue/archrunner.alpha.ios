@@ -266,10 +266,10 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
     }
     
 
+#ifdef IW_DEBUG
     IWRectangle screenShotButton = IWRectangleMake(0.0, 0.0, 0.1, 0.1);
     if (gdIsTouched
-        && IWPointInRectangle(gdTouchPoint, screenShotButton)
-        && 0) {
+        && IWPointInRectangle(gdTouchPoint, screenShotButton)) {
         //IWGRendererTearDownStartMenuAssets();
         //IWGRendererSetupGameAssets();
         gdCurrentGameStatus = IWGAME_STATUS_SCREENSHOT;
@@ -314,7 +314,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                              true);
         return;
     }
-
+#endif
     
     gdPlayerData = gdStartMenuController->player;
     
@@ -574,10 +574,12 @@ void IWGameUpdate(float timeSinceLastUpdate,
         && IWUIRectangleButtonCheckTouch(&gdUserInterfaceController.pauseButton, gdIsTouched, gdTouchPoint)) {
         gdCurrentGameStatus = IWGAME_STATUS_PAUSED;
         gdPauseTime = 0.0;
+#ifndef IW_DEBUG
         IWVector3TransitionReverseAndStart(&gdGrayScaleTransition);
         gdGrayScaleTransition.transitionTime = 0.5;
         IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
         //IWVector3TransitionResetAndStart(&gdGrayScaleTransition);
+#endif
     } else if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
         if (gdIsTouched) {
             int touchN = IWUIMenuPresenterGetTouch(&gdPauseMenu.presenter, gdTouchPoint);

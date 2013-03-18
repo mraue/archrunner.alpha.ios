@@ -469,6 +469,18 @@ void IWGRendererRender(void)
 
         glUseProgram(gdTextShaderProgram.programID);
 
+#ifdef IW_DEBUG
+        if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
+            || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+            IWUserInterfaceControllerRender(&gdUserInterfaceController,
+                                            gdTextShaderProgram.programID,
+                                            gdUIShaderProgram.programID);
+        } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
+            IWUIMenuControllerRender(&gdPauseMenu);
+        } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
+            IWScorePresenterRender(&gdScorePresenterTest);
+        }
+#else
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
             IWUserInterfaceControllerRender(&gdUserInterfaceController,
                                             gdTextShaderProgram.programID,
@@ -479,7 +491,7 @@ void IWGRendererRender(void)
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
             IWScorePresenterRender(&gdScorePresenterTest);
         }
-
+#endif
         glDisable(GL_BLEND);
         
     } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
