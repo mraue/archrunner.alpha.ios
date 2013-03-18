@@ -278,6 +278,7 @@
 {
     float alpha = 0.2;
     if (_motionManager.isDeviceMotionAvailable) {
+        // This is actually not used
         IWVector3 gravity = IWVector3Make(_motionManager.deviceMotion.gravity.x,
                                           _motionManager.deviceMotion.gravity.y,
                                           _motionManager.deviceMotion.gravity.z);
@@ -323,8 +324,7 @@
     gdControllerDataAccelerometer.direction = IWVector3Normalize(IWVector3Make(_filteredAcceleration.x,
                                                                                _filteredAcceleration.y,
                                                                                _filteredAcceleration.z));
-    
-    
+
     if (_motionManager.isDeviceMotionAvailable) {
         // Needs to be better determined under the assumption of 60 FPS
         alpha = 0.3;
@@ -346,6 +346,12 @@
         }
     } else {
         IWControllerUpdateRotationSpeed(&gdControllerDataAccelerometer, self.timeSinceLastUpdate);
+    }
+    
+    // Overhead (i.e. z direction positive) for accelerometer
+    if (!_motionManager.isDeviceMotionAvailable
+        && _filteredAcceleration.z > 0.0) {
+        gdControllerDataAccelerometer.rotationSpeed.y *= -1.0;
     }
     
     IWRectangle rollLeft = IWRectangleMake(0.0, 0.3, 0.3, 0.7);
