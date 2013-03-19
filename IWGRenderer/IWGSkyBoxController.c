@@ -190,7 +190,8 @@ void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController,
     skyBoxController->sun.centerLocation.x = player->position.x + skyBoxController->sunPosition.x;
     skyBoxController->sun.centerLocation.z = player->position.z + skyBoxController->sunPosition.z;
     skyBoxController->sun.radius = (1. + player->position.z / 30.0) * 5.0;
-    
+    // Make sure we don't grow to infinity
+    skyBoxController->sun.radius = skyBoxController->sun.radius > 10.0 ? 10.0 : skyBoxController->sun.radius;
     //    if (skyBoxController->sun.centerLocation.y > -10.0)
     //        skyBoxController->sun.centerLocation.y -= 5. * timeSinceLastUpdate / (skyBoxController->colorTransitionTime * 0.9);
     
