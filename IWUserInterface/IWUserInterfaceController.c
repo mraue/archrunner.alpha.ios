@@ -16,7 +16,7 @@
 #include "IWGeometry.h"
 #include "IWUIElement.h"
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRatio,
                                                             IWUSERINTERFACE_ELEMENT visibleElements,

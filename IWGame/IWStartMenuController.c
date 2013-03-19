@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRatio,
                                                             IWGFontMapData *fontMap)

@@ -24,7 +24,7 @@
 #import "AchievementController.h"
 #import "IWSoundHandler.h"
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 @interface ViewController () {
     

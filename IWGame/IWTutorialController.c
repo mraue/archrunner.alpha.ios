@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRatio,
                                                           IWGFontMapData *fontMap)

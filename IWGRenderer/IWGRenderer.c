@@ -42,7 +42,7 @@
 
 #include "IWGameData.h"
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 void IWGRendererSetupGL(const char* fontMapFilename)
 {
@@ -478,7 +478,7 @@ void IWGRendererRender(void)
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
             IWUIMenuControllerRender(&gdPauseMenu);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
-            IWScorePresenterRender(&gdScorePresenterTest);
+            IWScorePresenterRender(&gdScorePresenter);
         }
 #else
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {

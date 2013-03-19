@@ -15,8 +15,6 @@
 
 #include "IWGLighting.h"
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
 IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault()
 {
     IWGSkyBoxControllerData skyBoxController;
@@ -197,7 +195,7 @@ void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController,
     //        skyBoxController->sun.centerLocation.y -= 5. * timeSinceLastUpdate / (skyBoxController->colorTransitionTime * 0.9);
     
     float sunY = -1.0 - 5.0 * skyBoxController->transitionTime / (skyBoxController->colorTransitionTime * 0.9);
-    skyBoxController->sun.centerLocation.y = sunY < -10.0 ? -10.0 : sunY;
+    skyBoxController->sun.centerLocation.y = sunY < -15.0 ? -15.0 : sunY;
     
     if (updateColor)
         skyBoxController->sun.color = skyBoxController->sunColorTransition.currentVector;
