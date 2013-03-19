@@ -45,8 +45,8 @@
                                @"ArchRunnerAlpha.Achievement.CubeCollector",
                                @"ArchRunnerAlpha.Achievement.CubeCollectorPro",
                                @"ArchRunnerAlpha.Achievement.Club10k",
-                               @"ArchRunnerAlpha.Achievement.Club12k",
                                @"ArchRunnerAlpha.Achievement.Club14k",
+                               @"ArchRunnerAlpha.Achievement.Club20k",
                                @"ArchRunnerAlpha.Achievement.WatchingTheSunset",
                                nil];
     }
@@ -238,11 +238,11 @@
     }
     
     // @"ArchRunnerAlpha.Achievement.Club12k"
-    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club12k"];
+    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club14k"];
     if (achievement == nil) {
-        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club12k");
+        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club14k");
     } else if (![achievement.completed boolValue]
-               && self.lastScoreTotal >= 12000) {
+               && self.lastScoreTotal >= 14000) {
         achievement.completed = @YES;
         [completetedAchievements addObject:achievement];
         achievement.percentComplete = [NSNumber numberWithFloat:100.0];
@@ -253,11 +253,11 @@
     }
     
     // @"ArchRunnerAlpha.Achievement.Club14k"
-    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club14k"];
+    achievement = [self getAchievementForGameCenterId:@"ArchRunnerAlpha.Achievement.Club20k"];
     if (achievement == nil) {
-        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club14k");
+        NSLog(@"ERROR: Could not find achievement with gamecenter id ArchRunnerAlpha.Achievement.Club20k");
     } else if (![achievement.completed boolValue]
-               && self.lastScoreTotal >= 14000) {
+               && self.lastScoreTotal >= 20000) {
         achievement.completed = @YES;
         [completetedAchievements addObject:achievement];
         achievement.percentComplete = [NSNumber numberWithFloat:100.0];

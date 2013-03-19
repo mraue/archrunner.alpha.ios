@@ -395,13 +395,23 @@
 
 - (void)update
 {
+    // Reset sound
     IWSoundHandlerEmtpyAndReset(gdSoundHandler);
     
+    // Get controll input
     [self processControllInput];
     
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     
     IWGameMainHandler(self.timeSinceLastUpdate, aspect);
+    
+    // Process sound
+    for (int i = 0; i < gdSoundHandler->nSounds; i++) {
+        FISound *sound = [self.soundFXDictionary objectForKey:[NSNumber numberWithInt:gdSoundHandler->sounds[i]]];
+        if (sound) {
+            [sound play];
+        }
+    }
     
     // Report score to game center leaderboard
     if (self.localPlayer
@@ -427,14 +437,6 @@
             printf("Score reported!\n");
         }];
         gdPushScoreToLeaderboard = false;
-    }
-    
-    // Process sound
-    for (int i = 0; i < gdSoundHandler->nSounds; i++) {
-        FISound *sound = [self.soundFXDictionary objectForKey:[NSNumber numberWithInt:gdSoundHandler->sounds[i]]];
-        if (sound) {
-            [sound play];
-        }
     }
     
     // Report achievements
