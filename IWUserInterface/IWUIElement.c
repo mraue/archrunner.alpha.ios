@@ -30,7 +30,7 @@ IWUIElementData IWUIElementMakeCircle(IWPoint2D centerPoint, float radiusX, IWVe
     float angleStep = 2.0 * M_PI / (nDivisions - 1);
     bool first = true;
     // REFACTOR: This is scaffolded and needs massive refactoring
-    for (float angle = 0.0; angle < 2.0 * M_PI; angle += angleStep) {
+    for (float angle = 0.0; angle <= 2.0 * M_PI; angle += angleStep) {
         *bufferPointer++ = (centerPoint.x + sinf(angle) * radiusX) * 2.0 - 1.0;
         *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX / aspectRatio) * 2.0 - 1.0;
         *bufferPointer++ = -1.0;

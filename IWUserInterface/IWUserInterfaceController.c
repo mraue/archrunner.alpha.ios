@@ -202,7 +202,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
          userInterfaceController.lineDataBufferSize += IWUIRectangleButtonLineBufferSize(&userInterfaceController.pauseButton);
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
-        userInterfaceController.lineDataBufferSize += 2 * 52 * 7;
+        userInterfaceController.lineDataBufferSize += 2 * 52 * 7 - 4 * 7;
     }
     
     userInterfaceController.lineDataBufferStart = malloc(userInterfaceController.lineDataBufferSize * sizeof(GLfloat));
@@ -225,6 +225,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                                                  userInterfaceController.lineDataBufferStart
                                                                  + bufferOffset);
         bufferOffset += uiCentralCircle2.lineBufferSize;
+        
     }
     
     glBindVertexArrayOES(0);
