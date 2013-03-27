@@ -26,9 +26,13 @@ IWGFontMapData IWGFontMapMakeEmpty()
 
 IWGFontMapData IWGFontMapCreateFromFile(const char* filename)
 {
+    return IWGFontMapCreateFromString(IWFileToolsReadFileToString(filename));
+
+}
+
+IWGFontMapData IWGFontMapCreateFromString(char* contentString)
+{
     IWGFontMapData fontMap = IWGFontMapMakeEmpty();
-    
-    char *fileContent = IWFileToolsReadFileToString(filename);
     
     int charID;
     float x1, x2, y1, y2;
@@ -36,7 +40,7 @@ IWGFontMapData IWGFontMapCreateFromFile(const char* filename)
     unsigned int nFileEntries = 0;
     char *line = NULL;
     
-    while ((line = strtok(nFileEntries == 0 ? fileContent : NULL, "\n")) != NULL
+    while ((line = strtok(nFileEntries == 0 ? contentString : NULL, "\n")) != NULL
            && nFileEntries < IWGFONTMAP_MAX_FILE_ENTRIES_SAVE){
         if (sscanf(line, "%i %f %f %f %f", &charID, &x1, &y1, &x2, &y2) != EOF) {
             if (charID > 0 && charID < 127) {

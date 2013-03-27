@@ -42,8 +42,6 @@
 
 #include "IWGameData.h"
 
-//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
 void IWGRendererSetupGL(const char* fontMapFilename)
 {
     // Get and save uniform locations.

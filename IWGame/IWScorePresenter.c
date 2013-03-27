@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
 IWScorePresenterData IWScorePresenterMake(float timePerRow,
                                           IWPoint2D anchorPoint,
                                           float aspect,

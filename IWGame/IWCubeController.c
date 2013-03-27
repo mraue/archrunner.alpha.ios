@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
 IWCubeControllerData IWCubeControllerMake(int nx, int ny, int nz,
                                           float l, float d,
                                           IWVector3 center,
