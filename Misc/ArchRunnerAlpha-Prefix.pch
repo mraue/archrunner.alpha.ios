@@ -16,13 +16,13 @@
 //#define IW_DEBUG
 
 #ifdef IW_DEBUG
-#define VERSION "0.0.6d"
+#define VERSION "0.0.7d"
 #else
-#define VERSION "0.0.6"
+#define VERSION "0.0.7"
 #endif
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
-#define VERSION_SUBMINOR 6
+#define VERSION_SUBMINOR 7
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))

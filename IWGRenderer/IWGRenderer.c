@@ -92,7 +92,19 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
     
+    
+    // Font map texture setup
     glGenTextures(1, &gdTextureHandlerId);
+    
+    glBindTexture(GL_TEXTURE_2D, gdTextureHandlerId);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
+    //glGenerateMipmap(GL_TEXTURE_2D);
     
     gdTriangleDoubleBuffer = IWGRingBufferGen();
     gdTextTriangleDoubleBuffer = IWGRingBufferGen();
@@ -316,7 +328,7 @@ void IWGRendererTearDownGameAssets(void)
     
     IWGSkyBoxControllerPurgeData(&gdSkyBoxController);
     
-    glDeleteTextures(1, &gdTextureHandlerId);
+//    glDeleteTextures(1, &gdTextureHandlerId);
     
     //IWGRingBufferDealloc(&gdTextTriangleDoubleBuffer);
     IWGRingBufferDealloc(&gdTriangleDoubleBuffer);
@@ -515,6 +527,7 @@ void IWGRendererTearDownGL(void)
 {
     // Delete buffer
     //glDeleteBuffers(GLsizei n, const GLuint *buffers)
+    glDeleteTextures(1, &gdTextureHandlerId);
     // Delete shader and programs
     glDeleteShader(shaderProgramData.vertexShaderID);
     glDeleteShader(shaderProgramData.fragmentShaderID);
