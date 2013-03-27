@@ -49,8 +49,7 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
                              GLuint positionSlot,
                              GLuint colorSlot,
                              GLuint textureOffsetSlot,
-                             GLuint textureHandlerId,
-                             GLvoid* fontMapTextureData);
+                             GLuint textureHandlerId);
 
 void IWScorePresenterRender(IWScorePresenterData *scorePresenter);
 

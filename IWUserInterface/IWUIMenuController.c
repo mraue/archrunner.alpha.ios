@@ -64,7 +64,7 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
 
 void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
                                GLuint positionSlot,GLuint colorSlot, GLuint textureOffsetSlot,
-                               GLuint textureHandlerId, GLvoid* fontMapTextureData)
+                               GLuint textureHandlerId)
 {
     
     // Fill buffers

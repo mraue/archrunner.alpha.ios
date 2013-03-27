@@ -67,8 +67,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
 void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInterfaceController,
                                         const IWGShaderProgramData *uiShaderProgram,
                                         const IWGShaderProgramData *textShaderProgram,
-                                        GLuint textureHandlerId,
-                                        GLvoid* fontMapTextureData);
+                                        GLuint textureHandlerId);
 
 void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfaceController,
                                      const IWScoreCounterData *scoreCounter,

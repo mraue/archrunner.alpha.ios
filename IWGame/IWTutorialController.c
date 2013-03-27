@@ -262,8 +262,7 @@ void IWTutorialControllerReset(IWTutorialControllerData *tutorialController)
     IWUserInterfaceControllerSetupVBOs(&tutorialController->userInterfaceController,
                                        tutorialController->uiShaderProgram,
                                        tutorialController->textShaderProgram,
-                                       tutorialController->textureHandlerId,
-                                       tutorialController->fontMapTextureData);
+                                       tutorialController->textureHandlerId);
     
     // Cubes
     if (currentStage->hasActionStage) {
@@ -357,8 +356,7 @@ void IWTutorialControllerSetupVBOs(IWTutorialControllerData *tutorialController,
     IWUserInterfaceControllerSetupVBOs(&tutorialController->userInterfaceController,
                                        uiShaderProgram,
                                        textShaderProgram,
-                                       textureHandlerId,
-                                       fontMapTextureData);
+                                       textureHandlerId);
     return;
 }
 
@@ -432,8 +430,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
                     IWUserInterfaceControllerSetupVBOs(&tutorialController->userInterfaceController,
                                                        tutorialController->uiShaderProgram,
                                                        tutorialController->textShaderProgram,
-                                                       tutorialController->textureHandlerId,
-                                                       tutorialController->fontMapTextureData);
+                                                       tutorialController->textureHandlerId);
                     
                     // Cubes
                     if (currentStage->hasActionStage) {

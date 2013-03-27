@@ -113,7 +113,7 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
     IWStartMenuControllerSetupVBOs(gdStartMenuController,
                                    &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
-                                   gdTextureHandlerId, gdFontMapTextureData);
+                                   gdTextureHandlerId);
     
     // Open GL base settings
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -258,7 +258,7 @@ void IWGRendererSetupGameAssets(void)
                                                               IWUSERINTERFACE_ELEMENT_ALL,
                                                               &gdFontMap);
     IWUserInterfaceControllerSetupVBOs(&gdUserInterfaceController, &gdUIShaderProgram, &gdTextShaderProgram,
-                                       gdTextureHandlerId, gdFontMapTextureData);
+                                       gdTextureHandlerId);
 
     
     gdStartTextFieldColorTransition = IWVector4TransitionMake(IWVector4Make(0.2, 0.2, 0.2, 0.8),
@@ -295,7 +295,7 @@ void IWGRendererSetupGameAssets(void)
     IWUIMenuPresenterInitTextFields(&gdPauseMenu.presenter, gdPauseMenu.dataBufferStart);
     IWIUMenuPresenterPresentMenu(&gdPauseMenu.presenter, &gdPauseMenu.pages[0]);
     
-    IWUIMenuControllerFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId, gdFontMapTextureData);
+    IWUIMenuControllerFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId);
     
     //
     // Score presenter
@@ -304,7 +304,7 @@ void IWGRendererSetupGameAssets(void)
     gdScorePresenter = IWScorePresenterMake(1.0, IWVector2Make(-0.8, 0.9), 1. / aspect,
                                                 0.22, IWVector4Make(0.2, 0.2, 0.2, 0.8), &gdFontMap);
     IWScorePresenterFillVBO(&gdScorePresenter, positionSlot, colorSlot, textureOffsetSlot,
-                            gdTextureHandlerId, gdFontMapTextureData);
+                            gdTextureHandlerId);
     
     return;
 }

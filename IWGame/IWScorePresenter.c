@@ -108,8 +108,7 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
                              GLuint positionSlot,
                              GLuint colorSlot,
                              GLuint textureOffsetSlot,
-                             GLuint textureHandlerId,
-                             GLvoid* fontMapTextureData)
+                             GLuint textureHandlerId)
 {
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {

@@ -36,7 +36,6 @@ typedef struct {
     //
     const IWGShaderProgramData *mainShaderProgram, *skyShaderProgram, *textShaderProgram;
     GLuint textureHandlerId;
-    GLvoid* fontMapTextureData;
     //
     size_t textDataBufferSize;
     GLfloat* textDataBufferStart;
@@ -57,8 +56,7 @@ void IWStartMenuControllerSetupVBOs(IWStartMenuControllerData *startMenuControll
                                     const IWGShaderProgramData *mainShaderProgram,
                                     const IWGShaderProgramData *skyShaderProgram,
                                     const IWGShaderProgramData *textShaderProgram,
-                                    GLuint textureHandlerId,
-                                    GLvoid* fontMapTextureData);
+                                    GLuint textureHandlerId);
 
 void IWStartMenuControllerUpdate(IWStartMenuControllerData *startMenuController,
                                  IWPoint2D touchPoint,

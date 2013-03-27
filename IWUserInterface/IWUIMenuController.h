@@ -55,8 +55,7 @@ void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
                                GLuint positionSlot,
                                GLuint colorSlot,
                                GLuint textureOffsetSlot,
-                               GLuint textureHandlerId,
-                               GLvoid* fontMapTextureData);
+                               GLuint textureHandlerId);
 
 void IWUIMenuControllerUpdate(IWUIMenuControllerData *menuController,
                               bool isTouched,

@@ -27,7 +27,6 @@ IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRa
     startMenuController->mainShaderProgram = NULL;
     startMenuController->skyShaderProgram = NULL;
     startMenuController->textShaderProgram = NULL;
-    startMenuController->fontMapTextureData = NULL;
     
     // Allocate memory for text buffer
     startMenuController->textDataBufferSize = (2 * 10 + 1 * 9) * 6 * 9;
@@ -128,14 +127,12 @@ void IWStartMenuControllerSetupVBOs(IWStartMenuControllerData *startMenuControll
                                     const IWGShaderProgramData *mainShaderProgram,
                                     const IWGShaderProgramData *skyShaderProgram,
                                     const IWGShaderProgramData *textShaderProgram,
-                                    GLuint textureHandlerId,
-                                    GLvoid* fontMapTextureData)
+                                    GLuint textureHandlerId)
 {
     // Save programs for later use
     startMenuController->mainShaderProgram = mainShaderProgram;
     startMenuController->skyShaderProgram = skyShaderProgram;
     startMenuController->textShaderProgram = textShaderProgram;
-    startMenuController->fontMapTextureData = fontMapTextureData;
     startMenuController->textureHandlerId = textureHandlerId;
     
     // Text buffer
@@ -174,7 +171,7 @@ void IWStartMenuControllerSetupVBOs(IWStartMenuControllerData *startMenuControll
     IWUIMenuControllerFillVBO(&startMenuController->menuController,
                               textShaderProgram->vertexSlot, textShaderProgram->colorSlot,
                               textShaderProgram->textureOffsetSlot,
-                              textureHandlerId, fontMapTextureData);
+                              textureHandlerId);
     
     // Cubes
     IWCubeControllerSetupVBOs(&startMenuController->cubeController,

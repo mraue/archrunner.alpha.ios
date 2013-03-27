@@ -172,7 +172,7 @@ void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
             gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
             IWStartMenuControllerSetupVBOs(gdStartMenuController,
                                            &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
-                                           gdTextureHandlerId, gdFontMapTextureData);
+                                           gdTextureHandlerId);
 //            IWGRendererSetupStartMenuAssets();
             gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
             gdIsTouched = false;
@@ -440,7 +440,7 @@ void IWGameTutorialHandler(float timeSinceLastUpdate, float aspectRatio)
         gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
         IWStartMenuControllerSetupVBOs(gdStartMenuController,
                                        &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
-                                       gdTextureHandlerId, gdFontMapTextureData);
+                                       gdTextureHandlerId);
         gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
         // Update grayscale
         glUseProgram(gdSkyboxShaderProgram.programID);
@@ -595,7 +595,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                 gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
                 IWStartMenuControllerSetupVBOs(gdStartMenuController,
                                                &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
-                                               gdTextureHandlerId, gdFontMapTextureData);
+                                               gdTextureHandlerId);
                 gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
                 gdIsTouched = false;
                 IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
