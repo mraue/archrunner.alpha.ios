@@ -42,6 +42,11 @@
 
 #include "IWGameData.h"
 
+IWGShaderProgramData shaderProgramData;
+GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
+GLuint skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
+GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
+
 void IWGRendererSetupGL(const char* fontMapFilename)
 {
     // Get and save uniform locations.

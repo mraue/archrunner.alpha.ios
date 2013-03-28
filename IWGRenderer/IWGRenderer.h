@@ -40,10 +40,10 @@ typedef enum _IWGRENDERER_ATTRIBUTE_ID_INDEX IWGRENDERER_ATTRIBUTE_ID_INDEX;
 
 #pragma mark - Variables
 
-IWGShaderProgramData shaderProgramData;
-GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
-GLuint skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
-GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
+extern IWGShaderProgramData shaderProgramData;
+extern GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
+extern GLuint skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
+extern GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
 #pragma mark - Functions
 
