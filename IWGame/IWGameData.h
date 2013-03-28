@@ -44,123 +44,123 @@
 
 #pragma mark - Game Logic Data
 
-IWGAME_STATUS gdCurrentGameStatus;
+extern IWGAME_STATUS gdCurrentGameStatus;
 
-float gdPauseTime;
+extern float gdPauseTime;
 
-IWPlayerData gdPlayerDataStart;
-IWPlayerData gdPlayerData;
-IWPlayerData gdPlayerDataSave;
+extern IWPlayerData gdPlayerDataStart;
+extern IWPlayerData gdPlayerData;
+extern IWPlayerData gdPlayerDataSave;
 
-IWFuel gdFuel;
+extern IWFuel gdFuel;
 
-IWScoreCounterData gdScoreCounter;
-IWCubeStatusData gdCubeStatus;
+extern IWScoreCounterData gdScoreCounter;
+extern IWCubeStatusData gdCubeStatus;
 
-IWCubeData* gdCubeData;
-unsigned int gdNCubes;
-unsigned int gdNCubesPerAxis;
+extern IWCubeData* gdCubeData;
+extern unsigned int gdNCubes;
+extern unsigned int gdNCubesPerAxis;
 
-float gdTotalRunTime;
+extern float gdTotalRunTime;
 
-IWTimerData gdRandomRemoveCubeTimer;
+extern IWTimerData gdRandomRemoveCubeTimer;
 
-IWIndexListData gdStandardCubeIndexList;
-IWIndexListData gdPoolCubeIndexList;
-IWIndexListData gdGPUBufferPositionIndexList;
+extern IWIndexListData gdStandardCubeIndexList;
+extern IWIndexListData gdPoolCubeIndexList;
+extern IWIndexListData gdGPUBufferPositionIndexList;
 
-unsigned int gdSecondaryPositionCounter;
-IWVector3 *gdSecondaryPosition;
+extern unsigned int gdSecondaryPositionCounter;
+extern IWVector3 *gdSecondaryPosition;
 
 //float gdZMax;
 
-IWGSkyBoxControllerData gdSkyBoxController;
+extern IWGSkyBoxControllerData gdSkyBoxController;
 
-IWTimerData gdStateSwitchTimer;
+extern IWTimerData gdStateSwitchTimer;
 
-IWVector3Transition gdGrayScaleTransition;
-IWVector3Transition gdGrayScaleTransitionDefault;
+extern IWVector3Transition gdGrayScaleTransition;
+extern IWVector3Transition gdGrayScaleTransitionDefault;
 
-bool gdPushScoreToLeaderboard;
-bool gdUpdateAchievements, gdAchievementReportedWatchingTheSunset;
+extern bool gdPushScoreToLeaderboard;
+extern bool gdUpdateAchievements, gdAchievementReportedWatchingTheSunset;
 
-IWTutorialControllerData *gdTutorialController;
-IWStartMenuControllerData *gdStartMenuController;
+extern IWTutorialControllerData *gdTutorialController;
+extern IWStartMenuControllerData *gdStartMenuController;
 
-IWGAME_MODUS gdGameModus;
+extern IWGAME_MODUS gdGameModus;
 
 #pragma mark - User input
 
-IWControllerData gdControllerDataAccelerometer;
+extern IWControllerData gdControllerDataAccelerometer;
 
 #pragma mark - Debug / Testing
 
 //IWUIMenuPresenterData gdMenuPresenterTest;
 
-int gdScreenShotUIMode;
-IWVector3 gdScreenShotRotation;
-IWUISliderData gdScreenShotSliderX, gdScreenShotSliderY, gdScreenShotSliderZ, gdScreenShotSliderE;
+extern int gdScreenShotUIMode;
+extern IWVector3 gdScreenShotRotation;
+extern IWUISliderData gdScreenShotSliderX, gdScreenShotSliderY, gdScreenShotSliderZ, gdScreenShotSliderE;
 
-IWUserInterfaceControllerData gdUserInterfaceController;
+extern IWUserInterfaceControllerData gdUserInterfaceController;
 
-IWSoundHandlerData *gdSoundHandler;
+extern IWSoundHandlerData *gdSoundHandler;
 
 #pragma mark - Asset and memory management
 
-IWGFontMapData gdFontMap;
-void *gdFontMapTextureData;
+extern IWGFontMapData gdFontMap;
+extern void *gdFontMapTextureData;
 
-GLfloat *gdCubeTriangleBufferStartCPU;
-GLfloat *gdInGameTextTriangleBufferStartCPU;
+extern GLfloat *gdCubeTriangleBufferStartCPU;
+extern GLfloat *gdInGameTextTriangleBufferStartCPU;
 
-GLuint gdTextureHandlerId;
+extern GLuint gdTextureHandlerId;
 
 #pragma mark - User Interface
 
-bool gdIsTouched;
-IWPoint2D gdTouchPoint;
+extern bool gdIsTouched;
+extern IWPoint2D gdTouchPoint;
 
-bool gdResetControllerPosition;
+extern bool gdResetControllerPosition;
 
-bool gdRunningInSimulator;
+extern bool gdRunningInSimulator;
 
-IWUIMenuControllerData gdPauseMenu;
-IWUIMenuControllerData gdMenuController;
-IWScorePresenterData gdScorePresenter;
+extern IWUIMenuControllerData gdPauseMenu;
+extern IWUIMenuControllerData gdMenuController;
+extern IWScorePresenterData gdScorePresenter;
 
 #pragma mark - Open GL Buffer
 
-float gdScreenWidth;
-float gdScreenHeight;
+extern float gdScreenWidth;
+extern float gdScreenHeight;
 
-IWGShaderProgramData gdMainShaderProgram;
-IWGShaderProgramData gdTextShaderProgram;
-IWGShaderProgramData gdSkyboxShaderProgram;
-IWGShaderProgramData gdUIShaderProgram;
+extern IWGShaderProgramData gdMainShaderProgram;
+extern IWGShaderProgramData gdTextShaderProgram;
+extern IWGShaderProgramData gdSkyboxShaderProgram;
+extern IWGShaderProgramData gdUIShaderProgram;
 
-IWGRingBufferData gdTextTriangleDoubleBuffer;
+extern IWGRingBufferData gdTextTriangleDoubleBuffer;
 
-IWGRingBufferData gdTriangleDoubleBuffer;
+extern IWGRingBufferData gdTriangleDoubleBuffer;
 
-IWGTextFieldData gdTitleTextField;
-IWGTextFieldData gdVersionTextField;
-IWGTextFieldData gdStartTextField;
+extern IWGTextFieldData gdTitleTextField;
+extern IWGTextFieldData gdVersionTextField;
+extern IWGTextFieldData gdStartTextField;
 
-IWVector4Transition gdStartTextFieldColorTransition;
+extern IWVector4Transition gdStartTextFieldColorTransition;
 
 #pragma mark - Open GL Vertex Transformation Matrices
 
-IWMatrix4 gdModelMatrix;
-IWMatrix4 gdViewMatrix;
-IWMatrix4 gdProjectionMatrix;
-IWMatrix3 gdNormalMatrix;
+extern IWMatrix4 gdModelMatrix;
+extern IWMatrix4 gdViewMatrix;
+extern IWMatrix4 gdProjectionMatrix;
+extern IWMatrix3 gdNormalMatrix;
 
 #pragma mark - Open GL Lightsource Data
 
-IWGBasicLightSourceData gdSunLightSource;
-IWGBasicLightSourceData gdMoonLightSource;
-IWGPointLightSourceData gdPLayerLightSource;
+extern IWGBasicLightSourceData gdSunLightSource;
+extern IWGBasicLightSourceData gdMoonLightSource;
+extern IWGPointLightSourceData gdPLayerLightSource;
 
-IWVector4 gdClearColor;
+extern IWVector4 gdClearColor;
 
 #endif

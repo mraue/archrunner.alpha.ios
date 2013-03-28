@@ -50,7 +50,7 @@ typedef struct
 } IWGBasicLightSourceData;
 
 
-GLint IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_N];
+extern GLint IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_N];
 
 void IWGLightingInitializeUniformLocations(GLuint program);
 void IWGLightingSetUniforms(IWGBasicLightSourceData *sunLightSource,

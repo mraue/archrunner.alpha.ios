@@ -11,6 +11,8 @@
 
 #include "IWGLighting.h"
 
+GLint IWGLightingUniformLocations[IWGLIGHTING_UNIFORM_LOC_N];
+
 const char* IWGLIGHTING_UNIFORM_STRINGS[] = {
     "PlayerLight.Position",
     "PlayerLight.Attenuation",

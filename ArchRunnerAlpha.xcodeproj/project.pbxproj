@@ -93,6 +93,7 @@
 		64C0386816CB963800C4F491 /* MasterShader2.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386416CB8E9700C4F491 /* MasterShader2.vsh */; };
 		64C0386916CB963A00C4F491 /* MasterShader2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 64C0386616CB8E9F00C4F491 /* MasterShader2.fsh */; };
 		64D1C6F616F32A2C00A895BF /* soundfx_cubes_spawn_02.caf in Resources */ = {isa = PBXBuildFile; fileRef = 64D1C6F516F32A2C00A895BF /* soundfx_cubes_spawn_02.caf */; };
+		64D1C6FD1704D15F00A895BF /* IWGameData.c in Sources */ = {isa = PBXBuildFile; fileRef = 64D1C6FC1704D15D00A895BF /* IWGameData.c */; };
 		64E11D3716E4C0D50016FA34 /* IWUserInterfaceController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */; };
 		64E11D3916E4C0E20016FA34 /* IWUISlider.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3816E4C0E20016FA34 /* IWUISlider.c */; };
 		64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */ = {isa = PBXBuildFile; fileRef = 64E11D3B16E4C6EB0016FA34 /* IWCubeController.c */; };
@@ -265,6 +266,7 @@
 		64D1C6F816F9B62700A895BF /* misc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = misc.txt; sourceTree = "<group>"; };
 		64D1C6FA1704518B00A895BF /* IWOpenGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWOpenGL.h; sourceTree = "<group>"; };
 		64D1C6FB170470F400A895BF /* IWUIMenuItemType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIMenuItemType.h; path = IWUserInterface/IWUIMenuItemType.h; sourceTree = "<group>"; };
+		64D1C6FC1704D15D00A895BF /* IWGameData.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGameData.c; sourceTree = "<group>"; };
 		64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUserInterfaceController.c; path = IWUserInterface/IWUserInterfaceController.c; sourceTree = "<group>"; };
 		64E11D3816E4C0E20016FA34 /* IWUISlider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUISlider.c; path = IWUserInterface/IWUISlider.c; sourceTree = "<group>"; };
 		64E11D3A16E4C6E00016FA34 /* IWCubeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCubeController.h; sourceTree = "<group>"; };
@@ -484,6 +486,7 @@
 			isa = PBXGroup;
 			children = (
 				641E0D7716A840DE0077785D /* IWGameData.h */,
+				64D1C6FC1704D15D00A895BF /* IWGameData.c */,
 				641E0D7816A844650077785D /* IWGame.h */,
 				641E0D7916A844710077785D /* IWGame.c */,
 				641E0D8716AD69680077785D /* IWCube.h */,
@@ -872,6 +875,7 @@
 				64E11D3C16E4C6EB0016FA34 /* IWCubeController.c in Sources */,
 				64086BB216EA2141000B1E76 /* IWStartMenuController.c in Sources */,
 				64086BDB16EF6201000B1E76 /* IWSoundHandler.c in Sources */,
+				64D1C6FD1704D15F00A895BF /* IWGameData.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
