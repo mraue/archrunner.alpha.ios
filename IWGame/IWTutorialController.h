@@ -9,8 +9,7 @@
 #ifndef ArchRunnerAlpha_IWTutorialController_h
 #define ArchRunnerAlpha_IWTutorialController_h
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 #include "IWMath.h"
 #include "IWVectorTransition.h"

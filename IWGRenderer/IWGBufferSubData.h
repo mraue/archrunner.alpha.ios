@@ -9,8 +9,7 @@
 #ifndef theBr1dge_IWGBufferSubData_h
 #define theBr1dge_IWGBufferSubData_h
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 struct _IWGBufferSubData {
     GLintptr offset;

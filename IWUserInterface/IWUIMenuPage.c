@@ -51,7 +51,7 @@ void IWUIMenuPageAddItem(IWUIMenuPageData *menuPage,
                          unsigned short actionID)
 {
     menuPage->nItems += 1;
-    IWUIMenuItemData *newItems = malloc(menuPage->nItems * sizeof(IWUIMenuItemData));
+    IWUIMenuItemData *newItems = (IWUIMenuItemData*)malloc(menuPage->nItems * sizeof(IWUIMenuItemData));
     for (unsigned short i = 0; i < menuPage->nItems - 1; i++) {
         newItems[i] = menuPage->items[i];
     }

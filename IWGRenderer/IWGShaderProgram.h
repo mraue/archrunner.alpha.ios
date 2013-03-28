@@ -9,8 +9,7 @@
 #ifndef gameone_IWGShaderProgram_h
 #define gameone_IWGShaderProgram_h
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 typedef enum {
     IWGSHADERPROGRAM_VARYING_SLOTS_VERTEX  = 1 <<  0,

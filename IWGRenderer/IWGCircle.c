@@ -10,8 +10,7 @@
 
 #include <stdio.h>
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 IWGCircleData IWGCircleMake(IWVector3 centerLocation,
                             IWVector3 direction,

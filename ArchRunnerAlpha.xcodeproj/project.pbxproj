@@ -263,6 +263,7 @@
 		64D1C6F516F32A2C00A895BF /* soundfx_cubes_spawn_02.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = soundfx_cubes_spawn_02.caf; path = ../../../archrunner/alpha/soundfx/cubes/soundfx_cubes_spawn_02.caf; sourceTree = "<group>"; };
 		64D1C6F716F7511800A895BF /* appstore_description.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = appstore_description.txt; path = ../../test/appstore_description.txt; sourceTree = "<group>"; };
 		64D1C6F816F9B62700A895BF /* misc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = misc.txt; sourceTree = "<group>"; };
+		64D1C6FA1704518B00A895BF /* IWOpenGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWOpenGL.h; sourceTree = "<group>"; };
 		64E11D3616E4C0D50016FA34 /* IWUserInterfaceController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUserInterfaceController.c; path = IWUserInterface/IWUserInterfaceController.c; sourceTree = "<group>"; };
 		64E11D3816E4C0E20016FA34 /* IWUISlider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUISlider.c; path = IWUserInterface/IWUISlider.c; sourceTree = "<group>"; };
 		64E11D3A16E4C6E00016FA34 /* IWCubeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCubeController.h; sourceTree = "<group>"; };
@@ -540,6 +541,7 @@
 				641AC1C116C24F1300DDD2EB /* IWGFontMapEntry.c */,
 				64C0386116CB65A000C4F491 /* IWGSkyBoxController.h */,
 				64C0386216CB65AB00C4F491 /* IWGSkyBoxController.c */,
+				64D1C6FA1704518B00A895BF /* IWOpenGL.h */,
 			);
 			path = IWGRenderer;
 			sourceTree = "<group>";

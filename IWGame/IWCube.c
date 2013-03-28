@@ -13,8 +13,7 @@
 #include <math.h>
 #include <time.h>
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 unsigned int IWCubeFacesToNumber(IWCUBE_FACES cubeFaces)
 {
@@ -59,7 +58,7 @@ IWCubeData* IWCubeMakeCubes(int nx, int ny, int nz, float l, float d,
                             unsigned int nRandomizePositions, float randomDistance)
 {
     unsigned int n = nx * ny * nz;
-    IWCubeData* cubeOfCubeDataStart = malloc(n * sizeof(IWCubeData));
+    IWCubeData* cubeOfCubeDataStart = (IWCubeData*)malloc(n * sizeof(IWCubeData));
     IWCubeData* cubePtr = cubeOfCubeDataStart;
     float dx = nx * (l + d) - d;
     float dy = ny * (l + d) - d;
@@ -94,7 +93,7 @@ IWVector3* IWCubeMakeCubePositions(int nx, int ny, int nz, float l, float d,
                                    unsigned int nRandomizePositions, float randomDistance)
 {
     unsigned int n = nx * ny * nz;
-    IWVector3* positionsStart = malloc(n * sizeof(IWVector3));
+    IWVector3* positionsStart = (IWVector3*)malloc(n * sizeof(IWVector3));
     IWVector3* vectorPtr = positionsStart;
     float dx = nx * (l + d) - d;
     float dy = ny * (l + d) - d;
@@ -121,7 +120,7 @@ IWVector3* IWCubeMakeCubePositions(int nx, int ny, int nz, float l, float d,
 
 IWVector3* IWCubeMakeCubeCurve(unsigned int nPositions, IWVector3 startingPosition, IWGEOMETRY_AXIS axis)
 {
-    IWVector3* points = malloc(nPositions * sizeof(IWVector3));
+    IWVector3* points = (IWVector3*)malloc(nPositions * sizeof(IWVector3));
     IWVector3* pointsStart = points;
     IWVector3* pointsEnd = points + nPositions;
 

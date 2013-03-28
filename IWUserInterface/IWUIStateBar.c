@@ -10,15 +10,14 @@
 
 #include <stdio.h>
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 IWUIStateBar IWUIStateBarMake(unsigned int nStates, float *states,
                               IWVector4 *colors, IWRectangle rectangle,
                               IWUI_ORIENTATION orientation, IWUI_DIRECTION direction)
 {
-    float *_states = malloc(nStates * sizeof(float));
-    IWVector4 *_colors = malloc(nStates * sizeof(IWVector4));
+    float *_states = (float*)malloc(nStates * sizeof(float));
+    IWVector4 *_colors = (IWVector4*)malloc(nStates * sizeof(IWVector4));
     for (int i = 0; i < nStates; i++) {
         _states[i] = states[i];
         _colors[i] = colors[i];
@@ -39,8 +38,8 @@ size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar)
     if (stateBar->direction == IWUI_DIRECTION_REVERSE) {
         statesSaved = stateBar->states;
         colorsSaved = stateBar->colors;
-        stateBar->states = malloc((stateBar->nStates + 1) * sizeof(float));
-        stateBar->colors = malloc((stateBar->nStates + 1) * sizeof(IWVector4));
+        stateBar->states = (float*)malloc((stateBar->nStates + 1) * sizeof(float));
+        stateBar->colors = (IWVector4*)malloc((stateBar->nStates + 1) * sizeof(IWVector4));
         stateBar->states[0] = 1.0 - statesSaved[stateBar->nStates - 1];
         stateBar->colors[0] = IWVector4Make(0.0, 0.0, 0.0, 0.0);
         for (unsigned int i = 1; i < stateBar->nStates; i++) {

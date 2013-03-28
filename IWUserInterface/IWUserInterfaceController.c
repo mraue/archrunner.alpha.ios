@@ -41,7 +41,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     if (visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR)
         userInterfaceController.textDataBufferSize += 1 * 15 * 6 * 9;
 
-    userInterfaceController.textDataBufferStart = malloc(userInterfaceController.textDataBufferSize * sizeof(GLfloat));
+    userInterfaceController.textDataBufferStart = (GLfloat*)malloc(userInterfaceController.textDataBufferSize * sizeof(GLfloat));
     GLuint bufferOffset = 0;
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_SCORE) {
@@ -136,7 +136,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     if (visibleElements & IWUSERINTERFACE_ELEMENT_CUBE_COUNTER)
         userInterfaceController.triangleDataBufferSize += 6 * 3 * 7 * 2;
 
-    userInterfaceController.triangleDataBufferStart = malloc(userInterfaceController.triangleDataBufferSize * sizeof(GLfloat));
+    userInterfaceController.triangleDataBufferStart = (GLfloat*)malloc(userInterfaceController.triangleDataBufferSize * sizeof(GLfloat));
     bufferOffset = 0;
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR) {
@@ -203,7 +203,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
         userInterfaceController.lineDataBufferSize += 2 * 52 * 7 - 4 * 7;
     }
     
-    userInterfaceController.lineDataBufferStart = malloc(userInterfaceController.lineDataBufferSize * sizeof(GLfloat));
+    userInterfaceController.lineDataBufferStart = (GLfloat*)malloc(userInterfaceController.lineDataBufferSize * sizeof(GLfloat));
     bufferOffset = 0;
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON) {

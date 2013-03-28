@@ -19,7 +19,7 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
     IWUIMenuControllerData menuController;
     menuController.presenter = presenter;
     menuController.dataBufferSize = menuController.presenter.triangleBufferData.size;
-    menuController.dataBufferStart = malloc(menuController.dataBufferSize * sizeof(GLfloat));
+    menuController.dataBufferStart = (GLfloat*)malloc(menuController.dataBufferSize * sizeof(GLfloat));
     menuController.nPages = nPages;
     menuController.currentPage = 0;
     menuController.nextPage = 0;
@@ -49,7 +49,7 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
     }
     
     if (nPages) {
-        menuController.pages = malloc(nPages * sizeof(IWUIMenuPageData));
+        menuController.pages = (IWUIMenuPageData*)malloc(nPages * sizeof(IWUIMenuPageData));
         for (unsigned int i = 0; i < nPages; i++) {
             IWUIMenuPageDataSet(&menuController.pages[i], "", NULL, 0, false, NULL);
         }

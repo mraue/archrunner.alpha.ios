@@ -9,8 +9,7 @@
 #ifndef gameoneB_IWGLighting_h
 #define gameoneB_IWGLighting_h
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 #include "IWMath.h"
 

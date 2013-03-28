@@ -47,7 +47,7 @@ void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter,
     
     menuPresenter->triangleBufferData.bufferStartCPU = bufferPtr;
     menuPresenter->textFields = (IWGTextFieldData*)malloc((menuPresenter->nItemsMax * 2 + 1) * sizeof(IWGTextFieldData));
-    menuPresenter->buttonRects = malloc(menuPresenter->nItemsMax * sizeof(IWRectangle));
+    menuPresenter->buttonRects = (IWRectangle*)malloc(menuPresenter->nItemsMax * sizeof(IWRectangle));
     
     IWPoint2D startPosition = menuPresenter->anchorPoint;
     
@@ -143,7 +143,7 @@ void IWIUMenuPresenterPresentMenu(IWUIMenuPresenterData *menuPresenter, IWUIMenu
                 printf("ERROR IWIUMenuPresenterPresentMenu: Option string too long\n");
                 return;
             }
-            char *searchString = malloc(100 * sizeof(char));            
+            char *searchString = (char*)malloc(100 * sizeof(char));
             strncpy(searchString, menuPage->items[i].optionsString, 100);
             char *strTok = NULL;
             while ((optionCounter <= menuPage->items[i].currentOptionSelected)

@@ -9,8 +9,7 @@
 #ifndef theBr1dge_IWUIMenuPresenter_h
 #define theBr1dge_IWUIMenuPresenter_h
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include "IWOpenGL.h"
 
 #include "IWMath.h"
 #include "IWGeometry.h"

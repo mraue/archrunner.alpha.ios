@@ -94,7 +94,7 @@ IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault()
                                        + skyBoxController.ground.triangleBufferData.size
                                        + skyBoxController.sun.triangleBufferData.size
                                        + skyBoxController.moon.triangleBufferData.size);
-    skyBoxController.dataBufferStart = malloc(skyBoxController.dataBufferSize * sizeof(GLfloat));
+    skyBoxController.dataBufferStart = (GLfloat*)malloc(skyBoxController.dataBufferSize * sizeof(GLfloat));
     
     size_t bufferOffset = 0;
     

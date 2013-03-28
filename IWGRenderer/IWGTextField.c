@@ -40,7 +40,7 @@ IWGTextFieldData IWGTextFieldMake(IWPoint2D anchorPoint,
         false
     };
     if (!bufferStartPtr) {
-        textField.triangleBufferData.startCPU = malloc(nRows * nColumns * 6 * 9 * sizeof(GLfloat));
+        textField.triangleBufferData.startCPU = (GLfloat*)malloc(nRows * nColumns * 6 * 9 * sizeof(GLfloat));
         textField.manageBuffer = true;
     } else {
         textField.triangleBufferData.startCPU = bufferStartPtr;
@@ -87,7 +87,7 @@ void IWGTextFieldSetText(IWGTextFieldData *textField, const char* text)
     
     char emtpyChar = ' ';
     
-    char *textVar = malloc(strlen(text) + 1);
+    char *textVar = (char*)malloc(strlen(text) + 1);
     
     strcpy(textVar, text);
     char *line = strtok(textVar, "\n");

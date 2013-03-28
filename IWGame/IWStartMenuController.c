@@ -14,7 +14,7 @@
 IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRatio,
                                                             IWGFontMapData *fontMap)
 {
-    IWStartMenuControllerData *startMenuController = malloc(sizeof(IWStartMenuControllerData));
+    IWStartMenuControllerData *startMenuController = (IWStartMenuControllerData*)malloc(sizeof(IWStartMenuControllerData));
     
     startMenuController->currentTransitionTime = 0.0;
     
@@ -28,7 +28,7 @@ IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRa
     
     // Allocate memory for text buffer
     startMenuController->textDataBufferSize = (2 * 10 + 1 * 9) * 6 * 9;
-    startMenuController->textDataBufferStart = malloc(startMenuController->textDataBufferSize * sizeof(GLfloat));
+    startMenuController->textDataBufferStart = (GLfloat*)malloc(startMenuController->textDataBufferSize * sizeof(GLfloat));
     
     startMenuController->textMultiBuffer = IWGRingBufferGen();
     

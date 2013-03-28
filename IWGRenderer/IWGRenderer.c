@@ -146,7 +146,7 @@ void IWGRendererSetupGameAssets(void)
     int n = nx * ny * nz;
     size_t mypos_size = n * 6 * 6 * 10 * sizeof(GLfloat);
 
-    gdCubeTriangleBufferStartCPU = malloc(mypos_size);
+    gdCubeTriangleBufferStartCPU = (GLfloat*)malloc(mypos_size);
 
     gdStandardCubeIndexList = IWIndexListMake(n);
     gdPoolCubeIndexList = IWIndexListMake(n);

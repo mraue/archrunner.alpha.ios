@@ -31,7 +31,7 @@ IWCubeControllerData IWCubeControllerMake(int nx, int ny, int nz,
     
     // Allocate memory buffer
     cubeController.triangleDataBufferSize = cubeController.nCubes * 6 * 6 * 10;
-    cubeController.triangleDataBufferStart = malloc(cubeController.triangleDataBufferSize * sizeof(GLfloat));
+    cubeController.triangleDataBufferStart = (GLfloat*)malloc(cubeController.triangleDataBufferSize * sizeof(GLfloat));
     
     cubeController.triangleRingBuffer = IWGRingBufferGen();
     

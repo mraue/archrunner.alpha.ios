@@ -18,8 +18,8 @@ IWIndexListData IWIndexListMake(unsigned int nEntriesMax)
     IWIndexListData indexList = {
         0,
         nEntriesMax,
-        malloc(nEntriesMax * sizeof(unsigned int)),
-        malloc(nEntriesMax * sizeof(unsigned int))
+        (unsigned int*)malloc(nEntriesMax * sizeof(unsigned int)),
+        (unsigned int*)malloc(nEntriesMax * sizeof(unsigned int))
     };
     return indexList;
 }

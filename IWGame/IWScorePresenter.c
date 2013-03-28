@@ -24,7 +24,7 @@ IWScorePresenterData IWScorePresenterMake(float timePerRow,
     scorePresenter.hasFinished = false;
     scorePresenter.multiBuffer = IWGRingBufferGen();
     scorePresenter.dataBufferSize = (1 * 8 + 6 * 8 + 6 * 8) * 6 * 9;
-    scorePresenter.dataBufferStart = malloc(scorePresenter.dataBufferSize * sizeof(GLfloat));
+    scorePresenter.dataBufferStart = (GLfloat*)malloc(scorePresenter.dataBufferSize * sizeof(GLfloat));
     scorePresenter.titleTextField = IWGTextFieldMake(anchorPoint, IWGEOMETRY_ANCHOR_POSITION_UPPER_LEFT,
                                                            1, 8, aspect, "SCORE",
                                                            fontHeight * 1.6, 0.0, IWGTEXT_HORIZONTAL_ALIGNMENT_LEFT,

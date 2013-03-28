@@ -14,7 +14,7 @@
 IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRatio,
                                                           IWGFontMapData *fontMap)
 {
-    IWTutorialControllerData *tutorialController = malloc(sizeof(IWTutorialControllerData));
+    IWTutorialControllerData *tutorialController = (IWTutorialControllerData*)malloc(sizeof(IWTutorialControllerData));
     
     tutorialController->tutorialRadius = 2.0;
     tutorialController->currentStage = 0;
@@ -152,7 +152,7 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
     
     // Allocate memory for text buffer
     tutorialController->textDataBufferSize = (1 * 6 + 1 * 12 + 1 * 15 + 6 * 30) * 6 * 9;
-    tutorialController->textDataBufferStart = malloc(tutorialController->textDataBufferSize * sizeof(GLfloat));
+    tutorialController->textDataBufferStart = (GLfloat*)malloc(tutorialController->textDataBufferSize * sizeof(GLfloat));
     
     tutorialController->textMultiBuffer = IWGRingBufferGen();
     
