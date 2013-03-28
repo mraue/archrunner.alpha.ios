@@ -76,8 +76,8 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                                      float timeSinceLastUpdate);
 
 void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,
-                                     GLuint textProgramId,
-                                     GLuint uiProgramId);
+                                     const IWGShaderProgramData *uiShaderProgram,
+                                     const IWGShaderProgramData *textShaderProgram);
 
 void IWUserInterfacePurgeData(IWUserInterfaceControllerData *userInterfaceController);
 

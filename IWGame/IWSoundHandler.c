@@ -16,7 +16,7 @@ IWSoundHandlerData* IWSoundHandlerMake(unsigned int nSoundsMax)
     IWSoundHandlerData* soundHandler = (IWSoundHandlerData*)malloc(sizeof(IWSoundHandlerData));
     soundHandler->nSoundsMax = nSoundsMax;
     soundHandler->nSounds = 0;
-    soundHandler->sounds = malloc(sizeof(int) * nSoundsMax);
+    soundHandler->sounds = (int*)malloc(sizeof(int) * nSoundsMax);
     return soundHandler;
 }
 

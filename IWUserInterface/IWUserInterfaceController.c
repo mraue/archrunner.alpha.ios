@@ -226,7 +226,9 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
         
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     return userInterfaceController;
 }
@@ -271,7 +273,9 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
         glVertexAttribPointer(textShaderProgram->textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     //
     // UI Buffer
@@ -295,7 +299,9 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
         glVertexAttribPointer(uiShaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         userInterfaceController->lineMultiBuffer.nVertices[i] = userInterfaceController->lineDataBufferSize / 7;
@@ -313,7 +319,9 @@ void IWUserInterfaceControllerSetupVBOs(IWUserInterfaceControllerData *userInter
         glVertexAttribPointer(uiShaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), BUFFER_OFFSET(12));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     return;
 }
@@ -417,37 +425,70 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                              true);
     }
 
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     return;
 }
 
 void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,
-                                     GLuint textProgramId,
-                                     GLuint uiProgramId)
+                                     const IWGShaderProgramData *uiShaderProgram,
+                                     const IWGShaderProgramData *textShaderProgram)
 {
-    glUseProgram(textProgramId);
+    glUseProgram(textShaderProgram->programID);
     
     IWGRingBufferBindCurrentDrawBuffer(&userInterfaceController->textMultiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (textShaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(textShaderProgram, 9);
+    } else {
+        printf("ERROR IWUserInterfaceControllerRender: textShaderProgram == NULL\n");
+        return;
+    }
+#endif
     
     glDrawArrays(GL_TRIANGLES, 0, userInterfaceController->textMultiBuffer.nVertices[userInterfaceController->textMultiBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&userInterfaceController->textMultiBuffer);
     
-    glUseProgram(uiProgramId);
+    glUseProgram(uiShaderProgram->programID);
     
     IWGRingBufferBindCurrentDrawBuffer(&userInterfaceController->triangleMultiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (uiShaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(uiShaderProgram, 7);
+    } else {
+        printf("ERROR IWUserInterfaceControllerRender: uiShaderProgram == NULL\n");
+        return;
+    }
+#endif
     
     glDrawArrays(GL_TRIANGLES, 0, userInterfaceController->triangleMultiBuffer.nVertices[userInterfaceController->triangleMultiBuffer.currentDrawBuffer]);
     
     IWGRingBufferSwitchBuffer(&userInterfaceController->triangleMultiBuffer);
     
     IWGRingBufferBindCurrentDrawBuffer(&userInterfaceController->lineMultiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (uiShaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(uiShaderProgram, 7);
+    } else {
+        printf("ERROR IWUserInterfaceControllerRender: uiShaderProgram == NULL\n");
+        return;
+    }
+#endif
     
     glDrawArrays(GL_LINES, 0, userInterfaceController->lineMultiBuffer.nVertices[userInterfaceController->lineMultiBuffer.currentDrawBuffer]);
 
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&userInterfaceController->lineMultiBuffer);
 

@@ -19,6 +19,8 @@ IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault()
 {
     IWGSkyBoxControllerData skyBoxController;
     
+    skyBoxController.skyShaderProgram = NULL;
+    
     skyBoxController.colorTransitionTime = 8.0 * 60.0;// [8.0]
     skyBoxController.transitionTime = 0.0;
     
@@ -118,6 +120,8 @@ IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault()
 void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController,
                                 const IWGShaderProgramData *shaderProgram)
 {
+    skyBoxController->skyShaderProgram = shaderProgram;
+
     glUseProgram(shaderProgram->programID);
     
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
@@ -129,13 +133,16 @@ void IWGSkyBoxControllerFillVBO(IWGSkyBoxControllerData *skyBoxController,
         glBufferData(GL_ARRAY_BUFFER, skyBoxController->dataBufferSize * sizeof(GLfloat),
                      skyBoxController->dataBufferStart, GL_STREAM_DRAW);
         
-        glEnableVertexAttribArray(shaderProgram->vertexSlot);
-        glVertexAttribPointer(shaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-        glEnableVertexAttribArray(shaderProgram->colorSlot);
-        glVertexAttribPointer(shaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+        IWGShaderProgramEnableVertexAtrribArrays(shaderProgram, 10);// Vertices contain normals ...
+//        glEnableVertexAttribArray(shaderProgram->vertexSlot);
+//        glVertexAttribPointer(shaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+//        glEnableVertexAttribArray(shaderProgram->colorSlot);
+//        glVertexAttribPointer(shaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     return;
 }
@@ -230,11 +237,22 @@ void IWGSkyBoxControllerUpdate(IWGSkyBoxControllerData *skyBoxController,
 void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController)
 {
     IWGRingBufferBindCurrentDrawBuffer(&skyBoxController->multiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (skyBoxController->skyShaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(skyBoxController->skyShaderProgram, 10);
+    } else {
+        printf("ERROR IWGSkyBoxControllerRender: skyShaderProgram == 0\n");
+        return;
+    }
+#endif
     
     glDrawArrays(GL_TRIANGLES, 0,
                  skyBoxController->multiBuffer.nVertices[skyBoxController->multiBuffer.currentDrawBuffer]);
-    
+
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&skyBoxController->multiBuffer);
 }

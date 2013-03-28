@@ -13,7 +13,7 @@
 
 #include "IWOpenGL.h"
 
-#include <GLKit/GLKMath.h>
+//#include <GLKit/GLKMath.h>
 
 #include "IWGame.h"
 #include "IWGLighting.h"

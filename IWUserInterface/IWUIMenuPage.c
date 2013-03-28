@@ -44,8 +44,8 @@ void IWUIMenuPageDataSet(IWUIMenuPageData *menuPage,
 
 void IWUIMenuPageAddItem(IWUIMenuPageData *menuPage,
                          enum IWUIMENUITEM_ITEM_TYPE type,
-                         char* title,
-                         char *optionsString,
+                         const char* title,
+                         const char *optionsString,
                          unsigned short currentOptionSelected,
                          IWUIMenuPageData *subMenu,
                          unsigned short actionID)

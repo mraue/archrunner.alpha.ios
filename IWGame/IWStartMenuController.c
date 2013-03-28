@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef VERSION
+#define VERSION "0.0.0"
+#endif
+
 IWStartMenuControllerData* IWStartMenuControllerMakeDefault(float screenAspectRatio,
                                                             IWGFontMapData *fontMap)
 {
@@ -163,12 +167,13 @@ void IWStartMenuControllerSetupVBOs(IWStartMenuControllerData *startMenuControll
                               GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     // Menu
     IWUIMenuControllerFillVBO(&startMenuController->menuController,
-                              textShaderProgram->vertexSlot, textShaderProgram->colorSlot,
-                              textShaderProgram->textureOffsetSlot,
+                              textShaderProgram,
                               textureHandlerId);
     
     // Cubes
@@ -215,7 +220,7 @@ void IWStartMenuControllerRender(IWStartMenuControllerData *startMenuController,
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     
-    IWCubeControllerRender(&startMenuController->cubeController, mainShaderProgram->programID);
+    IWCubeControllerRender(&startMenuController->cubeController, mainShaderProgram);
     
     glDisable(GL_CULL_FACE);
     
@@ -232,11 +237,22 @@ void IWStartMenuControllerRender(IWStartMenuControllerData *startMenuController,
     IWUIMenuControllerRender(&startMenuController->menuController);
     
     IWGRingBufferBindCurrentDrawBuffer(&startMenuController->textMultiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (textShaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(textShaderProgram, 9);
+    } else {
+        printf("ERROR IWStartMenuControllerRender: textShaderProgram == NULL\n");
+        return;
+    }
+#endif
     
     glDrawArrays(GL_TRIANGLES, 0,
                  startMenuController->textMultiBuffer.nVertices[startMenuController->textMultiBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&startMenuController->textMultiBuffer);
     

@@ -48,6 +48,8 @@ IWGShaderProgramData IWGShaderProgramMakeFromFiles(const char* vertexShaderFilen
 
 void IWGShaderProgramInitFromFiles(IWGShaderProgramData *shaderProgram);
 void IWGShaderProgramSetupPrograms(IWGShaderProgramData *shaderProgram);
+void IWGShaderProgramEnableVertexAtrribArrays(const IWGShaderProgramData *shaderProgram,
+                                              unsigned int stride);
 
 GLuint IWGShaderProgramBuildShader(const char* source, GLenum shaderType);
 GLuint IWGShaderProgramBuildProgram(const char* vertexShaderSource,

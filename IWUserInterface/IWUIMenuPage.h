@@ -12,10 +12,11 @@
 #include <stdbool.h>
 
 #include "IWUIMenuItem.h"
+#include "IWUIMenuItemType.h"
 
 // Forward declarations
-struct _IWUIMenuItemData;
-enum IWUIMENUITEM_ITEM_TYPE;
+//struct _IWUIMenuItemData;
+//enum IWUIMENUITEM_ITEM_TYPE;
 
 struct _IWUIMenuPageData {
     const char* title;
@@ -42,8 +43,8 @@ void IWUIMenuPageDataSet(IWUIMenuPageData *menuPage,
 
 void IWUIMenuPageAddItem(IWUIMenuPageData *menuPage,
                          enum IWUIMENUITEM_ITEM_TYPE type,
-                         char* title,
-                         char *optionsString,
+                         const char* title,
+                         const char *optionsString,
                          unsigned short currentOptionSelected,
                          IWUIMenuPageData *subMenu,
                          unsigned short actionID);

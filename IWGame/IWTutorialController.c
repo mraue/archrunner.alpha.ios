@@ -53,8 +53,8 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         " \n"
                                                         "To refill, approach a cube.",
                                                         true,
-                                                        IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
-                                                        | IWUSERINTERFACE_ELEMENT_HUD,
+                                                        (IWUSERINTERFACE_ELEMENT)(IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
+                                                        | IWUSERINTERFACE_ELEMENT_HUD),
                                                         5, true, false, true, false, false,
                                                         IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                                                IWVector3Make(0.0, 0.0, 1.0),
@@ -86,9 +86,9 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                                                         "long line to enable you\n"
                                                         "to cross large distances.",
                                                         true,
-                                                        IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
+                                                        (IWUSERINTERFACE_ELEMENT)(IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
                                                         | IWUSERINTERFACE_ELEMENT_HUD
-                                                        | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
+                                                        | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER),
                                                         5, true, false, true, true, true,
                                                         IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                                                IWVector3Make(0.0, 0.0, 1.0),
@@ -102,9 +102,9 @@ IWTutorialControllerData* IWTutorialControllerMakeDefault(float screenAspectRati
                           "Bridge cubes are stable.\n"
                           "Collect bridge cubes\nto gain new grid cubes.\n...",
                           true,
-                          IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
+                          (IWUSERINTERFACE_ELEMENT)(IWUSERINTERFACE_ELEMENT_FUEL_STATUS_BAR
                           | IWUSERINTERFACE_ELEMENT_HUD
-                          | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER,
+                          | IWUSERINTERFACE_ELEMENT_CUBE_COUNTER),
                           3, true, true, true, true, true,
                           IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                  IWVector3Make(0.0, 0.0, 1.0),
@@ -340,7 +340,9 @@ void IWTutorialControllerSetupVBOs(IWTutorialControllerData *tutorialController,
                               GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     // Cubes
     IWCubeControllerSetupVBOs(&tutorialController->cubeController,
@@ -720,7 +722,7 @@ void IWTutorialControllerRender(IWTutorialControllerData *tutorialController,
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     
-    IWCubeControllerRender(&tutorialController->cubeController, mainShaderProgram->programID);
+    IWCubeControllerRender(&tutorialController->cubeController, mainShaderProgram);
     
     glDisable(GL_CULL_FACE);
     
@@ -737,22 +739,32 @@ void IWTutorialControllerRender(IWTutorialControllerData *tutorialController,
     if (tutorialController->stages[tutorialController->currentStage].status == IWTUTORIALSTAGE_STATUS_RUNNING
         && !tutorialController->hasFinished) {
         IWUserInterfaceControllerRender(&tutorialController->userInterfaceController,
-                                        textShaderProgram->programID,
-                                        uiShaderProgram->programID);
+                                        uiShaderProgram,
+                                        textShaderProgram);
     }
     
     glUseProgram(textShaderProgram->programID);
     
     IWGRingBufferBindCurrentDrawBuffer(&tutorialController->textMultiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (textShaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(textShaderProgram, 9);
+    } else {
+        printf("ERROR IWTutorialControllerRender: textShaderProgram == NULL\n");
+        return;
+    }
+#endif
     
     glDrawArrays(GL_TRIANGLES, 0,
                  tutorialController->textMultiBuffer.nVertices[tutorialController->textMultiBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&tutorialController->textMultiBuffer);
 
-    
     glDisable(GL_BLEND);
 }
 

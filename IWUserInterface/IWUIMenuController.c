@@ -17,6 +17,7 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
                                               bool fadeOut)
 {
     IWUIMenuControllerData menuController;
+    menuController.shaderProgram = NULL;
     menuController.presenter = presenter;
     menuController.dataBufferSize = menuController.presenter.triangleBufferData.size;
     menuController.dataBufferStart = (GLfloat*)malloc(menuController.dataBufferSize * sizeof(GLfloat));
@@ -61,9 +62,10 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
 }
 
 void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
-                               GLuint positionSlot,GLuint colorSlot, GLuint textureOffsetSlot,
+                               const IWGShaderProgramData *shaderProgram,
                                GLuint textureHandlerId)
 {
+    menuController->shaderProgram = shaderProgram;
     
     // Fill buffers
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
@@ -87,12 +89,14 @@ void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
                      menuController->dataBufferStart,
                      GL_DYNAMIC_DRAW);
         
-        glEnableVertexAttribArray(positionSlot);
-        glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(0));
-        glEnableVertexAttribArray(colorSlot);
-        glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(textureOffsetSlot);
-        glVertexAttribPointer(textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+        IWGShaderProgramEnableVertexAtrribArrays(shaderProgram, 9);
+        
+//        glEnableVertexAttribArray(shaderProgram->vertexSlot);
+//        glVertexAttribPointer(shaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(0));
+//        glEnableVertexAttribArray(shaderProgram->colorSlot);
+//        glVertexAttribPointer(shaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+//        glEnableVertexAttribArray(shaderProgram->textureOffsetSlot);
+//        glVertexAttribPointer(shaderProgram->textureOffsetSlot, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     return;
 }
@@ -200,10 +204,20 @@ void IWUIMenuControllerUpdateTextColor(IWUIMenuControllerData *menuController,
 void IWUIMenuControllerRender(IWUIMenuControllerData *menuController)
 {
     IWGRingBufferBindCurrentDrawBuffer(&menuController->multiBuffer);
-    
+
+#ifndef IW_USE_GLVAO
+    if (menuController->shaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(menuController->shaderProgram, 9);
+    } else {
+        printf("ERROR IWUIMenuControllerRender: shaderProgram == NULL\n");
+        return;
+    }
+#endif
     glDrawArrays(GL_TRIANGLES, 0, menuController->multiBuffer.nVertices[menuController->multiBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&menuController->multiBuffer);
     

@@ -83,7 +83,7 @@ void IWCubeControllerUpdate(IWCubeControllerData *cubeController,
                             float timeSinceLastUpdate);
 
 void IWCubeControllerRender(IWCubeControllerData *cubeController,
-                            GLuint programId);
+                            const IWGShaderProgramData* shaderProgram);
 
 void IWCubeControllerPurgeData(IWCubeControllerData *cubeController);
 

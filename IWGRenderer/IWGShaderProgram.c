@@ -105,6 +105,62 @@ void IWGShaderProgramSetupPrograms(IWGShaderProgramData *shaderProgram)
     return;
 }
 
+void IWGShaderProgramEnableVertexAtrribArrays(const IWGShaderProgramData *shaderProgram,
+                                              unsigned int stride)
+{
+    unsigned int bufferOffset = 0;
+    
+    if (stride == 0) {
+        if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_VERTEX)
+            stride += 3;
+        if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_COLOR)
+            stride += 4;
+        if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_NORMAL)
+            stride += 3;
+        if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_TEXTURE_OFFSET)
+            stride += 2;
+    }
+    
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_VERTEX) {
+        glEnableVertexAttribArray(shaderProgram->vertexSlot);
+        glVertexAttribPointer(shaderProgram->vertexSlot,
+                              3,
+                              GL_FLOAT, GL_FALSE,
+                              stride * sizeof(GLfloat),
+                              BUFFER_OFFSET(bufferOffset * sizeof(GLfloat)));
+        bufferOffset += 3;
+    }
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_COLOR) {
+        glEnableVertexAttribArray(shaderProgram->colorSlot);
+        glVertexAttribPointer(shaderProgram->colorSlot,
+                              4,
+                              GL_FLOAT, GL_FALSE,
+                              stride * sizeof(GLfloat),
+                              BUFFER_OFFSET(bufferOffset * sizeof(GLfloat)));
+        bufferOffset += 4;
+    }
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_NORMAL) {
+        glEnableVertexAttribArray(shaderProgram->normalSlot);
+        glVertexAttribPointer(shaderProgram->normalSlot,
+                              3,
+                              GL_FLOAT, GL_FALSE,
+                              stride * sizeof(GLfloat),
+                              BUFFER_OFFSET(bufferOffset * sizeof(GLfloat)));
+        bufferOffset += 3;
+    }
+    if (shaderProgram->varyingSlots & IWGSHADERPROGRAM_VARYING_SLOTS_TEXTURE_OFFSET) {
+        glEnableVertexAttribArray(shaderProgram->textureOffsetSlot);
+        glVertexAttribPointer(shaderProgram->textureOffsetSlot,
+                              2,
+                              GL_FLOAT, GL_FALSE,
+                              stride * sizeof(GLfloat),
+                              BUFFER_OFFSET(bufferOffset * sizeof(GLfloat)));
+        bufferOffset += 2;
+    }
+
+    return;
+}
+
 GLuint IWGShaderProgramBuildProgram(const char* vertexShaderSource,
                                     const char* fragmentShaderSource)
 {

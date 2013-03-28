@@ -18,6 +18,7 @@
 #include "IWVectorTransition.h"
 
 #include "IWGRingBuffer.h"
+#include "IWGShaderProgram.h"
 
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenuPage.h"
@@ -43,6 +44,7 @@ typedef struct {
     bool isInteractive;
     IWUIMENUCONTROLLER_STATUS status;
     unsigned int nextPage;
+    const IWGShaderProgramData *shaderProgram;
 } IWUIMenuControllerData;
 
 IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
@@ -51,9 +53,7 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
                                               bool fadeOut);
 
 void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
-                               GLuint positionSlot,
-                               GLuint colorSlot,
-                               GLuint textureOffsetSlot,
+                               const IWGShaderProgramData *shaderProgram,
                                GLuint textureHandlerId);
 
 void IWUIMenuControllerUpdate(IWUIMenuControllerData *menuController,

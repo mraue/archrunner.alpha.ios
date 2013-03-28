@@ -202,7 +202,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                             float aspectRatio)
 {
     
-    IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, gdIsTouched, timeSinceLastUpdate);
+    IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, &gdIsTouched, timeSinceLastUpdate);
     
     if (gdIsTouched
         && gdStartMenuController->menuController.isInteractive) {
@@ -342,7 +342,8 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
 
 void IWGameScreenShotHandler(float timeSinceLastUpdate, float aspectRatio)
 {
-    IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, false, timeSinceLastUpdate);
+    bool touchDummy = false;
+    IWStartMenuControllerUpdate(gdStartMenuController, gdTouchPoint, &touchDummy, timeSinceLastUpdate);
     
     // Update view position
     if (gdIsTouched) {

@@ -43,6 +43,7 @@ typedef struct {
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
     IWGRingBufferData multiBuffer;
+    const IWGShaderProgramData *skyShaderProgram;
 } IWGSkyBoxControllerData;
 
 IWGSkyBoxControllerData IWGSkyBoxControllerMakeDefault();

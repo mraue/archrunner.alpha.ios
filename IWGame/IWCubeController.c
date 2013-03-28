@@ -104,19 +104,21 @@ void IWCubeControllerSetupVBOs(IWCubeControllerData *cubeController,
                      cubeController->triangleDataBufferSize * sizeof(GLfloat),
                      cubeController->triangleDataBufferStart,
                      GL_DYNAMIC_DRAW);
-        
+        IWGShaderProgramEnableVertexAtrribArrays(shaderProgram, 10);
         glEnableVertexAttribArray(shaderProgram->vertexSlot);
-        glVertexAttribPointer(shaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE,
-                              10 * sizeof(GLfloat), BUFFER_OFFSET(0));
-        glEnableVertexAttribArray(shaderProgram->colorSlot);
-        glVertexAttribPointer(shaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE,
-                              10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(shaderProgram->normalSlot);
-        glVertexAttribPointer(shaderProgram->normalSlot, 3, GL_FLOAT, GL_FALSE,
-                              10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
+//        glVertexAttribPointer(shaderProgram->vertexSlot, 3, GL_FLOAT, GL_FALSE,
+//                              10 * sizeof(GLfloat), BUFFER_OFFSET(0));
+//        glEnableVertexAttribArray(shaderProgram->colorSlot);
+//        glVertexAttribPointer(shaderProgram->colorSlot, 4, GL_FLOAT, GL_FALSE,
+//                              10 * sizeof(GLfloat), BUFFER_OFFSET(3 * sizeof(GLfloat)));
+//        glEnableVertexAttribArray(shaderProgram->normalSlot);
+//        glVertexAttribPointer(shaderProgram->normalSlot, 3, GL_FLOAT, GL_FALSE,
+//                              10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
 
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
 }
 
 void IWCubeControllerRemoveCube(IWCubeControllerData *cubeController,
@@ -181,17 +183,23 @@ void IWCubeControllerUpdate(IWCubeControllerData *cubeController,
 }
 
 void IWCubeControllerRender(IWCubeControllerData *cubeController,
-                            GLuint programId)
+                            const IWGShaderProgramData* shaderProgram)
 {
-    glUseProgram(programId);
+    glUseProgram(shaderProgram->programID);
     
     IWGRingBufferBindCurrentDrawBuffer(&cubeController->triangleRingBuffer);
+    
+#ifndef IW_USE_GLVAO
+    IWGShaderProgramEnableVertexAtrribArrays(shaderProgram, 10);
+#endif
     
     glDrawArrays(GL_TRIANGLES,
                  0,
                  cubeController->triangleRingBuffer.nVertices[cubeController->triangleRingBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&cubeController->triangleRingBuffer);
 }

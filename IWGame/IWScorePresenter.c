@@ -140,13 +140,27 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
     return;
 }
 
-void IWScorePresenterRender(IWScorePresenterData *scorePresenter)
+void IWScorePresenterRender(IWScorePresenterData *scorePresenter,
+                            const IWGShaderProgramData* shaderProgram)
 {
-    IWGRingBufferBindCurrentDrawBuffer(&scorePresenter->multiBuffer);
+    glUseProgram(shaderProgram->programID);
     
+    IWGRingBufferBindCurrentDrawBuffer(&scorePresenter->multiBuffer);
+
+#ifndef IW_USE_GLVAO
+    if (shaderProgram) {
+        IWGShaderProgramEnableVertexAtrribArrays(shaderProgram, 9);
+    } else {
+        printf("ERROR IWScorePresenterRender: shaderProgram == NULL\n");
+        return;
+    }
+#endif
+
     glDrawArrays(GL_TRIANGLES, 0, scorePresenter->multiBuffer.nVertices[scorePresenter->multiBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     IWGRingBufferSwitchBuffer(&scorePresenter->multiBuffer);
     

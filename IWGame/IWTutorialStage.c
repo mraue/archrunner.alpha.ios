@@ -11,8 +11,8 @@
 #include <stdio.h>
 
 
-IWTutorialStageData IWTutorialStageMake(char* title,
-                                        char* text,
+IWTutorialStageData IWTutorialStageMake(const char* title,
+                                        const char* text,
                                         bool hasActionStage,
                                         IWUSERINTERFACE_ELEMENT userInterfaceElements,
                                         unsigned int nCubesPerAxis,
@@ -42,10 +42,10 @@ IWTutorialStageData IWTutorialStageMake(char* title,
     return tutorialStage;
 }
 
-IWTutorialStageData IWTutorialStageMakeNonActionStage(char* title,
-                                                      char* text)
+IWTutorialStageData IWTutorialStageMakeNonActionStage(const char* title,
+                                                      const char* text)
 {
-    return IWTutorialStageMake(title, text, false, 0, 0, false, false, false, false, false,
+    return IWTutorialStageMake(title, text, false, (IWUSERINTERFACE_ELEMENT)0, 0, false, false, false, false, false,
                                IWPlayerDataMakeSimple(IWVector3Make(0.0, 0.0, -1.0),
                                                       IWVector3Make(0.0, 0.0, 1.0),
                                                       IWVector3Make(0.0, 1.0, 0.0)),

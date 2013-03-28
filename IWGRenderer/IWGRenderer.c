@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GLKit/GLKMath.h>
+//#include <GLKit/GLKMath.h>
 
 #include "IWUserInterface.h"
 
@@ -228,7 +228,9 @@ void IWGRendererSetupGameAssets(void)
         glVertexAttribPointer(normalSlot, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), BUFFER_OFFSET(7 * sizeof(GLfloat)));
     }
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
     
     //
     // Sky box
@@ -293,7 +295,7 @@ void IWGRendererSetupGameAssets(void)
     IWUIMenuPresenterInitTextFields(&gdPauseMenu.presenter, gdPauseMenu.dataBufferStart);
     IWIUMenuPresenterPresentMenu(&gdPauseMenu.presenter, &gdPauseMenu.pages[0]);
     
-    IWUIMenuControllerFillVBO(&gdPauseMenu, positionSlot, colorSlot, textureOffsetSlot, gdTextureHandlerId);
+    IWUIMenuControllerFillVBO(&gdPauseMenu, &gdTextShaderProgram, gdTextureHandlerId);
     
     //
     // Score presenter
@@ -356,10 +358,16 @@ void IWGRendererRenderCubes(void)
     // Render cubes
     
     IWGRingBufferBindCurrentDrawBuffer(&gdTriangleDoubleBuffer);
-    
+
+#ifndef IW_USE_GLVAO
+    IWGShaderProgramEnableVertexAtrribArrays(&gdMainShaderProgram, 10);
+#endif
+
     glDrawArrays(GL_TRIANGLES, 0, gdTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
 }
 
 
@@ -368,10 +376,16 @@ void IWGRendererRenderInGameText(void)
     // Draw in game text
     
     IWGRingBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
+
+#ifndef IW_USE_GLVAO
+    IWGShaderProgramEnableVertexAtrribArrays(&gdTextShaderProgram, 9);
+#endif
     
     glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
     
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#endif
 }
 
 void IWGRendererUpdateUniforms(IWPlayerData* player,
@@ -483,8 +497,8 @@ void IWGRendererRender(void)
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING
             || gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
             IWUserInterfaceControllerRender(&gdUserInterfaceController,
-                                            gdTextShaderProgram.programID,
-                                            gdUIShaderProgram.programID);
+                                            &gdUIShaderProgram,
+                                            &gdTextShaderProgram);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
             IWUIMenuControllerRender(&gdPauseMenu);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
@@ -493,13 +507,14 @@ void IWGRendererRender(void)
 #else
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
             IWUserInterfaceControllerRender(&gdUserInterfaceController,
-                                            gdTextShaderProgram.programID,
-                                            gdUIShaderProgram.programID);
+                                            &gdUIShaderProgram,
+                                            &gdTextShaderProgram);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED
                    || gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
             IWUIMenuControllerRender(&gdPauseMenu);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
-            IWScorePresenterRender(&gdScorePresenter);
+            IWScorePresenterRender(&gdScorePresenter,
+                                   &gdTextShaderProgram);
         }
 #endif
         glDisable(GL_BLEND);
@@ -509,7 +524,7 @@ void IWGRendererRender(void)
         glEnable(GL_BLEND);
         
         glUseProgram(gdTextShaderProgram.programID);
-        
+
         IWGRendererRenderInGameText();
         
         glDisable(GL_BLEND);

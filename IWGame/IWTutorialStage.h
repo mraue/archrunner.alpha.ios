@@ -21,8 +21,8 @@ typedef enum {
 } IWTUTORIALSTAGE_STATUS;
 
 typedef struct {
-    char* title;
-    char* text;
+    const char* title;
+    const char* text;
     bool hasActionStage;
     IWUSERINTERFACE_ELEMENT userInterfaceElements;
     unsigned int nCubesPerAxis;
@@ -36,8 +36,8 @@ typedef struct {
     IWTUTORIALSTAGE_STATUS status;
 } IWTutorialStageData;
 
-IWTutorialStageData IWTutorialStageMake(char* title,
-                                        char* text,
+IWTutorialStageData IWTutorialStageMake(const char* title,
+                                        const char* text,
                                         bool hasActionStage,
                                         IWUSERINTERFACE_ELEMENT userInterfaceElements,
                                         unsigned int nCubesPerAxis,
@@ -49,7 +49,7 @@ IWTutorialStageData IWTutorialStageMake(char* title,
                                         IWPlayerData player,
                                         float radius);
 
-IWTutorialStageData IWTutorialStageMakeNonActionStage(char* title,
-                                                      char* text);
+IWTutorialStageData IWTutorialStageMakeNonActionStage(const char* title,
+                                                      const char* text);
 
 #endif

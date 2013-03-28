@@ -23,12 +23,12 @@ char* IWFileToolsReadFileToString(const char *filename)
     fclose(fp);
     if (i == FILETOSTRING_MAX_CHAR_N) {
         printf("ERROR: IWFileToolsReadFileToString maximum string length reached (%d)\n", FILETOSTRING_MAX_CHAR_N);
-        return "";
+        return (char*)"";
     } else {
         char* returnString = (char*)malloc(i * sizeof(int));
         if (returnString == NULL) {
             printf("ERROR: IWFileToolsReadFileToString could not allocate memory for return string\n");
-            return "";
+            return (char*)"";
         }
         inputStringFull[i] = '\0';
         strncpy(returnString, inputStringFull, i + 1);

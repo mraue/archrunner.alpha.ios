@@ -13,6 +13,8 @@
 
 #ifdef ANDROID
 
+#define GL_GLEXT_PROTOTYPES
+
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
@@ -20,6 +22,8 @@
 
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
+
+#define IW_USE_GLVAO
 
 #endif
 

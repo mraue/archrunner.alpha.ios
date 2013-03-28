@@ -15,7 +15,9 @@ IWGRingBufferData IWGRingBufferGen(void)
 {
     IWGRingBufferData multiBufferData;
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
+#ifdef IW_USE_GLVAO
         glGenVertexArraysOES(1, &multiBufferData.vertexArray[i]);
+#endif
         glGenBuffers(1, &multiBufferData.vertexBuffer[i]);
         multiBufferData.bufferSubData[i] = NULL;
         multiBufferData.nVertices[i] = 0;
@@ -27,7 +29,9 @@ IWGRingBufferData IWGRingBufferGen(void)
 
 void IWGRingBufferBind(IWGRingBufferData *multiBufferData, unsigned int buffer)
 {
+#ifdef IW_USE_GLVAO
     glBindVertexArrayOES(multiBufferData->vertexArray[buffer]);
+#endif
     glBindBuffer(GL_ARRAY_BUFFER, multiBufferData->vertexBuffer[buffer]);
     return;
 }
@@ -126,6 +130,8 @@ void IWGRingBufferDealloc(IWGRingBufferData *multiBufferData)
     IWGRingBufferResetNVertices(multiBufferData);
     for (unsigned int i = 0; i < IWGMULTIBUFFER_MAX; i++) {
         glDeleteBuffers(1, &multiBufferData->vertexBuffer[i]);
+#ifdef IW_USE_GLVAO
         glDeleteVertexArraysOES(1, &multiBufferData->vertexArray[i]);
+#endif
     }
 }

@@ -20,6 +20,7 @@
 #include "IWGFontMap.h"
 
 #include "IWGRingBuffer.h"
+#include "IWGShaderProgram.h"
 
 typedef struct {
     float timePerRow;
@@ -50,7 +51,8 @@ void IWScorePresenterFillVBO(IWScorePresenterData *scorePresenter,
                              GLuint textureOffsetSlot,
                              GLuint textureHandlerId);
 
-void IWScorePresenterRender(IWScorePresenterData *scorePresenter);
+void IWScorePresenterRender(IWScorePresenterData *scorePresenter,
+                            const IWGShaderProgramData* shaderProgram);
 
 void IWScorePresenterPurgeData(IWScorePresenterData *scorePresenter);
 
