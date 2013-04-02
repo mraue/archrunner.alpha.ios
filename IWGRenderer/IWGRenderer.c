@@ -47,25 +47,8 @@ GLuint basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
 GLuint skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_N];
 GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 
-void IWGRendererSetupGL(const char* fontMapFilename)
+void IWGRendererInit(const char* fontMapString)
 {
-    // Get and save uniform locations.
-    
-    glUseProgram(gdMainShaderProgram.programID);
-    
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
-        = glGetUniformLocation(gdMainShaderProgram.programID, "ModelMatrix");
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
-        = glGetUniformLocation(gdMainShaderProgram.programID, "ViewMatrix");
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
-        = glGetUniformLocation(gdMainShaderProgram.programID, "ProjectionMatrix");
-    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
-        = glGetUniformLocation(gdMainShaderProgram.programID, "NormalMatrix");
-    
-    GLuint grayScaleId = glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale");
-    
-    glUniform2f(grayScaleId, 0.0, 0.4);
-    
     gdSunLightSource = IWGBasicLightSourceMakeDefault();
     gdMoonLightSource = IWGBasicLightSourceMakeDefault();
     
@@ -75,6 +58,33 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     gdMoonLightSource.Color = IWVector4Make(1.0, 1.0, 1.0, 1.0);
     
     gdPLayerLightSource = IWGPointLightSourceMakeDefault();
+    
+    gdFontMap = IWGFontMapCreateFromString((char*)fontMapString);
+    
+    // Start menu controller
+    gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+
+    return;
+}
+
+void IWGRendererSetupGL()
+{
+    // Get and save uniform locations.
+    
+    glUseProgram(gdMainShaderProgram.programID);
+    
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
+    = glGetUniformLocation(gdMainShaderProgram.programID, "ModelMatrix");
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
+    = glGetUniformLocation(gdMainShaderProgram.programID, "ViewMatrix");
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
+    = glGetUniformLocation(gdMainShaderProgram.programID, "ProjectionMatrix");
+    basicUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_NORMAL_MATRIX]
+    = glGetUniformLocation(gdMainShaderProgram.programID, "NormalMatrix");
+    
+    GLuint grayScaleId = glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale");
+    
+    glUniform2f(grayScaleId, 0.0, 0.4);
     
     IWGLightingInitializeUniformLocations(gdMainShaderProgram.programID);
     IWGLightingSetUniforms(&gdSunLightSource, &gdMoonLightSource, &gdPLayerLightSource);
@@ -87,14 +97,11 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     
     // Get and save uniform locations.
     skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_MODEL_MATRIX]
-        = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ModelMatrix");
+    = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ModelMatrix");
     skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_VIEW_MATRIX]
-        = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ViewMatrix");
+    = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ViewMatrix");
     skyboxShaderUniformIDs[IWGRENDERER_BASIC_UNIFORM_ID_INDEX_PROJECTION_MATRIX]
-        = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ProjectionMatrix");
-    
-    gdFontMap = IWGFontMapCreateFromFile(fontMapFilename);
-    
+    = glGetUniformLocation(gdSkyboxShaderProgram.programID, "ProjectionMatrix");
     
     // Font map texture setup
     glGenTextures(1, &gdTextureHandlerId);
@@ -113,7 +120,6 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     gdTextTriangleDoubleBuffer = IWGRingBufferGen();
     
     // Start menu controller
-    gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
     IWStartMenuControllerSetupVBOs(gdStartMenuController,
                                    &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
                                    gdTextureHandlerId);
@@ -123,7 +129,7 @@ void IWGRendererSetupGL(const char* fontMapFilename)
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
     glLineWidth(1.2);
-
+    
     return;
 }
 

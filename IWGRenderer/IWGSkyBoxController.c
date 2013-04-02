@@ -245,6 +245,7 @@ void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController)
         printf("ERROR IWGSkyBoxControllerRender: skyShaderProgram == 0\n");
         return;
     }
+    glEnable(GL_DEPTH_TEST);
 #endif
     
     glDrawArrays(GL_TRIANGLES, 0,
@@ -252,6 +253,8 @@ void IWGSkyBoxControllerRender(IWGSkyBoxControllerData *skyBoxController)
 
 #ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#else
+    glDisable(GL_DEPTH_TEST);
 #endif
     
     IWGRingBufferSwitchBuffer(&skyBoxController->multiBuffer);

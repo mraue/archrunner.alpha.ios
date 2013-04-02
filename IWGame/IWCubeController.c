@@ -191,6 +191,7 @@ void IWCubeControllerRender(IWCubeControllerData *cubeController,
     
 #ifndef IW_USE_GLVAO
     IWGShaderProgramEnableVertexAtrribArrays(shaderProgram, 10);
+    glEnable(GL_DEPTH_TEST);
 #endif
     
     glDrawArrays(GL_TRIANGLES,
@@ -199,6 +200,8 @@ void IWCubeControllerRender(IWCubeControllerData *cubeController,
     
 #ifdef IW_USE_GLVAO
     glBindVertexArrayOES(0);
+#else
+    glDisable(GL_DEPTH_TEST);
 #endif
     
     IWGRingBufferSwitchBuffer(&cubeController->triangleRingBuffer);

@@ -14,6 +14,7 @@
 #import "IWGLighting.h"
 #import "IWUIRectangleButton.h"
 #import "IWGeometry.h"
+#import "IWFileTools.h"
 
 #import "IWGShaderProgram.h"
 
@@ -236,7 +237,8 @@
     CFDataRef dataRef = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
 
-    IWGRendererSetupGL([fontMapFilename UTF8String]);
+    IWGRendererInit(IWFileToolsReadFileToString([fontMapFilename UTF8String]));
+    IWGRendererSetupGL();
     
     // Game center 
     self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];
