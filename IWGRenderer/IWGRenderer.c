@@ -11,11 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include <GLKit/GLKMath.h>
-
 #include "IWUserInterface.h"
 
-//#include "IWColorTransition.h"
 #include "IWFileTools.h"
 #include "IWCube.h"
 #include "IWFuel.h"
@@ -116,9 +113,6 @@ void IWGRendererSetupGL()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
     //glGenerateMipmap(GL_TEXTURE_2D);
     
-    //gdTriangleDoubleBuffer = IWGRingBufferGen();
-    //gdTextTriangleDoubleBuffer = IWGRingBufferGen();
-    
     // Start menu controller
     IWStartMenuControllerSetupVBOs(gdStartMenuController,
                                    &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
@@ -142,14 +136,6 @@ void IWGRendererSetupGameAssets(void)
     gdClearColor = IWVector4Make(0.6, 0.6, 0.6, 1.0);
     //gdClearColor = IWVector4Make(0.95, 0.95, 0.95, 1.0);
     glClearColor(gdClearColor.x, gdClearColor.y, gdClearColor.z, gdClearColor.w);
-    
-//    IWColorTransition overdriveColorTransition = {
-//        IWUI_COLOR_WHITE(0.4),
-//        IWUI_COLOR_WHITE(1.0),
-//        IWUI_COLOR_WHITE(0.4),
-//        0.4, 0.0, true, true
-//    };
-//    gdOverdriveColorTransition = overdriveColorTransition;
     
     int nx, ny, nz;
     nx = ny = nz = gdNCubesPerAxis;
@@ -246,12 +232,6 @@ void IWGRendererSetupGameAssets(void)
     //
     // Sky box
     //
-    
-//    glUseProgram(gdSkyboxShaderProgram.programID);
-//    
-//    positionSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Vertex");
-//    normalSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Normal");
-//    colorSlot = glGetAttribLocation(gdSkyboxShaderProgram.programID, "Color");
 
     gdSkyBoxController = IWGSkyBoxControllerMakeDefault();
     IWGSkyBoxControllerFillVBO(&gdSkyBoxController,
@@ -380,24 +360,6 @@ void IWGRendererRenderCubes(void)
     glBindVertexArrayOES(0);
 #endif
 }
-
-
-//void IWGRendererRenderInGameText(void)
-//{
-//    // Draw in game text
-//    
-//    IWGRingBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
-//
-//#ifndef IW_USE_GLVAO
-//    IWGShaderProgramEnableVertexAtrribArrays(&gdTextShaderProgram, 9);
-//#endif
-//    
-//    glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
-//    
-//#ifdef IW_USE_GLVAO
-//    glBindVertexArrayOES(0);
-//#endif
-//}
 
 void IWGRendererUpdateUniforms(IWPlayerData* player,
                                IWGSkyBoxControllerData* skyBoxController) {
@@ -530,18 +492,6 @@ void IWGRendererRender(void)
         }
 #endif
         glDisable(GL_BLEND);
-        
-    } /*else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
-        
-        glEnable(GL_BLEND);
-        
-        glUseProgram(gdTextShaderProgram.programID);
-
-        IWGRendererRenderInGameText();
-        
-        glDisable(GL_BLEND);
-        
-    }*/  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
         
     }
     
