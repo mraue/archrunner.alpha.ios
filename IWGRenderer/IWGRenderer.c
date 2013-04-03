@@ -513,7 +513,8 @@ void IWGRendererRender(void)
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER_MENU) {
             IWUIMenuControllerRender(&gdPauseMenu);
         } else if (gdCurrentGameStatus == IWGAME_STATUS_GAME_OVER) {
-            IWScorePresenterRender(&gdScorePresenter);
+            IWScorePresenterRender(&gdScorePresenter,
+                                   &gdTextShaderProgram);
         }
 #else
         if (gdCurrentGameStatus == IWGAME_STATUS_RUNNING) {
