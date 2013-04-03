@@ -138,7 +138,7 @@ extern IWGShaderProgramData gdTextShaderProgram;
 extern IWGShaderProgramData gdSkyboxShaderProgram;
 extern IWGShaderProgramData gdUIShaderProgram;
 
-extern IWGRingBufferData gdTextTriangleDoubleBuffer;
+//extern IWGRingBufferData gdTextTriangleDoubleBuffer;
 
 extern IWGRingBufferData gdTriangleDoubleBuffer;
 

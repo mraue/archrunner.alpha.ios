@@ -104,7 +104,7 @@ IWGShaderProgramData gdTextShaderProgram;
 IWGShaderProgramData gdSkyboxShaderProgram;
 IWGShaderProgramData gdUIShaderProgram;
 
-IWGRingBufferData gdTextTriangleDoubleBuffer;
+//IWGRingBufferData gdTextTriangleDoubleBuffer;
 
 IWGRingBufferData gdTriangleDoubleBuffer;
 

@@ -60,7 +60,7 @@ void IWGRendererRender(void);
 
 void IWGRendererRenderCubes(void);
 
-void IWGRendererRenderInGameText(void);
+//void IWGRendererRenderInGameText(void);
 
 void IWGRendererTearDownGL(void);
 

@@ -120,7 +120,7 @@ void IWGameGameOverHandler(float timeSinceLastUpdate, float aspectRatio)
 {
     IWGRingBufferSwitchBuffer(&gdTriangleDoubleBuffer);
     //IWGRingBufferSwitchBuffer(&gdUITriangleDoubleBuffer);
-    IWGRingBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
+    //IWGRingBufferSwitchBuffer(&gdTextTriangleDoubleBuffer);
     
     // Nifty trick to get the menu setup, i.e. flush the buffer updates
     // (this should probably be a function in the future)

@@ -116,8 +116,8 @@ void IWGRendererSetupGL()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, gdFontMapTextureData);
     //glGenerateMipmap(GL_TEXTURE_2D);
     
-    gdTriangleDoubleBuffer = IWGRingBufferGen();
-    gdTextTriangleDoubleBuffer = IWGRingBufferGen();
+    //gdTriangleDoubleBuffer = IWGRingBufferGen();
+    //gdTextTriangleDoubleBuffer = IWGRingBufferGen();
     
     // Start menu controller
     IWStartMenuControllerSetupVBOs(gdStartMenuController,
@@ -382,22 +382,22 @@ void IWGRendererRenderCubes(void)
 }
 
 
-void IWGRendererRenderInGameText(void)
-{
-    // Draw in game text
-    
-    IWGRingBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
-
-#ifndef IW_USE_GLVAO
-    IWGShaderProgramEnableVertexAtrribArrays(&gdTextShaderProgram, 9);
-#endif
-    
-    glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
-    
-#ifdef IW_USE_GLVAO
-    glBindVertexArrayOES(0);
-#endif
-}
+//void IWGRendererRenderInGameText(void)
+//{
+//    // Draw in game text
+//    
+//    IWGRingBufferBindCurrentDrawBuffer(&gdTextTriangleDoubleBuffer);
+//
+//#ifndef IW_USE_GLVAO
+//    IWGShaderProgramEnableVertexAtrribArrays(&gdTextShaderProgram, 9);
+//#endif
+//    
+//    glDrawArrays(GL_TRIANGLES, 0, gdTextTriangleDoubleBuffer.nVertices[gdTriangleDoubleBuffer.currentDrawBuffer]);
+//    
+//#ifdef IW_USE_GLVAO
+//    glBindVertexArrayOES(0);
+//#endif
+//}
 
 void IWGRendererUpdateUniforms(IWPlayerData* player,
                                IWGSkyBoxControllerData* skyBoxController) {
@@ -531,7 +531,7 @@ void IWGRendererRender(void)
 #endif
         glDisable(GL_BLEND);
         
-    } else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
+    } /*else if (gdCurrentGameStatus == IWGAME_STATUS_START_MENU) {
         
         glEnable(GL_BLEND);
         
@@ -541,7 +541,7 @@ void IWGRendererRender(void)
         
         glDisable(GL_BLEND);
         
-    }  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
+    }*/  else if (gdCurrentGameStatus == IWGAME_STATUS_SCREENSHOT) {
         
     }
     
