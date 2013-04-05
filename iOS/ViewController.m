@@ -161,7 +161,6 @@
     // Read safed options
     if (self.gameOptions) {
         [self.gameOptions setToGameOptions:&gdGameOptions];
-        NSLog(@">>%@", self.gameOptions);
     }
     
     // In game sound effects via Fitch
@@ -613,7 +612,6 @@
     if (self.gameOptions) {
         [self.gameOptions setFromGameOptions:&gdGameOptions];
     }
-    NSLog(@">>>%@", self.gameOptions);
 }
 
 @end
