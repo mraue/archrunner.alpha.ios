@@ -164,6 +164,8 @@ void IWGameGameOverMenuHandler(float timeSinceLastUpdate, float aspectRatio)
                     gdGrayScaleTransition.currentVector.x,
                     gdGrayScaleTransition.currentVector.y);
     }
+
+    IWUIMenuControllerUpdate(&gdPauseMenu, timeSinceLastUpdate);
     
     if (gdIsTouched) {
         int touchN = IWUIMenuPresenterGetTouch(&gdPauseMenu.presenter, gdTouchPoint);
@@ -678,6 +680,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                 } else if (touchN == 2) {
                     gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
                     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
+                    IWUIMenuControllerUpdate(&gdPauseMenu, 1.0);
                     IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                 }
             }
