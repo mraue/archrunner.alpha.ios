@@ -22,6 +22,7 @@
 
 #include "IWUIMenuPresenter.h"
 #include "IWUIMenuPage.h"
+#include "IWUIMenuItemType.h"
 
 typedef enum {
     IWUIMENUCONTROLLER_STATUS_INTERACTIVE,
@@ -31,10 +32,24 @@ typedef enum {
 } IWUIMENUCONTROLLER_STATUS;
 
 typedef struct {
+    bool touchHandled;
+    unsigned int page;
+    unsigned int item;
+    unsigned int option;
+    enum IWUIMENUITEM_ITEM_TYPE itemType;
+} IWUIMenuControllerTouchHandlerData;
+
+IWUIMenuControllerTouchHandlerData IWUIMenuControllerTouchHandlerMake(bool touchHandled,
+                                                                      unsigned int page,
+                                                                      unsigned int item,
+                                                                      unsigned int option,
+                                                                      enum IWUIMENUITEM_ITEM_TYPE itemType);
+
+typedef struct {
     IWUIMenuPresenterData presenter;
     IWUIMenuPageData *pages;
     unsigned int nPages;
-    unsigned int currentPage;
+    unsigned int currentPage, nextPage, previousPage;
     size_t dataBufferSize;
     GLfloat* dataBufferStart;
     IWGRingBufferData multiBuffer;
@@ -43,8 +58,8 @@ typedef struct {
     IWVector4Transition textColorTransition;
     bool isInteractive;
     IWUIMENUCONTROLLER_STATUS status;
-    unsigned int nextPage;
     const IWGShaderProgramData *shaderProgram;
+    IWVector4 textColor;
 } IWUIMenuControllerData;
 
 IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
@@ -56,9 +71,11 @@ void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
                                const IWGShaderProgramData *shaderProgram,
                                GLuint textureHandlerId);
 
+IWUIMenuControllerTouchHandlerData IWUIMenuControllerHandleTouch(IWUIMenuControllerData *menuController,
+                                                                 bool isTouched,
+                                                                 IWPoint2D touchPoint);
+
 void IWUIMenuControllerUpdate(IWUIMenuControllerData *menuController,
-                              bool isTouched,
-                              IWPoint2D touchPoint,
                               float timeSinceLastUpdate);
 
 void IWUIMenuControllerPresentMenuPage(IWUIMenuControllerData *menuController,

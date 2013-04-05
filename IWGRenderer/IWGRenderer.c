@@ -267,21 +267,41 @@ void IWGRendererSetupGameAssets(void)
     // PAUSE/GAME OVER Menu
     //
     
-    gdPauseMenu = IWUIMenuControllerMake(IWUIMenuPresenterMake(2, 12, 1,
-                                                    IWVector2Make(-0.4, 0.6), 1. / aspect,
-                                                    0.22, 1.2,
-                                                    IWVector4Make(0.2, 0.2, 0.2, 0.8),
-                                                    &gdFontMap), 2, false, false);
+    gdPauseMenu = IWUIMenuControllerMake(IWUIMenuPresenterMake(4, 11, 4,
+                                                               IWVector2Make(-0.6, 0.8), 1. / aspect,
+                                                               0.21, 1.2,
+                                                               IWVector4Make(0.2, 0.2, 0.2, 0.8),
+                                                               &gdFontMap), 5, true, true);
     gdPauseMenu.pages[0].title = "PAUSED";
     gdPauseMenu.pages[0].isActive = true;
     //IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_EMPTY, "", "", 0, NULL, 0);
-    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_ACTION, "[QUIT]", "", 0, NULL, 1);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_ACTION, "[QUIT]", "", 0, 0, 1);
     //IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_EMPTY, "", "", 0, NULL, 0);
-    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_ACTION, "[CONTINUE]", "", 0, NULL, 2);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_SUBMENU, "[OPTIONS]", "", 0, 2, 2);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[0], IWUIMENUITEM_ITEM_TYPE_ACTION, "[CONTINUE]", "", 0, 0, 2);
     gdPauseMenu.pages[1].title = "GAME OVER";
     gdPauseMenu.pages[1].isActive = false;
-    IWUIMenuPageAddItem(&gdPauseMenu.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[QUIT]", "", 0, NULL, 1);
-    IWUIMenuPageAddItem(&gdPauseMenu.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[RETRY]", "", 0, NULL, 2);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[QUIT]", "", 0, 0, 1);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[1], IWUIMENUITEM_ITEM_TYPE_ACTION, "[RETRY]", "", 0, 0, 2);
+    gdPauseMenu.pages[2].title = "OPTIONS";
+    gdPauseMenu.pages[2].isActive = false;
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[2], IWUIMENUITEM_ITEM_TYPE_SUBMENU, "[SOUND]", "", 0, 3, 1);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[2], IWUIMENUITEM_ITEM_TYPE_SUBMENU, "[CONTROLS]", "", 0, 4, 2);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[2], IWUIMENUITEM_ITEM_TYPE_SUBMENU, "<BACK", "", 0, 0, 3);
+    gdPauseMenu.pages[3].title = "SOUND";
+    gdPauseMenu.pages[3].isActive = false;
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[3], IWUIMENUITEM_ITEM_TYPE_OPTIONS, "MUSIC", "ON\nOFF",
+                        gdGameOptions.playMusic ? 0 : 1, 0, 1);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[3], IWUIMENUITEM_ITEM_TYPE_OPTIONS, "FX", "ON\nOFF",
+                        gdGameOptions.playFX ? 0 : 1, 0, 2);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[3], IWUIMENUITEM_ITEM_TYPE_SUBMENU, "<BACK", "", 0, 2, 3);
+    gdPauseMenu.pages[4].title = "CONTROLS";
+    gdPauseMenu.pages[4].isActive = false;
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[4], IWUIMENUITEM_ITEM_TYPE_OPTIONS, "INVERT X", "NO\nYES",
+                        gdGameOptions.invertXAxisControls ? 1 : 0, 0, 1);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[4], IWUIMENUITEM_ITEM_TYPE_OPTIONS, "INVERT Y", "NO\nYES",
+                        gdGameOptions.invertYAxisControls ? 1 : 0, 0, 2);
+    IWUIMenuPageAddItem(&gdPauseMenu.pages[4], IWUIMENUITEM_ITEM_TYPE_SUBMENU, "<BACK", "", 0, 2, 3);
     
     IWUIMenuPresenterInitTextFields(&gdPauseMenu.presenter, gdPauseMenu.dataBufferStart);
     IWIUMenuPresenterPresentMenu(&gdPauseMenu.presenter, &gdPauseMenu.pages[0]);

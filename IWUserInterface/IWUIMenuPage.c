@@ -62,5 +62,8 @@ void IWUIMenuPageAddItem(IWUIMenuPageData *menuPage,
 
 void IWUIMenuPagePurgeData(IWUIMenuPageData *menuPage)
 {
+    for (int i = 0; i < menuPage->nItems; i++) {
+        IWUIMenuItemPurgeData(&menuPage->items[i]);
+    }
     free(menuPage->items); menuPage->items = NULL;
 }

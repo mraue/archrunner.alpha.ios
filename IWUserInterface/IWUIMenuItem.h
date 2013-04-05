@@ -9,7 +9,7 @@
 #ifndef theBr1dge_IWUIMenuItem_h
 #define theBr1dge_IWUIMenuItem_h
 
-#define IWUIMENUITEMDATA_STRING_LENGTH_MAX 255
+//#define IWUIMENUITEMDATA_STRING_LENGTH_MAX 255
 
 #include "IWUIMenuPage.h"
 #include "IWUIMenuItemType.h"
@@ -18,11 +18,13 @@ struct _IWUIMenuPageData;
 
 struct _IWUIMenuItemData {
     enum IWUIMENUITEM_ITEM_TYPE type;
-    char title[IWUIMENUITEMDATA_STRING_LENGTH_MAX];
-    char optionsString[IWUIMENUITEMDATA_STRING_LENGTH_MAX];// divided by \n
+    const char *title;
+    const char *optionsString;// divided by \n
+    char ** options;
+    unsigned int nOptions;
     unsigned short currentOptionSelected;
-    struct _IWUIMenuPageData *subMenu;
-    unsigned short actionID;
+    unsigned short subMenuId;
+    unsigned short id_;
 };
 typedef struct _IWUIMenuItemData IWUIMenuItemData;
 
@@ -30,7 +32,9 @@ IWUIMenuItemData IWUIMenuItemDataMake(enum IWUIMENUITEM_ITEM_TYPE type,
                                       const char *title,
                                       const char *optionsString,
                                       unsigned short currentOptionSelected,
-                                      struct _IWUIMenuPageData *subMenu,
-                                      unsigned short actionID);
+                                      unsigned short subMenuId,
+                                      unsigned short id_);
+
+void IWUIMenuItemPurgeData(IWUIMenuItemData* menuItem);
 
 #endif

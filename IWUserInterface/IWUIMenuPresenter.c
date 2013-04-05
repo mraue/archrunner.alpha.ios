@@ -137,22 +137,27 @@ void IWIUMenuPresenterPresentMenu(IWUIMenuPresenterData *menuPresenter, IWUIMenu
         IWGTextFieldSetText(&menuPresenter->textFields[n], menuPage->items[i].title);
         n++;
         if (menuPage->items[i].type == IWUIMENUITEM_ITEM_TYPE_OPTIONS) {
-            unsigned int optionCounter = 0;
-
-            if (strlen(menuPage->items[i].optionsString) > 100) {
-                printf("ERROR IWIUMenuPresenterPresentMenu: Option string too long\n");
-                return;
+            if (menuPage->items[i].options
+                && menuPage->items[i].currentOptionSelected < menuPage->items[i].nOptions) {
+                IWGTextFieldSetText(&menuPresenter->textFields[n],
+                                    menuPage->items[i].options[menuPage->items[i].currentOptionSelected]);
             }
-            char *searchString = (char*)malloc(100 * sizeof(char));
-            strncpy(searchString, menuPage->items[i].optionsString, 100);
-            char *strTok = NULL;
-            while ((optionCounter <= menuPage->items[i].currentOptionSelected)
-                   && (strTok = strtok(optionCounter == 0 ? searchString : NULL, "\n"))) {
-                optionCounter++;
-            }
-            if (strTok)
-                IWGTextFieldSetText(&menuPresenter->textFields[n], strTok);
-            free(searchString);
+//            unsigned int optionCounter = 0;
+//
+//            if (strlen(menuPage->items[i].optionsString) > 100) {
+//                printf("ERROR IWIUMenuPresenterPresentMenu: Option string too long\n");
+//                return;
+//            }
+//            char *searchString = (char*)malloc(100 * sizeof(char));
+//            strncpy(searchString, menuPage->items[i].optionsString, 100);
+//            char *strTok = NULL;
+//            while ((optionCounter <= menuPage->items[i].currentOptionSelected)
+//                   && (strTok = strtok(optionCounter == 0 ? searchString : NULL, "\n"))) {
+//                optionCounter++;
+//            }
+//            if (strTok)
+//                IWGTextFieldSetText(&menuPresenter->textFields[n], strTok);
+//            free(searchString);
         }
         n++;
     }

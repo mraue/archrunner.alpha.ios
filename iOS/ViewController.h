@@ -23,8 +23,9 @@
 @interface ViewController : GLKViewController <AVAudioPlayerDelegate,GKGameCenterControllerDelegate>
 
 @property (retain, nonatomic) AVAudioPlayer *audioPlayer;
-
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+
+- (void)saveGameOptions;
 
 @end
 

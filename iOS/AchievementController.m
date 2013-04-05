@@ -67,7 +67,7 @@
     if (mutableFetchResults == nil) {
         // Handle the error.
         NSLog(@"ERROR: Could not fetch AchievementTracker from data storage");
-        abort();
+        return nil;
     }
     if ([mutableFetchResults count] == 0) {
         _achievementTracker = (AchievementTracker *)[NSEntityDescription insertNewObjectForEntityForName:@"AchievementTracker" inManagedObjectContext:self.managedObjectContext];
@@ -77,7 +77,7 @@
     } else {
         // Handle the error.
         NSLog(@"ERROR: Found more then one AchievementTracker in data storage");
-        abort();
+        return nil;
     }
     [mutableFetchResults release];
     [request release];

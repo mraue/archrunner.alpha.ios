@@ -11,6 +11,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+IWUIMenuControllerTouchHandlerData IWUIMenuControllerTouchHandlerMake(bool touchHandled,
+                                                                      unsigned int page,
+                                                                      unsigned int item,
+                                                                      unsigned int option,
+                                                                      enum IWUIMENUITEM_ITEM_TYPE itemType)
+{
+    IWUIMenuControllerTouchHandlerData touchHandler = {
+        touchHandled,
+        page,
+        item,
+        option,
+        itemType,
+    };
+    return touchHandler;
+}
+
 IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
                                               unsigned int nPages,
                                               bool fadeIn,
@@ -24,6 +40,7 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
     menuController.nPages = nPages;
     menuController.currentPage = 0;
     menuController.nextPage = 0;
+    menuController.previousPage = 0;
     menuController.multiBuffer = IWGRingBufferGen();
     
     menuController.fadeIn = fadeIn;
@@ -33,6 +50,8 @@ IWUIMenuControllerData IWUIMenuControllerMake(IWUIMenuPresenterData presenter,
     
     menuController.isInteractive = true;
     menuController.status = IWUIMENUCONTROLLER_STATUS_INTERACTIVE;
+    
+    menuController.textColor = presenter.color;
     
     menuController.textColorTransition
     = IWVector4TransitionMake(menuController.presenter.color,
@@ -101,9 +120,47 @@ void IWUIMenuControllerFillVBO(IWUIMenuControllerData *menuController,
     return;
 }
 
+IWUIMenuControllerTouchHandlerData IWUIMenuControllerHandleTouch(IWUIMenuControllerData *menuController,
+                                                                 bool isTouched,
+                                                                 IWPoint2D touchPoint)
+{
+    IWUIMenuControllerTouchHandlerData touchHandler = IWUIMenuControllerTouchHandlerMake(false, 0, 0, 0,
+                                                                                         IWUIMENUITEM_ITEM_TYPE_EMPTY);
+    
+    if (menuController->status != IWUIMENUCONTROLLER_STATUS_INTERACTIVE)
+        return touchHandler;
+
+    int touchN = IWUIMenuPresenterGetTouch(&menuController->presenter, touchPoint);
+    switch (menuController->pages[menuController->currentPage].items[touchN].type) {
+        case IWUIMENUITEM_ITEM_TYPE_SUBMENU :
+            menuController->previousPage = menuController->currentPage;
+            IWUIMenuControllerPresentMenuPage(menuController, menuController->pages[menuController->currentPage].items[touchN].subMenuId);
+            touchHandler
+                = IWUIMenuControllerTouchHandlerMake(true,
+                                                     menuController->currentPage,
+                                                     touchN,
+                                                     0,
+                                                     menuController->pages[menuController->currentPage].items[touchN].type);
+            break;
+        case IWUIMENUITEM_ITEM_TYPE_OPTIONS :
+            menuController->pages[menuController->currentPage].items[touchN].currentOptionSelected += 1;
+            menuController->pages[menuController->currentPage].items[touchN].currentOptionSelected %= menuController->pages[menuController->currentPage].items[touchN].nOptions;
+            menuController->fadeOut = menuController->fadeIn = false;
+            IWUIMenuControllerPresentMenuPage(menuController, menuController->currentPage);
+            menuController->fadeOut = menuController->fadeIn = true;
+            touchHandler
+                = IWUIMenuControllerTouchHandlerMake(true,
+                                                     menuController->currentPage,
+                                                     touchN,
+                                                     menuController->pages[menuController->currentPage].items[touchN].currentOptionSelected,
+                                                     menuController->pages[menuController->currentPage].items[touchN].type);
+            break;
+    }
+
+    return touchHandler;
+}
+
 void IWUIMenuControllerUpdate(IWUIMenuControllerData *menuController,
-                              bool isTouched,
-                              IWPoint2D touchPoint,
                               float timeSinceLastUpdate)
 {
     if (menuController->status == IWUIMENUCONTROLLER_STATUS_FADE_IN
@@ -125,14 +182,14 @@ void IWUIMenuControllerUpdate(IWUIMenuControllerData *menuController,
             menuController->currentPage = menuController->nextPage;
             if (menuController->fadeIn) {
                 menuController->textColorTransition
-                = IWVector4TransitionMake(menuController->presenter.color,
-                                          menuController->presenter.color,
-                                          menuController->presenter.color,
+                = IWVector4TransitionMake(menuController->textColor,
+                                          menuController->textColor,
+                                          menuController->textColor,
                                           menuController->fadeInTime,
                                           0.0, false, false);
                 menuController->textColorTransition.startVector.w = 0.0;
                 menuController->textColorTransition.currentVector.w = 0.0;
-                menuController->textColorTransition.endVector.w = 1.0;
+                menuController->textColorTransition.endVector.w = menuController->textColor.w;
                 //menuController->presenter.color.w = 0.0;
                 menuController->isInteractive = false;
                 menuController->presenter.color = menuController->textColorTransition.currentVector;
@@ -162,9 +219,9 @@ void IWUIMenuControllerPresentMenuPage(IWUIMenuControllerData *menuController,
         menuController->status = IWUIMENUCONTROLLER_STATUS_FADE_OUT_TO_NEW_MENU;
         menuController->isInteractive = false;
         menuController->textColorTransition
-        = IWVector4TransitionMake(menuController->presenter.color,
-                                  menuController->presenter.color,
-                                  menuController->presenter.color,
+        = IWVector4TransitionMake(menuController->textColor,
+                                  menuController->textColor,
+                                  menuController->textColor,
                                   menuController->fadeOutTime,
                                   0.0, false, false);
         menuController->textColorTransition.endVector.w = 0.0;

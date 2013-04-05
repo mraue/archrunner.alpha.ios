@@ -55,6 +55,8 @@ IWStartMenuControllerData *gdStartMenuController;
 
 IWGAME_MODUS gdGameModus;
 
+IWGameOptionsData gdGameOptions;
+
 #pragma mark - User input
 
 IWControllerData gdControllerDataAccelerometer;

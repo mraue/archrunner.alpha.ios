@@ -196,8 +196,6 @@ void IWStartMenuControllerUpdate(IWStartMenuControllerData *startMenuController,
     
     // Update menu
     IWUIMenuControllerUpdate(&startMenuController->menuController,
-                             isTouched,
-                             touchPoint,
                              timeSinceLastUpdate);
     
     // Update skybox

@@ -24,6 +24,7 @@
 
 #import "AchievementController.h"
 #import "IWSoundHandler.h"
+#import "GameOptions.h"
 
 @interface ViewController () {
     
@@ -44,6 +45,7 @@
 @property (retain, nonatomic) AchievementController *achievementController;
 @property (retain, nonatomic) FISoundEngine *finchSoundEngine;
 @property (retain, nonatomic) NSMutableDictionary *soundFXDictionary;
+@property (strong, nonatomic) GameOptions *gameOptions;
 
 - (void)processControllInput;
 - (void)authenticateLocalPlayer;
@@ -59,6 +61,7 @@
 @synthesize achievementController=_achievementController;
 @synthesize finchSoundEngine=_finchSoundEngine;
 @synthesize soundFXDictionary=_soundFXDictionary;
+@synthesize gameOptions=_gameOptions;
 
 - (void)dealloc
 {
@@ -155,6 +158,12 @@
     
     [EAGLContext setCurrentContext:self.context];
     
+    // Read safed options
+    if (self.gameOptions) {
+        [self.gameOptions setToGameOptions:&gdGameOptions];
+        NSLog(@">>%@", self.gameOptions);
+    }
+    
     // In game sound effects via Fitch
     self.finchSoundEngine = [FISoundEngine sharedEngine];
     self.soundFXDictionary = [NSMutableDictionary dictionary];
@@ -209,7 +218,8 @@
     [self.audioPlayer prepareToPlay];
     [self.audioPlayer setDelegate: self];
     [self.audioPlayer setNumberOfLoops:-1];
-    [self.audioPlayer play];
+    if (gdGameOptions.playMusic)
+        [self.audioPlayer play];
     
     // Open GL ES shader program
     gdMainShaderProgram
@@ -244,6 +254,7 @@
     self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];
     [self authenticateLocalPlayer];
     gdAchievementReportedWatchingTheSunset = false;
+
 //    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
 //    if (gameCenterController != nil)
 //    {
@@ -354,6 +365,12 @@
         gdControllerDataAccelerometer.rotationSpeed.y *= -1.0;
     }
     
+    // Invert axis
+    if (gdGameOptions.invertXAxisControls)
+        gdControllerDataAccelerometer.rotationSpeed.x *= -1.0;
+    if (gdGameOptions.invertYAxisControls)
+        gdControllerDataAccelerometer.rotationSpeed.y *= -1.0;
+    
     IWRectangle rollLeft = IWRectangleMake(0.0, 0.3, 0.3, 0.7);
     IWRectangle rollRight = IWRectangleMake(0.7, 0.3, 1.0, 0.7);
     if (gdIsTouched) {
@@ -406,11 +423,23 @@
     IWGameMainHandler(self.timeSinceLastUpdate, aspect);
     
     // Process sound
-    for (int i = 0; i < gdSoundHandler->nSounds; i++) {
-        FISound *sound = [self.soundFXDictionary objectForKey:[NSNumber numberWithInt:gdSoundHandler->sounds[i]]];
-        if (sound) {
-            [sound play];
+    if (gdGameOptions.playFX) {
+        for (int i = 0; i < gdSoundHandler->nSounds; i++) {
+            FISound *sound = [self.soundFXDictionary objectForKey:[NSNumber numberWithInt:gdSoundHandler->sounds[i]]];
+            if (sound) {
+                [sound play];
+            }
         }
+    }
+    
+    // Process backgound music
+    
+    if (gdGameOptions.playMusic
+        && ![self.audioPlayer isPlaying]) {
+        [self.audioPlayer play];
+    } else if (!gdGameOptions.playMusic
+               && [self.audioPlayer isPlaying]) {
+        [self.audioPlayer stop];
     }
     
     // Report score to game center leaderboard
@@ -546,6 +575,45 @@
             //abort();
         }
     }
+}
+
+- (GameOptions *)gameOptions
+{
+    if (_gameOptions != nil) {
+        return _gameOptions;
+    }
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"GameOptions"
+                                              inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
+    
+    NSError *error = nil;
+    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+    if (mutableFetchResults == nil) {
+        // Handle the error.
+        NSLog(@"ERROR: Could not fetch GameOptions from data storage");
+        return nil;
+    }
+    if ([mutableFetchResults count] == 0) {
+        _gameOptions = (GameOptions *)[NSEntityDescription insertNewObjectForEntityForName:@"GameOptions" inManagedObjectContext:self.managedObjectContext];
+        [self saveContext];
+    } else if ([mutableFetchResults count] == 1) {
+        _gameOptions = [[mutableFetchResults objectAtIndex:0] retain];
+    } else {
+        // Handle the error.
+        NSLog(@"ERROR: Found more then one GameOptions in data storage");
+        return nil;
+    }
+    [mutableFetchResults release];
+    [request release];
+    return _gameOptions;
+}
+
+- (void)saveGameOptions {
+    if (self.gameOptions) {
+        [self.gameOptions setFromGameOptions:&gdGameOptions];
+    }
+    NSLog(@">>>%@", self.gameOptions);
 }
 
 @end

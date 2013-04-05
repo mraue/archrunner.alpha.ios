@@ -31,6 +31,8 @@
 #include "IWGSkyBoxController.h"
 #include "IWGRenderer.h"
 #include "IWSoundHandler.h"
+#include "IWGameOptions.h"
+#include "IWUIMenuItemType.h"
 
 void IWGameSetup(void)
 {
@@ -67,6 +69,7 @@ void IWGameSetup(void)
     //
     gdNCubesPerAxis = 5;// [5]
     gdGameModus = IWGAME_MODUS_NORMAL;
+    gdGameOptions = IWGameOptionsMakeDefault();
     //
     return;
 }
@@ -585,30 +588,98 @@ void IWGameUpdate(float timeSinceLastUpdate,
         //IWVector3TransitionResetAndStart(&gdGrayScaleTransition);
 #endif
     } else if (gdCurrentGameStatus == IWGAME_STATUS_PAUSED) {
+        IWUIMenuControllerUpdate(&gdPauseMenu, timeSinceLastUpdate);
         if (gdIsTouched) {
-            int touchN = IWUIMenuPresenterGetTouch(&gdPauseMenu.presenter, gdTouchPoint);
-            gdIsTouched = false;
-            if (touchN == 0) {
-                IWGRendererTearDownGameAssets();
-                //IWGRendererSetupStartMenuAssets();
-                // Start menu controller
-                gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
-                IWStartMenuControllerSetupVBOs(gdStartMenuController,
-                                               &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
-                                               gdTextureHandlerId);
-                gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+            IWUIMenuControllerTouchHandlerData touchHandler
+                = IWUIMenuControllerHandleTouch(&gdPauseMenu, true, gdTouchPoint);
+            if (touchHandler.touchHandled) {
+                if (touchHandler.itemType == IWUIMENUITEM_ITEM_TYPE_OPTIONS) {
+                    switch (touchHandler.page) {
+                        case 3:
+                            switch (touchHandler.item) {
+                                case 0:
+                                    switch (touchHandler.option) {
+                                        case 0:
+                                            gdGameOptions.playMusic = true;
+                                            break;
+                                        case 1:
+                                            gdGameOptions.playMusic = false;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                                case 1:
+                                    switch (touchHandler.option) {
+                                        case 0:
+                                            gdGameOptions.playFX = true;
+                                            break;
+                                        case 1:
+                                            gdGameOptions.playFX = false;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                            }
+                            break;
+                        case 4:
+                            switch (touchHandler.item) {
+                                case 0:
+                                    switch (touchHandler.option) {
+                                        case 0:
+                                            gdGameOptions.invertXAxisControls = false;
+                                            break;
+                                        case 1:
+                                            gdGameOptions.invertXAxisControls = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                                case 1:
+                                    switch (touchHandler.option) {
+                                        case 0:
+                                            gdGameOptions.invertYAxisControls = false;
+                                            break;
+                                        case 1:
+                                            gdGameOptions.invertYAxisControls = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                }
+                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                 gdIsTouched = false;
-                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
-                gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
-                glUseProgram(gdSkyboxShaderProgram.programID);
-                glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
-                glUseProgram(gdMainShaderProgram.programID);
-                glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.4);
-                return;
-            } else if (touchN == 1) {
-                gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
-                gdGrayScaleTransition = gdGrayScaleTransitionDefault;
-                IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
+            } else {
+                int touchN = IWUIMenuPresenterGetTouch(&gdPauseMenu.presenter, gdTouchPoint);
+                gdIsTouched = false;
+                if (touchN == 0) {
+                    IWGRendererTearDownGameAssets();
+                    //IWGRendererSetupStartMenuAssets();
+                    // Start menu controller
+                    gdStartMenuController = IWStartMenuControllerMakeDefault(fabsf(gdScreenWidth / gdScreenHeight), &gdFontMap);
+                    IWStartMenuControllerSetupVBOs(gdStartMenuController,
+                                                   &gdMainShaderProgram, &gdSkyboxShaderProgram, &gdTextShaderProgram,
+                                                   gdTextureHandlerId);
+                    gdCurrentGameStatus = IWGAME_STATUS_START_MENU;
+                    gdIsTouched = false;
+                    IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
+                    gdStateSwitchTimer = IWTimerDataMake(0.0, 0.5, false);
+                    glUseProgram(gdSkyboxShaderProgram.programID);
+                    glUniform2f(glGetUniformLocation(gdSkyboxShaderProgram.programID, "GrayScale"), 0.0, 0.4);
+                    glUseProgram(gdMainShaderProgram.programID);
+                    glUniform2f(glGetUniformLocation(gdMainShaderProgram.programID, "GrayScale"), 0.0, 0.4);
+                    return;
+                } else if (touchN == 2) {
+                    gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
+                    gdGrayScaleTransition = gdGrayScaleTransitionDefault;
+                    IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
+                }
             }
         }
     }

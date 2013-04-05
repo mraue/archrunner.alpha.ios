@@ -41,6 +41,7 @@
 #include "IWTutorialController.h"
 #include "IWStartMenuController.h"
 #include "IWSoundHandler.h"
+#include "IWGameOptions.h"
 
 #pragma mark - Game Logic Data
 
@@ -88,6 +89,8 @@ extern IWTutorialControllerData *gdTutorialController;
 extern IWStartMenuControllerData *gdStartMenuController;
 
 extern IWGAME_MODUS gdGameModus;
+
+extern IWGameOptionsData gdGameOptions;
 
 #pragma mark - User input
 

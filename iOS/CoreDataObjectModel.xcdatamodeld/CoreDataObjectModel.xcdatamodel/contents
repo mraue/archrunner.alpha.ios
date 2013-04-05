@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2057" systemVersion="12C3006" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12D78" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Achievement" representedClassName="Achievement" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="completionDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -14,8 +14,15 @@
         <attribute name="playTimeTotal" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="zTravelledTotal" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
     </entity>
+    <entity name="GameOptions" representedClassName="GameOptions" syncable="YES">
+        <attribute name="invertXAxisControls" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="invertYAxisControls" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="playFX" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="playMusic" optional="YES" attributeType="Boolean" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Achievement" positionX="160" positionY="192" width="128" height="135"/>
         <element name="AchievementTracker" positionX="-164" positionY="198" width="128" height="105"/>
+        <element name="GameOptions" positionX="160" positionY="192" width="128" height="105"/>
     </elements>
 </model>
