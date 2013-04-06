@@ -680,7 +680,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                 } else if (touchN == 2) {
                     gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
                     gdGrayScaleTransition = gdGrayScaleTransitionDefault;
-                    IWUIMenuControllerUpdate(&gdPauseMenu, 1.0);
+                    IWUIMenuControllerUpdate(&gdPauseMenu, IW_MAX(gdPauseMenu.fadeOutTime, gdPauseMenu.fadeOutTime));
                     IWSoundHandlerAddSound(gdSoundHandler, IWSOUNDHANDLER_SOUNDS_MENU_SELECTED);
                 }
             }
@@ -688,8 +688,8 @@ void IWGameUpdate(float timeSinceLastUpdate,
     }
     
     if (!gdUserInterfaceController.pauseButton.colorTransition.transitionHasFinished) {
-        IWColorTransitionUpdate(&gdUserInterfaceController.pauseButton.colorTransition, timeSinceLastUpdate);
-        gdUserInterfaceController.pauseButton.color = gdUserInterfaceController.pauseButton.colorTransition.currentColor;
+        IWVector4TransitionUpdate(&gdUserInterfaceController.pauseButton.colorTransition, timeSinceLastUpdate);
+        gdUserInterfaceController.pauseButton.color = gdUserInterfaceController.pauseButton.colorTransition.currentVector;
         IWUIRectangleButtonUpdateColorInBuffer(&gdUserInterfaceController.pauseButton);
         IWGRingBufferSubDataForBufferObject(&gdUserInterfaceController.triangleMultiBuffer,
                                              &gdUserInterfaceController.pauseButton.triangleBuffer, true);

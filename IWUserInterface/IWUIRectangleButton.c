@@ -37,7 +37,7 @@ IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPoin
                                                anchorPosition),
         IWGPrimitiveBufferDataMake(0, 7, 0, 0, 0, 0, 0, 0, 3, 0, 0),
         IWGPrimitiveBufferDataMake(0, 7, 0, 0, 0, 0, 0, 0, 3, 0, 0),
-        IWColorTransitionMake(),
+        IWVector4TransitionMakeEmpty(),
         false
     };
     return button;
@@ -76,7 +76,7 @@ bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, 
     if (isTouched && IWPointInRectangle(touchPoint, button->rectangle)) {
         if (!button->isTouched) {
             button->isTouched = true;
-            IWColorTransition colorTransition = {
+            IWVector4Transition colorTransition = {
                 button->color,
                 button->touchedColor,
                 button->color,
@@ -88,7 +88,7 @@ bool IWUIRectangleButtonCheckTouch(IWUIRectangleButton *button, bool isTouched, 
     } else {
         if (button->isTouched) {
             button->isTouched = false;
-            IWColorTransition colorTransition = {
+            IWVector4Transition colorTransition = {
                 button->color,
                 button->untouchedColor,
                 button->color,

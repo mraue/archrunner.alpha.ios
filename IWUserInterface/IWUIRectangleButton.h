@@ -15,7 +15,8 @@
 
 #include "IWMath.h"
 #include "IWGeometry.h"
-#include "IWColorTransition.h"
+#include "IWVectorTransition.h"
+//#include "IWColorTransition.h"
 
 #include "IWGPrimitiveBuffer.h"
 
@@ -41,7 +42,7 @@ struct _IWUIRectangleButton {
     IWRectangle rectangle;// [0.0 - 1.0]
     IWGPrimitiveBufferData triangleBuffer;
     IWGPrimitiveBufferData lineBuffer;
-    IWColorTransition colorTransition;
+    IWVector4Transition colorTransition;
     bool isTouched;
 };
 
@@ -50,7 +51,8 @@ typedef struct _IWUIRectangleButton IWUIRectangleButton;
 IWUIRectangleButton IWUIRectangleButtonMake(float anchorPointX, float anchorPointY,
                                             IWGEOMETRY_ANCHOR_POSITION anchorPosition,
                                             float sizeX, float sizeY,
-                                            IWVector4 touchedColor, IWVector4 untouchedColor,
+                                            IWVector4 touchedColor,
+                                            IWVector4 untouchedColor,
                                             IWVector4 lineColor,
                                             enum IWUIRECTANGLEBUTTON_CORNER_CUT cornerCut,
                                             float cornerOffset, float aspectRatio);

@@ -45,7 +45,6 @@
 		641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */ = {isa = PBXBuildFile; fileRef = 646F590716A555B000704F45 /* IWGShaderProgram.c */; };
 		641E0D7616A834FE0077785D /* IWGRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D6F16A809560077785D /* IWGRenderer.c */; };
 		641E0D7A16A844710077785D /* IWGame.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7916A844710077785D /* IWGame.c */; };
-		641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D7F16A9662D0077785D /* IWColorTransition.c */; };
 		641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8116AAF8D80077785D /* IWUIElement.c */; };
 		641E0D8916AD69720077785D /* IWCube.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8816AD69720077785D /* IWCube.c */; };
 		641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 641E0D8B16AD6D740077785D /* IWGPrimitiveBuffer.c */; };
@@ -180,8 +179,6 @@
 		641E0D7816A844650077785D /* IWGame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWGame.h; sourceTree = "<group>"; };
 		641E0D7916A844710077785D /* IWGame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IWGame.c; sourceTree = "<group>"; };
 		641E0D7B16A962580077785D /* IWVector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IWVector4.h; sourceTree = "<group>"; };
-		641E0D7D16A965E90077785D /* IWColorTransition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWColorTransition.h; path = IWAnimation/IWColorTransition.h; sourceTree = SOURCE_ROOT; };
-		641E0D7F16A9662D0077785D /* IWColorTransition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWColorTransition.c; path = IWAnimation/IWColorTransition.c; sourceTree = "<group>"; };
 		641E0D8116AAF8D80077785D /* IWUIElement.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IWUIElement.c; path = IWUserInterface/IWUIElement.c; sourceTree = "<group>"; };
 		641E0D8416AAF9170077785D /* IWUIElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IWUIElement.h; path = IWUserInterface/IWUIElement.h; sourceTree = "<group>"; };
 		641E0D8716AD69680077785D /* IWCube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IWCube.h; sourceTree = "<group>"; };
@@ -401,15 +398,6 @@
 			name = IWTools;
 			sourceTree = "<group>";
 		};
-		641E0D7E16A965EF0077785D /* IWAnimation */ = {
-			isa = PBXGroup;
-			children = (
-				641E0D7D16A965E90077785D /* IWColorTransition.h */,
-				641E0D7F16A9662D0077785D /* IWColorTransition.c */,
-			);
-			name = IWAnimation;
-			sourceTree = "<group>";
-		};
 		641E0D8316AAF8E00077785D /* IWUserInterface */ = {
 			isa = PBXGroup;
 			children = (
@@ -462,7 +450,6 @@
 			isa = PBXGroup;
 			children = (
 				641E0D8316AAF8E00077785D /* IWUserInterface */,
-				641E0D7E16A965EF0077785D /* IWAnimation */,
 				646F58FA16A555B000704F45 /* iOS */,
 				646F58FF16A555B000704F45 /* IWGame */,
 				646F590616A555B000704F45 /* IWGRenderer */,
@@ -854,7 +841,6 @@
 				641E0D7516A832EF0077785D /* IWGShaderProgram.c in Sources */,
 				641E0D7616A834FE0077785D /* IWGRenderer.c in Sources */,
 				641E0D7A16A844710077785D /* IWGame.c in Sources */,
-				641E0D8016A9662D0077785D /* IWColorTransition.c in Sources */,
 				641E0D8216AAF8D90077785D /* IWUIElement.c in Sources */,
 				641E0D8916AD69720077785D /* IWCube.c in Sources */,
 				641E0D8C16AD6D740077785D /* IWGPrimitiveBuffer.c in Sources */,
