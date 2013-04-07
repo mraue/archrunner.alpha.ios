@@ -557,8 +557,10 @@ void IWGameUpdate(float timeSinceLastUpdate,
     if (gdFuel.currentLevel == 0.0) {
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
         //
+#ifdef IW_DEBUG
         printf("GAME OVER\n");
         IWScoreCounterPrintScore(&gdScoreCounter);
+#endif
         //
         gdClearColor = IWVector4Make(0.9, 0.9, 0.9, 1.0);
         gdCurrentGameStatus = IWGAME_STATUS_GAME_OVER;
