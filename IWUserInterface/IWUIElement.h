@@ -15,15 +15,12 @@
 
 #include "IWMath.h"
 #include "IWGeometry.h"
+#include "IWGPrimitiveBuffer.h"
 
 struct _IWUIElementData {
     IWRectangle rectangle;// [0.0 - 1.0]
-    size_t nTriangleVertices;
-    GLfloat *triangleBufferStart;
-    size_t triangleBufferSize;// [GLFloat]
-    size_t nLineVertices;
-    GLfloat *lineBufferStart;
-    size_t lineBufferSize;// [GLFloat]
+    IWGPrimitiveBufferData triangleBuffer;
+    IWGPrimitiveBufferData lineBuffer;
 };
 typedef struct _IWUIElementData IWUIElementData;
 

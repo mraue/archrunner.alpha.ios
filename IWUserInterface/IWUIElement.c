@@ -14,7 +14,8 @@ IWUIElementData IWUIElementMakeEmpty()
 {
     IWUIElementData uiElement = {
         {{0.0, 0.0}, {1.0, 1.0}},
-        0, NULL, 0, 0, NULL, 0
+        IWGPrimitiveBufferDataMakeEmpty(),
+        IWGPrimitiveBufferDataMakeEmpty()
     };
     return uiElement;
 }
@@ -48,12 +49,11 @@ IWUIElementData IWUIElementMakeArch(IWPoint2D centerPoint,
     IWUIElementData circle = {
         {{centerPoint.x - radiusX, centerPoint.y - radiusX / aspectRatio},
         {centerPoint.x + radiusX, centerPoint.y + radiusX / aspectRatio}},
-        0, NULL, 0, 0, bufferPointer, 0
+        IWGPrimitiveBufferDataMakeEmpty(),
+        IWGPrimitiveBufferDataMake(0, 7, bufferPointer, NULL, 0, 0, 0, 0, 3, 0, 0)
     };
     float angleStep = (thetaMaxRad - thetaMinRad) / (nDivisions - 1);
-    bool first = true;
-    // REFACTOR: This is scaffolded and needs massive refactoring
-    for (float angle = thetaMinRad; angle <= 2.0 * M_PI; angle += angleStep) {
+    for (float angle = thetaMinRad; angle < thetaMaxRad; angle += angleStep) {
         *bufferPointer++ = (centerPoint.x + sinf(angle) * radiusX) * 2.0 - 1.0;
         *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX / aspectRatio) * 2.0 - 1.0;
         *bufferPointer++ = -1.0;
@@ -61,27 +61,15 @@ IWUIElementData IWUIElementMakeArch(IWPoint2D centerPoint,
         *bufferPointer++ = color.y;
         *bufferPointer++ = color.z;
         *bufferPointer++ = color.w;
-        if (first) {
-            first = false;
-        } else {
-            *bufferPointer++ = (centerPoint.x + sinf(angle) * radiusX) * 2.0 - 1.0;
-            *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX / aspectRatio) * 2.0 - 1.0;
-            *bufferPointer++ = -1.0;
-            *bufferPointer++ = color.x;
-            *bufferPointer++ = color.y;
-            *bufferPointer++ = color.z;
-            *bufferPointer++ = color.w;
-        }
+        *bufferPointer++ = (centerPoint.x + sinf(angle + angleStep) * radiusX) * 2.0 - 1.0;
+        *bufferPointer++ = (centerPoint.y + cosf(angle + angleStep) * radiusX / aspectRatio) * 2.0 - 1.0;
+        *bufferPointer++ = -1.0;
+        *bufferPointer++ = color.x;
+        *bufferPointer++ = color.y;
+        *bufferPointer++ = color.z;
+        *bufferPointer++ = color.w;
     }
-    *bufferPointer++ = centerPoint.x * 2.0 - 1.0;
-    *bufferPointer++ = (centerPoint.y + radiusX / aspectRatio) * 2.0 - 1.0;
-    *bufferPointer++ = -1.0;
-    *bufferPointer++ = color.x;
-    *bufferPointer++ = color.y;
-    *bufferPointer++ = color.z;
-    *bufferPointer++ = color.w;
-    circle.lineBufferSize = bufferPointer - circle.lineBufferStart;
-    circle.nLineVertices = circle.lineBufferSize / 7;
+    circle.lineBuffer.size = bufferPointer - circle.lineBuffer.startCPU;
     return circle;
 }
 
@@ -93,7 +81,8 @@ IWUIElementData IWUIElementMakeCubeSymbol(IWRectangle rectangle,
 {
     IWUIElementData uiElement = {
         rectangle,
-        0, p, 0, 0, NULL, 0
+        IWGPrimitiveBufferDataMake(0, 7, p, NULL, 0, 0, 0, 0, 3, 0, 0),
+        IWGPrimitiveBufferDataMakeEmpty()
     };
     float z = 0.0;
     float ymin = rectangle.lowerLeft.y, ymax = rectangle.upperRight.y;
@@ -145,7 +134,6 @@ IWUIElementData IWUIElementMakeCubeSymbol(IWRectangle rectangle,
     *p++ = xmid; *p++ = ymax; *p++ = z;
     *p++ = lightColor.x; *p++ = lightColor.y; *p++ = lightColor.z; *p++ = lightColor.w;
 
-    
-    uiElement.triangleBufferSize = p - uiElement.triangleBufferStart;
+    uiElement.triangleBuffer.size = p - uiElement.triangleBuffer.startCPU;
     return uiElement;
 }

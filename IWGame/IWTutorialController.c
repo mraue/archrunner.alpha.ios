@@ -700,6 +700,7 @@ void IWTutorialControllerUpdate(IWTutorialControllerData *tutorialController,
         // Update user interface
         IWUserInterfaceControllerUpdate(&tutorialController->userInterfaceController,
                                         scoreCounter, cubeStatus, fuel, player,
+                                        controller,
                                         timeSinceLastUpdate);
         
     } else if (!tutorialController->hasFinished) {

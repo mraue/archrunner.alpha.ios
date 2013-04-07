@@ -26,6 +26,7 @@
 #include "IWVectorTransition.h"
 #include "IWFuel.h"
 #include "IWPlayer.h"
+#include "IWController.h"
 
 typedef enum {
     IWUSERINTERFACE_ELEMENT_SCORE = 1 <<  0,
@@ -52,6 +53,8 @@ typedef struct {
     //
     IWGTextFieldData scoreTextField, cubeStatusTextField1, cubeStatusTextField2, fuelStatusTextField;
     //
+    IWUIElementData upperArch, lowerArch, rightArch, leftArch;
+    //
     IWUIRectangleButton pauseButton;
     //
     IWUIStateBar fuelStateBar;
@@ -73,6 +76,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                                      const IWCubeStatusData *cubeStatus,
                                      const IWFuel *fuel,
                                      const IWPlayerData *player,
+                                     const IWControllerData *controller,
                                      float timeSinceLastUpdate);
 
 void IWUserInterfaceControllerRender(IWUserInterfaceControllerData *userInterfaceController,

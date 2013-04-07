@@ -289,5 +289,7 @@ void IWUIMenuControllerPurgeData(IWUIMenuControllerData *menuController)
     IWUIMenuPresenterPurgeData(&menuController->presenter);
     IWGRingBufferDealloc(&menuController->multiBuffer);
     free(menuController->dataBufferStart);
+    free(menuController->pages);
+    menuController->pages = NULL;
     return;
 }

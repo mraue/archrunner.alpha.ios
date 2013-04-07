@@ -146,7 +146,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                                                 IWRectangleMake(0.01, 0.95, 0.4, 0.99),
                                                                 IWUI_ORIENTATION_HORIZONTAL,
                                                                 IWUI_DIRECTION_NORMAL);
-        userInterfaceController.fuelStateBar.triangleBufferData.bufferStartCPU = userInterfaceController.triangleDataBufferStart + bufferOffset;
+        userInterfaceController.fuelStateBar.triangleBufferData.startCPU = userInterfaceController.triangleDataBufferStart + bufferOffset;
         IWUIStateBarToTriangles(&userInterfaceController.fuelStateBar);
         userInterfaceController.fuelStateBar.triangleBufferData.bufferOffsetGPU = bufferOffset;
         bufferOffset += userInterfaceController.fuelStateBar.triangleBufferData.size;
@@ -181,7 +181,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                                                IWVector4Make(0.3, 0.3, 0.3, 0.8),
                                                                userInterfaceController.triangleDataBufferStart
                                                                + bufferOffset);
-        bufferOffset += cubeSymbol.triangleBufferSize;
+        bufferOffset += cubeSymbol.triangleBuffer.size;
         cubeCounterCubeSymbolRect.lowerLeft.y -= cubeCounterLineHeight;
         cubeCounterCubeSymbolRect.upperRight.y -= cubeCounterLineHeight;
         cubeSymbol = IWUIElementMakeCubeSymbol(cubeCounterCubeSymbolRect,
@@ -190,7 +190,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                                IWUI_COLOR_DARK_RED(0.8),
                                                userInterfaceController.triangleDataBufferStart
                                                + bufferOffset);
-        bufferOffset += cubeSymbol.triangleBufferSize;
+        bufferOffset += cubeSymbol.triangleBuffer.size;
     }
     
     //
@@ -200,7 +200,7 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
          userInterfaceController.lineDataBufferSize += IWUIRectangleButtonLineBufferSize(&userInterfaceController.pauseButton);
     
     if (visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
-        userInterfaceController.lineDataBufferSize += 2 * 52 * 7 - 4 * 7;
+        userInterfaceController.lineDataBufferSize += 2 * 52 * 7 + 4 * 21 * 2 * 7;
     }
     
     userInterfaceController.lineDataBufferStart = (GLfloat*)malloc(userInterfaceController.lineDataBufferSize * sizeof(GLfloat));
@@ -216,13 +216,59 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
                                                                 IWVector4Make(1.0, 1.0, 1.0, 0.3), screenAspectRatio, 41,
                                                                 userInterfaceController.lineDataBufferStart
                                                                 + bufferOffset);
-        bufferOffset += uiCentralCircle.lineBufferSize;
+        bufferOffset += uiCentralCircle.lineBuffer.size;
         
         IWUIElementData uiCentralCircle2 = IWUIElementMakeCircle(IWVector2Make(0.5, 0.5), 0.001,//0.01,//0.1,//0.005,
                                                                  IWVector4Make(1.0, 1.0, 1.0, 0.4), screenAspectRatio, 11,
                                                                  userInterfaceController.lineDataBufferStart
                                                                  + bufferOffset);
-        bufferOffset += uiCentralCircle2.lineBufferSize;
+        bufferOffset += uiCentralCircle2.lineBuffer.size;
+        
+        float archRadius = 0.065;
+        
+        userInterfaceController.upperArch = IWUIElementMakeArch(IWVector2Make(0.5, 0.5), archRadius,
+                                                                IWVector4Make(1.0, 1.0, 1.0, 0.4),
+                                                                screenAspectRatio,
+                                                                21,
+                                                                userInterfaceController.lineDataBufferStart
+                                                                + bufferOffset,
+                                                                2. * M_PI * (1.0 - 0.125),
+                                                                2. * M_PI * (1.0 + 0.125));
+        userInterfaceController.upperArch.lineBuffer.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.upperArch.lineBuffer.size;
+        
+        userInterfaceController.lowerArch = IWUIElementMakeArch(IWVector2Make(0.5, 0.5), archRadius,
+                                                                IWVector4Make(1.0, 1.0, 1.0, 0.4),
+                                                                screenAspectRatio,
+                                                                21,
+                                                                userInterfaceController.lineDataBufferStart
+                                                                + bufferOffset,
+                                                                2. * M_PI * (0.5 - 0.125),
+                                                                2. * M_PI * (0.5 + 0.125));
+        userInterfaceController.lowerArch.lineBuffer.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.lowerArch.lineBuffer.size;
+        
+        userInterfaceController.rightArch = IWUIElementMakeArch(IWVector2Make(0.5, 0.5), archRadius,
+                                                                IWVector4Make(1.0, 1.0, 1.0, 0.4),
+                                                                screenAspectRatio,
+                                                                21,
+                                                                userInterfaceController.lineDataBufferStart
+                                                                + bufferOffset,
+                                                                2. * M_PI * (0.25 - 0.125),
+                                                                2. * M_PI * (0.25 + 0.125));
+        userInterfaceController.rightArch.lineBuffer.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.rightArch.lineBuffer.size;
+        
+        userInterfaceController.leftArch = IWUIElementMakeArch(IWVector2Make(0.5, 0.5), archRadius,
+                                                                IWVector4Make(1.0, 1.0, 1.0, 0.4),
+                                                                screenAspectRatio,
+                                                                21,
+                                                                userInterfaceController.lineDataBufferStart
+                                                                + bufferOffset,
+                                                                2. * M_PI * (0.75 - 0.125),
+                                                                2. * M_PI * (0.75 + 0.125));
+        userInterfaceController.leftArch.lineBuffer.bufferOffsetGPU = bufferOffset;
+        bufferOffset += userInterfaceController.leftArch.lineBuffer.size;
         
     }
     
@@ -331,6 +377,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                                      const IWCubeStatusData *cubeStatus,
                                      const IWFuel *fuel,
                                      const IWPlayerData *player,
+                                     const IWControllerData *controller,
                                      float timeSinceLastUpdate)
 {
     if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_SCORE) {
@@ -414,7 +461,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
         IWGRingBufferSubData(&userInterfaceController->triangleMultiBuffer,
                              0,
                              userInterfaceController->fuelStateBar.triangleBufferData.size * sizeof(GLfloat),
-                             userInterfaceController->fuelStateBar.triangleBufferData.bufferStartCPU,
+                             userInterfaceController->fuelStateBar.triangleBufferData.startCPU,
                              true);
         
         // Fuel text update
@@ -423,6 +470,43 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                              userInterfaceController->fuelStatusTextField.triangleBufferData.size * sizeof(GLfloat),
                              userInterfaceController->fuelStatusTextField.triangleBufferData.startCPU,
                              true);
+    }
+    
+    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
+        float controlIndicatorAlphaMax = 0.5;
+        IWGPrimitiveBufferDataUpdateColor(&userInterfaceController->upperArch.lineBuffer,
+                                          IWVector4Make(1.0, 1.0, 1.0,
+                                                        controller->rotationSpeed.x > 0.0
+                                                        ? controller->rotationSpeed.x * controlIndicatorAlphaMax
+                                                        : 0.0));
+        IWGRingBufferSubDataForBufferObject(&userInterfaceController->lineMultiBuffer,
+                                            &userInterfaceController->upperArch.lineBuffer,
+                                            true);
+        IWGPrimitiveBufferDataUpdateColor(&userInterfaceController->lowerArch.lineBuffer,
+                                          IWVector4Make(1.0, 1.0, 1.0,
+                                                        controller->rotationSpeed.x < 0.0
+                                                        ? fabs(controller->rotationSpeed.x) * controlIndicatorAlphaMax
+                                                        : 0.0));
+        IWGRingBufferSubDataForBufferObject(&userInterfaceController->lineMultiBuffer,
+                                            &userInterfaceController->lowerArch.lineBuffer,
+                                            true);
+        IWGPrimitiveBufferDataUpdateColor(&userInterfaceController->leftArch.lineBuffer,
+                                          IWVector4Make(1.0, 1.0, 1.0,
+                                                        controller->rotationSpeed.y > 0.0
+                                                        ? controller->rotationSpeed.y * controlIndicatorAlphaMax
+                                                        : 0.0));
+        IWGRingBufferSubDataForBufferObject(&userInterfaceController->lineMultiBuffer,
+                                            &userInterfaceController->leftArch.lineBuffer,
+                                            true);
+        IWGPrimitiveBufferDataUpdateColor(&userInterfaceController->rightArch.lineBuffer,
+                                          IWVector4Make(1.0, 1.0, 1.0,
+                                                        controller->rotationSpeed.y < 0.0
+                                                        ? fabs(controller->rotationSpeed.y) * controlIndicatorAlphaMax
+                                                        : 0.0));
+        IWGRingBufferSubDataForBufferObject(&userInterfaceController->lineMultiBuffer,
+                                            &userInterfaceController->rightArch.lineBuffer,
+                                            true);
+        
     }
 
 #ifdef IW_USE_GLVAO

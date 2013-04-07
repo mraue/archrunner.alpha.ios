@@ -92,14 +92,14 @@ void IWGRingBufferSubData(IWGRingBufferData *multiBufferData,
 }
 
 void IWGRingBufferSubDataForBufferObject(IWGRingBufferData *multiBuffer,
-                                          IWGPrimitiveBufferData *primitiveBuffer,
-                                          bool bindBuffer)
+                                         IWGPrimitiveBufferData *primitiveBuffer,
+                                         bool bindBuffer)
 {
     IWGRingBufferSubData(multiBuffer,
-                          primitiveBuffer->bufferOffsetGPU  * sizeof(GLfloat),
-                          primitiveBuffer->size * sizeof(GLfloat),
-                          primitiveBuffer->bufferStartCPU,
-                          bindBuffer);
+                         primitiveBuffer->bufferOffsetGPU  * sizeof(GLfloat),
+                         primitiveBuffer->size * sizeof(GLfloat),
+                         primitiveBuffer->startCPU,
+                         bindBuffer);
     return;
 }
 

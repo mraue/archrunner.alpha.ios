@@ -51,7 +51,7 @@ size_t IWUIStateBarToTriangles(IWUIStateBar *stateBar)
         stateBar->nStates += 1;
     }
     unsigned int indices[] = {0, 1, 2, 0, 2, 3};
-    GLfloat *p = stateBar->triangleBufferData.bufferStartCPU;
+    GLfloat *p = stateBar->triangleBufferData.startCPU;
     GLfloat *pstart = p;
     IWVector2 llV = IWVector2AddScalar(IWVector2MultiplyScalar(stateBar->rectangle.lowerLeft, 2.0), -1.0);
     IWVector2 urV = IWVector2AddScalar(IWVector2MultiplyScalar(stateBar->rectangle.upperRight, 2.0), -1.0);

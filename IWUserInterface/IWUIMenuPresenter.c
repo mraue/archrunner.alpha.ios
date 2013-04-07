@@ -45,7 +45,7 @@ void IWUIMenuPresenterInitTextFields(IWUIMenuPresenterData *menuPresenter,
     free(menuPresenter->textFields); menuPresenter->textFields = NULL;
     free(menuPresenter->buttonRects); menuPresenter->buttonRects = NULL;
     
-    menuPresenter->triangleBufferData.bufferStartCPU = bufferPtr;
+    menuPresenter->triangleBufferData.startCPU = bufferPtr;
     menuPresenter->textFields = (IWGTextFieldData*)malloc((menuPresenter->nItemsMax * 2 + 1) * sizeof(IWGTextFieldData));
     menuPresenter->buttonRects = (IWRectangle*)malloc(menuPresenter->nItemsMax * sizeof(IWRectangle));
     

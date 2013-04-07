@@ -234,6 +234,7 @@ void IWGameStartMenuHandler(float timeSinceLastUpdate,
                         break;
                 }
                 IWStartMenuControllerPurgeData(gdStartMenuController);
+                free(gdStartMenuController);
                 gdStartMenuController = NULL;
                 IWGRendererSetupGameAssets();
                 gdCurrentGameStatus = IWGAME_STATUS_RUNNING;
@@ -774,6 +775,7 @@ void IWGameUpdate(float timeSinceLastUpdate,
                                     &gdCubeStatus,
                                     &gdFuel,
                                     &gdPlayerData,
+                                    &gdControllerDataAccelerometer,
                                     timeSinceLastUpdate);
 
     // Switch main draw buffer
