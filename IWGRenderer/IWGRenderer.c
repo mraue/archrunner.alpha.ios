@@ -122,7 +122,7 @@ void IWGRendererSetupGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
-    glLineWidth(1.5);
+    glLineWidth(1.4);
     
     return;
 }

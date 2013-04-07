@@ -52,8 +52,8 @@ IWUIElementData IWUIElementMakeArch(IWPoint2D centerPoint,
         IWGPrimitiveBufferDataMakeEmpty(),
         IWGPrimitiveBufferDataMake(0, 7, bufferPointer, NULL, 0, 0, 0, 0, 3, 0, 0)
     };
-    float angleStep = (thetaMaxRad - thetaMinRad) / (nDivisions - 1);
-    for (float angle = thetaMinRad; angle < thetaMaxRad; angle += angleStep) {
+    float angleStep = (thetaMaxRad - thetaMinRad) / nDivisions;
+    for (float angle = thetaMinRad; angle < thetaMaxRad - angleStep / 2.0; angle += angleStep) {
         *bufferPointer++ = (centerPoint.x + sinf(angle) * radiusX) * 2.0 - 1.0;
         *bufferPointer++ = (centerPoint.y + cosf(angle) * radiusX / aspectRatio) * 2.0 - 1.0;
         *bufferPointer++ = -1.0;

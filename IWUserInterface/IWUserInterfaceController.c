@@ -196,11 +196,11 @@ IWUserInterfaceControllerData IWUserInterfaceControllerMake(float screenAspectRa
     //
     // Setup line buffer
     //
-     if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON)
-         userInterfaceController.lineDataBufferSize += IWUIRectangleButtonLineBufferSize(&userInterfaceController.pauseButton);
     
+    if (visibleElements & IWUSERINTERFACE_ELEMENT_PAUSE_BUTTON)
+         userInterfaceController.lineDataBufferSize += IWUIRectangleButtonLineBufferSize(&userInterfaceController.pauseButton);
     if (visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
-        userInterfaceController.lineDataBufferSize += 2 * 52 * 7 + 4 * 21 * 2 * 7;
+        userInterfaceController.lineDataBufferSize += (41 + 11 + 4 * 21) * 2 * 7;
     }
     
     userInterfaceController.lineDataBufferStart = (GLfloat*)malloc(userInterfaceController.lineDataBufferSize * sizeof(GLfloat));
@@ -472,7 +472,7 @@ void IWUserInterfaceControllerUpdate(IWUserInterfaceControllerData *userInterfac
                              true);
     }
     
-    if (userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_HUD) {
+    if ((userInterfaceController->visibleElements & IWUSERINTERFACE_ELEMENT_HUD)) {
         float controlIndicatorAlphaMax = 0.5;
         IWGPrimitiveBufferDataUpdateColor(&userInterfaceController->upperArch.lineBuffer,
                                           IWVector4Make(1.0, 1.0, 1.0,
