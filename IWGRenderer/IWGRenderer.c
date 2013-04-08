@@ -64,7 +64,7 @@ void IWGRendererInit(const char* fontMapString)
     return;
 }
 
-void IWGRendererSetupGL()
+void IWGRendererSetupGL(bool highDef)
 {
     // Get and save uniform locations.
     
@@ -122,7 +122,11 @@ void IWGRendererSetupGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
-    glLineWidth(1.4);
+
+    if (highDef)
+        glLineWidth(2.0);
+    else
+        glLineWidth(1.0);
     
     return;
 }

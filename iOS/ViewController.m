@@ -119,7 +119,7 @@
     self.motionManager = [[CMMotionManager alloc] init]; // motionManager is an instance variable
     self.motionManager.accelerometerUpdateInterval = 0.01; // 100Hz
     [self.motionManager startAccelerometerUpdates];
-
+    
     if (self.motionManager.isDeviceMotionAvailable) {
         // IPhone 4++
         //self.preferredFramesPerSecond = 60;
@@ -146,6 +146,15 @@
     
     orientationNeutralSetAccelerometer = NO;
     
+    bool highDef = false;
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
+        ([UIScreen mainScreen].scale == 2.0)) {
+        // Retina display
+        highDef = true;
+    } else {
+        // non-Retina display
+    }
+
     gdScreenHeight = self.view.bounds.size.height;
     gdScreenWidth = self.view.bounds.size.width;
     
@@ -247,7 +256,7 @@
     gdFontMapTextureData = (void*)CFDataGetBytePtr(dataRef);
 
     IWGRendererInit(IWFileToolsReadFileToString([fontMapFilename UTF8String]));
-    IWGRendererSetupGL();
+    IWGRendererSetupGL(highDef);
     
     // Game center 
     self.achievementController = [[AchievementController alloc] initWithManagedContext:self.managedObjectContext];

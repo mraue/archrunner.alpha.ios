@@ -48,7 +48,7 @@ extern GLuint attributeIDs[IWGRENDERER_ATTRIBUTE_ID_INDEX_N];
 #pragma mark - Functions
 
 void IWGRendererInit(const char* fontMapString);
-void IWGRendererSetupGL();
+void IWGRendererSetupGL(bool highDef);
 
 void IWGRendererSetupGameAssets(void);
 void IWGRendererTearDownGameAssets(void);
