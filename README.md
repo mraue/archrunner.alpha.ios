@@ -1,5 +1,8 @@
 #Archunner: Alpha (iOS)
 
+## COPYRIGHT
+
+(c) 2013-2014 by Martin Raue // martin.raue@gmail.com
 
 ## LICENSE
 
